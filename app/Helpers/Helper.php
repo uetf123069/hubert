@@ -4,8 +4,27 @@
 
    use Hash;
 
+   use App\Admin;
+
+   use App\User;
+
+   use App\Provider;
+
     class Helper
     {
+
+        public static function clean($string)
+        {
+            $string = str_replace(' ', '-', $string); // Replaces all spaces with hyphens.
+
+            return preg_replace('/[^A-Za-z0-9\-]/', '', $string); // Removes special chars.
+        }
+
+        public static function web_url()
+        {
+            return url('/');
+        }
+
         // Note: $error is passed by reference
         public static function is_token_valid($entity, $id, $token, &$error)
         {
@@ -31,10 +50,7 @@
             $email  = $user->email;
             $id     = $user->id;
             $referral_code = mt_rand(100000,999999); 
-            $ledger = new ReferralLedger;
-            $ledger->user_id = $id;
-            $ledger->referral_code = $referral_code;
-            $ledger->save();
+            
 
             $name = "$user->first_name $user->last_name";
             $admin   = Admin::find(1);
@@ -70,7 +86,7 @@
                 $picture->move(public_path() . "/uploads", $file_name . "." . $ext);
                 $local_url = $file_name . "." . $ext;
 
-                $s3_url = web_url().'/uploads/'.$local_url;
+                $s3_url = Helper::web_url().'/uploads/'.$local_url;
                 
                 return $s3_url;
             }
@@ -89,7 +105,7 @@
 
         public static function generate_token()
         {
-            return clean(Hash::make(rand() . time() . rand()));
+            return Helper::clean(Hash::make(rand() . time() . rand()));
         }
 
         public static function generate_token_expiry()

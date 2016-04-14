@@ -19,7 +19,7 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->string('picture');
             $table->string('token');
-            $table->string('token_expire');
+            $table->string('token_expiry');
             $table->string('device_token');
             $table->enum('device_type',array('android','ios'));
             $table->enum('login_by',array('manual','facebook','google'));

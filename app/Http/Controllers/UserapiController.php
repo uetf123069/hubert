@@ -12,44 +12,47 @@ use Log;
 
 use Hash;
 
+use Validator;
+
+use App\User;
+
 
 define('DEFAULT_FALSE', 0);
 define('DEFAULT_TRUE', 1);
+
+define('DEVICE_ANDROID', 'android');
+define('DEVICE_IOS', 'ios');
 
 class UserapiController extends Controller
 {
     public function __construct(Request $request)
 	{
-		$this->beforeFilter(function() {
 
-			$validator = Validator::make(
-					$request->all(),
-					array(
-							'token' => 'required|min:5',
-							'id' => 'required|integer'
-					));
+    	$validator = Validator::make(
+    			$request->all(),
+    			array(
+    					'token' => 'required|min:5',
+    					'id' => 'required|integer'
+    			));
 
-			if ($validator->fails()) {
-                $error_messages = $validator->messages()->all();
-				$response = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101, 'error_messages'=>$error_messages);
-				return $response;
-			} else {
-				$token = $request->('token');
-				$user_id = $request->('id');
+    	if ($validator->fails()) {
+            $error_messages = $validator->messages()->all();
+    		$response = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101, 'error_messages'=>$error_messages);
+    		return $response;
+    	} else {
+    		$token = $request->token;
+    		$user_id = $request->id;
 
-				if (! Helper::is_token_valid(USER, $user_id, $token, $error)) {
-					$response = Response::json($error, 200);
-					return $response;
-				}
-			}
-		}, array('except' => array(
-				'register',
-				'login','forgot_password')
-		));
+    		if (! Helper::is_token_valid(USER, $user_id, $token, $error)) {
+    			$response = response()->json($error, 200);
+    			return $response;
+    		}
+    	}
 	}
 
 	public function register(Request $request)
 	{
+        // dd($request->all());
         $response_array = array();
         $operation = false;
         /*validate basic field*/
@@ -146,7 +149,7 @@ class UserapiController extends Controller
 
             if($operation){
                 /*creating the user*/
-                $first_name = $request->name;
+                $name = $request->name;
                 $email = $request->email;
                 $phone = $request->phone;
                 $password = $request->password;
@@ -176,7 +179,7 @@ class UserapiController extends Controller
                 $user->save();
 
                 // Send welcome email to the new user:
-                Helper::send_user_welcome_email($user);
+                // Helper::send_user_welcome_email($user);
 
                 // Response with registered user details:
                 $response_array = array(
@@ -220,7 +223,7 @@ class UserapiController extends Controller
             $response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101, 'error_messages'=> $error_messages);
         }else{
 
-            $login_by = $request->('login_by');
+            $login_by = $request->login_by;
             if($login_by == 'manual'){
 
                 /*validate manual login fields*/

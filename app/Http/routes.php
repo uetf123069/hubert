@@ -16,3 +16,21 @@ Route::get('/', function () {
 });
 
 
+
+Route::get('/register','UserapiController@register');
+
+Route::group(['prefix' => 'userApi'], function(){
+
+	Route::post('/register','UserapiController@register');
+	
+	Route::post('/socialSignup','UserapiController@socialSignup');
+
+	Route::post('/login','UserapiController@login');
+
+	Route::get('/profile', 'UserapiController@profile');
+
+	Route::post('/updateProfile', 'UserapiController@updateProfile');
+
+	Route::get('/forgotpassword', 'UserapiController@Forgotpassword');
+
+});
