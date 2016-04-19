@@ -393,6 +393,8 @@ class UserapiController extends Controller
                 $request->all(),
                 /*The param names are changed to match the param names in api doc and email validation added to check email existence in db other than the current user */
                 array(
+                        'device_token' => 'required',
+                        'id' => 'required',
                         'name' => 'required|max:255',
                         'email' => 'required|email|unique:user,email,'.$user_id.'|max:255',
                         'phone' => 'required|digits_between:6,13',
@@ -409,8 +411,7 @@ class UserapiController extends Controller
             );
         } else {
             //$user_id = $request->id; /*Moved to up to overcome the scope problem*/
-            $first_name = $request->first_name;
-            $last_name = $request->last_name;
+            $name = $request->name;
             $email = $request->email;
             $phone = $request->phone;
             $picture = $request->file('picture');

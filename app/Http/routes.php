@@ -23,14 +23,12 @@ Route::group(['prefix' => 'userApi'], function(){
 
 	Route::post('/register','UserapiController@register');
 	
-	Route::post('/socialSignup','UserapiController@socialSignup');
+	Route::get('/userdetails','UserapiController@details_fetch');
 
 	Route::post('/login','UserapiController@login');
 
-	Route::get('/profile', 'UserapiController@profile');
+	Route::post('/updateProfile', 'UserapiController@details_save');
 
-	Route::post('/updateProfile', 'UserapiController@updateProfile');
-
-	Route::get('/forgotpassword', 'UserapiController@Forgotpassword');
+	Route::post('/forgotpassword', 'UserapiController@forgot_password');
 
 });
