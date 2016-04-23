@@ -32,3 +32,27 @@ Route::group(['prefix' => 'userApi'], function(){
 	Route::post('/forgotpassword', 'UserapiController@forgot_password');
 
 });
+
+
+Route::group(['prefix' => 'providerApi'], function(){
+
+	Route::post('/register','ProviderApiController@register');
+	
+	Route::get('/userdetails','ProviderApiController@details_fetch');
+
+	Route::post('/login','ProviderApiController@login');
+
+	Route::post('/updateProfile', 'ProviderApiController@details_save');
+
+	Route::post('/forgotpassword', 'ProviderApiController@forgot_password');
+
+});
+
+
+
+
+
+
+
+
+
