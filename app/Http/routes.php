@@ -31,6 +31,20 @@ Route::group(['prefix' => 'userApi'], function(){
 
 	Route::post('/forgotpassword', 'UserapiController@forgot_password');
 
+	Route::get('/tokenRenew', 'UserapiController@tokenRenew');
+
+	Route::post('/serviceList', 'UserapiController@serviceList');
+
+	Route::post('/singleService', 'UserapiController@singleService');
+
+	Route::post('/sendRequest', 'UserapiController@sendRequest');
+
+	Route::post('/cancelRequest', 'UserapiController@cancelRequest');
+
+	Route::post('/paybypaypal', 'UserapiController@paybypaypal');
+
+	Route::post('/feedback', 'UserapiController@feedback');
+
 });
 
 
@@ -45,6 +59,23 @@ Route::group(['prefix' => 'providerApi'], function(){
 	Route::post('/updateProfile', 'ProviderApiController@details_save');
 
 	Route::post('/forgotpassword', 'ProviderApiController@forgot_password');
+
+	Route::post('/acceptRequest', 'ProviderApiController@acceptRequest');
+
+	Route::post('/cancelRequest', 'ProviderApiController@cancelRequest');
+
+	Route::post('/startRequest', 'ProviderApiController@startRequest');
+
+	Route::post('/arrived', 'ProviderApiController@arrived');
+
+	Route::post('/startedRequest', 'ProviderApiController@startRequest');
+
+	Route::post('/endRequest', 'ProviderApiController@endRequest');
+
+	Route::post('/completed', 'ProviderApiController@completed');
+
+	Route::post('/feedback', 'ProviderApiController@feedback');
+
 
 });
 

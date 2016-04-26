@@ -308,7 +308,7 @@ class ProviderApiController extends Controller
 		return $response;
 	}
 	
-	function renew_token()
+	public function renew_token()
 	{
 		$validator = Validator::make(
 				Input::all(),
