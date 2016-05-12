@@ -18,7 +18,7 @@ class CreateRequestsTable extends Migration
             $table->integer('provider_id');
             $table->integer('user_id');
             $table->integer('current_provider');
-            $table->integer('confimed_provider');
+            $table->integer('confirmed_provider');
             $table->dateTime('request_start_time');
             $table->double('s_latitude',15,8);
             $table->double('s_longitude',15,8);

@@ -276,7 +276,10 @@
                     $string = "Not a valid social registration User";
                     break;
                 case 126:
-                    $string = "Something went wrong";
+                    $string = "Something went wrong while sending request. Please try again.";
+                    break;
+                case 127;
+                    $string = "Already request is in progress. Try again later";
                     break;
                 default:
                     $string = "Unknown error occurred.";
@@ -308,6 +311,21 @@
                 default:
                     $string = "";
             }
+            return $string;
+        }
+
+        public static function get_push_message($code) {
+            switch ($code) {
+                case 601:
+                    $string = "No Provider Available";
+                    break;
+                case 602:
+                    $string = "No provider available to take the Service.";
+                    break;
+                default:
+                    $string = "";
+            }
+
             return $string;
         }
 

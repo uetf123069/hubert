@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-use App\Http\Requests;
-
 use App\Helpers\Helper;
 
 use Log;
@@ -16,14 +14,47 @@ use Validator;
 
 use File;
 
+use DB;
+
 use App\User;
 
+use App\ProviderService;
+
+use App\Requests;
+
+use App\RequestsMeta;
+
+use App\ServiceType;
 
 define('DEFAULT_FALSE', 0);
 define('DEFAULT_TRUE', 1);
 
 define('DEVICE_ANDROID', 'android');
 define('DEVICE_IOS', 'ios');
+
+define('NONE', 0);
+
+define('PROVIDER_NONE' , 0);
+
+define('REQUEST_NEW' , 1);
+
+define('REQUEST_SEND' , 2);
+
+define('REQUEST_ACCEPT_PROVIDER' , 3);
+
+define('REQUEST_REJECT_PROVIDER' , 4);
+
+define('REQUEST_STARTED' , 5);
+
+define('REQUEST_ARRIVED' , 6);
+
+define('SERVICE_STARTED' , 7);
+
+define('REQUEST_COMPLETED' , 8);
+
+define('REQUEST_CANCEL_PROVIDER' , 9);
+
+define('REQUEST_CANCEL_USER' , 10);
 
 class UserapiController extends Controller
 {
@@ -629,10 +660,10 @@ class UserapiController extends Controller
                 array(
                     'id' => 'required|integer',
                     'token' => 'required',
-                    'source_lat' => 'required|numeric',
-                    'source_long' => 'required|numeric',
-                    'service_id' => 'required|numeric',
-                    'amount' => 'required|numeric',
+                    'source_latitude' => 'required|numeric',
+                    'source_longitude' => 'required|numeric',
+                    'service_type' => 'numeric',
+                    // 'amount' => 'required|numeric',
                 ));
 
         if ($validator->fails()) 
@@ -644,143 +675,231 @@ class UserapiController extends Controller
         {
             Log::info('Create request start');
 
-            $service_type = $request->service_id;
-            $s_latitude = $request->source_lat;
-            $s_longitude = $request->source_long;
-            $request_start_time = time();
-            if ($request_after != REQUEST_NOW) {
-                $request_start_time = time() + ($request_after * 60);
-            }
+            // Check already request exists 
 
-            /*Get default search radius*/
-            $settings = Setting::where('key', 'search_radius')->first();
-            $distance = $settings->value;
+            $check_status = array(REQUEST_CANCEL_USER,REQUEST_CANCEL_PROVIDER,REQUEST_REJECT_PROVIDER);
 
-            $latitude = $s_latitude;
-            $longitude = $s_longitude;
-
-            /*Search delivery boys*/
-            $available = 1;
-            $query = "SELECT providers.id, 1.609344 * 3956 * acos( cos( radians('$latitude') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians('$longitude') ) + sin( radians('$latitude') ) * sin( radians(latitude) ) ) AS distance
-                  FROM provider
-                  WHERE available IN ($available) AND is_activated = 1 AND is_approved = 1
-                        AND (1.609344 * 3956 * acos( cos( radians('$latitude') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians('$longitude') ) + sin( radians('$latitude') ) * sin( radians(latitude) ) ) ) <= $distance
-                  ORDER BY distance";
-
-            $providers = DB::select(DB::raw($query));
-            Log::info("Search query: " . $query);
-            
+            $check_requests = Requests::where('user_id' , $request->id)->whereNotIn('status' , $check_status)->get();
 
 
-            if ($providers) 
-            {
-                
-                $amount = $request->amount;
+            if(count($check_requests) == 0) {
 
-                /*Create delivery*/
-                $requests = new Requests;
-                $requests->user_id = $user->id;
-                $requests->request_type = $service_type;
-                $requests->status = REQUEST_NEW;
-                $requests->confirmed_provider = NONE;
-                $requests->request_start_time = date("Y-m-d H:i:s", $requests_start_time);
-                $requests->provider_status = PROVIDER_NONE;
-                if($requests->s_address)
-                {
-                    $requests->s_address = $request->s_address;
-                }
-                if($requests->d_address)
-                {
-                    $requests->d_address = $request->d_address;
-                }
-                $requests->latitude = $s_latitude;
-                $requests->longitude = $s_longitude;
-                $requests->d_latitude = $d_latitude;
-                $requests->d_longitude = $d_longitude;
+                $service_type = $request->service_type; // Get the service type 
 
-                $requests->amount = $amount != NULL ? $amount : 0;
-                
-                $requests->save();
+                $s_latitude = $latitude = $request->source_latitude;
+                $s_longitude = $longitude = $request->source_longitude;
 
-                    /*Assign providers*/
-                    $first_provider_id = 0;
-                    foreach ($providers as $provider) {
-                        $request_meta = new RequestMeta;
-                        $request_meta->request_id = $request->id;
-                        $request_meta->provider_id = $provider->id;
+                $d_latitude = $request->d_latitude;
+                $d_longitude = $request->d_longitude;
 
-                        if ($first_provider_id == 0) {
-                            $first_provider_id = $provider->id;
-                            $request_meta->status = REQUEST_META_OFFERED;
-                            $request->status = REQUEST_WAITING;
-                            $request->save();
+                $request_start_time = time();
+
+                /*Get default search radius*/
+
+                // $settings = Setting::where('key', 'search_radius')->first();
+                // $distance = $settings->value;
+
+                $distance = 100;
+
+                // Search Providers
+
+                $available = 1;
+
+                $providers = array();   // Initialize providers variable
+
+                // Check the service type value 
+
+                if($service_type) {
+
+                    // Get the providers based on the selected service types
+
+                    $service_providers = ProviderService::where('service_type_id' , $service_type)->get();
+
+                    $list_service_ids = array();    // Initialize list_service_ids
+
+                    $list_service_ids = array();    // Initialize list_service_ids
+
+                    if($service_providers) {
+
+                        foreach ($service_providers as $sp => $service_provider) {
+
+                            if($service_provider->provider_id != $request->id)
+
+                                $list_service_ids[] = $service_provider->provider_id;
+
                         }
-                        $request_meta->save();
+
+                        $list_service_ids = implode(',', $list_service_ids);
+
                     }
 
-                    /*Push Start*/
-                    $settings = Setting::where('key', 'provider_select_timeout')->first();
-                    $provider_timeout = $settings->value;
-                    //$request_offered_provider = Provider::find($first_provider_id);
-                    $service = ServiceType::find($requests->request_type);
+                    if($list_service_ids) {
 
-                    $push_data = array();
-                    $push_data['request_id'] = $requests->id;
-                    $push_data['service_type'] = $requests->request_type;
-                    $push_data['request_start_time'] = $requests->request_start_time;
-                    $push_data['status'] = $requests->status;
-                    $push_data['amount'] = $requests->amount;
-                    $push_data['user_name'] = $user->name;
-                    $push_data['user_picture'] = $user->picture;
-                    $push_data['source_address'] = $requests->s_address;
-                    $push_data['desti_address'] = $requests->d_address;
-                    $push_data['source_lat'] = $requests->latitude;
-                    $push_data['source_long'] = $requests->longitude;
-                    $push_data['desti_lat'] = $requests->d_latitude;
-                    $push_data['desti_long'] = $requests->d_longitude;
-                    $push_data['user_rating'] = DB::table('ratings')->where('user_id', $user->id)->avg('rating') ?: 0;
-                    $push_data['time_left_to_respond'] = $provider_timeout - (time() - strtotime($request->request_start_time));
+                        $query = "SELECT providers.id, 1.609344 * 3956 * acos( cos( radians('$latitude') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians('$longitude') ) + sin( radians('$latitude') ) * sin( radians(latitude) ) ) AS distance FROM providers
+                                WHERE id IN ($list_service_ids) AND is_available = 1 AND is_activated = 1 AND is_approved = 1
+                                AND (1.609344 * 3956 * acos( cos( radians('$latitude') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians('$longitude') ) + sin( radians('$latitude') ) * sin( radians(latitude) ) ) ) <= $distance
+                                ORDER BY distance";
 
-                    $title = "New Request";
-                    $push_msg = "You got a new request from ".$user->name;
-                    $push_message = array(
-                        'success' => true,
-                        'msg' => $push_msg,
-                        'data' => array((object) $push_data)
-                    );
-                    /* Send Push Notification to Provider */
-                    send_push_notification($first_provider_id, PROVIDER, $title, $push_message);
-                    Log::info(print_r($push_message,true));
-                    /*Push End*/
+                        $providers = DB::select(DB::raw($query));
 
-                    // Add the pickup and drop addresses to the user's favourite 20
-                    
+                        Log::info("Search query: " . $query);
+                    } 
+
+                } else {
+
+                    $query = "SELECT providers.id, 1.609344 * 3956 * acos( cos( radians('$latitude') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians('$longitude') ) + sin( radians('$latitude') ) * sin( radians(latitude) ) ) AS distance FROM providers
+                            WHERE is_available = 1 AND is_activated = 1 AND is_approved = 1
+                            AND (1.609344 * 3956 * acos( cos( radians('$latitude') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians('$longitude') ) + sin( radians('$latitude') ) * sin( radians(latitude) ) ) ) <= $distance
+                            ORDER BY distance";
+
+                    $providers = DB::select(DB::raw($query));
+
+                    Log::info("Search query: " . $query);
                 
+                }
 
-                $response_array = array(
-                    'success' => true,
-                    'source_address' => $request->s_address,
-                    'desti_address' => $request->d_address,
-                    'source_lat' => $request->latitude,
-                    'source_long' => $request->longitude,
-                    'desti_lat' => $request->d_latitude,
-                    'desti_long' => $request->d_longitude,
-                    'service_id' => $request->service_id,
-                    'request_id' => $request->id,
-                );
-                $response_array = null_safe($response_array);
+                Log::info('List of providers'." ".print_r($providers));
 
-                Log::info('Create request end');
+                if ($providers) 
+                {
+                    $user = User::find($request->id);
 
-            } else {
-                /*No provider found*/
-                Log::info("No Provider Found");
-                //send_notifications($user->id, "user", 'No Provider Found', 'No provider found for the selected service in your area currently');
-                /*Send Push Notification to User*/
-                send_push_notification($user->id, USER, 'No Provider Available', 'No provider available to take the Service.');
-                $response_array = array('success' => false, 'error' => get_error_message(112), 'error_code' => 112);
+                    // Create Requests
+                    $requests = new Requests;
+                    $requests->user_id = $user->id;
+
+                    if($service_type)
+                        $requests->request_type = $service_type;
+
+                    $requests->status = REQUEST_NEW;
+                    $requests->confirmed_provider = NONE;
+                    $requests->request_start_time = date("Y-m-d H:i:s", $request_start_time);
+
+                    $requests->s_address = $request->s_address ? $request->s_address : "";
+                    
+                    $requests->d_address = $request->d_address ? $request->d_address : "";
+
+                    if($s_latitude)
+                        $requests->s_latitude = $s_latitude;
+
+                    if($s_longitude)
+                        $requests->s_longitude = $s_longitude;
+
+                    if($d_latitude)
+                        $requests->d_latitude = $d_latitude;
+
+                    if($d_longitude)
+                        $requests->d_longitude = $d_longitude;
+                    
+                    $requests->save();
+
+                    if($requests) {
+
+                        $first_provider_id = 0;
+
+                        foreach ($providers as $provider) 
+                        {
+                            $request_meta = new RequestsMeta;
+                            $request_meta->request_id = $request->id;
+                            $request_meta->provider_id = $provider->id;
+
+                            if ($first_provider_id == 0) {
+
+                                $first_provider_id = $provider->id;
+                                $request_meta->status = REQUEST_SEND;
+
+                                $requests->status = REQUEST_SEND;
+                                $requests->current_provider = $provider->id;
+                                $requests->save();
+
+                                 // Push notification start
+
+                                // $settings = Setting::where('key', 'provider_select_timeout')->first();
+                                // $provider_timeout = $settings->value;
+
+                                $provider_timeout = 60;
+
+                                 if($service_type)
+                                    $service = ServiceType::find($requests->request_type);
+
+                                $push_data = array();
+                                $push_data['request_id'] = $requests->id;
+                                $push_data['service_type'] = $requests->request_type;
+                                $push_data['request_start_time'] = $requests->request_start_time;
+                                $push_data['status'] = $requests->status;
+                                $push_data['amount'] = $requests->amount;
+                                $push_data['user_name'] = $user->name;
+                                $push_data['user_picture'] = $user->picture;
+                                $push_data['source_address'] = $requests->s_address;
+                                $push_data['desti_address'] = $requests->d_address;
+                                $push_data['source_lat'] = $requests->s_latitude;
+                                $push_data['source_long'] = $requests->s_longitude;
+                                $push_data['desti_lat'] = $requests->d_latitude;
+                                $push_data['desti_long'] = $requests->d_longitude;
+                                // $push_data['user_rating'] = DB::table('ratings')->where('user_id', $user->id)->avg('rating') ?: 0;
+                                $push_data['time_left_to_respond'] = $provider_timeout - (time() - strtotime($request->request_start_time));
+
+                                $title = "New Request";
+                                $message = "You got a new request from ".$user->name;
+                                $push_message = array(
+                                    'success' => true,
+                                    'message' => $message,
+                                    'data' => array((object) Helper::null_safe($push_data))
+                                );
+
+                                // Send Push Notification to Provider
+
+                                //send_push_notification($first_provider_id, PROVIDER, $title, $push_message);
+                                Log::info(print_r($push_message,true));
+
+                                // Push End
+                            }
+
+                            $request_meta->save();
+                        }
+
+                        $response_array = array(
+                            'success' => true,
+                            'source_address' => $requests->s_address,
+                            'desti_address' => $requests->d_address,
+                            'source_lat' => $requests->s_latitude,
+                            'source_long' => $requests->s_longitude,
+                            'desti_lat' => $requests->d_latitude,
+                            'desti_long' => $requests->d_longitude,
+                            'service_id' => $requests->service_id,
+                            'request_id' => $requests->id,
+                        );
+
+
+                        $response_array = Helper::null_safe($response_array);
+
+                        Log::info('Create request end');
+
+                    } else {
+
+                        $response_array = array('success' => false , 'error' => Helper::get_error_message(126) , 'error_code' => 126 );
+                    }
+
+                } else {
+
+                    // No provider found
+
+                    Log::info("No Provider Found");
+
+                    // Send push notification to User
+
+                    send_push_notification($user->id, USER, Helper::get_push_message(601), Helper::get_push_message(602));
+                    $response_array = array('success' => false, 'error' => Helper::get_error_message(112), 'error_code' => 112);
+                
+                }
+
+            } else  {
+                $response_array = array('success' => false , 'error' => Helper::get_error_message(127) , 'error_code' => 127);
             }
         }
+
+        $response = response()->json($response_array, 200);
+        return $response;
 
     }
 
