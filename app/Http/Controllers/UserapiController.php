@@ -14,6 +14,8 @@ use Hash;
 
 use Validator;
 
+use File;
+
 use App\User;
 
 
@@ -43,7 +45,7 @@ class UserapiController extends Controller
     		$token = $request->token;
     		$user_id = $request->id;
 
-    		if (! Helper::is_token_valid(USER, $user_id, $token, $error)) {
+    		if (! Helper::is_token_valid('USER', $user_id, $token, $error)) {
     			$response = response()->json($error, 200);
     			return $response;
     		}
@@ -281,7 +283,7 @@ class UserapiController extends Controller
                         $operation = true;
 
                     }else{
-                        $response_array = array('success' => false, 'error' => 'Not a valid social registration User', 'error_code' => 404);
+                        $response_array = array('success' => false, 'error' => Helper::get_error_message(125), 'error_code' => 125);
                     }
 
                 }
@@ -329,37 +331,68 @@ class UserapiController extends Controller
 	public function forgot_password(Request $request)
 	{
 		$email = $request->email;
-		$user_data = User::where('email',$email)->first();
-		if($user_data)
-		{
-			$user = User::find($user_data->id);
-			$new_password = Helper::generate_password();
-			$user->password = Hash::make($new_password);
-			$user->save();
 
-			$subject = "Your New Password";
-			$email_data = array();
-			$email_data['password']  = $new_password;
-			Helper::send_user_forgot_email($user->email,$email_data,$subject);
+        // Validate the email field
 
-			$response_array = array();
-			$response_array['success'] = true;
-			$response_code = 200;
-			$response = response()->json($response_array, $response_code);
-			return $response;
+        $validator = Validator::make(
+            $request->all(),
+            array(
+                'email' => 'required|email',
+            )
+        );
 
-		}
-		else{
-			$response_array = array('success' => false, 'error' => 'This Email is not registered', 'error_code' => 425);
-			$response_code = 200;
-			$response = response()->json($response_array, $response_code);
-			return $response;
-		}
+        if ($validator->fails()) {
+
+            $error_messages = $validator->messages()->all();
+            $response_code = 200;
+            $response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101, 'error_messages'=> $error_messages);
+
+        } else {
+
+    		$user_data = User::where('email',$email)->first();
+
+    		if($user_data)
+    		{
+    			$user = User::find($user_data->id);
+    			$new_password = Helper::generate_password();
+    			$user->password = Hash::make($new_password);
+    			$user->save();
+
+    			$subject = "Your New Password";
+    			$email_data = array();
+    			$email_data['password']  = $new_password;
+
+    			$email_send = Helper::send_user_forgot_email($user->email,$email_data,$subject);
+
+    			$response_array = array();
+
+                if($email_send == Helper::get_message(106)) {
+                    $response_array['success'] = true;
+                    $response_array['message'] = $email_send;
+                    
+                } else {
+                    $response_array['success'] = false;
+                    $response_array['message'] = $email_send;
+                }
+
+                $response_code = 200;
+
+    		} else {
+
+    			$response_array = array('success' => false, 'error' => Helper::get_error_message(124), 'error_code' => 124);
+    			$response_code = 200;
+    		}
+        }
+
+        $response = response()->json($response_array, $response_code);
+        return $response;
 	}
 
     public function details_fetch(Request $request)
     {
         $user = User::find($request->id);
+
+        // Check Condition
 
         // Generate new tokens
         $user->token = Helper::generate_token();
@@ -390,16 +423,16 @@ class UserapiController extends Controller
     {
         $user_id = $request->id;
         $validator = Validator::make(
-                $request->all(),
-                /*The param names are changed to match the param names in api doc and email validation added to check email existence in db other than the current user */
-                array(
-                        'device_token' => 'required',
-                        'id' => 'required',
-                        'name' => 'required|max:255',
-                        'email' => 'required|email|unique:user,email,'.$user_id.'|max:255',
-                        'phone' => 'required|digits_between:6,13',
-                        'picture' => 'mimes:jpeg,bmp,png',
-                ));
+            $request->all(),
+            /*The param names are changed to match the param names in api doc and email validation added to check email existence in db other than the current user */
+            array(
+                    'device_token' => 'required',
+                    'id' => 'required',
+                    'name' => 'required|max:255',
+                    'email' => 'required|email|unique:users,email,'.$user_id.'|max:255',
+                    'mobile' => 'required|digits_between:6,13',
+                    'picture' => 'mimes:jpeg,bmp,png',
+            ));
 
         if ($validator->fails()) {
             $error_messages = $validator->messages()->all(); /*Error messages added in response for debugging*/
@@ -413,14 +446,14 @@ class UserapiController extends Controller
             //$user_id = $request->id; /*Moved to up to overcome the scope problem*/
             $name = $request->name;
             $email = $request->email;
-            $phone = $request->phone;
+            $mobile = $request->mobile;
             $picture = $request->file('picture');
 
             $user = User::find($user_id);
             $user->name = $name;
             $user->email = $email;
-            if ($phone != "")
-                $user->phone = $phone;
+            if ($mobile != "")
+                $user->mobile = $mobile;
 
             // Upload picture
             if ($picture != ""){
@@ -440,7 +473,7 @@ class UserapiController extends Controller
                 'success' => true,
                 'id' => $user->id,
                 'name' => $user->name,
-                'phone' => $user->phone,
+                'mobile' => $user->mobile,
                 'email' => $user->email,
                 'picture' => $user->picture,
                 'token' => $user->token,
@@ -480,11 +513,11 @@ class UserapiController extends Controller
 
                 $user->save();
 
-                $response_array = array(
+                $response_array = Helper::null_safe(array(
                         'success' => true,
                         'token' => $user->token,
                         'token_refresh' => $user->token_refresh
-                );
+                ));
             } else {
                 $response_array = array(
                         'success' => false,
@@ -610,6 +643,7 @@ class UserapiController extends Controller
         else 
         {
             Log::info('Create request start');
+
             $service_type = $request->service_id;
             $s_latitude = $request->source_lat;
             $s_longitude = $request->source_long;
@@ -749,9 +783,6 @@ class UserapiController extends Controller
         }
 
     }
-
-
-
 
 }
 

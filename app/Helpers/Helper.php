@@ -10,6 +10,10 @@
 
    use App\Provider;
 
+   use Mail;
+
+   use File;
+
     class Helper
     {
 
@@ -29,19 +33,19 @@
         public static function is_token_valid($entity, $id, $token, &$error)
         {
             if (
-                ( $entity==USER   && ($row = User::where('id', '=', $id)->where('token', '=', $token)->first()) ) ||
-                ( $entity==PROVIDER  && ($row = Provider::where('id', '=', $id)->where('token', '=', $token)->first()) )
+                ( $entity== 'USER' && ($row = User::where('id', '=', $id)->where('token', '=', $token)->first()) ) ||
+                ( $entity== 'PROVIDER' && ($row = Provider::where('id', '=', $id)->where('token', '=', $token)->first()) )
             ) {
                 if ($row->token_expiry > time()) {
                     // Token is valid
                     $error = NULL;
                     return $row;
                 } else {
-                    $error = array('success' => false, 'error' => get_error_message(103), 'error_code' => 103);
+                    $error = array('success' => false, 'error' => Helper::get_error_message(103), 'error_code' => 103);
                     return FALSE;
                 }
             }
-            $error = array('success' => false, 'error' => get_error_message(104), 'error_code' => 104);
+            $error = array('success' => false, 'error' => Helper::get_error_message(104), 'error_code' => 104);
             return FALSE;
         }
 
@@ -115,27 +119,82 @@
 
         public static function send_user_forgot_email($email,$email_data,$subject)
         {
-            Mail::send('emails.user.forgot_password', array('email_data' => $email_data), function ($message) use ($email, $subject) {
-                        $message->to($email)->subject($subject);
-                });
+            if(env('MAIL_USERNAME') && env('MAIL_PASSWORD')) {
+               try
+                {
+                    Mail::send('emails.user.forgot_password', array('email_data' => $email_data), function ($message) use ($email, $subject) {
+                            $message->to($email)->subject($subject);
+                    });
+
+                } catch(Exception $e) {
+
+                    return Helper::get_error_message(123);
+
+                }
+
+                return Helper::get_message(105);
+
+            } else {
+                return Helper::get_error_message(123);
+            }
+           
         }
         public static function send_provider_forgot_email($email,$email_data,$subject)
-        {
-            Mail::send('emails.provider.forgot_password', array('email_data' => $email_data), function ($message) use ($email, $subject) {
-                        $message->to($email)->subject($subject);
-                });
+        {            
+            if(env('MAIL_USERNAME') && env('MAIL_PASSWORD')) {
+                try
+                {
+                    // Log::info("mail Started//.....");
+
+                    Mail::send('emails.provider.forgot_password', array('email_data' => $email_data), function ($message) use ($email, $subject) {
+                            $message->to($email)->subject($subject);
+                    });
+
+                } catch(Exception $e) {
+
+                    Log::info('Email Send Error message***********'.print_r($e,true));
+
+                    return Helper::get_error_message(123);
+                }
+
+                return Helper::get_message(105);
+
+            } else {
+                return Helper::get_error_message(123);
+            }
         }
 
         public static function send_provider_welcome_email($provider)
         {
             $email = $provider->email;
-            $name = "$provider->first_name $provider->last_name";
-            Mail::send('emails.provider.welcome',
-                array('provider' => $provider),
-                function($message) use ($email, $name) {
-                    $message->to($email, $name)
-                        ->subject(Config::get('app.title')." ".tr('account_verification'));
-                });
+
+            $subject = "Account Verification";
+
+            $email_data = $provider;
+
+            if(env('MAIL_USERNAME') && env('MAIL_PASSWORD')) {
+                try
+                {
+                    Log::info("Provider welcome mail started.....");
+
+                    Mail::send('emails.provider.welcome', array('email_data' => $email_data), function ($message) use ($email, $subject) {
+                            $message->to($email)->subject($subject);
+                    });
+
+                } catch(Exception $e) {
+
+                    Log::info('Email send error message***********'.print_r($e,true));
+
+                    return Helper::get_error_message(123);
+                }
+
+                return Helper::get_message(105);
+
+            } else {
+
+                return Helper::get_error_message(123);
+
+            }
         }
 
         public static function get_error_message($code)
@@ -207,6 +266,18 @@
                 case 122:
                     $string = "You can't use your own referral code.";
                     break;
+                case 123:
+                    $string = "Something went wrong in mail configuration";
+                    break;
+                case 124:
+                    $string = "This Email is not registered";
+                    break;
+                case 125:
+                    $string = "Not a valid social registration User";
+                    break;
+                case 126:
+                    $string = "Something went wrong";
+                    break;
                 default:
                     $string = "Unknown error occurred.";
             }
@@ -231,6 +302,9 @@
                 case 105:
                     $string = "Successfully signed up.";
                     break;
+                case 106:
+                    $string = "Mail sent successfully";
+                    break;
                 default:
                     $string = "";
             }
@@ -244,6 +318,11 @@
             $new_password = sha1($new_password);
             $new_password = substr($new_password,0,8);
             return $new_password;
+        }
+
+        public static function delete_picture($picture) {
+            File::delete( public_path() . "/uploads/" . basename($picture));
+            return true;
         }
 
     }
