@@ -14,6 +14,8 @@
 
    use File;
 
+   use Log;
+
     class Helper
     {
 
@@ -281,6 +283,15 @@
                 case 127;
                     $string = "Already request is in progress. Try again later";
                     break;
+                case 128:
+                    $string = "Request is not Completed. So you can't do the payment now.";
+                    break;
+                case 129:
+                    $string = "Request Service ID and User ID are mismatched";
+                    break;
+                case 130:
+                    $string = "No results found";
+                    break;
                 default:
                     $string = "Unknown error occurred.";
             }
@@ -308,6 +319,9 @@
                 case 106:
                     $string = "Mail sent successfully";
                     break;
+                case 107:
+                    $string = "Payment successfully done";
+                    break;
                 default:
                     $string = "";
             }
@@ -322,11 +336,15 @@
                 case 602:
                     $string = "No provider available to take the Service.";
                     break;
+                case 603:
+                    $string = "Request completed successfully";
+                    break;
                 default:
                     $string = "";
             }
 
             return $string;
+        
         }
 
         public static function generate_password()
@@ -341,6 +359,82 @@
         public static function delete_picture($picture) {
             File::delete( public_path() . "/uploads/" . basename($picture));
             return true;
+        }
+
+        public static function send_notifications($id, $type, $title, $message)
+        {
+            Log::info('push notification');
+
+            $push_notification = 1; // Check the push notifictaion is enabled
+
+            // Check the user type whether "USER" or "PROVIDER"
+
+            if ($type == 'PROVIDER') {
+                $user = Provider::find($id);
+            } else {
+                $user = User::find($id);
+            }
+
+            if ($push_notification == 1) {
+                if ($user->device_type == 'ios') {
+                    Helper::send_ios_push($user->device_token, $title, $message, $type);
+                } else {
+
+                    Helper::send_android_push($user->device_token, $title, $message);
+                }
+            }
+        }
+
+        public static function send_ios_push($user_id, $title, $message, $type)
+        {
+            require_once app_path().'ios_push/apns.php';
+
+            $msg = array("alert" => "" . $title,
+                "status" => "success",
+                "title" => $title,
+                "message" => $message,
+                "badge" => 1,
+                "sound" => "default");
+
+            if (!isset($user_id) || empty($user_id)) {
+                $deviceTokens = array();
+            } else {
+                $deviceTokens = $user_id;
+            }
+
+            $apns = new Apns();
+            $apns->send_notification($deviceTokens, $msg);
+
+            Log::info($deviceTokens);
+        }
+
+        public static function send_android_push($user_id, $message, $title)
+        {
+            require_once app_path().'/gcm/GCM_1.php';
+            require_once app_path().'/gcm/const.php';
+
+            if (!isset($user_id) || empty($user_id)) {
+                $registatoin_ids = "0";
+            } else {
+                $registatoin_ids = trim($user_id);
+            }
+            if (!isset($message) || empty($message)) {
+                $msg = "Message not set";
+            } else {
+                $msg = trim($message);
+            }
+            if (!isset($title) || empty($title)) {
+                $title1 = "Message not set";
+            } else {
+                $title1 = trim($title);
+            }
+
+            $message = array(TEAM => $title1, MESSAGE => $msg);
+
+            $gcm = new GCM();
+            $registatoin_ids = array($registatoin_ids);
+            $gcm->send_notification($registatoin_ids, $message);
+
         }
 
     }

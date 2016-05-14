@@ -27,9 +27,11 @@ use App\RequestsMeta;
 use App\ServiceType;
 
 define('DEFAULT_FALSE', 0);
+
 define('DEFAULT_TRUE', 1);
 
 define('DEVICE_ANDROID', 'android');
+
 define('DEVICE_IOS', 'ios');
 
 define('NONE', 0);
@@ -54,13 +56,16 @@ define('REQUEST_COMPLETED' , 8);
 
 define('REQUEST_CANCEL_PROVIDER' , 9);
 
-define('REQUEST_CANCEL_USER' , 10);
+define('REQUEST_CANCEL_USER' , 10); 
+
+define('PROVIDER' , 'PROVIDER');
+
+define('USER' , 'USER');
 
 class UserapiController extends Controller
 {
     public function __construct(Request $request)
 	{
-
     	$validator = Validator::make(
     			$request->all(),
     			array(
@@ -69,14 +74,27 @@ class UserapiController extends Controller
     			));
 
     	if ($validator->fails()) {
+
             $error_messages = $validator->messages()->all();
+
     		$response = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101, 'error_messages'=>$error_messages);
-    		return $response;
+
+            Log::info("Validator Failssss");
+
+    		return response()->json($response,200);
+
     	} else {
+
+            Log::info("Check Token Expiry Start");
+
     		$token = $request->token;
+
     		$user_id = $request->id;
 
-    		if (! Helper::is_token_valid('USER', $user_id, $token, $error)) {
+    		if (!Helper::is_token_valid('USER', $user_id, $token, $error)) {
+
+                Log::info("Check Token Expiry END");
+
     			$response = response()->json($error, 200);
     			return $response;
     		}
@@ -106,7 +124,8 @@ class UserapiController extends Controller
 
             $login_by = $request->login_by;
             $allowedSocialLogin = array('facebook','google');
-            /*check login-by*/
+
+            // check login-by
             if(in_array($login_by,$allowedSocialLogin)){
 
                 /*validate social registration fields*/
@@ -560,6 +579,7 @@ class UserapiController extends Controller
 
         $response = response()->json($response_array, 200);
         return $response;
+    
     }
 
     public function serviceList(Request $request)
@@ -651,6 +671,7 @@ class UserapiController extends Controller
 
         $response = response()->json($response_array, 200);
         return $response;
+    
     }
 
     public function sendRequest(Request $request)
@@ -677,12 +698,12 @@ class UserapiController extends Controller
 
             // Check already request exists 
 
-            $check_status = array(REQUEST_CANCEL_USER,REQUEST_CANCEL_PROVIDER,REQUEST_REJECT_PROVIDER);
+            $check_status = array(REQUEST_CANCEL_USER,REQUEST_CANCEL_PROVIDER,REQUEST_REJECT_PROVIDER,REQUEST_COMPLETED);
 
-            $check_requests = Requests::where('user_id' , $request->id)->whereNotIn('status' , $check_status)->get();
+            $check_requests = Requests::where('user_id' , $request->id)->whereNotIn('status' , $check_status)->count();
 
 
-            if(count($check_requests) == 0) {
+            if($check_requests == 0) {
 
                 $service_type = $request->service_type; // Get the service type 
 
@@ -713,9 +734,7 @@ class UserapiController extends Controller
 
                     // Get the providers based on the selected service types
 
-                    $service_providers = ProviderService::where('service_type_id' , $service_type)->get();
-
-                    $list_service_ids = array();    // Initialize list_service_ids
+                    $service_providers = ProviderService::where('service_type_id' , $service_type)->where('is_available' , 1)->get();
 
                     $list_service_ids = array();    // Initialize list_service_ids
 
@@ -805,7 +824,10 @@ class UserapiController extends Controller
 
                             if ($first_provider_id == 0) {
 
-                                $first_provider_id = $provider->id;
+                                // Assign the first provider id to extsts the condition next time
+
+                                $first_provider_id = $provider->id; 
+
                                 $request_meta->status = REQUEST_SEND;
 
                                 $requests->status = REQUEST_SEND;
@@ -819,7 +841,7 @@ class UserapiController extends Controller
 
                                 $provider_timeout = 60;
 
-                                 if($service_type)
+                                if($service_type)
                                     $service = ServiceType::find($requests->request_type);
 
                                 $push_data = array();
@@ -830,14 +852,14 @@ class UserapiController extends Controller
                                 $push_data['amount'] = $requests->amount;
                                 $push_data['user_name'] = $user->name;
                                 $push_data['user_picture'] = $user->picture;
-                                $push_data['source_address'] = $requests->s_address;
-                                $push_data['desti_address'] = $requests->d_address;
-                                $push_data['source_lat'] = $requests->s_latitude;
-                                $push_data['source_long'] = $requests->s_longitude;
-                                $push_data['desti_lat'] = $requests->d_latitude;
-                                $push_data['desti_long'] = $requests->d_longitude;
-                                // $push_data['user_rating'] = DB::table('ratings')->where('user_id', $user->id)->avg('rating') ?: 0;
-                                $push_data['time_left_to_respond'] = $provider_timeout - (time() - strtotime($request->request_start_time));
+                                $push_data['s_address'] = $requests->s_address;
+                                $push_data['d_address'] = $requests->d_address;
+                                $push_data['s_latitude'] = $requests->s_latitude;
+                                $push_data['s_longitude'] = $requests->s_longitude;
+                                $push_data['d_latitude'] = $requests->d_latitude;
+                                $push_data['d_longitude'] = $requests->d_longitude;
+                                // $push_data['user_rating'] = ProviderRating::where('provider_id', $provider->id)->avg('rating') ?: 0;
+                                $push_data['time_left_to_respond'] = $provider_timeout - (time() - strtotime($requests->request_start_time));
 
                                 $title = "New Request";
                                 $message = "You got a new request from ".$user->name;
@@ -853,6 +875,7 @@ class UserapiController extends Controller
                                 Log::info(print_r($push_message,true));
 
                                 // Push End
+                            
                             }
 
                             $request_meta->save();
@@ -888,18 +911,287 @@ class UserapiController extends Controller
 
                     // Send push notification to User
 
-                    send_push_notification($user->id, USER, Helper::get_push_message(601), Helper::get_push_message(602));
+                    Helper::send_push_notification($user->id, USER, Helper::get_push_message(601), Helper::get_push_message(602));
                     $response_array = array('success' => false, 'error' => Helper::get_error_message(112), 'error_code' => 112);
                 
                 }
 
-            } else  {
+            } else {
                 $response_array = array('success' => false , 'error' => Helper::get_error_message(127) , 'error_code' => 127);
             }
         }
 
         $response = response()->json($response_array, 200);
         return $response;
+
+    }
+
+    public function cancelRequest(Request $request) {
+
+        // Validate the request_id
+
+        $validator = Validator::make($request->all() , 
+            array(
+                    'request_id' => 'required|integer',
+                ));
+
+        if($validator->fails()) {
+
+            $error_messages = $validator->messages()->all();
+
+            $response_array = array('success' => false , 'error' => Helper::get_error_message(101) , 'error_code' => 101 , 'error_messages' => $error_messages);
+
+        } else {
+
+            // Get the particular request details 
+
+            $request_query = Requests::where('id' , $request->request_id)->where('user_id' , $request->id);
+
+            // Check the request details are not empty 
+
+            if($request_query->count() != 0) {
+
+                $requests = $request_query->first();
+
+                // Check the status of the request is not reached "SERVICE_STARTED" status
+
+                if($requests->status <= REQUEST_ARRIVED) {
+
+                    // Detect amount from User
+
+                    // Get Request Meta details
+
+                    $request_metas = RequestsMeta::where('request_id' , $request->request_id)->get();
+
+                    // Check the request_metas is not empty
+
+                    if($request_metas) {
+
+                        foreach ($request_metas as $rm => $request_meta) {
+
+                            $request_meta->status = REQUEST_CANCEL_USER;
+                            $request_meta->save();    
+                            
+                        }
+                    }
+
+                    // Change the status of the request
+
+                    $requests->status = REQUEST_CANCEL_USER;
+
+                    $requests->save();
+
+                    // Send notification to the provider
+
+                    // Push Start
+
+                    $user = User::find($request->id);
+
+                    $push_data = array();
+                    $push_data['request_id'] = $requests->id;
+                    $push_data['service_type'] = $requests->request_type;
+                    $push_data['request_start_time'] = $requests->request_start_time;
+                    $push_data['status'] = $requests->status;
+                    $push_data['amount'] = $requests->amount;
+                    $push_data['user_name'] = $user->name;
+                    $push_data['user_picture'] = $user->picture;
+
+                    $title = "Cancel Request";
+                    $message = $user->name." "." cancelled the request";
+
+                    $push_message = array(
+                        'success' => true,
+                        'message' => $message,
+                        'data' => array((object) Helper::null_safe($push_data))
+                    );
+
+                    // Send Push Notification to Provider
+
+                    //send_push_notification($first_provider_id, PROVIDER, $title, $push_message);
+
+                    // Push End
+
+                } else {   // If reached the "SERVICE_STARTED" status
+
+                }
+
+            } else {    // If request details are empty
+
+                $response_array = array('success' => false , 'error' => Helper::get_error_message(129) , 'error_code' => 129);
+            }
+            
+        }
+
+        return response()->json(Helper::null_safe($response_array),200);
+
+    }
+
+    public function requestStatusCheck(Request $request) {
+
+        $check_status = array(); // Initialize the check_status variable
+
+        $check_status = array(REQUEST_REJECT_PROVIDER,REQUEST_CANCEL_PROVIDER,REQUEST_CANCEL_USER,REQUEST_COMPLETED);
+
+        $requests = Requests::whereNotIn('status' , $check_status)->where('user_id' , $request->id)->get();
+
+        $request_data = array(); // Initialize the request_data variable
+
+        $request_dataa = array(); // Initialize the request_dataa variable
+
+        // Get the provider timeout from admin settings
+
+        $provider_timeout = 60;
+
+        // Check the requests is empty or not
+
+        if($requests) {
+
+            foreach ($requests as $r => $req) {
+
+                $request_data['request_id'] = $req->id;
+                $request_data['user_id'] = $req->user_id;
+                $request_data['current_provider'] = $req->current_provider;
+                $request_data['confirmed_provider'] = $req->confirmed_provider;
+                $request_data['request_type'] = $req->request_type;
+                $request_data['request_start_time'] = $req->request_start_time;
+                $request_data['s_latitude'] = $req->s_latitude;
+                $request_data['s_longitude'] = $req->s_longitude;
+                $request_data['d_latitude'] = $req->d_latitude;
+                $request_data['d_longitude'] = $req->d_longitude;
+                $request_data['s_address'] = $req->s_address;
+                $request_data['d_address'] = $req->d_address;
+                $request_data['time_left_to_respond'] = $provider_timeout - (time() - strtotime($req->request_start_time));
+                $request_data['status'] = $req->status;
+
+                array_push($request_dataa, $request_data);
+            }
+
+            $response_array = Helper::null_safe(array('success' => true , 'requests' => $request_dataa ));
+
+        } else {
+
+            $response_array = array('success' => false , 'error' => Helper::get_error_message(128) , 'error_code' => 128);
+
+        }
+
+        // Send the response
+
+        return response()->json($response_array,200);
+
+    } 
+
+    public function paybypaypal(Request $request) {
+
+        $validator = Validator::make($request->all() , 
+            array(
+                'amount' => "required",
+                'is_paid' => "required",
+                'request_id' => "required|integer",
+            ));
+
+
+        if($validator->fails()) {
+
+            $error_messages = $validator->messages()->all();
+            $response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101, 'error_messages' => $error_messages);
+
+        } else {
+
+            // Check the request id exists and check the user ID matches with the request
+            $requests_query = Requests::where('id' , $request->request_id)->where('user_id' , $request->id);
+
+            if($requests_query->count() != 0) {
+
+                $requests = $requests_query->first();
+
+                // Check the status is completed
+
+                if($requests->status == REQUEST_COMPLETED) {
+
+                    // Save the payment details 
+
+                    $requests->is_paid = 1;
+
+                    $requests->amount = $request->amount;
+
+                    $requests->save();
+
+                    $user = User::find($request->id);
+
+
+                    // Send push notification to provider
+
+                    if($user)
+                        $title =  "The"." ".$user->name." done the payment";
+                    else
+                        $title = "Payment done";
+
+                    $message = Helper::get_push_message(603);
+
+                    // Helper::send_notifications($requests->confirmed_provider, PROVIDER , $title , $message );
+
+                    // Send push notification to provider
+
+                    // Helper::send_notifications($requests->user_id, USER , $user_title , $user_message );
+
+                    // Send Response
+
+                    $response_array =  array('success' => true , 'message' => Helper::get_message(107));
+
+                } else {
+                    $response_array = array('success' => 'false' , 'error' => Helper::get_error_message(128) , 'error_code' => 128);
+                }
+
+            } else { // Else dont allow to save the details
+
+                $response_array = array('success' => false , 'error' => Helper::get_error_message(129) , 'error_code' => 129);
+
+            }
+
+        }
+
+        return response()->json($response_array,200);
+
+    }
+
+    public function history(Request $request) {
+
+        // Get the completed request details 
+
+        $requests = Requests::where('user_id' , $request->id)->where('status' , REQUEST_COMPLETED)->get();
+
+        // Check the request details are not empty
+
+        if($requests) {
+
+            // Initialize the request_data variable
+
+            $request_data = array();
+
+            // Initialize the request_dataa variable
+
+            $request_dataa = array();
+
+            foreach ($requests as $key => $req) {
+                
+                $request_data['request_id'] = $req->id;
+                $request_data['user_id'] = $req->user_id;
+                $request_data['current_provider'] = $req->current_provider;
+                $request_data['confirmed_provider'] = $req->confirmed_provider;
+                $request_data['request_start_time'] = $req->request_start_time;
+
+                array_push($request_dataa, $request_data);
+            }
+
+            // Send Response
+            $response_array = array('success' => true , 'requests' => $request_dataa);
+        } else {
+
+            $response_array = array('success' => false , 'error' => Helper::get_error_message() , 'error_code' => );
+
+        }
+
+        return response()->json(Helper::null_safe($response_array) , 200);
 
     }
 

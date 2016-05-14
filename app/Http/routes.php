@@ -40,7 +40,9 @@ Route::group(['prefix' => 'userApi'], function(){
 
 	Route::post('/cancelRequest', 'UserapiController@cancelRequest');
 
-	Route::post('/paybypaypal', 'UserapiController@paybypaypal');
+	Route::get('/paybypaypal', 'UserapiController@paybypaypal');
+
+	Route::get('/requestStatusCheck', 'UserapiController@requestStatusCheck');
 
 	Route::post('/feedback', 'UserapiController@feedback');
 
