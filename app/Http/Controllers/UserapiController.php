@@ -26,6 +26,8 @@ use App\RequestsMeta;
 
 use App\ServiceType;
 
+use App\Provider;
+
 define('DEFAULT_FALSE', 0);
 
 define('DEFAULT_TRUE', 1);
@@ -1007,7 +1009,7 @@ class UserapiController extends Controller
 
                     // Send Push Notification to Provider
 
-                    //send_push_notification($first_provider_id, PROVIDER, $title, $push_message);
+                    //  send_push_notification($first_provider_id, PROVIDER, $title, $push_message);
 
                     // Push End
 
@@ -1066,7 +1068,7 @@ class UserapiController extends Controller
                 array_push($request_dataa, $request_data);
             }
 
-            $response_array = Helper::null_safe(array('success' => true , 'requests' => $request_dataa ));
+            $response_array = array('success' => true , 'requests' => $request_dataa );
 
         } else {
 
@@ -1076,7 +1078,7 @@ class UserapiController extends Controller
 
         // Send the response
 
-        return response()->json($response_array,200);
+        return response()->json(Helper::null_safe($response_array,200));
 
     } 
 
@@ -1175,10 +1177,29 @@ class UserapiController extends Controller
             foreach ($requests as $key => $req) {
                 
                 $request_data['request_id'] = $req->id;
+                $request_data['request_meta_id'] = $req->request_meta_id;
                 $request_data['user_id'] = $req->user_id;
                 $request_data['current_provider'] = $req->current_provider;
                 $request_data['confirmed_provider'] = $req->confirmed_provider;
                 $request_data['request_start_time'] = $req->request_start_time;
+
+                // Check the provider details are not empty
+
+                if($provider = Provider::find($req->confirmed_provider)) {
+                    $request_data['provider_name'] = $provider->name;
+                    $request_data['provider_email'] = $provider->email;
+                    $request_data['provider_picture'] = $provider->picture;
+                    $request_data['provider_mobile'] = $provider->mobile;
+                
+                } else {
+                    $request_data['provider_name'] = "";
+                    $request_data['provider_email'] = "";
+                    $request_data['provider_picture'] = "";
+                    $request_data['provider_mobile'] = "";
+                
+                }
+
+                $request_data['user_id'] = $req->user_id;
 
                 array_push($request_dataa, $request_data);
             }
@@ -1187,7 +1208,7 @@ class UserapiController extends Controller
             $response_array = array('success' => true , 'requests' => $request_dataa);
         } else {
 
-            $response_array = array('success' => false , 'error' => Helper::get_error_message() , 'error_code' => );
+            $response_array = array('success' => false , 'error' => Helper::get_error_message(130) , 'error_code' => 130);
 
         }
 

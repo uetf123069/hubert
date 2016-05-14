@@ -44,6 +44,8 @@ Route::group(['prefix' => 'userApi'], function(){
 
 	Route::get('/requestStatusCheck', 'UserapiController@requestStatusCheck');
 
+	Route::get('/history' , 'UserapiController@history');
+
 	Route::post('/feedback', 'UserapiController@feedback');
 
 });
