@@ -84,15 +84,4 @@ Route::group(['prefix' => 'providerApi'], function(){
 
 });
 
-
-
-
-
-
-
-
-
-
 Route::auth();
-
-Route::get('/home', 'HomeController@index');
