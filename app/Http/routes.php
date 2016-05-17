@@ -11,12 +11,7 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
-
-Route::get('/register','UserapiController@register');
+Route::get('/register', 'UserapiController@register');
 
 Route::group(['prefix' => 'userApi'], function(){
 
@@ -84,4 +79,23 @@ Route::group(['prefix' => 'providerApi'], function(){
 
 });
 
-Route::auth();
+// Admin Routes
+
+Route::group(['prefix' => 'admin'], function(){
+
+    Route::get('login', 'Auth\AdminAuthController@showLoginForm');
+    Route::post('login', 'Auth\AdminAuthController@login');
+    Route::get('logout', 'Auth\AdminAuthController@logout');
+
+    // Registration Routes...
+    Route::get('register', 'Auth\AdminAuthController@showRegistrationForm');
+    Route::post('register', 'Auth\AdminAuthController@register');
+
+    // Password Reset Routes...
+    Route::get('password/reset/{token?}', 'Auth\AdminPasswordController@showResetForm');
+    Route::post('password/email', 'Auth\AdminPasswordController@sendResetLinkEmail');
+    Route::post('password/reset', 'Auth\AdminPasswordController@reset');
+
+    Route::get('/', 'AdminController@index')->name('admin.dashboard');
+
+});

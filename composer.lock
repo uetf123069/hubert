@@ -4,9 +4,55 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "c284a9c122da36c99a8b6597bdce7aa6",
-    "content-hash": "8b1485987e7c5949da82435d403e52e8",
+    "hash": "8ca625840ebcb10a3fb33563aab4b1a2",
+    "content-hash": "3e0954e07ff0c77cdb0489da0078f86c",
     "packages": [
+        {
+            "name": "anlutro/l4-settings",
+            "version": "0.4.8",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/anlutro/laravel-settings.git",
+                "reference": "3c389dcef5e1d2dd8830c1254a70b56f430d3ea0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/anlutro/laravel-settings/zipball/3c389dcef5e1d2dd8830c1254a70b56f430d3ea0",
+                "reference": "3c389dcef5e1d2dd8830c1254a70b56f430d3ea0",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": ">=4.1 <6.0",
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "illuminate/database": ">=4.1 <6.0",
+                "illuminate/filesystem": ">=4.1 <6.0",
+                "mockery/mockery": "0.9.*"
+            },
+            "suggest": {
+                "illuminate/database": "Save settings to a database table.",
+                "illuminate/filesystem": "Save settings to a JSON file."
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "anlutro\\LaravelSettings\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Andreas Lutro",
+                    "email": "anlutro@gmail.com"
+                }
+            ],
+            "description": "Persistent settings in Laravel.",
+            "time": "2016-02-28 18:37:50"
+        },
         {
             "name": "classpreloader/classpreloader",
             "version": "3.0.0",
