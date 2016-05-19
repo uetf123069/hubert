@@ -68,41 +68,10 @@ define('USER' , 'USER');
 
 class UserapiController extends Controller
 {
+
     public function __construct(Request $request)
 	{
-    	$validator = Validator::make(
-    			$request->all(),
-    			array(
-    					'token' => 'required|min:5',
-    					'id' => 'required|integer'
-    			));
-
-    	if ($validator->fails()) {
-
-            $error_messages = $validator->messages()->all();
-
-    		$response = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101, 'error_messages'=>$error_messages);
-
-            Log::info("Validator Failssss");
-
-    		return response()->json($response,200);
-
-    	} else {
-
-            Log::info("Check Token Expiry Start");
-
-    		$token = $request->token;
-
-    		$user_id = $request->id;
-
-    		if (!Helper::is_token_valid('USER', $user_id, $token, $error)) {
-
-                Log::info("Check Token Expiry END");
-
-    			$response = response()->json($error, 200);
-    			return $response;
-    		}
-    	}
+        $this->middleware('UserApiVal' , array('except' => ['register' , 'login' , 'forgot_password']));
 	}
 
 	public function register(Request $request)
@@ -580,7 +549,8 @@ class UserapiController extends Controller
             array(
                     'device_token' => 'required',
                     'id' => 'required',
-                    'name' => 'required|max:255',
+                    'first_name' => 'required|max:255',
+                    'last_name' => 'required|max:255',
                     'email' => 'required|email|unique:users,email,'.$user_id.'|max:255',
                     'mobile' => 'required|digits_between:6,13',
                     'picture' => 'mimes:jpeg,bmp,png',
@@ -634,7 +604,8 @@ class UserapiController extends Controller
             $response_array = array(
                 'success' => true,
                 'id' => $user->id,
-                'name' => $user->name,
+                'first_name' => $user->first_name,
+                'last_name' => $user->last_name,
                 'mobile' => $user->mobile,
                 'email' => $user->email,
                 'picture' => $user->picture,
@@ -1268,6 +1239,8 @@ class UserapiController extends Controller
     }
 
     public function fav_providers(Request $request) {
+
+        dd($this->val_response);
 
         $fav_providers = FavouriteProvider::where('user_id' , $request->id)->get();
 

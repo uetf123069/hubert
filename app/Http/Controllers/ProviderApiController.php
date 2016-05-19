@@ -29,28 +29,7 @@ class ProviderApiController extends Controller
 {
     public function __construct(Request $request)
 	{
-					
-		$validator = Validator::make(
-				$request->all(),
-				array(
-						'token' => 'required|min:5',
-						'id' => 'required|integer'
-				));
-			
-		if ($validator->fails()) {
-            $error_messages = $validator->messages()->all();
-			$response = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101, 'error_messages'=>$error_messages);
-			return $response;
-		} else {
-			$token = $request->token;
-			$provider_id = $request->id;
-				
-			if (! Helper::is_token_valid('PROVIDER', $provider_id, $token, $error)) {
-				$response = Response::json($error, 200);
-				return $response;
-			}
-		}
-		
+		$this->middleware('ProviderApiVal' , ['except' => ['register' , 'login' , 'forgot_password']]);
 	}
 
 	public function register(Request $request)
