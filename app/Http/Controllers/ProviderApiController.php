@@ -494,6 +494,205 @@ class ProviderApiController extends Controller
 		$response = response()->json($response_array, 200);
 		return $response;
 	}
+
+	public function service_decline(Request $request)
+	{
+		$validator = Validator::make(
+				Input::all(),
+				array(
+						'request_id' => 'required|integer|exists:requests,id',
+				));
+			
+		if ($validator->fails()) {
+            $error_messages = $validator->messages()->all();
+			$response_array = array(
+                'success' => false,
+                'error' => get_error_message(101),
+                'error_code' => 101,
+                'error_messages' => $error_messages
+            );
+		} else {
+			$provider = Provider::find($request->id);
+			$request_id = $request->request_id;
+            $requests = Requests::find($request_id);
+            //Check whether the request is cancelled by user.
+            if($requests->status == REQUEST_CANCELLED) {
+                $response_array = array(
+                    'success' => false,
+                    'error' => get_error_message(117),
+                    'error_code' => 117
+                );
+            }else {
+                // Verify if request was indeed offered to this provider
+                $request_meta = RequestMeta::where('request_id', '=', $request_id)
+                    ->where('provider_id', '=', $provider->id)
+                    ->where('status', '=', REQUEST_SEND)->first();
+
+                if (!$request_meta) {
+                    // This request has not been offered to this provider. Abort.
+                    $response_array = array(
+                        'success' => false,
+                        'error' => get_error_message(101),
+                        'error_code' => 101);
+                } else {
+                    // Decline this offer
+                    $request_meta->status = REQUEST_CANCELLED;
+                    $request_meta->save();
+
+                    $response_array = array('success' => true);
+
+                    //Select the new provider who is in the next position.
+                    $request_meta_next = RequestMeta::where('request_id', '=', $request_id)->where('status', REQUEST_META_NONE)
+                                        ->leftJoin('provider', 'provider.id', '=', 'request_meta.provider_id')
+                                        ->where('provider.is_active',DEFAULT_TRUE)
+                                        ->where('provider.available',DEFAULT_TRUE)
+                                        ->select('request_meta.id','request_meta.status')
+                                        ->orderBy('request_meta.created_at')->first();
+                    if($request_meta_next){
+                        //Assign the next provider.
+                        $request_meta_next->status = REQUEST_SEND;
+                        $request_meta_next->save();
+                        //Update the request start time in request table
+                        Requests::where('id', '=', $request->id)->update( array('request_start_time' => date("Y-m-d H:i:s")) );
+                    }
+
+                }
+            }
+		}
+		
+		$response = Response::json($response_array, 200);
+		return $response;
+	}
+	
+	public function service_accept(Request $request)
+	{
+		$validator = Validator::make(
+				Input::all(),
+				array(
+						'request_id' => 'required|integer|exists:requests,id'
+				));
+			
+		if ($validator->fails()) {
+            $error_messages = $validator->messages()->all();
+			$response_array = array(
+                'success' => false,
+                'error' => get_error_message(101),
+                'error_code' => 101,
+                'error_messages' => $error_messages
+            );
+		} else {
+			$provider = Provider::find($request->id);
+			$request_id = $request->request_id;
+            $requests = Requests::find($request_id);
+            //Check whether the request is cancelled by user.
+		    if($requests->status == REQUEST_CANCELLED) {
+                $response_array = array(
+                    'success' => false,
+                    'error' => get_error_message(117),
+                    'error_code' => 117
+                );
+            }else{
+                // Verify if request was indeed offered to this provider
+                $request_meta = RequestMeta::where('request_id', '=', $request_id)
+                    ->where('provider_id', '=', $provider->id)
+                    ->where('status', '=', REQUEST_SEND)->first();
+
+                if (!$request_meta) {
+                    // This request has not been offered to this provider. Abort.
+                    $response_array = array(
+                        'success' => false,
+                        'error' => get_error_message(101),
+                        'error_code' => 101);
+                } else {
+                    // Accept the offer
+                    $requests->confirmed_provider = $provider->id;
+                    $requests->status = REQUEST_INPROGRESS;
+                    $requests->provider_status = PROVIDER_ACCEPTED;
+                    $requests->save();
+
+                    $provider->available = PROVIDER_NOT_AVAILABLE;
+                    $provider->save();
+
+                    /*Send Push Notification to User*/
+                    send_push_notification($requests->user_id, USER, 'Service Accepted', 'The Service is accepted by provider.');
+
+                    // No longer need request specific rows from RequestMeta
+                    RequestMeta::where('request_id', '=', $request_id)->delete();
+
+                    $requestData = array(
+                        'request_id' => $requests->id,
+                        'user_id' => $requests->user_id,
+                        'request_type' => $requests->request_type,
+                    );
+                    $response_array = array(
+                        'success' => true,
+                        'data' => $requestData);
+                }
+            }
+		}
+		// Send Notification to User
+		
+		$response = Response::json($response_array, 200);
+		return $response;
+	}
+
+	public function providerstarted(Request $request)
+	{
+        $provider = Provider::find($request->id);
+		$validator = Validator::make(
+            Input::all(),
+            array(
+                'request_id' => 'required|integer|exists:request,id,confirmed_provider,'.$provider->id,
+                'status' => 'required|integer'
+            ),
+            array(
+                'exists' => 'The :attribute doesn\'t belong to provider:'.$provider->id
+            )
+        );
+		
+		if ($validator->fails()) 
+		{
+            $error_messages = $validator->messages()->all();
+            $response_array = array(
+                'success' => false,
+                'error' => get_error_message(101),
+                'error_code' => 101,
+                '$error_messages' => $error_messages
+            );
+            Log::info('Input Error::'.print_r($error_messages,true));
+		} 
+		else 
+		{
+
+			$request_id = $request->request_id;
+			$current_state = $request->status; // provider current state
+
+			$request = Requests::where('id', '=', $request_id)
+								->where('confirmed_provider', '=', $provider->id)
+								->first();
+
+			// Current state being validated in order to prevent accidental change of state
+			if ($request && intval($request->provider_status) != $current_state ) 
+			{
+	            $request->status = REQUEST_INPROGRESS;
+	            $request->provider_status = PROVIDER_STARTED;
+    			$request->save();
+	            /*Send Push Notification to User*/
+	            send_push_notification($request->user_id, USER, 'Provider Started', 'Provider started from location');
+           
+				$response_array = array(
+						'success' => true,
+						'new_state' => $new_state
+				);
+			} else {
+				$response_array = array('success' => false, 'error' => get_error_message(101), 'error_code' => 101);
+                Log::info('Provider status Error:: Old state='.$request->provider_status.' and current state='.$current_state);
+			}
+		}
+
+		$response = Response::json($response_array, 200);
+		return $response;
+	}
 }
 
 
