@@ -73,9 +73,9 @@ Route::group(['prefix' => 'providerApi'], function(){
 
 	Route::post('/arrived', 'ProviderApiController@arrived');
 
-	Route::post('/startedRequest', 'ProviderApiController@startRequest');
+	Route::post('/servicestarted', 'ProviderApiController@servicestarted');
 
-	Route::post('/endRequest', 'ProviderApiController@endRequest');
+	Route::post('/servicecompleted', 'ProviderApiController@servicecompleted');
 
 	Route::post('/completed', 'ProviderApiController@completed');
 

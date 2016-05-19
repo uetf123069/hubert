@@ -539,6 +539,9 @@ class ProviderApiController extends Controller
                     $request_meta->status = REQUEST_CANCELLED;
                     $request_meta->save();
 
+                    $provider->available = PROVIDER_IS_AVAILABLE;
+                    $provider->save();
+
                     $response_array = array('success' => true);
 
                     //Select the new provider who is in the next position.
@@ -643,7 +646,6 @@ class ProviderApiController extends Controller
             Input::all(),
             array(
                 'request_id' => 'required|integer|exists:request,id,confirmed_provider,'.$provider->id,
-                'status' => 'required|integer'
             ),
             array(
                 'exists' => 'The :attribute doesn\'t belong to provider:'.$provider->id
@@ -665,20 +667,20 @@ class ProviderApiController extends Controller
 		{
 
 			$request_id = $request->request_id;
-			$current_state = $request->status; // provider current state
+			$current_state = PROVIDER_STARTED;
 
-			$request = Requests::where('id', '=', $request_id)
+			$requests = Requests::where('id', '=', $request_id)
 								->where('confirmed_provider', '=', $provider->id)
 								->first();
 
 			// Current state being validated in order to prevent accidental change of state
-			if ($request && intval($request->provider_status) != $current_state ) 
+			if ($requests && intval($requests->provider_status) != $current_state ) 
 			{
-	            $request->status = REQUEST_INPROGRESS;
-	            $request->provider_status = PROVIDER_STARTED;
-    			$request->save();
+	            $requests->status = REQUEST_INPROGRESS;
+	            $requests->provider_status = PROVIDER_STARTED;
+    			$requests->save();
 	            /*Send Push Notification to User*/
-	            send_push_notification($request->user_id, USER, 'Provider Started', 'Provider started from location');
+	            send_push_notification($requests->user_id, USER, 'Provider Started', 'Provider started from location');
            
 				$response_array = array(
 						'success' => true,
@@ -686,7 +688,207 @@ class ProviderApiController extends Controller
 				);
 			} else {
 				$response_array = array('success' => false, 'error' => get_error_message(101), 'error_code' => 101);
-                Log::info('Provider status Error:: Old state='.$request->provider_status.' and current state='.$current_state);
+                Log::info('Provider status Error:: Old state='.$requests->provider_status.' and current state='.$current_state);
+			}
+		}
+
+		$response = Response::json($response_array, 200);
+		return $response;
+	}
+
+	public function arrived(Request $request)
+	{
+        $provider = Provider::find($request->id);
+		$validator = Validator::make(
+            Input::all(),
+            array(
+                'request_id' => 'required|integer|exists:request,id,confirmed_provider,'.$provider->id,
+            ),
+            array(
+                'exists' => 'The :attribute doesn\'t belong to provider:'.$provider->id
+            )
+        );
+		
+		if ($validator->fails()) 
+		{
+            $error_messages = $validator->messages()->all();
+            $response_array = array(
+                'success' => false,
+                'error' => get_error_message(101),
+                'error_code' => 101,
+                '$error_messages' => $error_messages
+            );
+            Log::info('Input Error::'.print_r($error_messages,true));
+		} 
+		else 
+		{
+
+			$request_id = $request->request_id;
+			$current_state = PROVIDER_ARRIVED;
+
+			$requests = Requests::where('id', '=', $request_id)
+								->where('confirmed_provider', '=', $provider->id)
+								->first();
+
+			// Current state being validated in order to prevent accidental change of state
+			if ($requests && intval($requests->provider_status) != $current_state ) 
+			{
+	            $requests->status = REQUEST_INPROGRESS;
+	            $requests->provider_status = PROVIDER_ARRIVED;
+    			$requests->save();
+	            /*Send Push Notification to User*/
+	            send_push_notification($requests->user_id, USER, 'Provider Arrived', 'Provider arrived to your location');
+           
+				$response_array = array(
+						'success' => true,
+						'new_state' => $new_state
+				);
+			} else {
+				$response_array = array('success' => false, 'error' => get_error_message(101), 'error_code' => 101);
+                Log::info('Provider status Error:: Old state='.$requests->provider_status.' and current state='.$current_state);
+			}
+		}
+
+		$response = Response::json($response_array, 200);
+		return $response;
+	}
+
+	public function servicestarted(Request $request)
+	{
+        $provider = Provider::find($request->id);
+		$validator = Validator::make(
+            Input::all(),
+            array(
+                'request_id' => 'required|integer|exists:request,id,confirmed_provider,'.$provider->id,
+            ),
+            array(
+                'exists' => 'The :attribute doesn\'t belong to provider:'.$provider->id
+            )
+        );
+		
+		if ($validator->fails()) 
+		{
+            $error_messages = $validator->messages()->all();
+            $response_array = array(
+                'success' => false,
+                'error' => get_error_message(101),
+                'error_code' => 101,
+                '$error_messages' => $error_messages
+            );
+            Log::info('Input Error::'.print_r($error_messages,true));
+		} 
+		else 
+		{
+
+			$request_id = $request->request_id;
+			$current_state = PROVIDER_SERVICE_STARTED;
+
+			$requests = Requests::where('id', '=', $request_id)
+								->where('confirmed_provider', '=', $provider->id)
+								->first();
+
+			// Current state being validated in order to prevent accidental change of state
+			if ($requests && intval($requests->provider_status) != $current_state ) 
+			{
+				if($request->hasFile('before_image'))
+				{
+					$image = $request->file('before_image');
+					$requests->before_image = Helper::upload_picture($image);
+				}
+				$requests->start_time = date("Y-m-d H:i:s");
+	            $requests->status = REQUEST_INPROGRESS;
+	            $requests->provider_status = PROVIDER_SERVICE_STARTED;
+    			$requests->save();
+	            /*Send Push Notification to User*/
+	            send_push_notification($requests->user_id, USER, 'Provider Service Started', 'Provider service Started');
+           
+				$response_array = array(
+						'success' => true,
+						'new_state' => $new_state
+				);
+			} else {
+				$response_array = array('success' => false, 'error' => get_error_message(101), 'error_code' => 101);
+                Log::info('Provider status Error:: Old state='.$requests->provider_status.' and current state='.$current_state);
+			}
+		}
+
+		$response = Response::json($response_array, 200);
+		return $response;
+	}
+
+	public function servicecompleted(Request $request)
+	{
+        $provider = Provider::find($request->id);
+		$validator = Validator::make(
+            Input::all(),
+            array(
+                'request_id' => 'required|integer|exists:request,id,confirmed_provider,'.$provider->id,
+            ),
+            array(
+                'exists' => 'The :attribute doesn\'t belong to provider:'.$provider->id
+            )
+        );
+		
+		if ($validator->fails()) 
+		{
+            $error_messages = $validator->messages()->all();
+            $response_array = array(
+                'success' => false,
+                'error' => get_error_message(101),
+                'error_code' => 101,
+                '$error_messages' => $error_messages
+            );
+            Log::info('Input Error::'.print_r($error_messages,true));
+		} 
+		else 
+		{
+
+			$request_id = $request->request_id;
+			$current_state = PROVIDER_SERVICE_COMPLETED;
+
+			$requests = Requests::where('id', '=', $request_id)
+								->where('confirmed_provider', '=', $provider->id)
+								->first();
+
+			// Current state being validated in order to prevent accidental change of state
+			if ($requests && intval($requests->provider_status) != $current_state ) 
+			{
+				if($request->hasFile('after_image'))
+				{
+					$image = $request->file('after_image');
+					$requests->before_image = Helper::upload_picture($image);
+				}
+	            $request->status = REQUEST_COMPLETE_PENDING;
+	            $request->end_time = date("Y-m-d H:i:s");
+	            $requests->provider_status = PROVIDER_SERVICE_COMPLETED;
+    			$requests->save();
+
+    			// Invoice details
+
+    			//Get base price from admin panel
+
+    			//Get price per minute detials from admin panel
+
+    			// Calculate price 
+
+    			// get payment mode from user table.
+	            
+
+	            //Update provider availability
+	            $provider = Provider::find($request->confirmed_provider);
+	            $provider->available = PROVIDER_AVAILABLE;
+	            $provider->save();
+
+	            /*Send Push Notification to User*/
+
+	            //Invoice details to Provider as well
+	           
+				$response_array = array(
+						'success' => true,
+				);
+			} else {
+				$response_array = array('success' => false, 'error' => get_error_message(101), 'error_code' => 101);
+                Log::info('Provider status Error:: Old state='.$requests->provider_status.' and current state='.$current_state);
 			}
 		}
 
