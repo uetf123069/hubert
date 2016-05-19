@@ -28,6 +28,8 @@ use App\ServiceType;
 
 use App\Provider;
 
+use App\FavouriteProvider;
+
 define('DEFAULT_FALSE', 0);
 
 define('DEFAULT_TRUE', 1);
@@ -105,10 +107,11 @@ class UserapiController extends Controller
 
 	public function register(Request $request)
 	{
-        // dd($request->all());
         $response_array = array();
         $operation = false;
-        /*validate basic field*/
+
+        // validate basic field
+
         $basicValidator = Validator::make(
             $request->all(),
             array(
@@ -118,31 +121,39 @@ class UserapiController extends Controller
             )
         );
 
-        if($basicValidator->fails()){
+        if($basicValidator->fails()) {
+
             $error_messages = $basicValidator->messages()->all();
+
             $response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101, 'error_messages'=> $error_messages);
+
             Log::info('Registration basic validation failed');
-        }else{
+
+        } else {
 
             $login_by = $request->login_by;
             $allowedSocialLogin = array('facebook','google');
 
             // check login-by
+
             if(in_array($login_by,$allowedSocialLogin)){
 
-                /*validate social registration fields*/
-                $socialValidator = Validator::make(
-                    $request->all(),
-                    array(
-                        'social_unique_id' => 'required',
-                        'name' => 'required|max:255',
-                        'email' => 'required|email|max:255',
-                        'phone' => 'digits_between:6,13',
-                        'picture' => 'mimes:jpeg,jpg,bmp,png',
-                    )
-                );
+                // validate social registration fields
 
-                /*validate social_unique_id and email existence */
+                $socialValidator = Validator::make(
+                            $request->all(),
+                            array(
+                                'social_unique_id' => 'required',
+                                'first_name' => 'required|max:255',
+                                'last_name' => 'required|max:255',
+                                'email' => 'required|email|max:255',
+                                'mobile' => 'digits_between:6,13',
+                                'picture' => 'mimes:jpeg,jpg,bmp,png',
+                            )
+                        );
+
+                // validate social_unique_id and email existence 
+
                 $socialEmailValidator = Validator::make(
                     $request->all(),
                     array(
@@ -151,35 +162,42 @@ class UserapiController extends Controller
                     )
                 );
 
-                if($socialValidator->fails()){
+                if($socialValidator->fails()) {
+
                     $error_messages = $socialValidator->messages()->all();
                     $response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101, 'error_messages'=> $error_messages);
+
                     Log::info('Registration social validation failed');
-                }elseif($socialEmailValidator->fails()){
+
+                } elseif($socialEmailValidator->fails()) {
+
                     $error_messages = $socialEmailValidator->messages()->all();
                     $response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101, 'error_messages'=> $error_messages);
                     Log::info('Registration manual email validation failed');
 
-                }else{
+                } else {
                     Log::info('Registration passed social validation');
                     $operation = true;
                 }
 
-            }else{
+            } else {
 
-                /*validate manual registration fields*/
+                // Validate manual registration fields
+
                 $manualValidator = Validator::make(
                     $request->all(),
                     array(
-                        'name' => 'required|max:255',
+                        'first_name' => 'required|max:255',
+                        'last_name' => 'required|max:255',
                         'email' => 'required|email|max:255',
-                        'phone' => 'required|digits_between:6,13',
+                        'mobile' => 'required|digits_between:6,13',
                         'password' => 'required|min:6',
                         'picture' => 'mimes:jpeg,jpg,bmp,png',
                     )
                 );
 
-                /*validate email existence */
+                // validate email existence 
+
                 $emailValidator = Validator::make(
                     $request->all(),
                     array(
@@ -187,25 +205,32 @@ class UserapiController extends Controller
                     )
                 );
 
-                if($manualValidator->fails()){
+                if($manualValidator->fails()) {
+
                     $error_messages = $manualValidator->messages()->all();
                     $response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101, 'error_messages'=> $error_messages);
                     Log::info('Registration manual validation failed');
-                }elseif($emailValidator->fails()){
+
+                } elseif($emailValidator->fails()) {
+
                     $error_messages = $emailValidator->messages()->all();
                     $response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101, 'error_messages'=> $error_messages);
                     Log::info('Registration manual email validation failed');
-                }else{
+
+                } else {
                     Log::info('Registration passed manual validation');
                     $operation = true;
                 }
             }
 
-            if($operation){
-                /*creating the user*/
-                $name = $request->name;
+            if($operation) {
+
+                // Creating the user
+
+                $first_name = $request->first_name;
+                $last_name = $request->last_name;
                 $email = $request->email;
-                $phone = $request->phone;
+                $mobile = $request->mobile;
                 $password = $request->password;
                 $picture = $request->file('picture');
                 $device_token = $request->device_token;
@@ -214,9 +239,10 @@ class UserapiController extends Controller
                 $social_unique_id = $request->social_unique_id;
 
                 $user = new User;
-                $user->name = $name;
+                $user->first_name = $first_name;
+                $user->last_name = $last_name;
                 $user->email = $email;
-                $user->mobile = $phone!=NULL ? $phone : '';
+                $user->mobile = $mobile!=NULL ? $mobile : '';
                 $user->password = $password!=NULL ? Hash::make($password) : '';
                 
 
@@ -230,26 +256,42 @@ class UserapiController extends Controller
                 // Upload picture
                 $user->picture = Helper::upload_picture($picture);
 
+                $user->is_activated = 1;
+                $user->is_approved = 1;
+
+                // Settings table - COD Check is enabled 
+
+                // Save the default payment method
+
+
                 $user->save();
+
+                $payment_mode_status = $user->payment_mode ? $user->payment_mode : 0;
 
                 // Send welcome email to the new user:
                 // Helper::send_user_welcome_email($user);
 
                 // Response with registered user details:
+
                 $response_array = array(
                     'success' => true,
                     'id' => $user->id,
-                    'name' => $user->name,
-                    'phone' => $user->mobile,
+                    'first_name' => $user->first_name,
+                    'last_name' => $user->last_name,
+                    'mobile' => $user->mobile,
                     'email' => $user->email,
                     'picture' => $user->picture,
                     'token' => $user->token,
                     'token_expiry' => $user->token_expiry,
                     'login_by' => $user->login_by,
                     'social_unique_id' => $user->social_unique_id,
+                    'payment_mode_status' =>  $payment_mode_status,
                 );
+
                 $response_array = Helper::null_safe($response_array);
+
                 Log::info('Registration completed');
+            
             }
 
         }
@@ -358,7 +400,10 @@ class UserapiController extends Controller
 
                 $user->save();
 
+                $payment_mode_status = $user->payment_mode ? $user->payment_mode : 0;
+
                 // Respond with user details
+
                 $response_array = array(
                     'success' => true,
                     'id' => $user->id,
@@ -369,8 +414,10 @@ class UserapiController extends Controller
                     'token' => $user->token,
                     'token_expiry' => $user->token_expiry,
                     'login_by' => $user->login_by,
-                    'social_unique_id' => $user->social_unique_id
+                    'social_unique_id' => $user->social_unique_id,
+                    'payment_mode_status' => $payment_mode_status,
                 );
+
                 $response_array = Helper::null_safe($response_array);
 
             }
@@ -440,7 +487,59 @@ class UserapiController extends Controller
         return $response;
 	}
 
-    public function details_fetch(Request $request)
+    public function changePassword(Request $request) {
+
+        $old_password = $request->old_password;
+        $new_password = $request->password;
+        $confirm_password = $request->confirm_password;
+        
+        $validator = Validator::make($request->all(), [              
+                'password' => 'required',
+                'old_password' => 'required',
+                'confirm_password' => 'required',
+            ]);
+
+        if($validator->fails()) {
+
+            $error_messages = $validator->messages()->all();
+
+            $response_array = array('success' => false, 'error' => 'Invalid Input', 'error_code' => 401, 'error_messages' => $error_messages );
+
+            $response_code = 200;
+
+        } else {
+
+            if($user = User::find($request->id)) {
+
+                if(Hash::check($old_password,$user->password))
+                {
+                    $user->password = Hash::make($new_password);
+                    $user->save();
+
+                    $response_array = array('success' => true , 'message' => Helper::get_message(102));
+                    $response_code = 200;
+                    
+                } else {
+                    $response_array = array('success' => false , 'error' => Helper::get_error_message(131), 'error_code' => 131);
+                    $response_code = 200;
+                }
+
+            } else {
+
+                $response_array = array('success' => false , 'error' => 'User ID not found');
+                $response_code = 200;
+            }
+
+        }
+
+        $response = response()->json($response_array,$response_code);
+
+        return $response;
+    
+    }
+
+
+    public function userDetails(Request $request)
     {
         $user = User::find($request->id);
 
@@ -471,12 +570,13 @@ class UserapiController extends Controller
         return $response;
     }
 
-    public function details_save(Request $request)
+    public function updateProfile(Request $request)
     {
         $user_id = $request->id;
+
         $validator = Validator::make(
             $request->all(),
-            /*The param names are changed to match the param names in api doc and email validation added to check email existence in db other than the current user */
+            // The param names are changed to match the param names in api doc and email validation added to check email existence in db other than the current user 
             array(
                     'device_token' => 'required',
                     'id' => 'required',
@@ -487,7 +587,9 @@ class UserapiController extends Controller
             ));
 
         if ($validator->fails()) {
-            $error_messages = $validator->messages()->all(); /*Error messages added in response for debugging*/
+
+            $error_messages = $validator->messages()->all(); // Error messages added in response for debugging
+
             $response_array = array(
                     'success' => false,
                     'error' => Helper::get_error_message(101),
@@ -495,7 +597,9 @@ class UserapiController extends Controller
                     'error_messages' => $error_messages
             );
         } else {
+
             //$user_id = $request->id; /*Moved to up to overcome the scope problem*/
+
             $name = $request->name;
             $email = $request->email;
             $mobile = $request->mobile;
@@ -508,10 +612,14 @@ class UserapiController extends Controller
                 $user->mobile = $mobile;
 
             // Upload picture
-            if ($picture != ""){
+
+            if ($picture != "") {
+
                 //deleting old image if exists
                 //if( $user->picture != "" && file_exists( parse_url($user->picture, PHP_URL_PATH) ) )
-                    File::delete( public_path() . "/uploads/" . basename($user->picture) );
+
+                Helper::delete_picture($user->picture);
+
                 $user->picture = Helper::upload_picture($picture);
             }
 
@@ -520,6 +628,8 @@ class UserapiController extends Controller
             $user->token_expiry = Helper::generate_token_expiry();
             
             $user->save();
+
+            $payment_mode_status = $user->payment_mode ? $user->payment_mode : "";
 
             $response_array = array(
                 'success' => true,
@@ -531,7 +641,8 @@ class UserapiController extends Controller
                 'token' => $user->token,
                 'token_expiry' => $user->token_expiry,
                 'login_by' => $user->login_by,
-                'social_unique_id' => $user->social_unique_id
+                'social_unique_id' => $user->social_unique_id,
+                'payment_mode_status' => $payment_mode_status
             );
             $response_array = Helper::null_safe($response_array);
         }
@@ -1152,7 +1263,83 @@ class UserapiController extends Controller
 
         }
 
-        return response()->json($response_array,200);
+        return response()->json(Helper::null_safe($response_array),200);
+
+    }
+
+    public function fav_providers(Request $request) {
+
+        $fav_providers = FavouriteProvider::where('user_id' , $request->id)->get();
+
+        $provider_data = array();
+        $provider_dataa = array();
+
+        if($fav_providers) {
+
+            foreach ($fav_providers as $f => $fav_provider) {
+                # code...
+                $provider_data['favourite_id'] = $fav_provider->id;
+                $provider_data['user_id'] = $fav_provider->user_id;
+                $provider_data['provider_id'] = $fav_provider->provider_id;
+
+                if($provider = Provider::find($fav_provider->provider_id)) {
+                    $provider_data['provider_name'] = $provider->name;
+                    $provider_data['provider_picture'] = $provider->picture;
+                } else {
+                    $provider_data['provider_name'] = "";
+                    $provider_data['provider_picture'] = "";
+                }
+
+                array_push($provider_dataa, $provider_data);
+            }
+
+            $response_array = array('success' => true , 'providers' => $provider_dataa);
+
+        } else {
+
+            $response_array = array('success' => false , 'error' => Helper::get_error_message(132) , 'error_code' => 132);
+
+        }
+        return response()->json(Helper::null_safe($response_array),200);
+    
+    }
+
+    public function deleteFavProvider(Request $request) {
+
+        $fav_id = $request->fav_id;
+
+        $validator = Validator::make($request->all() , 
+            array(
+                'fav_id' => "required",
+            ));
+
+
+        if($validator->fails()) {
+
+            $error_messages = $validator->messages()->all();
+            $response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101, 'error_messages' => $error_messages);
+
+        } else {
+
+            if($favourite = FavouriteProvider::find($request->fav_id)) {
+
+                if($provider = Provider::find($favourite->provider_id)) {
+
+                    $fav_delete = FavouriteProvider::find($request->fav_id)->delete();
+
+                    $response_array = array('success' => true , 'message' => Helper::get_message(108));
+
+                } else {
+                    $response_array = array('success' => false , 'error' => Helper::get_error_message(132) ,'error_code' =>132);
+                }
+
+            } else {
+                $response_array = array('success' => false , 'error' => Helper::get_error_message(133) ,'error_code' =>133);
+            }
+
+        }
+
+        return response()->json(Helper::null_safe($response_array) , 200);
 
     }
 
