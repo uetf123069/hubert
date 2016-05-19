@@ -29,7 +29,11 @@ class AddIsApprovedPaymentFieldsToUsersTable extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            //
+           $table->dropColumn('first_name');
+           $table->dropColumn('last_name');
+           $table->dropColumn('is_approved');
+           $table->dropColumn('payment_mode');
+           $table->dropColumn('default_card');
         });
     }
 }

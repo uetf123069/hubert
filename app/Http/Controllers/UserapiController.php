@@ -50,25 +50,27 @@ define('REQUEST_ACCEPT_PROVIDER' , 3);
 
 define('REQUEST_REJECT_PROVIDER' , 4);
 
-define('REQUEST_STARTED' , 5);
+define('REQUEST_INPROGRESS', 5);
 
-define('REQUEST_ARRIVED' , 6);
+define('REQUEST_STARTED' , 6);
 
-define('SERVICE_STARTED' , 7);
+define('REQUEST_ARRIVED' , 7);
 
-define('REQUEST_COMPLETED' , 8);
+define('SERVICE_STARTED' , 8);
 
-define('REQUEST_CANCEL_PROVIDER' , 9);
+define('REQUEST_COMPLETED' , 9);
 
-define('REQUEST_CANCEL_USER' , 10); 
+define('REQUEST_CANCEL_PROVIDER' , 10);
+
+define('REQUEST_CANCEL_USER' , 11); 
 
 define('PROVIDER' , 'PROVIDER');
 
 define('USER' , 'USER');
 
-define('OFFLINE', 0);
+define('PROVIDER_NOT_AVAILABLE', 0);
 
-define('ONLINE', 1);
+define('PROVIDER_IS_AVAILABLE', 1);
 
 class UserapiController extends Controller
 {
@@ -119,7 +121,7 @@ class UserapiController extends Controller
                                 'social_unique_id' => 'required',
                                 'first_name' => 'required|max:255',
                                 'last_name' => 'required|max:255',
-                                'email' => 'required|email|max:255',
+                                'email' => 'email|max:255',
                                 'mobile' => 'digits_between:6,13',
                                 'picture' => 'mimes:jpeg,jpg,bmp,png',
                             )
@@ -235,6 +237,8 @@ class UserapiController extends Controller
                 // Settings table - COD Check is enabled 
 
                 // Save the default payment method
+
+                $user->payment_mode = 1;
 
 
                 $user->save();
@@ -381,7 +385,7 @@ class UserapiController extends Controller
                     'success' => true,
                     'id' => $user->id,
                     'name' => $user->name,
-                    'phone' => $user->mobile,
+                    'mobile' => $user->mobile,
                     'email' => $user->email,
                     'picture' => $user->picture,
                     'token' => $user->token,
@@ -529,7 +533,7 @@ class UserapiController extends Controller
             'success' => true,
             'id' => $user->id,
             'first_name' => $user->name,
-            'phone' => $user->phone,
+            'mobile' => $user->mobile,
             'email' => $user->email,
             'picture' => $user->picture,
             'token' => $user->token,
@@ -762,34 +766,43 @@ class UserapiController extends Controller
 
             if(!$user->payment_mode) {
 
+                Log::info('Payment Mode is not available');
+
                 $response_array = array('success' => false , 'error' => Helper::get_error_message(134) , 'error_code' => 134);
 
             } else {
 
                 // Check already request exists 
 
-                $check_status = array(REQUEST_CANCEL_USER,REQUEST_CANCEL_PROVIDER,REQUEST_REJECT_PROVIDER,REQUEST_COMPLETED);
+                $check_status = array(REQUEST_CANCEL_USER,REQUEST_CANCEL_PROVIDER,REQUEST_COMPLETED);
 
                 $check_requests = Requests::where('user_id' , $request->id)->whereNotIn('status' , $check_status)->count();
 
 
                 if($check_requests == 0) {
 
+                    Log::info('Previous requests check is done');
             
                     $service_type = $request->service_type; // Get the service type 
 
                     /** Favourite Providers Search Start */
 
+                    Log::info('Favourite Providers Search Start');
+
                     $favProviders = array();  // Initialize the variable
 
                      // Get the favourite providers list
 
-                    $provider_services = ProviderService::where('service_type_id' , $service_type)
-                                                ->where('is_available' , 1)
-                                                ->get();
-
+                    $fav_providers_query = FavouriteProvider::leftJoin('providers' , 'favourite_providers.provider_id' ,'=' , 'providers.id')
+                            ->where('providers.is_available' , DEFAULT_TRUE)
+                            ->where('providers.is_activated' , DEFAULT_TRUE)
+                            ->where('providers.is_approved' , DEFAULT_TRUE);
 
                     if($service_type) {
+
+                        $provider_services = ProviderService::where('service_type_id' , $service_type)
+                                                ->where('is_available' , DEFAULT_TRUE)
+                                                ->get();
 
                         $provider_ids = array();
 
@@ -800,21 +813,11 @@ class UserapiController extends Controller
                                 $provider_ids[] = $provider_service->provider_id;
                             }
 
-                            $favProviders = FavouriteProvider::leftJoin('providers' , 'favourite_providers.provider_id' ,'=' , 'providers.id')
-                                ->whereIn('provider_id' , $provider_ids)
-                                ->where('providers.is_activated' , 1)
-                                ->where('providers.is_approved' , 1)
-                                ->where('providers.is_available' , 1)
-                                ->get();
+                            $favProviders = $fav_providers_query->whereIn('provider_id' , $provider_ids)->get();
                         }
                                        
                     } else {
-                        $favProviders = FavouriteProvider::leftJoin('providers' , 'favourite_providers.provider_id' ,'=' , 'providers.id')
-                            ->where('providers.is_available' , 1)
-                            ->where('providers.is_activated' , 1)
-                            ->where('providers.is_approved' , 1)
-                            ->get();
-                    
+                        $favProviders = $fav_providers_query->get();
                     }
 
                     // Check Favourite Providers list is not empty
@@ -840,6 +843,9 @@ class UserapiController extends Controller
                         }
                     
                     }
+
+
+                    Log::info('List Of Favourite Providers' .print_r($list_fav_providers, true));
 
                     /** Favourite Providers Search End */
 
@@ -867,6 +873,8 @@ class UserapiController extends Controller
                     // Check the service type value to search the providers based on the nearby location
 
                     if($service_type) {
+
+                        Log::info('Location Based search started - service_type');
 
                         // Get the providers based on the selected service types
 
@@ -903,6 +911,8 @@ class UserapiController extends Controller
 
                     } else {
 
+                        Log::info('Location Based search started - without service_type');
+
                         $query = "SELECT providers.id, 1.609344 * 3956 * acos( cos( radians('$latitude') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians('$longitude') ) + sin( radians('$latitude') ) * sin( radians(latitude) ) ) AS distance FROM providers
                                 WHERE is_available = 1 AND is_activated = 1 AND is_approved = 1
                                 AND (1.609344 * 3956 * acos( cos( radians('$latitude') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians('$longitude') ) + sin( radians('$latitude') ) * sin( radians(latitude) ) ) ) <= $distance
@@ -914,7 +924,7 @@ class UserapiController extends Controller
                     
                     }
 
-                    // Log::info('List of providers'." ".print_r($providers));
+                    Log::info('List of providers'." ".print_r($providers));
 
                     $final_providers = array();
 
@@ -1053,7 +1063,7 @@ class UserapiController extends Controller
 
                                     if($current_provider = Provider::find($first_provider_id)) {
 
-                                        $current_provider->is_available = OFFLINE;
+                                        $current_provider->is_available = PROVIDER_NOT_AVAILABLE;
                                         $current_provider->save();
                                     }
                                 }

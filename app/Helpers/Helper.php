@@ -298,6 +298,12 @@
                 case 132:
                     $string = 'Provider ID not found';
                     break;
+                case 133:
+                    $string = 'User ID not found';
+                    break;
+                case 134:
+                    $string = 'Payment details is not filled';
+                    break;
                 default:
                     $string = "Unknown error occurred.";
             }

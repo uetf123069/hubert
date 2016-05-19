@@ -69,6 +69,8 @@ Route::group(['prefix' => 'providerApi'], function(){
 
 	Route::post('/forgotpassword', 'ProviderApiController@forgot_password');
 
+	Route::post('/changePassword', 'ProviderApiController@changePassword');
+
 	Route::get('/tokenRenew', 'ProviderApiController@tokenRenew');
 
 	Route::post('/serviceaccept', 'ProviderApiController@service_accept');

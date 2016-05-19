@@ -18,6 +18,10 @@ use App\User;
 
 use App\Provider;
 
+use App\ProviderService;
+
+use App\ServiceType;
+
 
 define('DEFAULT_FALSE', 0);
 define('DEFAULT_TRUE', 1);
@@ -38,8 +42,9 @@ class ProviderApiController extends Controller
 		$validator = Validator::make(
 				$request->all(),
 				array(
-					'name' => 'required|max:255',
-					'phone' => 'required|digits_between:6,13',
+					'first_name' => 'required|max:255',
+					'last_name' => 'required|max:255',
+					'mobile' => 'required|digits_between:6,13',
 					'password' => 'required|min:6',
 					'picture' => 'mimes:jpeg,bmp,png',
 					'device_type' => 'required|in:'.DEVICE_ANDROID.','.DEVICE_IOS,
@@ -49,7 +54,7 @@ class ProviderApiController extends Controller
 		$email_validator = Validator::make(
 				$request->all(),
 				array(
-						'email' => 'required|email|unique:providers,email|max:255'
+					'email' => 'required|email|unique:providers,email|max:255'
 				));
 
 		if ($email_validator->fails()) {
@@ -58,13 +63,15 @@ class ProviderApiController extends Controller
 
 		} else if ($validator->fails()) {
 
-			$response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101);
+			$error_messages = implode(',', $validator->messages()->all());
+			$response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_messages' => $error_messages ,'error_code' => 101);
 
 		} else {
 
-			$first_name = $request->name;
+			$first_name = $request->first_name;
+			$last_name = $request->last_name;
 			$email = $request->email;
-			$phone = $request->phone;
+			$mobile = $request->mobile;
 			$password = $request->password;
 			$picture = $request->file('picture');
 			$device_token = $request->device_token;
@@ -72,14 +79,17 @@ class ProviderApiController extends Controller
 			$login_by = $request->login_by;				
 				
 			$provider = new Provider;
-			$provider->name = $first_name;
+			$provider->first_name = $first_name;
+			$provider->last_name = $last_name;
 			$provider->email = $email;
-			$provider->mobile = $phone;
+			$provider->mobile = $mobile;
 			$provider->password = Hash::make($password);
 			
-			$provider->is_approved = FALSE;
-			$provider->is_activated = FALSE;
-			$provider->is_email_activated = FALSE;
+			// Temp purpose 
+
+			$provider->is_approved = DEFAULT_TRUE;
+			$provider->is_activated = DEFAULT_TRUE;
+			$provider->is_email_activated = DEFAULT_TRUE;
 			$provider->email_activation_code = uniqid();
 
 			$provider->login_by = $login_by;
@@ -88,12 +98,26 @@ class ProviderApiController extends Controller
 			$provider->token_expiry = Helper::generate_token_expiry();
 			$provider->device_token = $device_token;
 			$provider->device_type = $device_type;
+
+			
 				
 			// Upload picture
 			if($request->hasFile('picture'))
 				$provider->picture = Helper::upload_picture($picture);
 				
 			$provider->save();
+
+			if($provider) {
+
+				if($request->has('service_type')) {
+
+					$provider_service = new  ProviderService;
+					$provider_service->provider_id = $provider->id;
+					$provider_service->service_type_id = $request->service_type;
+					$provider_service->is_available = DEFAULT_TRUE;
+					$provider_service->save();
+				}
+			}
 				
 			// Send welcome email to the new provider
 			$check_mail = Helper::send_provider_welcome_email($provider);
@@ -106,18 +130,20 @@ class ProviderApiController extends Controller
 								'success' => true ,
 								'message' => $provider ? Helper::get_message(105) : Helper::get_error_message(126),
 								'id' 	=> $provider->id,
-			                    'name' 	=> $provider->name,
-			                    'phone' => $provider->mobile,
+			                    'first_name' => $provider->first_name,
+			                    'last_name' => $provider->last_name,
+			                    'mobile' => $provider->mobile,
 			                    'email' => $provider->email,
 			                    'picture' => $provider->picture,
 			                    'token' => $provider->token,
 			                    'token_expiry' => $provider->token_expiry,
 			                    'login_by' => $provider->login_by,
 			                    'social_unique_id' => $provider->social_unique_id,
+			                    'service_type' => $request->service_type,
 								);
 		}
 	
-		$response = response()->json($response_array, 200);
+		$response = response()->json(Helper::null_safe($response_array), 200);
 		return $response;
 	}
 
@@ -151,7 +177,7 @@ class ProviderApiController extends Controller
 			if ($provider = Provider::where('email', '=', $email)->first()) {
 
 				// Check the email is activated
-				if ($provider->is_email_activated) { 
+				if ($provider->is_activated) { 
 
 					if (Hash::check($password, $provider->password)) {
 
@@ -169,8 +195,9 @@ class ProviderApiController extends Controller
 						$response_array = array(
                             'success' => true,
                             'id' => $provider->id,
-                            'name' => $provider->name,
-                            'phone' => $provider->phone,
+                            'first_name' => $provider->first_name,
+                            'last_name' => $provider->last_name,
+                            'mobile' => $provider->mobile,
                             'email' => $provider->email,
                             'picture' => $provider->picture,
                             'token' => $provider->token,
@@ -188,6 +215,7 @@ class ProviderApiController extends Controller
 								'error_code' => 105
 						);
 					}
+				
 				} else {
 
 					$response_array = array(
@@ -214,6 +242,7 @@ class ProviderApiController extends Controller
     public function forgot_password(Request $request)
     {
         $email = $request->email;
+
          // Validate the email field
 
         $validator = Validator::make(
@@ -273,6 +302,57 @@ class ProviderApiController extends Controller
 	    }
     
     }
+
+    public function changePassword(Request $request) {
+
+        $old_password = $request->old_password;
+        $new_password = $request->password;
+        $confirm_password = $request->confirm_password;
+        
+        $validator = Validator::make($request->all(), [              
+                'password' => 'required|min:6',
+                'old_password' => 'required',
+                'confirm_password' => 'required|min:6',
+            ]);
+
+        if($validator->fails()) {
+
+            $error_messages = implode(',',$validator->messages()->all());
+
+            $response_array = array('success' => false, 'error' => 'Invalid Input', 'error_code' => 401, 'error_messages' => $error_messages );
+
+            $response_code = 200;
+
+        } else {
+
+            if($provider = Provider::find($request->id)) {
+
+                if(Hash::check($old_password,$provider->password))
+                {
+                    $provider->password = Hash::make($new_password);
+                    $provider->save();
+
+                    $response_array = array('success' => true , 'message' => Helper::get_message(102));
+                    $response_code = 200;
+                    
+                } else {
+                    $response_array = array('success' => false , 'error' => Helper::get_error_message(131), 'error_code' => 131);
+                    $response_code = 200;
+                }
+
+            } else {
+
+                $response_array = array('success' => false , 'error' => Helper::get_error_message(133) , 'error_code' => 133);
+                $response_code = 200;
+            }
+
+        }
+
+        $response = response()->json($response_array,$response_code);
+
+        return $response;
+    
+    }
 	
 	public function details_fetch(Request $request)
 	{
@@ -287,13 +367,13 @@ class ProviderApiController extends Controller
 		$response_array = array(
             'success' => true,
             'id' => $provider->id,
-            'name' => $provider->name,
+            'first_name' => $provider->first_name,
+            'last_name' => $provider->last_name,
             'mobile' => $provider->mobile,
             'email' => $provider->email,
             'picture' => $provider->picture,
             'token' => $provider->token,
             'token_expiry' => $provider->token_expiry,
-            'timezone' => $provider->timezone,
             'active' => boolval($provider->is_activated)
 		);
 		$response_array = Helper::null_safe($response_array);
@@ -307,13 +387,15 @@ class ProviderApiController extends Controller
 		$validator = Validator::make(
 				$request->all(),
 				array(
-						'name' => 'required|max:255',
-						'mobile' => 'required|digits_between:6,13',
-						'picture' => 'mimes:jpeg,bmp,png',
+					'first_name' => 'required|max:255',
+					'last_name' => 'required|max:255',
+					'mobile' => 'required|digits_between:6,13',
+					'picture' => 'mimes:jpeg,bmp,png',
+					'email' => 'required|email|max:255|unique:users,email'
 				));
 			
 		if ($validator->fails()) {
-            $error_messages = $validator->messages()->all();
+            $error_messages = implode(',', $validator->messages()->all());
             $response_array = array(
                 'success' => false,
                 'error' => Helper::get_error_message(101),
@@ -321,15 +403,26 @@ class ProviderApiController extends Controller
                 'error_messages' => $error_messages
             );
 		} else {
-			$provider = Provider::find($request->id);
-					
-			$name = $request->name;
-			$mobile = $request->phone;
-			$picture = $request->file('picture');
 
-			$provider->name = $name;
-			if ($mobile != "")
-				$provider->mobile = $mobile;
+			$provider = Provider::find($request->id);
+			
+			if($request->has('first_name')) {
+				$provider->first_name = $request->first_name;
+			}
+
+			if($request->has('last_name')) {
+				$provider->last_name = $request->last_name;
+			}
+
+			if($request->has('email')) {
+				$provider->email = $request->email;
+			}
+
+			if ($request->has('mobile')) {
+				$provider->mobile = $request->mobile;
+			}
+
+			$picture = $request->file('picture');
 
 			// Upload picture
             if ($picture != ""){
@@ -342,19 +435,49 @@ class ProviderApiController extends Controller
             }
 
             // Generate new tokens
-            $provider->token = Helper::generate_token();
-            $provider->token_expiry = Helper::generate_token_expiry();
+            // $provider->token = Helper::generate_token();
+            // $provider->token_expiry = Helper::generate_token_expiry();
+
 			$provider->save();
+
+			$service_type_id = NONE;
+
+			if($request->has('service_type')) {
+
+				$service_type_id = $request->service_type_id;
+
+				if($check_service = ServiceType::find($request->service_type)) {
+
+					$check_provider_service = ProviderService::where('service_type_id', $request->service_type)
+												->where('provider_id' , $request->id)
+												->first();
+
+					if(!$check_provider_service) {
+						$provider_service = new ProviderService;
+					} else {
+						$provider_service = $check_provider_service;
+					}
+
+					$provider_service->provider_id = $request->id;
+					$provider_service->service_type_id = $request->service_type;
+					$provider_service->is_available = DEFAULT_TRUE;
+					$provider_service->save();
+				
+				}
+			
+			}
 
             $response_array = array(
                 'success' => true,
                 'id' => $provider->id,
-                'name' => $provider->name,
+                'first_name' => $provider->first_name,
+                'last_name' => $provider->last_name,
                 'mobile' => $provider->mobile,
                 'email' => $provider->email,
                 'picture' => $provider->picture,
                 'token' => $provider->token,
                 'token_expiry' => $provider->token_expiry,
+                'service_type' => $service_type_id,
             );
 
             $response_array = Helper::null_safe($response_array);
@@ -366,41 +489,30 @@ class ProviderApiController extends Controller
 	
 	public function tokenRenew(Request $request)
 	{
-		$validator = Validator::make(
-				$request->all(),
-				array(
-						'id' => 'required|integer',
-						'token_refresh' => 'required'
-				));
-	
-		if ($validator->fails()) {
-            $error_messages = $validator->messages()->all();
-			$response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101, 'error_messages' => $error_messages);
+		
+		$provider_id = $request->id;
+		$token_refresh = $request->token_refresh;
+			
+		// Check if refresher token is valid
+		if ($provider = Provider::where('id', '=', $provider_id)->first()) {
+
+			// Generate new tokens
+			$provider->token = Helper::generate_token();
+			$provider->token_expiry = Helper::generate_token_expiry();
+			$provider->token_refresh = Helper::generate_token();
+
+			$provider->save();
+
+			$response_array = array(
+					'success' => true,
+					'token' => $provider->token,
+			);
 		} else {
-			$provider_id = $request->id;
-			$token_refresh = $request->token_refresh;
-				
-			// Check if refresher token is valid
-			if ($provider = Provider::where('id', '=', $provider_id)->first()) {
-	
-				// Generate new tokens
-				$provider->token = Helper::generate_token();
-				$provider->token_expiry = Helper::generate_token_expiry();
-				$provider->token_refresh = Helper::generate_token();
-	
-				$provider->save();
-	
-				$response_array = array(
-						'success' => true,
-						'token' => $provider->token,
-				);
-			} else {
-				$response_array = array(
-						'success' => false,
-						'error' => Helper::get_error_message(115),
-						'error_code' => 115
-				);
-			}
+			$response_array = array(
+					'success' => false,
+					'error' => Helper::get_error_message(115),
+					'error_code' => 115
+			);
 		}
 	
 		$response = response()->json($response_array, 200);
