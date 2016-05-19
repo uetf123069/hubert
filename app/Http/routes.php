@@ -71,11 +71,11 @@ Route::group(['prefix' => 'providerApi'], function(){
 
 	Route::get('/tokenRenew', 'ProviderApiController@tokenRenew');
 
-	Route::post('/acceptRequest', 'ProviderApiController@acceptRequest');
+	Route::post('/serviceaccept', 'ProviderApiController@service_accept');
 
-	Route::post('/cancelRequest', 'ProviderApiController@cancelRequest');
+	Route::post('/servicedecline', 'ProviderApiController@service_decline');
 
-	Route::post('/startRequest', 'ProviderApiController@startRequest');
+	Route::post('/providerstarted', 'ProviderApiController@providerstarted');
 
 	Route::post('/arrived', 'ProviderApiController@arrived');
 
