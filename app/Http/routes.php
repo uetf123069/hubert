@@ -87,6 +87,8 @@ Route::group(['prefix' => 'providerApi'], function(){
 
 	Route::post('/rateuser', 'ProviderApiController@rate_user');
 
+	Route::post('/cancelrequest', 'ProviderApiController@cancelrequest');
+
 
 });
 
