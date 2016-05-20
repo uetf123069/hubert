@@ -89,6 +89,12 @@ Route::group(['prefix' => 'providerApi'], function(){
 
 	Route::post('/cancelrequest', 'ProviderApiController@cancelrequest');
 
+	Route::post('/history', 'ProviderApiController@history');
+
+	Route::post('/incomingrequest', 'ProviderApiController@get_incoming_request');
+
+	Route::post('/requeststatuscheck', 'ProviderApiController@request_status_check');
+
 
 });
 
