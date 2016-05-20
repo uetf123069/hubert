@@ -23,11 +23,51 @@ use App\ProviderService;
 use App\ServiceType;
 
 
+define('USER', 0);
+define('PROVIDER',1);
+
+
+define('NONE', 0);
+
+
 define('DEFAULT_FALSE', 0);
 define('DEFAULT_TRUE', 1);
 
+
+define('REQUEST_NEW',        0);
+define('REQUEST_WAITING',      1);
+define('REQUEST_INPROGRESS',    2);
+define('REQUEST_RATING',      3);
+define('REQUEST_COMPLETE_PENDING',  4);
+define('REQUEST_COMPLETED',      5);
+define('REQUEST_CANCELLED',      6);
+define('REQUEST_NO_PROVIDER_AVAILABLE',7);
+define('REQUEST_CANCEL_USER',8);
+define('REQUEST_CANCEL_PROVIDER',9);
+
+
+
+define('PROVIDER_NOT_AVAILABLE', 0);
+define('PROVIDER_AVAILABLE', 1);
+
+define('PROVIDER_NONE', 0);
+define('PROVIDER_ACCEPTED', 1);
+define('PROVIDER_STARTED', 2);
+define('PROVIDER_ARRIVED', 3);
+define('PROVIDER_SERVICE_STARTED', 4);
+define('PROVIDER_SERVICE_COMPLETED', 5);
+define('PROVIDER_RATED', 6);
+
+define('REQUEST_META_NONE',   0);
+define('REQUEST_META_OFFERED',   1);
+define('REQUEST_META_TIMEDOUT', 2);
+define('REQUEST_META_DECLINED', 3);
+
+define('RATINGS', '1,2,3,4,5');
+
 define('DEVICE_ANDROID', 'android');
 define('DEVICE_IOS', 'ios');
+
 
 class ProviderApiController extends Controller
 {
@@ -522,7 +562,7 @@ class ProviderApiController extends Controller
 	public function location_update()
 	{
 		$validator = Validator::make(
-				Input::all(),
+				$request->all(),
 				array(
 						'latitude' => 'required',
 						'longitude' => 'required'
@@ -589,7 +629,7 @@ class ProviderApiController extends Controller
 	public function service_decline(Request $request)
 	{
 		$validator = Validator::make(
-				Input::all(),
+				$request->all(),
 				array(
 						'request_id' => 'required|integer|exists:requests,id',
 				));
@@ -661,7 +701,7 @@ class ProviderApiController extends Controller
 	public function service_accept(Request $request)
 	{
 		$validator = Validator::make(
-				Input::all(),
+				$request->all(),
 				array(
 						'request_id' => 'required|integer|exists:requests,id'
 				));
@@ -734,7 +774,7 @@ class ProviderApiController extends Controller
 	{
         $provider = Provider::find($request->id);
 		$validator = Validator::make(
-            Input::all(),
+            $request->all(),
             array(
                 'request_id' => 'required|integer|exists:request,id,confirmed_provider,'.$provider->id,
             ),
@@ -791,7 +831,7 @@ class ProviderApiController extends Controller
 	{
         $provider = Provider::find($request->id);
 		$validator = Validator::make(
-            Input::all(),
+            $request->all(),
             array(
                 'request_id' => 'required|integer|exists:request,id,confirmed_provider,'.$provider->id,
             ),
@@ -848,7 +888,7 @@ class ProviderApiController extends Controller
 	{
         $provider = Provider::find($request->id);
 		$validator = Validator::make(
-            Input::all(),
+            $request->all(),
             array(
                 'request_id' => 'required|integer|exists:request,id,confirmed_provider,'.$provider->id,
             ),
@@ -911,7 +951,7 @@ class ProviderApiController extends Controller
 	{
         $provider = Provider::find($request->id);
 		$validator = Validator::make(
-            Input::all(),
+            $request->all(),
             array(
                 'request_id' => 'required|integer|exists:request,id,confirmed_provider,'.$provider->id,
             ),
@@ -981,6 +1021,61 @@ class ProviderApiController extends Controller
 				$response_array = array('success' => false, 'error' => get_error_message(101), 'error_code' => 101);
                 Log::info('Provider status Error:: Old state='.$requests->provider_status.' and current state='.$current_state);
 			}
+		}
+
+		$response = Response::json($response_array, 200);
+		return $response;
+	}
+
+	public function rate_user(Request $request)
+	{
+        $provider = Provider::find($request->id);
+
+		$validator = Validator::make(
+            $request->all(),
+            array(
+                'request_id' => 'required|integer|exists:request,id,confirmed_provider,'.$provider->id.'|unique:provider_ratings,request_id',
+                'rating' => 'required|integer|in:'.RATINGS,
+                'comments' => 'max:255'
+            ),
+            array(
+                'exists' => 'The :attribute doesn\'t belong to provider:'.$provider->id,
+                'unique' => 'The :attribute already rated.'
+            )
+        );
+	
+		if ($validator->fails()) {
+            $error_messages = $validator->messages()->all();
+            $response_array = array('success' => false, 'error' => get_error_message(101), 'error_code' => 101, 'error_messages'=>$error_messages);
+		} else {
+            $request_id = $request->request_id;
+            $comments = $request->comments;
+
+            $req = Requests::find($request_id);
+            //Save Rating
+            $rev_user = new ProviderRating();
+            $rev_user->provider_id = $req->confirmed_provider;
+            $rev_user->user_id = $req->user_id;
+            $rev_user->request_id = $req->id;
+            $rev_user->rating = $request->rating;
+            $rev_user->comments = $comments ?: '';
+            $rev_user->save();
+
+            $req->provider_status = PROVIDER_RATED;
+            $req->save();
+
+            /*Send Push Notification to User*/
+            send_push_notification($req->user_id, USER, 'Provider Rated', 'The provider rated your service.');
+
+            if($req->is_paid == DEFAULT_FALSE){
+                //service_complete($req);
+            }
+
+
+            $response_array = array(
+                'success' => true
+            );
+
 		}
 
 		$response = Response::json($response_array, 200);
