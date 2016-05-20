@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddRequestMetaIdToRequestsTable extends Migration
+class CreateSettingsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,8 +12,12 @@ class AddRequestMetaIdToRequestsTable extends Migration
      */
     public function up()
     {
-        Schema::table('requests' , function(Blueprint $table) {
-            $table->integer('request_meta_id');
+        Schema::create('settings', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('key');
+            $table->string('value');
+            $table->integer('status');
+            $table->timestamps();
         });
     }
 
@@ -24,6 +28,6 @@ class AddRequestMetaIdToRequestsTable extends Migration
      */
     public function down()
     {
-        $table->dropColumn('request_meta_id');
+        Schema::drop('settings');
     }
 }

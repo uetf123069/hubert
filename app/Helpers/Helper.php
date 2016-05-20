@@ -292,6 +292,18 @@
                 case 130:
                     $string = "No results found";
                     break;
+                case 131:
+                    $string = 'Password doesn\'t match';
+                    break;
+                case 132:
+                    $string = 'Provider ID not found';
+                    break;
+                case 133:
+                    $string = 'User ID not found';
+                    break;
+                case 134:
+                    $string = 'Payment details is not filled';
+                    break;
                 default:
                     $string = "Unknown error occurred.";
             }
@@ -322,6 +334,9 @@
                 case 107:
                     $string = "Payment successfully done";
                     break;
+                case 108:
+                    $string = "Favourite provider deleted successfully";
+                    break;
                 default:
                     $string = "";
             }
@@ -329,6 +344,7 @@
         }
 
         public static function get_push_message($code) {
+
             switch ($code) {
                 case 601:
                     $string = "No Provider Available";
@@ -387,7 +403,7 @@
 
         public static function send_ios_push($user_id, $title, $message, $type)
         {
-            require_once app_path().'ios_push/apns.php';
+            require_once app_path().'ios/apns.php';
 
             $msg = array("alert" => "" . $title,
                 "status" => "success",

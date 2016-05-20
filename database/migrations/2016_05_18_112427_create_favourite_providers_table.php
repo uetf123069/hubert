@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddProviderIdToRequestsMetaTable extends Migration
+class CreateFavouriteProvidersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,8 +12,12 @@ class AddProviderIdToRequestsMetaTable extends Migration
      */
     public function up()
     {
-        Schema::table('requests_meta', function (Blueprint $table) {
+        Schema::create('favourite_providers', function (Blueprint $table) {
+            $table->increments('id');
+            $table->integer('user_id');
             $table->integer('provider_id');
+            $table->integer('status');
+            $table->timestamps();
         });
     }
 
@@ -24,8 +28,6 @@ class AddProviderIdToRequestsMetaTable extends Migration
      */
     public function down()
     {
-        Schema::table('requests_meta', function (Blueprint $table) {
-            $table->dropColumn('provider_id');
-        });
+        Schema::drop('favourite_providers');
     }
 }

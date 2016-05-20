@@ -22,13 +22,15 @@ Route::group(['prefix' => 'userApi'], function(){
 
 	Route::post('/register','UserapiController@register');
 	
-	Route::get('/userdetails','UserapiController@details_fetch');
-
 	Route::post('/login','UserapiController@login');
 
-	Route::post('/updateProfile', 'UserapiController@details_save');
+	Route::get('/userDetails','UserapiController@userDetails');
+
+	Route::post('/updateProfile', 'UserapiController@updateProfile');
 
 	Route::post('/forgotpassword', 'UserapiController@forgot_password');
+
+	Route::post('/changePassword', 'UserapiController@changePassword');
 
 	Route::get('/tokenRenew', 'UserapiController@tokenRenew');
 
@@ -45,6 +47,10 @@ Route::group(['prefix' => 'userApi'], function(){
 	Route::get('/requestStatusCheck', 'UserapiController@requestStatusCheck');
 
 	Route::get('/history' , 'UserapiController@history');
+
+	Route::get('/favProviders' , 'UserapiController@fav_providers');
+
+	Route::post('/deleteFavProvider' , 'UserapiController@deleteFavProvider');
 
 	Route::post('/feedback', 'UserapiController@feedback');
 
@@ -63,19 +69,21 @@ Route::group(['prefix' => 'providerApi'], function(){
 
 	Route::post('/forgotpassword', 'ProviderApiController@forgot_password');
 
+	Route::post('/changePassword', 'ProviderApiController@changePassword');
+
 	Route::get('/tokenRenew', 'ProviderApiController@tokenRenew');
 
-	Route::post('/acceptRequest', 'ProviderApiController@acceptRequest');
+	Route::post('/serviceaccept', 'ProviderApiController@service_accept');
 
-	Route::post('/cancelRequest', 'ProviderApiController@cancelRequest');
+	Route::post('/servicedecline', 'ProviderApiController@service_decline');
 
-	Route::post('/startRequest', 'ProviderApiController@startRequest');
+	Route::post('/providerstarted', 'ProviderApiController@providerstarted');
 
 	Route::post('/arrived', 'ProviderApiController@arrived');
 
-	Route::post('/startedRequest', 'ProviderApiController@startRequest');
+	Route::post('/servicestarted', 'ProviderApiController@servicestarted');
 
-	Route::post('/endRequest', 'ProviderApiController@endRequest');
+	Route::post('/servicecompleted', 'ProviderApiController@servicecompleted');
 
 	Route::post('/completed', 'ProviderApiController@completed');
 
