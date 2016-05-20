@@ -1537,6 +1537,44 @@ class UserapiController extends Controller
         $response = Response::json($response_array, 200);
         return $response;
     } 
+    public function provider_list(Request $request)
+    {
+        $validator = Validator::make(
+            $request->all(),
+            array(
+                'latitude' => 'required|numeric',
+                'longitude' => 'required|numeric'
+            ));
+
+        if ($validator->fails()) {
+            $error_messages = $validator->messages()->all();
+            $response_array = array('success' => false, 'error' => get_error_message(101), 'error_code' => 101, 'error_messages' => $error_messages);
+        } else {
+            $latitude = $request->latitude;
+            $longitude = $request->longitude;
+
+            /*Get default search radius*/
+            $settings = Setting::where('key', 'search_radius')->first();
+            $distance = $settings->value;
+            $available = 1;
+
+            $query = "SELECT providers.id,first_name,last_name,latitude,longitude,
+                            1.609344 * 3956 * acos( cos( radians('$latitude') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians('$longitude') ) + sin( radians('$latitude') ) * sin( radians(latitude) ) ) AS distance
+                      FROM providers
+                      WHERE is_available IN ($available) AND is_activated = 1 AND is_approved = 1
+                            AND (1.609344 * 3956 * acos( cos( radians('$latitude') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians('$longitude') ) + sin( radians('$latitude') ) * sin( radians(latitude) ) ) ) <= $distance
+                      ORDER BY distance";
+
+            $providers = DB::select(DB::raw($query));
+
+            $response_array = array(
+                'success' => true,
+                'providers' => $providers
+            );
+        }
+
+        return response()->json(Helper::null_safe($response_array) , 200);
+    }
 
 }
 
