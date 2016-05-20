@@ -1149,6 +1149,99 @@ class ProviderApiController extends Controller
         return $response;
     }
 
+    public function history(Request $request)
+	{
+		$provider = Provider::find($request->id);
+
+		$requests = Requests::where('confirmed_provider', '=', $provider->id)
+							->where('status', '=', REQUEST_COMPLETED)
+							->leftJoin('providers', 'providers.id', '=', 'requests.confirmed_provider')
+							->leftJoin('users', 'users.id', '=', 'requests.user_id')
+							->orderBy('request_start_time','desc')
+							->select('requests.id', 'requests.request_type as request_type', 'request_start_time as date',
+									DB::raw('CONCAT(users.first_name, " ", users.last_name) as user_name'), 'users.picture',
+									'requests.amount')
+									->get()
+									->toArray();
+
+		$response_array = array(
+				'success' => true,
+				'requests' => $requests
+		);
+			
+		$response = response()->json($response_array, 200);
+		return $response;
+	}
+
+	// Get incoming requests
+
+	public function get_incoming_request(Request $request)
+	{
+		$$provider = Provider::find($request->id);
+
+		$request_meta = RequestMeta::where('requests_meta.provider_id',$provider->id)
+                        ->where('requests_meta.status',REQUEST_META_OFFERED)
+                        ->where('requests_meta.is_cancelled',0)
+                        ->leftJoin('requests', 'requests.id', '=', 'requests_meta.request_id')
+                        ->leftJoin('service_types', 'service_types.id', '=', 'requests.request_type')
+                        ->leftJoin('users', 'users.id', '=', 'requests.user_id')
+                        ->select('requests.id as request_id', 'request.request_type as request_type', 'service_types.name as service_type_name', 'request_start_time as request_start_time', 'requests.status', 'requests.provider_status', 'requests.amount', DB::raw('CONCAT(users.first_name, " ", users.last_name) as user_name'), 'users.picture as user_picture', 'users.id as user_id','requests.latitude as latitude', 'requests.longitude as longitude')
+                        ->get()->toArray();
+
+        $settings = Setting::where('key', 'provider_select_timeout')->first();
+        $provider_timeout = $settings->value;
+
+        $request_meta_data = array();
+        foreach($request_meta as $each_request_meta){
+            $each_request_meta['user_rating'] = DB::table('user_ratings')->where('user_id', $each_request_meta['user_id'])->avg('rating') ?: 0;
+            unset($each_request_meta['user_id']);
+            $each_request_meta['time_left_to_respond'] = $provider_timeout - (time() - strtotime($each_request_meta['request_start_time']) );
+            $request_meta_data[] = $each_request_meta;
+        }
+
+		$response_array = array(
+				'success' => true,
+				'data' => $request_meta_data
+		);
+	
+		$response = Response::json($response_array, 200);
+		return $response;
+	}
+
+	public function request_status_check(Request $request)
+	{
+		$provider = Provider::find($request->id);
+
+		$requests = Requests::where('confirmed_provider', '=', $provider->id)
+							->where('status', '!=', REQUEST_COMPLETED)
+							->where('status', '!=', REQUEST_CANCELLED)
+							->where('provider_status', '!=', PROVIDER_RATED)
+							->leftJoin('users', 'users.id', '=', 'requests.user_id')
+                            ->leftJoin('service_types', 'service_types.id', '=', 'requests.request_type')
+							->orderBy('provider_status','desc')
+							->select('requests.id as request_id', 'requests.request_type as request_type', 'service_types.name as service_type_name', 'request_start_time as request_start_time', 'requests.status', 'requests.provider_status', 'requests.amount', DB::raw('CONCAT(users.first_name, " ", users.last_name) as user_name'), 'users.picture as user_picture', 'users.id as user_id','requests.latitude', 'request.longitude')
+                            ->get()->toArray();
+
+        $requests_data = array();
+		if($requests)
+		{
+            foreach($requests as $each_request){
+                $each_request['user_rating'] = DB::table('user_ratings')->where('user_id', $each_request['user_id'])->avg('rating') ?: 0;
+                unset($each_request['user_id']);
+                $requests_data[] = $each_request;
+            }
+		}
+
+        $response_array = array(
+            'success' => true,
+            'data' => $requests_data
+        );
+	
+		$response = Response::json($response_array, 200);
+		return $response;
+	}
+
+
 }
 
 

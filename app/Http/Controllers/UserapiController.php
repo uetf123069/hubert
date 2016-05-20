@@ -1423,8 +1423,8 @@ class UserapiController extends Controller
 
     }
 
-    public function history(Request $request) {
-
+    public function history(Request $request) 
+    {
         // Get the completed request details 
 
         $requests = Requests::where('user_id' , $request->id)->where('status' , REQUEST_COMPLETED)->get();
