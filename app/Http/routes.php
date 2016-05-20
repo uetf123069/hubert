@@ -28,15 +28,19 @@ Route::group(['prefix' => 'userApi'], function(){
 
 	Route::post('/updateProfile', 'UserapiController@updateProfile');
 
-	Route::post('/forgotpassword', 'UserapiController@forgot_password');
+	Route::post('/forgotpassword', 'UserapiController@forgotPassword');
 
 	Route::post('/changePassword', 'UserapiController@changePassword');
 
 	Route::get('/tokenRenew', 'UserapiController@tokenRenew');
 
+	// Service Types Handle
+
 	Route::post('/serviceList', 'UserapiController@serviceList');
 
 	Route::post('/singleService', 'UserapiController@singleService');
+
+	// Request Handle
 
 	Route::post('/sendRequest', 'UserapiController@sendRequest');
 
@@ -46,13 +50,26 @@ Route::group(['prefix' => 'userApi'], function(){
 
 	Route::get('/requestStatusCheck', 'UserapiController@requestStatusCheck');
 
+	Route::post('/rateProvider', 'UserapiController@rateProvider');
+
 	Route::get('/history' , 'UserapiController@history');
+
+	// Favourite Providers
 
 	Route::get('/favProviders' , 'UserapiController@fav_providers');
 
 	Route::post('/deleteFavProvider' , 'UserapiController@deleteFavProvider');
 
-	Route::post('/feedback', 'UserapiController@feedback');
+	// Cards 
+
+	Route::post('/getCards', 'UserapiController@getCards');
+
+	Route::post('/addCard', 'UserapiController@addCard');
+
+	Route::post('/defaultCard', 'UserapiController@defaultCard');
+
+	Route::post('/deleteCard', 'UserapiController@deleteCard');
+
 
 });
 

@@ -415,7 +415,7 @@ class UserapiController extends Controller
         return $response;
 	}
 
-	public function forgot_password(Request $request)
+	public function forgotPassword(Request $request)
 	{
 		$email = $request->email;
 
@@ -1159,6 +1159,10 @@ class UserapiController extends Controller
 
                     if($requests->status <= REQUEST_INPROGRESS && $requests->provider_status <= PROVIDER_ARRIVED)
                     {
+                        // Request meta delete 
+
+                        //Provider Available change
+
                         // Change the status of the request
 
                         $requests->status = REQUEST_CANCEL_USER;
@@ -1483,71 +1487,52 @@ class UserapiController extends Controller
 
     }
 
-    public function rate_user(Request $request)
+    public function rateProvider(Request $request)
     {
         $user = User::find($request->id);
 
-        if($request->skip == DEFAULT_TRUE) {
-
-            $validator = Validator::make($request->all() , 
-                    array(
-                            'request_id' => 'required|integer|exists,id',
-                        ));
-            if($validator->fails()) {
-                $error_messages = implode('', $validator->messages()->all());
-                $response_array = array('success' => false , 'error' => Helper::get_error_message(101) , 'error_code' => 101);
-
-            } else {
-                $requests = Requests::find($request->request_id);
-                $requests->status = REQUEST_COMPLETED;
-                $requests->save();
-
-                $response_array = array('success' => true);
-            }
+        $validator = Validator::make(
+            $request->all(),
+            array(
+                'request_id' => 'required|integer|exists:requests,id,user_id,'.$user->id.'|unique:user_ratings,request_id',
+                'rating' => 'required|integer|in:'.RATINGS,
+                'comments' => 'max:255'
+            ),
+            array(
+                'exists' => 'The :attribute doesn\'t belong to user:'.$user->id,
+                'unique' => 'The :attribute already rated.'
+            )
+        );
+    
+        if ($validator->fails()) {
+            $error_messages = implode(',', $validator->messages()->all());
+            $response_array = array('success' => false, 'error' => get_error_message(101), 'error_code' => 101, 'error_messages'=>$error_messages);
         
         } else {
 
-            $validator = Validator::make(
-                $request->all(),
-                array(
-                    'request_id' => 'required|integer|exists:requests,id,user_id,'.$user->id.'|unique:user_ratings,request_id',
-                    'rating' => 'required|integer|in:'.RATINGS,
-                    'comments' => 'max:255'
-                ),
-                array(
-                    'exists' => 'The :attribute doesn\'t belong to user:'.$user->id,
-                    'unique' => 'The :attribute already rated.'
-                )
+            $request_id = $request->request_id;
+            $comment = $request->comment;
+
+            $req = Requests::find($request_id);
+            //Save Rating
+            $rev_user = new UserRating();
+            $rev_user->provider_id = $req->confirmed_provider;
+            $rev_user->user_id = $req->user_id;
+            $rev_user->request_id = $req->id;
+            $rev_user->rating = $request->rating;
+            $rev_user->comment = $comment ? $comment: '';
+            $rev_user->save();
+
+            $req->status = REQUEST_COMPLETED;
+            $req->save();
+
+            // Send Push Notification to Provider
+            send_push_notification($req->confirmed_provider, PROVIDER, 'User Rated', 'The user rated your service.');
+
+            $response_array = array(
+                'success' => true
             );
-        
-            if ($validator->fails()) {
-                $error_messages = implode(',', $validator->messages()->all());
-                $response_array = array('success' => false, 'error' => get_error_message(101), 'error_code' => 101, 'error_messages'=>$error_messages);
-            } else {
-                $request_id = $request->request_id;
-                $comment = $request->comment;
 
-                $req = Requests::find($request_id);
-                //Save Rating
-                $rev_user = new UserRating();
-                $rev_user->provider_id = $req->confirmed_provider;
-                $rev_user->user_id = $req->user_id;
-                $rev_user->request_id = $req->id;
-                $rev_user->rating = $request->rating;
-                $rev_user->comments = $comment ? $comment: '';
-                $rev_user->save();
-
-                $req->status = REQUEST_COMPLETED;
-                $req->save();
-
-                // Send Push Notification to Provider
-                send_push_notification($req->confirmed_provider, PROVIDER, 'User Rated', 'The user rated your service.');
-
-                $response_array = array(
-                    'success' => true
-                );
-
-            }
         }
 
         $response = Response::json(Helper::null_safe($response_array), 200);
@@ -1592,6 +1577,171 @@ class UserapiController extends Controller
 
         return response()->json(Helper::null_safe($response_array) , 200);
     }
+
+    public function getCards(Request $request) {
+
+        $user_cards = Cards::where('user_id' , $request->id)->get();
+
+        $data = array();
+
+        $card_data = array();
+
+        if($user_cards) {
+
+            foreach ($cards as $c => $card) {
+
+                $data['id'] = $card->id;
+                $data['customer_id'] = $card->customer_id;
+                $data['card_id'] = $card->card_token;
+                $data['last_four'] = $data->last_four;
+                $data['is_default']= $data->is_default;
+
+                array_push($card_data, $data);
+            
+            }
+
+            $response_array = array('success' => true ,'cards' => $card_data);
+
+        } else{
+            $response_array = array('success' => false , 'error' => Helper::get_error_message(130) , 'error_code' => 130);
+        }
+
+        return response()->json(Helper::null_safe($response_array) , 200);
+
+    }
+
+    public function addCard()
+    {
+        $payment_token = $request->payment_token;
+        $last_four = $request->last_four;
+
+        $validator = Validator::make(
+                        $request->all(),
+                        array(
+                            'last_four' => 'required',
+                            'payment_token' => 'required',
+                        )
+                    );
+
+        if ($validator->fails())
+        {
+           $error_messages = implode(',', $validator->messages()->all());
+           $response_array = array('success' => false , 'error' => Helper::get_error_message(101) , 'error_code' => 101 , 'error_messages' => $error_messages);
+
+        } else {   
+
+            try{
+
+                // Get the key from settings table
+
+                $stripe_secret_key = "";
+                
+                \Stripe\Stripe::setApiKey($stripe_secret_key);
+
+                $customer = \Stripe\Stripe_Customer::create(array(
+                              "card" => $payment_token,
+                              "description" => $owner_data->email)
+                            );
+                Log::info('customer = '.print_r($customer, true));
+
+                if($customer){
+
+                    $customer_id = $customer->id;
+
+                    $cards = new Cards;
+                    $cards->user_id = $request->id;
+                    $cards->customer_id = $customer_id;
+                    $cards->last_four = $last_four;
+                    $cards->card_token = $customer->sources->data[0]->id;
+
+                    // Check is any default is available
+                    $check_card = Cards::where('user',$request->id)->first();
+
+                    if($check_card ) 
+                        $cards->is_default = 0;
+                    else
+                        $cards->is_default = 1;
+                    
+                    $cards->save();
+
+                    $response_array = array('success' => true);
+                    $response_code = 200;
+                }
+                else{
+                    $response_array = array('success' => false , 'error' => 'Could not create client ID' , 'error_code' => 450);
+                    $response_code = 200;
+                }
+                
+                
+            } catch(Exception $e) {
+                $response_array = array('success' => false , 'error' => $e , 'error_code' => 101);
+                $response_code = 200;
+            
+            }
+              
+            
+        }
+    
+        $response = Response::json($response_array , $response_code);
+        return $response; 
+
+    }
+
+    public function deleteCard()
+    {
+        $card_id = $request->card_id;
+
+        $validator = Validator::make(
+                        $request->all,
+                        array(
+                            'card_id' => 'required|exists:cards,id,user_id,'.$request->id,
+                        )
+                    );
+
+        if ($validator->fails())
+        {
+           $error_messages = implode(',', $validator->messages()->all());
+
+           $response_array = array('success' => false , 'error' => Helper::get_error_message(101) , 'error_code' => 101 , 'error_messages' => $error_messages);
+
+           $response_code = 200;
+        } else {
+            Cards::find($card_id)->delete();
+            $response_array = array('success' => true );
+        }
+    
+        return response()->json(Helper::null_safe($response_array) , 200);
+       
+    }
+
+    public function defaultCard(Request $request) {
+
+        $validator = Validator::make($request->all() , 
+            array(
+                'card_id' => 'required|exists:cards,id,'.$request->card_id.',user_id,'.$request->id
+                )
+            );
+
+        if($validator->fails()) {
+
+            $error_messages = implode(',', $validator->messages()->all());
+            $response_array = array('success' => false, 'error' => get_error_message(101), 'error_code' => 101, 'error_messages'=>$error_messages);
+
+        } else {
+            
+            $old_default = Cards::where('user_id' , $request->id)->where('is_default', DEFAULT_TRUE)->update('is_default' , DEFAULT_FALSE);
+ 
+            $card = Cards::where('id' , $request->request_id)->update('is_default' , DEFAULT_TRUE);
+
+            if($card) {
+                $response_array = array('success' => true);
+            } else {
+                $response_array = array('success' => false , 'error' => 'Something went wrong');
+            }
+        }
+    
+    }
+
 
 }
 
