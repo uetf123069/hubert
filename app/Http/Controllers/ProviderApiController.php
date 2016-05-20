@@ -1058,7 +1058,7 @@ class ProviderApiController extends Controller
             $rev_user->user_id = $req->user_id;
             $rev_user->request_id = $req->id;
             $rev_user->rating = $request->rating;
-            $rev_user->comments = $comments ?: '';
+            $rev_user->comment = $comments ?: '';
             $rev_user->save();
 
             $req->provider_status = PROVIDER_RATED;
@@ -1067,10 +1067,7 @@ class ProviderApiController extends Controller
             /*Send Push Notification to User*/
             send_push_notification($req->user_id, USER, 'Provider Rated', 'The provider rated your service.');
 
-            if($req->is_paid == DEFAULT_FALSE){
-                //service_complete($req);
-            }
-
+            
 
             $response_array = array(
                 'success' => true

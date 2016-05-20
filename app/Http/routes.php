@@ -85,9 +85,7 @@ Route::group(['prefix' => 'providerApi'], function(){
 
 	Route::post('/servicecompleted', 'ProviderApiController@servicecompleted');
 
-	Route::post('/completed', 'ProviderApiController@completed');
-
-	Route::post('/feedback', 'ProviderApiController@feedback');
+	Route::post('/rateuser', 'ProviderApiController@rate_user');
 
 
 });
