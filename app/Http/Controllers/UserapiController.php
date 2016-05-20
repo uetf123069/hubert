@@ -1487,56 +1487,73 @@ class UserapiController extends Controller
     {
         $user = User::find($request->id);
 
-        $validator = Validator::make(
-            $request->all(),
-            array(
-                'request_id' => 'required|integer|exists:requests,id,user_id,'.$user->id.'|unique:user_ratings,request_id',
-                'rating' => 'required|integer|in:'.RATINGS,
-                'comments' => 'max:255'
-            ),
-            array(
-                'exists' => 'The :attribute doesn\'t belong to provider:'.$provider->id,
-                'unique' => 'The :attribute already rated.'
-            )
-        );
-    
-        if ($validator->fails()) {
-            $error_messages = $validator->messages()->all();
-            $response_array = array('success' => false, 'error' => get_error_message(101), 'error_code' => 101, 'error_messages'=>$error_messages);
-        } else {
-            $request_id = $request->request_id;
-            $comments = $request->comments;
+        if($request->skip == DEFAULT_TRUE) {
 
-            $req = Requests::find($request_id);
-            //Save Rating
-            $rev_user = new ProviderRating();
-            $rev_user->provider_id = $req->confirmed_provider;
-            $rev_user->user_id = $req->user_id;
-            $rev_user->request_id = $req->id;
-            $rev_user->rating = $request->rating;
-            $rev_user->comments = $comments ?: '';
-            $rev_user->save();
+            $validator = Validator::make($request->all() , 
+                    array(
+                            'request_id' => 'required|integer|exists,id',
+                        ));
+            if($validator->fails()) {
+                $error_messages = implode('', $validator->messages()->all());
+                $response_array = array('success' => false , 'error' => Helper::get_error_message(101) , 'error_code' => 101);
 
-            $req->provider_status = PROVIDER_RATED;
-            $req->save();
+            } else {
+                $requests = Requests::find($request->request_id);
+                $requests->status = REQUEST_COMPLETED;
+                $requests->save();
 
-            /*Send Push Notification to User*/
-            send_push_notification($req->user_id, USER, 'Provider Rated', 'The provider rated your service.');
-
-            if($req->is_paid == DEFAULT_FALSE){
-                //service_complete($req);
+                $response_array = array('success' => true);
             }
+        
+        } else {
 
-
-            $response_array = array(
-                'success' => true
+            $validator = Validator::make(
+                $request->all(),
+                array(
+                    'request_id' => 'required|integer|exists:requests,id,user_id,'.$user->id.'|unique:user_ratings,request_id',
+                    'rating' => 'required|integer|in:'.RATINGS,
+                    'comments' => 'max:255'
+                ),
+                array(
+                    'exists' => 'The :attribute doesn\'t belong to user:'.$user->id,
+                    'unique' => 'The :attribute already rated.'
+                )
             );
+        
+            if ($validator->fails()) {
+                $error_messages = implode(',', $validator->messages()->all());
+                $response_array = array('success' => false, 'error' => get_error_message(101), 'error_code' => 101, 'error_messages'=>$error_messages);
+            } else {
+                $request_id = $request->request_id;
+                $comment = $request->comment;
 
+                $req = Requests::find($request_id);
+                //Save Rating
+                $rev_user = new UserRating();
+                $rev_user->provider_id = $req->confirmed_provider;
+                $rev_user->user_id = $req->user_id;
+                $rev_user->request_id = $req->id;
+                $rev_user->rating = $request->rating;
+                $rev_user->comments = $comment ? $comment: '';
+                $rev_user->save();
+
+                $req->status = REQUEST_COMPLETED;
+                $req->save();
+
+                // Send Push Notification to Provider
+                send_push_notification($req->confirmed_provider, PROVIDER, 'User Rated', 'The user rated your service.');
+
+                $response_array = array(
+                    'success' => true
+                );
+
+            }
         }
 
-        $response = Response::json($response_array, 200);
+        $response = Response::json(Helper::null_safe($response_array), 200);
         return $response;
     } 
+
     public function provider_list(Request $request)
     {
         $validator = Validator::make(
