@@ -1,8 +1,10 @@
 @extends('layouts.user.focused')
 
+@section('title', 'Login | ')
+
 @section('content')
 <div class="container" id="login-form">
-    <a href="index.html" class="login-logo"><img src="{{ asset('logo.png') }}"></a>
+    <a href="{{ url('/') }}" class="login-logo"><img src="{{ asset('logo.png') }}"></a>
     <div class="row">
         <div class="col-md-4 col-md-offset-4">
             <div class="panel panel-default">
@@ -58,8 +60,11 @@
 
                         <div class="panel-footer">
                             <div class="clearfix">
-                                <a href="extras-registration.html" class="btn btn-default pull-left">Register</a>
-                                <a href="extras-login.html" class="btn btn-primary pull-right"><i class="fa fa-btn fa-sign-in"></i>Login</a>
+                                <a href="{{ url('/register') }}" class="btn btn-default pull-left">Register</a>
+                                <button type="submit" class="btn btn-primary pull-right">
+                                    <i class="fa fa-btn fa-sign-in"></i> Login
+                                </button>
+
                             </div>
                         </div>
 

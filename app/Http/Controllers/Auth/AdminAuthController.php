@@ -8,7 +8,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
 
-class AuthController extends Controller
+class AdminAuthController extends Controller
 {
     /*
     |--------------------------------------------------------------------------
@@ -28,7 +28,23 @@ class AuthController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/';
+    protected $redirectTo = '/admin';
+
+    /**
+     * The Login form view that should be used.
+     *
+     * @var string
+     */
+
+    protected $loginView = 'admin.auth.login';
+
+    /**
+     * The Register form view that should be used.
+     *
+     * @var string
+     */
+
+    protected $registerView = 'admin.auth.register';
 
     /**
      * Create a new authentication controller instance.

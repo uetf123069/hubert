@@ -21,6 +21,30 @@ class PasswordController extends Controller
     use ResetsPasswords;
 
     /**
+     * Where to redirect users after successful change of password.
+     *
+     * @var string
+     */
+
+    protected $redirectTo = '/';
+
+    /**
+     * The password reset request view that should be used.
+     *
+     * @var string
+     */
+
+    protected $linkRequestView = 'user.auth.passwords.email';
+
+    /**
+     * The password reset view that should be used.
+     *
+     * @var string
+     */
+
+    protected $resetView = 'user.auth.passwords.reset';
+
+    /**
      * Create a new password controller instance.
      *
      * @return void

@@ -1,11 +1,14 @@
-@extends('layouts.app')
+@extends('layouts.user.focused')
+
+@section('title', 'Reset Password | ')
 
 @section('content')
-<div class="container">
+<div class="container" id="login-form">
+    <a href="{{ url('/') }}" class="login-logo"><img src="{{ asset('logo.png') }}"></a>
     <div class="row">
-        <div class="col-md-8 col-md-offset-2">
+        <div class="col-md-4 col-md-offset-4">
             <div class="panel panel-default">
-                <div class="panel-heading">Reset Password</div>
+                <div class="panel-heading"><h2>Reset Password</h2></div>
 
                 <div class="panel-body">
                     <form class="form-horizontal" role="form" method="POST" action="{{ url('/password/reset') }}">
@@ -56,11 +59,18 @@
 
                         <div class="form-group">
                             <div class="col-md-6 col-md-offset-4">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fa fa-btn fa-refresh"></i>Reset Password
+                            </div>
+                        </div>
+
+                        <div class="panel-footer">
+                            <div class="clearfix">
+                                <a href="{{ url('/login') }}" class="btn btn-default pull-left">Go Back</a>
+                                <button type="submit" class="btn btn-primary pull-right">
+                                    <i class="fa fa-btn fa-refresh"></i> Reset Password
                                 </button>
                             </div>
                         </div>
+
                     </form>
                 </div>
             </div>
