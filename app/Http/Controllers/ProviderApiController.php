@@ -37,14 +37,13 @@ define('DEFAULT_TRUE', 1);
 define('REQUEST_NEW',        0);
 define('REQUEST_WAITING',      1);
 define('REQUEST_INPROGRESS',    2);
-define('REQUEST_RATING',      3);
-define('REQUEST_COMPLETE_PENDING',  4);
+define('REQUEST_COMPLETE_PENDING',  3);
+define('REQUEST_RATING',      4);   
 define('REQUEST_COMPLETED',      5);
 define('REQUEST_CANCELLED',      6);
 define('REQUEST_NO_PROVIDER_AVAILABLE',7);
 define('REQUEST_CANCEL_USER',8);
 define('REQUEST_CANCEL_PROVIDER',9);
-
 
 
 define('PROVIDER_NOT_AVAILABLE', 0);

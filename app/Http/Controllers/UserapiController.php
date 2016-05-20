@@ -33,6 +33,7 @@ use App\FavouriteProvider;
 
 
 define('USER', 0);
+
 define('PROVIDER',1);
 
 
@@ -40,24 +41,26 @@ define('NONE', 0);
 
 
 define('DEFAULT_FALSE', 0);
+
 define('DEFAULT_TRUE', 1);
 
+// Request table status
 
 define('REQUEST_NEW',        0);
 define('REQUEST_WAITING',      1);
 define('REQUEST_INPROGRESS',    2);
-define('REQUEST_RATING',      3);
-define('REQUEST_COMPLETE_PENDING',  4);
+define('REQUEST_COMPLETE_PENDING',  3);
+define('REQUEST_RATING',      4);                                                                      
 define('REQUEST_COMPLETED',      5);
 define('REQUEST_CANCELLED',      6);
 define('REQUEST_NO_PROVIDER_AVAILABLE',7);
 define('REQUEST_CANCEL_USER',8);
 define('REQUEST_CANCEL_PROVIDER',9);
 
-
-
 define('PROVIDER_NOT_AVAILABLE', 0);
 define('PROVIDER_AVAILABLE', 1);
+
+// Request table provider_status
 
 define('PROVIDER_NONE', 0);
 define('PROVIDER_ACCEPTED', 1);
@@ -74,52 +77,11 @@ define('REQUEST_META_DECLINED', 3);
 
 define('RATINGS', '1,2,3,4,5');
 
-define('DEVICE_ANDROID', 'android');
-define('DEVICE_IOS', 'ios');
-
-
-
-define('DEFAULT_FALSE', 0);
-
-define('DEFAULT_TRUE', 1);
 
 define('DEVICE_ANDROID', 'android');
 
 define('DEVICE_IOS', 'ios');
 
-define('NONE', 0);
-
-define('PROVIDER_NONE' , 0);
-
-define('REQUEST_NEW' , 1);
-
-define('REQUEST_SEND' , 2);
-
-define('REQUEST_ACCEPT_PROVIDER' , 3);
-
-define('REQUEST_REJECT_PROVIDER' , 4);
-
-define('REQUEST_INPROGRESS', 5);
-
-define('REQUEST_STARTED' , 6);
-
-define('REQUEST_ARRIVED' , 7);
-
-define('SERVICE_STARTED' , 8);
-
-define('REQUEST_COMPLETED' , 9);
-
-define('REQUEST_CANCEL_PROVIDER' , 10);
-
-define('REQUEST_CANCEL_USER' , 11); 
-
-define('PROVIDER' , 'PROVIDER');
-
-define('USER' , 'USER');
-
-define('PROVIDER_NOT_AVAILABLE', 0);
-
-define('PROVIDER_IS_AVAILABLE', 1);
 
 class UserapiController extends Controller
 {
@@ -823,7 +785,7 @@ class UserapiController extends Controller
 
                 // Check already request exists 
 
-                $check_status = array(REQUEST_CANCEL_USER,REQUEST_CANCEL_PROVIDER,REQUEST_COMPLETED);
+                $check_status = array(REQUEST_CANCEL_USER,REQUEST_CANCELLED,REQUEST_CANCEL_PROVIDER,REQUEST_COMPLETED);
 
                 $check_requests = Requests::where('user_id' , $request->id)->whereNotIn('status' , $check_status)->count();
 
@@ -1046,7 +1008,7 @@ class UserapiController extends Controller
 
                     if($requests) {
 
-                        $requests->status = REQUEST_SEND;
+                        $requests->status = REQUEST_WAITING;
                         $requests->current_provider = $first_provider_id;
                         $requests->save();
 
@@ -1106,7 +1068,7 @@ class UserapiController extends Controller
 
                                 if($first_provider_id == $final_provider) {
 
-                                    $request_meta->status = REQUEST_SEND;  // Request status change
+                                    $request_meta->status = REQUEST_META_OFFERED;  // Request status change
 
                                     // Availablity status change 
 
@@ -1189,66 +1151,57 @@ class UserapiController extends Controller
 
                 $requests = $request_query->first();
 
-                // Check the status of the request is not reached "SERVICE_STARTED" status
+                //  Check already request cancelled
 
-                if($requests->status <= REQUEST_ARRIVED) {
+                if($requests->status != REQUEST_CANCEL_USER || $requests != REQUEST_CANCEL_PROVIDER)
 
-                    // Detect amount from User
+                    // Check the status of the request is not reached "SERVICE_STARTED" status
 
-                    // Get Request Meta details
+                    if($requests->status <= REQUEST_INPROGRESS && $requests->provider_status <= PROVIDER_ARRIVED)
+                    {
+                        // Change the status of the request
 
-                    $request_metas = RequestsMeta::where('request_id' , $request->request_id)->get();
+                        $requests->status = REQUEST_CANCEL_USER;
 
-                    // Check the request_metas is not empty
+                        $requests->save();
 
-                    if($request_metas) {
+                        // Send notification to the provider
 
-                        foreach ($request_metas as $rm => $request_meta) {
+                        // Push Start
 
-                            $request_meta->status = REQUEST_CANCEL_USER;
-                            $request_meta->save();    
-                            
-                        }
+                        $user = User::find($request->id);
+
+                        $push_data = array();
+                        $push_data['request_id'] = $requests->id;
+                        $push_data['service_type'] = $requests->request_type;
+                        $push_data['request_start_time'] = $requests->request_start_time;
+                        $push_data['status'] = $requests->status;
+                        $push_data['amount'] = $requests->amount;
+                        $push_data['user_name'] = $user->name;
+                        $push_data['user_picture'] = $user->picture;
+
+                        $title = "Cancel Request";
+                        $message = $user->name." "." cancelled the request";
+
+                        $push_message = array(
+                            'success' => true,
+                            'message' => $message,
+                            'data' => array((object) Helper::null_safe($push_data))
+                        );
+
+                        // Send Push Notification to Provider
+
+                        //  send_push_notification($provider_id, PROVIDER, $title, $push_message);
+
+                        // Push End
+
+                    } else {   
+                        // If reached the "SERVICE_STARTED" status
+                        $response_array = array('success' => false , 'error' => Helper::get_error_message(114) ,'error_code' => 114 );
                     }
 
-                    // Change the status of the request
-
-                    $requests->status = REQUEST_CANCEL_USER;
-
-                    $requests->save();
-
-                    // Send notification to the provider
-
-                    // Push Start
-
-                    $user = User::find($request->id);
-
-                    $push_data = array();
-                    $push_data['request_id'] = $requests->id;
-                    $push_data['service_type'] = $requests->request_type;
-                    $push_data['request_start_time'] = $requests->request_start_time;
-                    $push_data['status'] = $requests->status;
-                    $push_data['amount'] = $requests->amount;
-                    $push_data['user_name'] = $user->name;
-                    $push_data['user_picture'] = $user->picture;
-
-                    $title = "Cancel Request";
-                    $message = $user->name." "." cancelled the request";
-
-                    $push_message = array(
-                        'success' => true,
-                        'message' => $message,
-                        'data' => array((object) Helper::null_safe($push_data))
-                    );
-
-                    // Send Push Notification to Provider
-
-                    //  send_push_notification($first_provider_id, PROVIDER, $title, $push_message);
-
-                    // Push End
-
-                } else {   // If reached the "SERVICE_STARTED" status
-
+                } else {
+                    $response_array = array('success' => false , 'error' => Helper::get_error_message(113) , 'error_code' => 113);
                 }
 
             } else {    // If request details are empty
@@ -1266,7 +1219,7 @@ class UserapiController extends Controller
 
         $check_status = array(); // Initialize the check_status variable
 
-        $check_status = array(REQUEST_REJECT_PROVIDER,REQUEST_CANCEL_PROVIDER,REQUEST_CANCEL_USER,REQUEST_COMPLETED);
+        $check_status = array(REQUEST_REJECT_PROVIDER,REQUEST_CANCEL_PROVIDER,REQUEST_CANCEL_USER,REQUEST_COMPLETED,REQUEST_CANCELLED);
 
         $requests = Requests::whereNotIn('status' , $check_status)->where('user_id' , $request->id)->get();
 
@@ -1391,17 +1344,6 @@ class UserapiController extends Controller
     }
 
     public function fav_providers(Request $request) {
-
-        // $array1 = array(1,2,3,4);
-
-        // $array2 = array( 
-        //         '0.000' => 1,
-        //         '0.333' => 10,
-        //         '1.385' => 9,
-        //         '5.55' => 9,
-        //     );
-
-        // dd(array_unique(array_merge($array1,$array2)));
 
         $fav_providers = FavouriteProvider::where('user_id' , $request->id)->get();
 
@@ -1536,6 +1478,65 @@ class UserapiController extends Controller
         return response()->json(Helper::null_safe($response_array) , 200);
 
     }
+
+    public function singleRequest(Request $request) {
+
+    }
+
+    public function rate_user(Request $request)
+    {
+        $user = User::find($request->id);
+
+        $validator = Validator::make(
+            $request->all(),
+            array(
+                'request_id' => 'required|integer|exists:requests,id,user_id,'.$user->id.'|unique:user_ratings,request_id',
+                'rating' => 'required|integer|in:'.RATINGS,
+                'comments' => 'max:255'
+            ),
+            array(
+                'exists' => 'The :attribute doesn\'t belong to provider:'.$provider->id,
+                'unique' => 'The :attribute already rated.'
+            )
+        );
+    
+        if ($validator->fails()) {
+            $error_messages = $validator->messages()->all();
+            $response_array = array('success' => false, 'error' => get_error_message(101), 'error_code' => 101, 'error_messages'=>$error_messages);
+        } else {
+            $request_id = $request->request_id;
+            $comments = $request->comments;
+
+            $req = Requests::find($request_id);
+            //Save Rating
+            $rev_user = new ProviderRating();
+            $rev_user->provider_id = $req->confirmed_provider;
+            $rev_user->user_id = $req->user_id;
+            $rev_user->request_id = $req->id;
+            $rev_user->rating = $request->rating;
+            $rev_user->comments = $comments ?: '';
+            $rev_user->save();
+
+            $req->provider_status = PROVIDER_RATED;
+            $req->save();
+
+            /*Send Push Notification to User*/
+            send_push_notification($req->user_id, USER, 'Provider Rated', 'The provider rated your service.');
+
+            if($req->is_paid == DEFAULT_FALSE){
+                //service_complete($req);
+            }
+
+
+            $response_array = array(
+                'success' => true
+            );
+
+        }
+
+        $response = Response::json($response_array, 200);
+        return $response;
+    } 
 
 }
 
