@@ -30,6 +30,8 @@ use App\Provider;
 
 use App\FavouriteProvider;
 
+use App\UserRating;
+
 
 
 define('USER', 0);
@@ -1153,7 +1155,7 @@ class UserapiController extends Controller
 
                 //  Check already request cancelled
 
-                if($requests->status != REQUEST_CANCEL_USER || $requests != REQUEST_CANCEL_PROVIDER)
+                if($requests->status != REQUEST_CANCEL_USER || $requests != REQUEST_CANCEL_PROVIDER) {
 
                     // Check the status of the request is not reached "SERVICE_STARTED" status
 
@@ -1215,9 +1217,86 @@ class UserapiController extends Controller
             
         }
 
+
         return response()->json(Helper::null_safe($response_array),200);
 
     }
+
+
+    // public function cancel_request(Request $request)
+    // {
+    //     $user_id = $request->id;
+
+    //     $validator = Validator::make(
+    //         $request->all(),
+    //         array(
+    //             'request_id' => 'required|numeric|exists:requests,id',
+    //         ));
+
+    //     if ($validator->fails())
+    //     {
+    //         $error_messages = implode(',', $validator->messages()->all());
+    //         $response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101, 'error_messages'=>$error_messages);
+    //     }else
+    //     {
+    //         $request_id = $request->request_id;
+    //         $requests = Requests::find($request_id);
+    //         $requestStatus = $requests->status;
+    //         $providerStatus = $requests->provider_status;
+    //         $allowedCancellationStatuses = array(
+    //             PROVIDER_NONE,
+    //             PROVIDER_ACCEPTED,
+    //             PROVIDER_STARTED,
+    //         );
+
+    //         /*Check whether request cancelled previously*/
+    //         if($requestStatus != REQUEST_CANCELLED)
+    //         {
+    //             /*Check whether request eligible for cancellation*/
+    //             if( in_array($providerStatus, $allowedCancellationStatuses) )
+    //             {
+    //                 /*Update status of the request to cancellation*/
+    //                 $request->status = REQUEST_CANCELLED;
+    //                 $request->save();
+
+    //                 /*Send Push Notification to User*/
+    //                 // send_push_notification($requests->user_id, USER, 'Service Cancelled', 'The service is cancelled.');
+
+    //                 /*If request has confirmed provider then release him to available status*/
+    //                 if($request->confirmed_provider != DEFAULT_FALSE){
+    //                     $provider = Provider::find( $requests->confirmed_provider );
+    //                     $provider->available = PROVIDER_AVAILABLE;
+    //                     $provider->save();
+    //                     /*Send Push Notification to Provider*/
+    //                     // send_push_notification($requests->confirmed_provider, PROVIDER, 'Service Cancelled', 'The service is cancelled by user.');
+    //                 }
+
+    //                 // No longer need request specific rows from RequestMeta
+    //                 RequestsMeta::where('request_id', '=', $request_id)->delete();
+
+    //                 $response_array = array(
+    //                     'success' => true,
+    //                     'request_id' => $request->id,
+    //                 );
+    //             }
+    //             else
+    //             {
+    //                 $response_array = array( 'success' => false, 'error' => Helper::get_error_message(114), 'error_code' => 114 );
+    //             }
+
+    //         }
+    //         else
+    //         {
+    //             $response_array = array( 'success' => false, 'error' => Helper::get_error_message(113), 'error_code' => 113 );
+    //         }
+
+    //         $response_array = Helper::null_safe($response_array);
+    //     }
+
+    //     $response = response()->json($response_array, 200);
+    //     return $response;
+    // }
+
 
     public function requestStatusCheck(Request $request) {
 
@@ -1506,7 +1585,7 @@ class UserapiController extends Controller
     
         if ($validator->fails()) {
             $error_messages = implode(',', $validator->messages()->all());
-            $response_array = array('success' => false, 'error' => get_error_message(101), 'error_code' => 101, 'error_messages'=>$error_messages);
+            $response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101, 'error_messages'=>$error_messages);
         
         } else {
 
@@ -1527,7 +1606,7 @@ class UserapiController extends Controller
             $req->save();
 
             // Send Push Notification to Provider
-            send_push_notification($req->confirmed_provider, PROVIDER, 'User Rated', 'The user rated your service.');
+            // send_push_notification($req->confirmed_provider, PROVIDER, 'User Rated', 'The user rated your service.');
 
             $response_array = array(
                 'success' => true
@@ -1535,7 +1614,7 @@ class UserapiController extends Controller
 
         }
 
-        $response = Response::json(Helper::null_safe($response_array), 200);
+        $response = response()->json(Helper::null_safe($response_array), 200);
         return $response;
     } 
 

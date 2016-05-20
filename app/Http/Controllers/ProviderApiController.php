@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-use App\Http\Requests;
-
 use App\Helpers\Helper;
 
 use Log;
@@ -13,6 +11,8 @@ use Log;
 use Hash;
 
 use Validator;
+
+use DB;
 
 use App\User;
 
@@ -22,17 +22,22 @@ use App\ProviderService;
 
 use App\ServiceType;
 
+use App\Requests;
+
+use App\RequestsMeta;
+
+use App\Settings;
+
+use App\ProviderRating;
+
 
 define('USER', 0);
 define('PROVIDER',1);
 
-
 define('NONE', 0);
-
 
 define('DEFAULT_FALSE', 0);
 define('DEFAULT_TRUE', 1);
-
 
 define('REQUEST_NEW',        0);
 define('REQUEST_WAITING',      1);
@@ -630,17 +635,20 @@ class ProviderApiController extends Controller
 		$validator = Validator::make(
 				$request->all(),
 				array(
-						'request_id' => 'required|integer|exists:requests,id',
+					'request_id' => 'required|integer|exists:requests,id',
 				));
 			
 		if ($validator->fails()) {
-            $error_messages = $validator->messages()->all();
+
+            $error_messages = implode(',', $validator->messages()->all());
+
 			$response_array = array(
                 'success' => false,
-                'error' => get_error_message(101),
+                'error' => Helper::get_error_message(101),
                 'error_code' => 101,
                 'error_messages' => $error_messages
             );
+
 		} else {
 			$provider = Provider::find($request->id);
 			$request_id = $request->request_id;
@@ -649,48 +657,56 @@ class ProviderApiController extends Controller
             if($requests->status == REQUEST_CANCELLED) {
                 $response_array = array(
                     'success' => false,
-                    'error' => get_error_message(117),
+                    'error' => Helper::get_error_message(117),
                     'error_code' => 117
                 );
             }else {
                 // Verify if request was indeed offered to this provider
-                $request_meta = RequestMeta::where('request_id', '=', $request_id)
+                $request_meta = RequestsMeta::where('request_id', '=', $request_id)
                     ->where('provider_id', '=', $provider->id)
-                    ->where('status', '=', REQUEST_SEND)->first();
+                    ->where('status', '=', REQUEST_WAITING)->first();
 
                 if (!$request_meta) {
                     // This request has not been offered to this provider. Abort.
                     $response_array = array(
                         'success' => false,
-                        'error' => get_error_message(101),
-                        'error_code' => 101);
+                        'error' => Helper::get_error_message(135),
+                        'error_code' => 135);
                 } else {
                     // Decline this offer
                     $request_meta->status = REQUEST_CANCELLED;
                     $request_meta->save();
 
-                    $provider->available = PROVIDER_IS_AVAILABLE;
+                    $provider->is_available = PROVIDER_AVAILABLE;
                     $provider->save();
 
                     $response_array = array('success' => true);
 
                     //Select the new provider who is in the next position.
-                    $request_meta_next = RequestMeta::where('request_id', '=', $request_id)->where('status', REQUEST_META_NONE)
-                                        ->leftJoin('provider', 'provider.id', '=', 'request_meta.provider_id')
-                                        ->where('provider.is_active',DEFAULT_TRUE)
-                                        ->where('provider.available',DEFAULT_TRUE)
-                                        ->select('request_meta.id','request_meta.status')
-                                        ->orderBy('request_meta.created_at')->first();
+                    $request_meta_next = RequestsMeta::where('request_id', '=', $request_id)->where('status', REQUEST_META_NONE)
+                                        ->leftJoin('providers', 'providers.id', '=', 'requests_meta.provider_id')
+                                        ->where('providers.is_activated',DEFAULT_TRUE)
+                                        ->where('providers.is_approved',DEFAULT_TRUE)
+                                        ->where('providers.is_available',DEFAULT_TRUE)
+                                        ->select('requests_meta.id','requests_meta.status')
+                                        ->orderBy('requests_meta.created_at')->first();
                     if($request_meta_next){
                         //Assign the next provider.
-                        $request_meta_next->status = REQUEST_SEND;
+                        $request_meta_next->status = REQUEST_META_OFFERED;
                         $request_meta_next->save();
                         //Update the request start time in request table
                         Requests::where('id', '=', $request->id)->update( array('request_start_time' => date("Y-m-d H:i:s")) );
+                    } else {
+
+                    	/**************************/
+                    	// Change status as no providers avaialable in request table
+
+                    	// delete all request meta data's
                     }
 
                 }
             }
+		
 		}
 		
 		$response = response()->json(Helper::null_safe($response_array) , 200);
@@ -702,14 +718,14 @@ class ProviderApiController extends Controller
 		$validator = Validator::make(
 				$request->all(),
 				array(
-						'request_id' => 'required|integer|exists:requests,id'
+					'request_id' => 'required|integer|exists:requests,id'
 				));
 			
 		if ($validator->fails()) {
-            $error_messages = $validator->messages()->all();
+            $error_messages = implode(',', $validator->messages()->all());
 			$response_array = array(
                 'success' => false,
-                'error' => get_error_message(101),
+                'error' => Helper::get_error_message(101),
                 'error_code' => 101,
                 'error_messages' => $error_messages
             );
@@ -726,15 +742,15 @@ class ProviderApiController extends Controller
                 );
             }else{
                 // Verify if request was indeed offered to this provider
-                $request_meta = RequestMeta::where('request_id', '=', $request_id)
+                $request_meta = RequestsMeta::where('request_id', '=', $request_id)
                     ->where('provider_id', '=', $provider->id)
-                    ->where('status', '=', REQUEST_SEND)->first();
+                    ->where('status', '=', REQUEST_WAITING)->first();
 
                 if (!$request_meta) {
                     // This request has not been offered to this provider. Abort.
                     $response_array = array(
                         'success' => false,
-                        'error' => get_error_message(101),
+                        'error' => Helper::get_error_message(101),
                         'error_code' => 101);
                 } else {
                     // Accept the offer
@@ -743,14 +759,14 @@ class ProviderApiController extends Controller
                     $requests->provider_status = PROVIDER_ACCEPTED;
                     $requests->save();
 
-                    $provider->available = PROVIDER_NOT_AVAILABLE;
+                    $provider->is_available = PROVIDER_NOT_AVAILABLE;
                     $provider->save();
 
                     /*Send Push Notification to User*/
-                    send_push_notification($requests->user_id, USER, 'Service Accepted', 'The Service is accepted by provider.');
+                    // send_push_notification($requests->user_id, USER, 'Service Accepted', 'The Service is accepted by provider.');
 
                     // No longer need request specific rows from RequestMeta
-                    RequestMeta::where('request_id', '=', $request_id)->delete();
+                    RequestsMeta::where('request_id', '=', $request_id)->delete();
 
                     $requestData = array(
                         'request_id' => $requests->id,
@@ -772,10 +788,11 @@ class ProviderApiController extends Controller
 	public function providerstarted(Request $request)
 	{
         $provider = Provider::find($request->id);
+
 		$validator = Validator::make(
             $request->all(),
             array(
-                'request_id' => 'required|integer|exists:request,id,confirmed_provider,'.$provider->id,
+                'request_id' => 'required|integer|exists:requests,id,confirmed_provider,'.$provider->id,
             ),
             array(
                 'exists' => 'The :attribute doesn\'t belong to provider:'.$provider->id
@@ -784,12 +801,13 @@ class ProviderApiController extends Controller
 		
 		if ($validator->fails()) 
 		{
-            $error_messages = $validator->messages()->all();
+            $error_messages = implode(',', $validator->messages()->all());
+
             $response_array = array(
                 'success' => false,
-                'error' => get_error_message(101),
+                'error' => Helper::get_error_message(101),
                 'error_code' => 101,
-                '$error_messages' => $error_messages
+                'error_messages' => $error_messages
             );
             Log::info('Input Error::'.print_r($error_messages,true));
 		} 
@@ -809,15 +827,19 @@ class ProviderApiController extends Controller
 	            $requests->status = REQUEST_INPROGRESS;
 	            $requests->provider_status = PROVIDER_STARTED;
     			$requests->save();
+
+    			$new_state = $requests->status;
+
 	            /*Send Push Notification to User*/
-	            send_push_notification($requests->user_id, USER, 'Provider Started', 'Provider started from location');
+	            // send_push_notification($requests->user_id, USER, 'Provider Started', 'Provider started from location');
            
 				$response_array = array(
 						'success' => true,
 						'new_state' => $new_state
 				);
 			} else {
-				$response_array = array('success' => false, 'error' => get_error_message(101), 'error_code' => 101);
+
+				$response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101);
                 Log::info('Provider status Error:: Old state='.$requests->provider_status.' and current state='.$current_state);
 			}
 		}
@@ -832,7 +854,7 @@ class ProviderApiController extends Controller
 		$validator = Validator::make(
             $request->all(),
             array(
-                'request_id' => 'required|integer|exists:request,id,confirmed_provider,'.$provider->id,
+                'request_id' => 'required|integer|exists:requests,id,confirmed_provider,'.$provider->id,
             ),
             array(
                 'exists' => 'The :attribute doesn\'t belong to provider:'.$provider->id
@@ -844,9 +866,9 @@ class ProviderApiController extends Controller
             $error_messages = $validator->messages()->all();
             $response_array = array(
                 'success' => false,
-                'error' => get_error_message(101),
+                'error' => Helper::get_error_message(101),
                 'error_code' => 101,
-                '$error_messages' => $error_messages
+                'error_messages' => $error_messages
             );
             Log::info('Input Error::'.print_r($error_messages,true));
 		} 
@@ -866,15 +888,16 @@ class ProviderApiController extends Controller
 	            $requests->status = REQUEST_INPROGRESS;
 	            $requests->provider_status = PROVIDER_ARRIVED;
     			$requests->save();
+
 	            /*Send Push Notification to User*/
-	            send_push_notification($requests->user_id, USER, 'Provider Arrived', 'Provider arrived to your location');
+	            // send_push_notification($requests->user_id, USER, 'Provider Arrived', 'Provider arrived to your location');
            
 				$response_array = array(
 						'success' => true,
-						'new_state' => $new_state
+						'new_state' => REQUEST_INPROGRESS
 				);
 			} else {
-				$response_array = array('success' => false, 'error' => get_error_message(101), 'error_code' => 101);
+				$response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101);
                 Log::info('Provider status Error:: Old state='.$requests->provider_status.' and current state='.$current_state);
 			}
 		}
@@ -889,7 +912,7 @@ class ProviderApiController extends Controller
 		$validator = Validator::make(
             $request->all(),
             array(
-                'request_id' => 'required|integer|exists:request,id,confirmed_provider,'.$provider->id,
+                'request_id' => 'required|integer|exists:requests,id,confirmed_provider,'.$provider->id,
             ),
             array(
                 'exists' => 'The :attribute doesn\'t belong to provider:'.$provider->id
@@ -901,9 +924,9 @@ class ProviderApiController extends Controller
             $error_messages = $validator->messages()->all();
             $response_array = array(
                 'success' => false,
-                'error' => get_error_message(101),
+                'error' => Helper::get_error_message(101),
                 'error_code' => 101,
-                '$error_messages' => $error_messages
+                'error_messages' => $error_messages
             );
             Log::info('Input Error::'.print_r($error_messages,true));
 		} 
@@ -930,14 +953,14 @@ class ProviderApiController extends Controller
 	            $requests->provider_status = PROVIDER_SERVICE_STARTED;
     			$requests->save();
 	            /*Send Push Notification to User*/
-	            send_push_notification($requests->user_id, USER, 'Provider Service Started', 'Provider service Started');
+	            // send_push_notification($requests->user_id, USER, 'Provider Service Started', 'Provider service Started');
            
 				$response_array = array(
 						'success' => true,
-						'new_state' => $new_state
+						'new_state' => REQUEST_INPROGRESS
 				);
 			} else {
-				$response_array = array('success' => false, 'error' => get_error_message(101), 'error_code' => 101);
+				$response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101);
                 Log::info('Provider status Error:: Old state='.$requests->provider_status.' and current state='.$current_state);
 			}
 		}
@@ -952,7 +975,7 @@ class ProviderApiController extends Controller
 		$validator = Validator::make(
             $request->all(),
             array(
-                'request_id' => 'required|integer|exists:request,id,confirmed_provider,'.$provider->id,
+                'request_id' => 'required|integer|exists:requests,id,confirmed_provider,'.$provider->id,
             ),
             array(
                 'exists' => 'The :attribute doesn\'t belong to provider:'.$provider->id
@@ -964,7 +987,7 @@ class ProviderApiController extends Controller
             $error_messages = $validator->messages()->all();
             $response_array = array(
                 'success' => false,
-                'error' => get_error_message(101),
+                'error' => Helper::get_error_message(101),
                 'error_code' => 101,
                 '$error_messages' => $error_messages
             );
@@ -988,8 +1011,9 @@ class ProviderApiController extends Controller
 					$image = $request->file('after_image');
 					$requests->before_image = Helper::upload_picture($image);
 				}
-	            $request->status = REQUEST_COMPLETE_PENDING;
-	            $request->end_time = date("Y-m-d H:i:s");
+
+	            $requests->status = REQUEST_COMPLETE_PENDING;
+	            $requests->end_time = date("Y-m-d H:i:s");
 	            $requests->provider_status = PROVIDER_SERVICE_COMPLETED;
     			$requests->save();
 
@@ -1005,8 +1029,8 @@ class ProviderApiController extends Controller
 	            
 
 	            //Update provider availability
-	            $provider = Provider::find($request->confirmed_provider);
-	            $provider->available = PROVIDER_AVAILABLE;
+	            $provider = Provider::find($requests->confirmed_provider);
+	            $provider->is_available = PROVIDER_AVAILABLE;
 	            $provider->save();
 
 	            /*Send Push Notification to User*/
@@ -1017,7 +1041,7 @@ class ProviderApiController extends Controller
 						'success' => true,
 				);
 			} else {
-				$response_array = array('success' => false, 'error' => get_error_message(101), 'error_code' => 101);
+				$response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101);
                 Log::info('Provider status Error:: Old state='.$requests->provider_status.' and current state='.$current_state);
 			}
 		}
@@ -1033,7 +1057,7 @@ class ProviderApiController extends Controller
 		$validator = Validator::make(
             $request->all(),
             array(
-                'request_id' => 'required|integer|exists:request,id,confirmed_provider,'.$provider->id.'|unique:provider_ratings,request_id',
+                'request_id' => 'required|integer|exists:requests,id,confirmed_provider,'.$provider->id.'|unique:provider_ratings,request_id',
                 'rating' => 'required|integer|in:'.RATINGS,
                 'comments' => 'max:255'
             ),
@@ -1044,8 +1068,8 @@ class ProviderApiController extends Controller
         );
 	
 		if ($validator->fails()) {
-            $error_messages = $validator->messages()->all();
-            $response_array = array('success' => false, 'error' => get_error_message(101), 'error_code' => 101, 'error_messages'=>$error_messages);
+            $error_messages = implode(',', $validator->messages()->all());
+            $response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101, 'error_messages'=>$error_messages);
 		} else {
             $request_id = $request->request_id;
             $comments = $request->comments;
@@ -1064,7 +1088,7 @@ class ProviderApiController extends Controller
             $req->save();
 
             /*Send Push Notification to User*/
-            send_push_notification($req->user_id, USER, 'Provider Rated', 'The provider rated your service.');
+            // send_push_notification($req->user_id, USER, 'Provider Rated', 'The provider rated your service.');
 
             
 
@@ -1087,8 +1111,8 @@ class ProviderApiController extends Controller
 
         if ($validator->fails())
         {
-            $error_messages = $validator->messages()->all();
-            $response_array = array('success' => false, 'error' => get_error_message(101), 'error_code' => 101, 'error_messages'=>$error_messages);
+            $error_messages = implode(',', $validator->messages()->all());
+            $response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101, 'error_messages'=>$error_messages);
         }else
         {
             $request_id = $request->request_id;
@@ -1108,11 +1132,11 @@ class ProviderApiController extends Controller
                 if( in_array($providerStatus, $allowedCancellationStatuses) )
                 {
                     /*Update status of the request to cancellation*/
-                    $request->status = REQUEST_CANCELLED;
-                    $request->save();
+                    $requests->status = REQUEST_CANCELLED;
+                    $requests->save();
 
                     /*Send Push Notification to User*/
-                    send_push_notification($requests->user_id, USER, 'Service Cancelled', 'The service is cancelled.');
+                    // send_push_notification($requests->user_id, USER, 'Service Cancelled', 'The service is cancelled.');
 
                     /*If request has confirmed provider then release him to available status*/
                     if($request->confirmed_provider != DEFAULT_FALSE){
@@ -1120,11 +1144,11 @@ class ProviderApiController extends Controller
                         $provider->available = PROVIDER_AVAILABLE;
                         $provider->save();
                         /*Send Push Notification to Provider*/
-                        send_push_notification($requests->confirmed_provider, PROVIDER, 'Service Cancelled', 'The service is cancelled by user.');
+                        // send_push_notification($requests->confirmed_provider, PROVIDER, 'Service Cancelled', 'The service is cancelled by user.');
                     }
 
                     // No longer need request specific rows from RequestMeta
-                    RequestMeta::where('request_id', '=', $request_id)->delete();
+                    RequestsMeta::where('request_id', '=', $request_id)->delete();
 
                     $response_array = array(
                         'success' => true,
@@ -1133,16 +1157,16 @@ class ProviderApiController extends Controller
                 }
                 else
                 {
-                    $response_array = array( 'success' => false, 'error' => get_error_message(114), 'error_code' => 114 );
+                    $response_array = array( 'success' => false, 'error' => Helper::get_error_message(114), 'error_code' => 114 );
                 }
 
             }
             else
             {
-                $response_array = array( 'success' => false, 'error' => get_error_message(113), 'error_code' => 113 );
+                $response_array = array( 'success' => false, 'error' => Helper::get_error_message(113), 'error_code' => 113 );
             }
 
-            $response_array = null_safe($response_array);
+            $response_array = Helper::null_safe($response_array);
         }
 
         $response = response()->json($response_array, 200);
@@ -1177,18 +1201,20 @@ class ProviderApiController extends Controller
 
 	public function get_incoming_request(Request $request)
 	{
-		$$provider = Provider::find($request->id);
+		$provider = Provider::find($request->id);
 
-		$request_meta = RequestMeta::where('requests_meta.provider_id',$provider->id)
+		// Don't check availability
+
+		$request_meta = RequestsMeta::where('requests_meta.provider_id',$provider->id)
                         ->where('requests_meta.status',REQUEST_META_OFFERED)
                         ->where('requests_meta.is_cancelled',0)
                         ->leftJoin('requests', 'requests.id', '=', 'requests_meta.request_id')
                         ->leftJoin('service_types', 'service_types.id', '=', 'requests.request_type')
                         ->leftJoin('users', 'users.id', '=', 'requests.user_id')
-                        ->select('requests.id as request_id', 'request.request_type as request_type', 'service_types.name as service_type_name', 'request_start_time as request_start_time', 'requests.status', 'requests.provider_status', 'requests.amount', DB::raw('CONCAT(users.first_name, " ", users.last_name) as user_name'), 'users.picture as user_picture', 'users.id as user_id','requests.latitude as latitude', 'requests.longitude as longitude')
+                        ->select('requests.id as request_id', 'requests.request_type as request_type', 'service_types.name as service_type_name', 'request_start_time as request_start_time', 'requests.status', 'requests.provider_status', 'requests.amount', DB::raw('CONCAT(users.first_name, " ", users.last_name) as user_name'), 'users.picture as user_picture', 'users.id as user_id','requests.s_latitude as latitude', 'requests.s_longitude as longitude')
                         ->get()->toArray();
 
-        $settings = Setting::where('key', 'provider_select_timeout')->first();
+        $settings = Settings::where('key', 'provider_select_timeout')->first();
         $provider_timeout = $settings->value;
 
         $request_meta_data = array();
@@ -1204,7 +1230,7 @@ class ProviderApiController extends Controller
 				'data' => $request_meta_data
 		);
 	
-		$response = Response::json($response_array, 200);
+		$response = response()->json(Helper::null_safe($response_array), 200);
 		return $response;
 	}
 
@@ -1212,14 +1238,14 @@ class ProviderApiController extends Controller
 	{
 		$provider = Provider::find($request->id);
 
-		$requests = Requests::where('confirmed_provider', '=', $provider->id)
-							->where('status', '!=', REQUEST_COMPLETED)
-							->where('status', '!=', REQUEST_CANCELLED)
+		$requests = Requests::where('requests.confirmed_provider', '=', $provider->id)
+							->where('requests.status', '!=', REQUEST_COMPLETED)
+							->where('requests.status', '!=', REQUEST_CANCELLED)
 							->where('provider_status', '!=', PROVIDER_RATED)
 							->leftJoin('users', 'users.id', '=', 'requests.user_id')
                             ->leftJoin('service_types', 'service_types.id', '=', 'requests.request_type')
 							->orderBy('provider_status','desc')
-							->select('requests.id as request_id', 'requests.request_type as request_type', 'service_types.name as service_type_name', 'request_start_time as request_start_time', 'requests.status', 'requests.provider_status', 'requests.amount', DB::raw('CONCAT(users.first_name, " ", users.last_name) as user_name'), 'users.picture as user_picture', 'users.id as user_id','requests.latitude', 'request.longitude')
+							->select('requests.id as request_id', 'requests.request_type as request_type', 'service_types.name as service_type_name', 'request_start_time as request_start_time', 'requests.status', 'requests.provider_status', 'requests.amount', DB::raw('CONCAT(users.first_name, " ", users.last_name) as user_name'), 'users.picture as user_picture', 'users.id as user_id','requests.s_latitude', 'requests.s_longitude')
                             ->get()->toArray();
 
         $requests_data = array();
@@ -1237,7 +1263,7 @@ class ProviderApiController extends Controller
             'data' => $requests_data
         );
 	
-		$response = Response::json($response_array, 200);
+		$response = response()->json(Helper::null_safe($response_array), 200);
 		return $response;
 	}
 

@@ -90,30 +90,32 @@ Route::group(['prefix' => 'providerApi'], function(){
 
 	Route::get('/tokenRenew', 'ProviderApiController@tokenRenew');
 
-	Route::post('/serviceaccept', 'ProviderApiController@service_accept');
+	Route::post('/serviceAccept', 'ProviderApiController@service_accept');
 
-	Route::post('/servicedecline', 'ProviderApiController@service_decline');
+	Route::post('/serviceDecline', 'ProviderApiController@service_decline');
 
-	Route::post('/providerstarted', 'ProviderApiController@providerstarted');
+	Route::post('/providerStarted', 'ProviderApiController@providerstarted');
 
 	Route::post('/arrived', 'ProviderApiController@arrived');
 
-	Route::post('/servicestarted', 'ProviderApiController@servicestarted');
+	Route::post('/serviceStarted', 'ProviderApiController@servicestarted');
 
-	Route::post('/servicecompleted', 'ProviderApiController@servicecompleted');
+	Route::post('/serviceCompleted', 'ProviderApiController@servicecompleted');
 
-	Route::post('/rateuser', 'ProviderApiController@rate_user');
+	Route::post('/rateUser', 'ProviderApiController@rate_user');
 
 	Route::post('/cancelrequest', 'ProviderApiController@cancelrequest');
 
 	Route::post('/history', 'ProviderApiController@history');
 
-	Route::post('/incomingrequest', 'ProviderApiController@get_incoming_request');
+	Route::post('/incomingRequest', 'ProviderApiController@get_incoming_request');
 
-	Route::post('/requeststatuscheck', 'ProviderApiController@request_status_check');
+	Route::post('/requestStatusCheck', 'ProviderApiController@request_status_check');
 
 
 });
+
+Route::get('/assign_next_provider_cron' , 'ApplicationController@assign_next_provider_cron');
 
 
 

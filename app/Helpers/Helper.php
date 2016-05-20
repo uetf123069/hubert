@@ -230,7 +230,7 @@
                     $string = "There was a problem with the server. Please try again.";
                     break;
                 case 110:
-                    $string = "There is a delivery already in progress.";
+                    $string = "There is a service already in progress.";
                     break;
                 case 111:
                     $string = "Email is not activated.";
@@ -239,10 +239,10 @@
                     $string = "No provider found for the selected service in your area currently.";
                     break;
                 case 113:
-                    $string = "The delivery is already cancelled.";
+                    $string = "The service is already cancelled.";
                     break;
                 case 114:
-                    $string = "The delivery cancellation is not allowed at this point.";
+                    $string = "The service cancellation is not allowed at this point.";
                     break;
                 case 115:
                     $string = "Invalid refresh token.";
@@ -251,10 +251,10 @@
                     $string = "No provider assigned to this request id.";
                     break;
                 case 117:
-                    $string = "The delivery is cancelled by user.";
+                    $string = "The service is cancelled by user.";
                     break;
                 case 118:
-                    $string = "The delivery is not completed.";
+                    $string = "The service is not completed.";
                     break;
                 case 119:
                     $string = "You have pending payments of completed deliveries.";
@@ -303,6 +303,9 @@
                     break;
                 case 134:
                     $string = 'Payment details is not filled';
+                    break;
+                case 135:
+                    $string = "Request Service ID and Provider ID are mismatched";
                     break;
                 default:
                     $string = "Unknown error occurred.";
