@@ -694,7 +694,7 @@ class ProviderApiController extends Controller
             }
 		}
 		
-		$response = Response::json($response_array, 200);
+		$response = response()->json(Helper::null_safe($response_array) , 200);
 		return $response;
 	}
 	
@@ -766,7 +766,7 @@ class ProviderApiController extends Controller
 		}
 		// Send Notification to User
 		
-		$response = Response::json($response_array, 200);
+		$response = response()->json(Helper::null_safe($response_array) , 200);
 		return $response;
 	}
 
@@ -823,7 +823,7 @@ class ProviderApiController extends Controller
 			}
 		}
 
-		$response = Response::json($response_array, 200);
+		$response = response()->json(Helper::null_safe($response_array) , 200);
 		return $response;
 	}
 
@@ -880,7 +880,7 @@ class ProviderApiController extends Controller
 			}
 		}
 
-		$response = Response::json($response_array, 200);
+		$response = response()->json(Helper::null_safe($response_array) , 200);
 		return $response;
 	}
 
@@ -943,7 +943,7 @@ class ProviderApiController extends Controller
 			}
 		}
 
-		$response = Response::json($response_array, 200);
+		$response = response()->json(Helper::null_safe($response_array) , 200);
 		return $response;
 	}
 
@@ -1023,7 +1023,7 @@ class ProviderApiController extends Controller
 			}
 		}
 
-		$response = Response::json($response_array, 200);
+		$response = response()->json(Helper::null_safe($response_array) , 200);
 		return $response;
 	}
 
@@ -1074,9 +1074,7 @@ class ProviderApiController extends Controller
             );
 
 		}
-
-		$response = Response::json($response_array, 200);
-		return $response;
+		return response()->json(Helper::null_safe($response_array) , 200);
 	}
 }
 
