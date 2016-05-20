@@ -8,14 +8,14 @@ use App\Http\Requests;
 
 class ApplicationController extends Controller
 {
-     public function assign_next_provider_cron(){
+    public function assign_next_provider_cron(){
         $settings = Setting::where('key', 'provider_select_timeout')->first();
         $provider_timeout = $settings->value;
         $time = date("Y-m-d H:i:s");
         //Log::info('assign_next_provider_cron ran at: '.$time);
 
         //Get all the new waiting requests which are not confirmed and not cancelled.
-        $query = "SELECT id, user_id,request_type, TIMESTAMPDIFF(SECOND,request_start_time, '$time') AS time_since_request_assigned
+        $query = "SELECT id, user_id,request_type, TIMESTAMP DIFF(SECOND,request_start_time, '$time') AS time_since_request_assigned
                   FROM request
                   WHERE status = ".REQUEST_WAITING;
         $requests = DB::select(DB::raw($query));
@@ -24,15 +24,16 @@ class ApplicationController extends Controller
 
             if ($request->time_since_request_assigned >= $provider_timeout) {
                 // TimeOut the current assigned provider
-                RequestMeta::where('request_id', $request->id)->where('status', REQUEST_META_OFFERED)->update(array('status' => REQUEST_META_TIMEDOUT));
+                RequestsMeta::where('request_id', $request->id)->where('status', REQUEST_META_OFFERED)->update(array('status' => REQUEST_META_TIMEDOUT));
 
                 //Select the new provider who is in the next position.
-                $next_request_meta = RequestMeta::where('request_id', '=', $request->id)->where('status', REQUEST_META_NONE)
-                                    ->leftJoin('provider', 'provider.id', '=', 'request_meta.provider_id')
-                                    ->where('provider.is_active',DEFAULT_TRUE)
-                                    ->where('provider.available',DEFAULT_TRUE)
-                                    ->select('request_meta.id','request_meta.status','request_meta.provider_id')
-                                    ->orderBy('request_meta.created_at')->first();
+                $next_request_meta = RequestsMeta::where('request_id', '=', $request->id)->where('status', REQUEST_META_NONE)
+                                    ->leftJoin('providers', 'providers.id', '=', 'requests_meta.provider_id')
+                                    ->where('providers.is_activated',DEFAULT_TRUE)
+                                    ->where('providers.is_available',DEFAULT_TRUE)
+                                    ->where('providers.is_approved',DEFAULT_TRUE)
+                                    ->select('requests_meta.id','requests_meta.status','requests_meta.provider_id')
+                                    ->orderBy('requests_meta.created_at')->first();
 
                 //Check the next provider exist or not.
                 if($next_request_meta){
@@ -44,10 +45,9 @@ class ApplicationController extends Controller
                     Log::info('assign_next_provider_cron assigned provider to request_id:'.$request->id.' at '.$time);
 
                     /*Push Start*/
-                    $settings = Setting::where('key', 'provider_select_timeout')->first();
-                    $provider_timeout = $settings->value;
+                    
                     $service = ServiceType::find($request->request_type);
-                    $user = Provider::find($request->user_id);
+                    $user = Provider::find($request->current_provider);
                     $request_data = Requests::find($request->id);
 
 
