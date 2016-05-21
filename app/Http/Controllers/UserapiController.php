@@ -34,6 +34,8 @@ use App\FavouriteProvider;
 
 use App\UserRating;
 
+use App\ProviderRating;
+
 use App\Cards;
 
 
@@ -735,90 +737,55 @@ class UserapiController extends Controller
                 $check_status = array(REQUEST_CANCEL_USER,REQUEST_NO_PROVIDER_AVAILABLE,REQUEST_CANCELLED,REQUEST_CANCEL_PROVIDER,REQUEST_COMPLETED);
 
                 $check_requests = Requests::where('user_id' , $request->id)->whereNotIn('status' , $check_status)->count();
+
                 if($check_requests == 0) {
 
                     Log::info('Previous requests check is done');
             
                     $service_type = $request->service_type; // Get the service type 
 
-                    /** Favourite Providers Search Start */
+                    // Initialize the variable
+                    $list_fav_providers = array(); $first_provider_id = 0; $list_fav_provider = array();
 
-                    Log::info('Favourite Providers Search Start');
+                    /** Fav Providers SEARCH started */
 
-                    $favProviders = array();  // Initialize the variable
-
-                     // Get the favourite providers list
-
-                    $fav_providers_query = FavouriteProvider::leftJoin('providers' , 'favourite_providers.provider_id' ,'=' , 'providers.id')
-                            ->where('providers.is_available' , DEFAULT_TRUE)
-                            ->where('providers.is_activated' , DEFAULT_TRUE)
-                            ->where('providers.is_approved' , DEFAULT_TRUE);
-
-                    if($service_type) {
-
-                        $provider_services = ProviderService::where('service_type_id' , $service_type)
-                                                ->where('is_available' , DEFAULT_TRUE)
-                                                ->get();
-
-                        $provider_ids = array();
-
-                        if($provider_services ) {
-
-                            foreach ($provider_services as $key => $provider_service) {
-                                # code...
-                                $provider_ids[] = $provider_service->provider_id;
-                            }
-
-                            $favProviders = $fav_providers_query->whereIn('provider_id' , $provider_ids)->get();
-                        }
-                                       
-                    } else {
-                        $favProviders = $fav_providers_query->get();
-                    }
+                    $favProviders = Helper::get_fav_providers($service_type,$request->id);
 
                     // Check Favourite Providers list is not empty
 
                     if($favProviders) {
 
-                        // Initialize the variable
-
-                        $list_fav_providers = array();
-
-                        $first_provider_id = 0;
-
                         foreach ($favProviders as $key => $favProvider) {
 
-                            $list_fav_providers[] = $favProvider->provider_id;
+                            $list_fav_provider['id'] = $favProvider->provider_id;
+                            $list_fav_provider['waiting'] = $favProvider->waiting;
+                            $list_fav_provider['distance'] = 0;
 
                             // Assign value to the first_provider_id to send push notifications
-
                             if($first_provider_id == 0) {
-                                $first_provider_id = $favProvider->provider_id;
+                                if($favProvider->waiting == 0) {
+                                    $first_provider_id = $favProvider->provider_id;
+                                }
                             }
 
-                        }
-                    
+                            array_push($list_fav_providers, $list_fav_provider);
+                        }                
                     }
 
+                    // Log::info('List Of Favourite Providers' .print_r($list_fav_providers, true));
 
-                    Log::info('List Of Favourite Providers' .print_r($list_fav_providers, true));
+                    /** Fav providers end */
 
-                    /** Favourite Providers Search End */
-
-                    $s_latitude = $latitude = $request->s_latitude;
-                    $s_longitude = $longitude = $request->s_longitude;
-
-                    $d_latitude = $request->d_latitude;
-                    $d_longitude = $request->d_longitude;
+                    $latitude = $request->s_latitude;
+                    $longitude = $request->s_longitude;
 
                     $request_start_time = time();
 
                     /*Get default search radius*/
                     $settings = Settings::where('key', 'search_radius')->first();
                     $distance = $settings->value;
-                    // Search Providers
 
-                    $available = 1;
+                    // Search Providers
 
                     $providers = array();   // Initialize providers variable
 
@@ -830,27 +797,23 @@ class UserapiController extends Controller
 
                         // Get the providers based on the selected service types
 
-                        $service_providers = ProviderService::where('service_type_id' , $service_type)->where('is_available' , 1)->get();
+                        $service_providers = ProviderService::where('service_type_id' , $service_type)->where('is_available' , 1)->select('provider_id')->get();
 
                         $list_service_ids = array();    // Initialize list_service_ids
 
                         if($service_providers) {
-
                             foreach ($service_providers as $sp => $service_provider) {
-
-                                if($service_provider->provider_id != $request->id)
 
                                     $list_service_ids[] = $service_provider->provider_id;
 
                             }
-
                             $list_service_ids = implode(',', $list_service_ids);
 
                         }
 
                         if($list_service_ids) {
 
-                            $query = "SELECT providers.id, 1.609344 * 3956 * acos( cos( radians('$latitude') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians('$longitude') ) + sin( radians('$latitude') ) * sin( radians(latitude) ) ) AS distance FROM providers
+                            $query = "SELECT providers.id,providers.waiting_to_respond as waiting, 1.609344 * 3956 * acos( cos( radians('$latitude') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians('$longitude') ) + sin( radians('$latitude') ) * sin( radians(latitude) ) ) AS distance FROM providers
                                     WHERE id IN ($list_service_ids) AND is_available = 1 AND is_activated = 1 AND is_approved = 1
                                     AND (1.609344 * 3956 * acos( cos( radians('$latitude') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians('$longitude') ) + sin( radians('$latitude') ) * sin( radians(latitude) ) ) ) <= $distance
                                     ORDER BY distance";
@@ -865,7 +828,7 @@ class UserapiController extends Controller
 
                         Log::info('Location Based search started - without service_type');
 
-                        $query = "SELECT providers.id, 1.609344 * 3956 * acos( cos( radians('$latitude') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians('$longitude') ) + sin( radians('$latitude') ) * sin( radians(latitude) ) ) AS distance FROM providers
+                        $query = "SELECT providers.id,providers.waiting_to_respond as waiting, 1.609344 * 3956 * acos( cos( radians('$latitude') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians('$longitude') ) + sin( radians('$latitude') ) * sin( radians(latitude) ) ) AS distance FROM providers
                                 WHERE is_available = 1 AND is_activated = 1 AND is_approved = 1
                                 AND (1.609344 * 3956 * acos( cos( radians('$latitude') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians('$longitude') ) + sin( radians('$latitude') ) * sin( radians(latitude) ) ) ) <= $distance
                                 ORDER BY distance";
@@ -876,15 +839,16 @@ class UserapiController extends Controller
                     
                     }
 
-                    Log::info('List of providers'." ".print_r($providers));
+                    // Log::info('List of providers'." ".print_r($providers));
 
-                    $final_providers = array();
+                    $merge_providers = array();
 
                     if ($providers) 
                     {
                         // Initialize Final list of provider variable
 
                         $search_providers = array();
+                        $search_provider = array();
 
                         foreach ($providers as $provider) 
                         {
@@ -894,8 +858,12 @@ class UserapiController extends Controller
                                 $first_provider_id = $provider->id;
                             }
 
-                            $search_providers[] = $provider->id;
-                        
+                            // $search_providers[] = $provider->id;
+                            $search_provider['id'] = $provider->id;
+                            $search_provider['waiting'] = $provider->waiting;
+                            $search_provider['distance'] = $provider->distance;
+                            
+                            array_push($search_providers, $search_provider);
                         }
 
                     } else {
@@ -905,10 +873,11 @@ class UserapiController extends Controller
                         // Helper::send_push_notification($user->id, USER, Helper::get_push_message(601), Helper::get_push_message(602));
                         $response_array = array('success' => false, 'error' => Helper::get_error_message(112), 'error_code' => 112);
                     }
-                    // Merge the favourite providers and search providers
-                    $final_providers = array_unique(array_merge($list_fav_providers,$search_providers));
 
-                    $user = User::find($request->id);
+                    // Merge the favourite providers and search providers
+                    $merge_providers = array_merge($list_fav_providers,$search_providers);
+
+                    $final_providers = Helper::sort_waiting_providers($merge_providers);            
 
                     // Create Requests
                     $requests = new Requests;
@@ -923,19 +892,11 @@ class UserapiController extends Controller
 
                     $requests->s_address = $request->s_address ? $request->s_address : "";
                         
-                    $requests->d_address = $request->d_address ? $request->d_address : "";
+                    if($latitude)
+                        $requests->s_latitude = $latitude;
 
-                    if($s_latitude)
-                        $requests->s_latitude = $s_latitude;
-
-                    if($s_longitude)
-                        $requests->s_longitude = $s_longitude;
-
-                    if($d_latitude)
-                        $requests->d_latitude = $d_latitude;
-
-                    if($d_longitude)
-                        $requests->d_longitude = $d_longitude;
+                    if($longitude)
+                        $requests->s_longitude = $longitude;
                         
                     $requests->save();
 
@@ -949,12 +910,18 @@ class UserapiController extends Controller
 
                         if ($first_provider_id) {
 
+                            // Availablity status change 
+
+                            if($current_provider = Provider::find($first_provider_id)) {
+
+                                $current_provider->waiting_to_respond = WAITING_TO_RESPOND;
+                                $current_provider->save();
+                            }
+
                             // Push notification start
 
-                            // $settings = Setting::where('key', 'provider_select_timeout')->first();
-                            // $provider_timeout = $settings->value;
-
-                            $provider_timeout = 60;
+                            $settings = Settings::where('key', 'provider_select_timeout')->first();
+                            $provider_timeout = $settings->value;
 
                             if($service_type)
                                 $service = ServiceType::find($requests->request_type);
@@ -964,16 +931,12 @@ class UserapiController extends Controller
                             $push_data['service_type'] = $requests->request_type;
                             $push_data['request_start_time'] = $requests->request_start_time;
                             $push_data['status'] = $requests->status;
-                            $push_data['amount'] = $requests->amount;
                             $push_data['user_name'] = $user->name;
                             $push_data['user_picture'] = $user->picture;
                             $push_data['s_address'] = $requests->s_address;
-                            $push_data['d_address'] = $requests->d_address;
                             $push_data['s_latitude'] = $requests->s_latitude;
                             $push_data['s_longitude'] = $requests->s_longitude;
-                            $push_data['d_latitude'] = $requests->d_latitude;
-                            $push_data['d_longitude'] = $requests->d_longitude;
-                            // $push_data['user_rating'] = ProviderRating::where('provider_id', $provider->id)->avg('rating') ?: 0;
+                            $push_data['user_rating'] = ProviderRating::where('provider_id', $first_provider_id)->avg('rating') ?: 0;
                             $push_data['time_left_to_respond'] = $provider_timeout - (time() - strtotime($requests->request_start_time));
 
                             $title = "New Request";
@@ -1025,35 +988,25 @@ class UserapiController extends Controller
                         $response_array = array(
                             'success' => true,
                             'source_address' => $requests->s_address,
-                            'desti_address' => $requests->d_address,
-                            'source_lat' => $requests->s_latitude,
-                            'source_long' => $requests->s_longitude,
-                            'desti_lat' => $requests->d_latitude,
-                            'desti_long' => $requests->d_longitude,
+                            's_latitude' => $requests->s_latitude,
+                            's_longitude' => $requests->s_longitude,
                             'service_id' => $requests->service_id,
                             'request_id' => $requests->id,
                         );
-
 
                         $response_array = Helper::null_safe($response_array);
 
                         Log::info('Create request end');
 
                     } else {
-
                         $response_array = array('success' => false , 'error' => Helper::get_error_message(126) , 'error_code' => 126 );
-                    }
-
-                    
-
+                    }     
                 } else {
-
                     $response_array = array('success' => false , 'error' => Helper::get_error_message(127) , 'error_code' => 127);
                 }
 
             }
         }
-
         $response = response()->json($response_array, 200);
         return $response;
     }
