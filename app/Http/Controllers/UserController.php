@@ -27,4 +27,34 @@ class UserController extends Controller
     {
         return view('user.dashboard');
     }
+
+    /**
+     * Show the services list.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function services()
+    {
+        return view('user.services');
+    }
+
+    /**
+     * Show the request list.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function request()
+    {
+        return view('user.request');
+    }
+
+    /**
+     * Show the profile list.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function profile()
+    {
+        return view('user.profile');
+    }
 }

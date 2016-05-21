@@ -51,7 +51,7 @@
                 <div class="static-content">
                     <div class="page-content">
                         <div class="page-heading">
-                            <h1>Dashboard</h1>
+                            <h1>@yield('page_title')</h1>
                         </div>
                         <div class="container-fluid">
                             @yield('content')
