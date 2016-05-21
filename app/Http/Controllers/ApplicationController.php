@@ -63,6 +63,9 @@ define('REQUEST_META_OFFERED',   1);
 define('REQUEST_META_TIMEDOUT', 2);
 define('REQUEST_META_DECLINED', 3);
 
+define('WAITING_TO_RESPOND', 1);
+define('WAITING_TO_RESPOND_NORMAL',0);
+
 define('RATINGS', '1,2,3,4,5');
 
 
@@ -73,6 +76,9 @@ define('DEVICE_IOS', 'ios');
 class ApplicationController extends Controller
 {
     public function assign_next_provider_cron(){
+
+        Log::info("CRON STARTED");
+
         $settings = Settings::where('key', 'provider_select_timeout')->first();
         $provider_timeout = $settings->value;
         $time = date("Y-m-d H:i:s");
@@ -110,6 +116,7 @@ class ApplicationController extends Controller
 
                 //Check the next provider exist or not.
                 if($next_request_meta){
+
                     // change waiting to respond state
                     $provider_detail = Provider::find($next_request_meta->provider_id);
                     $provider_detail->waiting_to_respond = WAITING_TO_RESPOND;
@@ -129,7 +136,7 @@ class ApplicationController extends Controller
 
 
                     // Push notification has to add
-                    
+
                     $push_data = array();
                     $title = "New Service";
                     $push_msg = "You got a new service from ".$user->first_name.''.$user->last_name;
@@ -143,6 +150,7 @@ class ApplicationController extends Controller
                     // send_push_notification($next_request_meta->provider_id, PROVIDER, $title, $push_message);
 
                     Log::info(print_r($push_message,true));
+
                 }else{
                     //End the request
                     //Update the request status to no provider available
@@ -159,6 +167,8 @@ class ApplicationController extends Controller
                     // send_push_notification($request->user_id, USER, 'No Provider Available', 'No provider available to take the service.');
 
                 }
+            } else {
+                Log::info("Provider Waiting State");
             }
         }
     }

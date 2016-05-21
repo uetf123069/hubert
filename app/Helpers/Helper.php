@@ -307,6 +307,12 @@
                 case 135:
                     $string = "Request Service ID and Provider ID are mismatched";
                     break;
+                case 136:
+                    $string = "Request already completed";
+                    break;
+                case 137:
+                    $string = "The service payment is not allowed at this point.";
+                    break;
                 default:
                     $string = "Unknown error occurred.";
             }
