@@ -664,7 +664,7 @@ class ProviderApiController extends Controller
                 // Verify if request was indeed offered to this provider
                 $request_meta = RequestsMeta::where('request_id', '=', $request_id)
                     ->where('provider_id', '=', $provider->id)
-                    ->where('status', '=', REQUEST_WAITING)->first();
+                    ->where('status', '=', REQUEST_META_OFFERED)->first();
 
                 if (!$request_meta) {
                     // This request has not been offered to this provider. Abort.
@@ -700,8 +700,12 @@ class ProviderApiController extends Controller
 
                     	/**************************/
                     	// Change status as no providers avaialable in request table
+                    	 Requests::where('id', '=', $request->id)->update( array('status' => REQUEST_NO_PROVIDER_AVAILABLE) );
 
-                    	// delete all request meta data's
+	                    // No longer need request specific rows from RequestMeta
+	                    RequestsMeta::where('request_id', '=', $request->id)->delete();
+	                    Log::info('assign_next_provider ended the request_id:'.$request->id.' at '.$time);
+
                     }
 
                 }
