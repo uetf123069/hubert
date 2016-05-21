@@ -76,6 +76,9 @@ define('REQUEST_META_OFFERED',   1);
 define('REQUEST_META_TIMEDOUT', 2);
 define('REQUEST_META_DECLINED', 3);
 
+define('WAITING_TO_RESPOND', 1);
+define('WAITING_TO_RESPOND_NORMAL',0);
+
 define('RATINGS', '1,2,3,4,5');
 
 
@@ -1069,7 +1072,7 @@ class UserapiController extends Controller
 
                                     if($current_provider = Provider::find($first_provider_id)) {
 
-                                        $current_provider->is_available = PROVIDER_NOT_AVAILABLE;
+                                        $current_provider->waiting_to_respond = WAITING_TO_RESPOND;
                                         $current_provider->save();
                                     }
                                 }

@@ -63,6 +63,9 @@ define('REQUEST_META_OFFERED',   1);
 define('REQUEST_META_TIMEDOUT', 2);
 define('REQUEST_META_DECLINED', 3);
 
+define('WAITING_TO_RESPOND', 1);
+define('WAITING_TO_RESPOND_NORMAL',0);
+
 define('RATINGS', '1,2,3,4,5');
 
 
