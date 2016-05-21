@@ -33,7 +33,6 @@ use App\FavouriteProvider;
 use App\UserRating;
 
 
-
 define('USER', 0);
 
 define('PROVIDER',1);
@@ -1265,7 +1264,7 @@ class UserapiController extends Controller
     //                 /*If request has confirmed provider then release him to available status*/
     //                 if($request->confirmed_provider != DEFAULT_FALSE){
     //                     $provider = Provider::find( $requests->confirmed_provider );
-    //                     $provider->available = PROVIDER_AVAILABLE;
+    //                     $provider->is_available = PROVIDER_AVAILABLE;
     //                     $provider->save();
     //                     /*Send Push Notification to Provider*/
     //                     // send_push_notification($requests->confirmed_provider, PROVIDER, 'Service Cancelled', 'The service is cancelled by user.');
