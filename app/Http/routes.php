@@ -118,13 +118,13 @@ Route::group(['prefix' => 'admin'], function(){
 
 Route::group([], function(){
 
-    Route::get('login', 'Auth\AuthController@showLoginForm');
-    Route::post('login', 'Auth\AuthController@login');
-    Route::get('logout', 'Auth\AuthController@logout');
+    Route::get('login', 'Auth\AuthController@showLoginForm')->name('user.login.form');
+    Route::post('login', 'Auth\AuthController@login')->name('user.login.post');
+    Route::get('logout', 'Auth\AuthController@logout')->name('user.logout');
 
     // Registration Routes...
-    Route::get('register', 'Auth\AuthController@showRegistrationForm');
-    Route::post('register', 'Auth\AuthController@register');
+    Route::get('register', 'Auth\AuthController@showRegistrationForm')->name('user.register.form');
+    Route::post('register', 'Auth\AuthController@register')->name('user.register.post');
 
     // Password Reset Routes...
     Route::get('password/reset/{token?}', 'Auth\PasswordController@showResetForm');
@@ -133,4 +133,9 @@ Route::group([], function(){
 
     Route::get('/', 'UserController@index')->name('user.dashboard');
 
+    Route::get('/services', 'UserController@services')->name('user.services.list');
+    Route::get('/request', 'UserController@request')->name('user.services.request');
+    Route::get('/profile', 'UserController@profile')->name('user.profile');
+
 });
+
