@@ -426,7 +426,7 @@ class UserapiController extends Controller
         $validator = Validator::make(
             $request->all(),
             array(
-                'email' => 'required|email',
+                'email' => 'required|email|exists:users,email',
             )
         );
 
@@ -436,41 +436,32 @@ class UserapiController extends Controller
             $response_code = 200;
             $response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101, 'error_messages'=> $error_messages);
 
-        } else {
+        } 
+        else 
+        {
+			$user = User::find($user_data->id);
+			$new_password = Helper::generate_password();
+			$user->password = Hash::make($new_password);
+			$user->save();
 
-    		$user_data = User::where('email',$email)->first();
+			$subject = "Your New Password";
+			$email_data = array();
+			$email_data['password']  = $new_password;
 
-    		if($user_data)
-    		{
-    			$user = User::find($user_data->id);
-    			$new_password = Helper::generate_password();
-    			$user->password = Hash::make($new_password);
-    			$user->save();
+			$email_send = Helper::send_user_forgot_email($user->email,$email_data,$subject);
 
-    			$subject = "Your New Password";
-    			$email_data = array();
-    			$email_data['password']  = $new_password;
+			$response_array = array();
 
-    			$email_send = Helper::send_user_forgot_email($user->email,$email_data,$subject);
+            if($email_send == Helper::get_message(106)) {
+                $response_array['success'] = true;
+                $response_array['message'] = $email_send;
+                
+            } else {
+                $response_array['success'] = false;
+                $response_array['message'] = $email_send;
+            }
 
-    			$response_array = array();
-
-                if($email_send == Helper::get_message(106)) {
-                    $response_array['success'] = true;
-                    $response_array['message'] = $email_send;
-                    
-                } else {
-                    $response_array['success'] = false;
-                    $response_array['message'] = $email_send;
-                }
-
-                $response_code = 200;
-
-    		} else {
-
-    			$response_array = array('success' => false, 'error' => Helper::get_error_message(124), 'error_code' => 124);
-    			$response_code = 200;
-    		}
+            $response_code = 200;
         }
 
         $response = response()->json($response_array, $response_code);
@@ -488,6 +479,7 @@ class UserapiController extends Controller
                 'old_password' => 'required',
                 'confirm_password' => 'required',
             ]);
+        // check new password and confirm password are same ?
 
         if($validator->fails()) {
 
@@ -761,7 +753,7 @@ class UserapiController extends Controller
                 array(
                     's_latitude' => 'required|numeric',
                     's_longitude' => 'required|numeric',
-                    'service_type' => 'numeric',
+                    'service_type' => 'numeric|exists:service_types,id',
                 ));
 
         if ($validator->fails()) 

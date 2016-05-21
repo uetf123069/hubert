@@ -295,7 +295,7 @@ class ProviderApiController extends Controller
         $validator = Validator::make(
             $request->all(),
             array(
-                'email' => 'required|email',
+                'email' => 'required|email|exists:providers,email',
             )
         );
 
@@ -307,42 +307,31 @@ class ProviderApiController extends Controller
 
         } else {
 
-	        $provider_data = Provider::where('email',$email)->first();
+	        $provider = Provider::where('email',$email)->first();
 
-	        if($provider_data)
-	        {
-	            $provider = $provider_data;
+            $new_password = Helper::generate_password();
+            $provider->password = Hash::make($new_password);
+            $provider->save();
 
-	            $new_password = Helper::generate_password();
-	            $provider->password = Hash::make($new_password);
-	            $provider->save();
+            $subject = "Your New Password";
+            $email_data = array();
+            $email_data['password']  = $new_password;
 
-	            $subject = "Your New Password";
-	            $email_data = array();
-	            $email_data['password']  = $new_password;
+            $email_send = Helper::send_provider_forgot_email($provider->email,$email_data,$subject);
 
-	            $email_send = Helper::send_provider_forgot_email($provider->email,$email_data,$subject);
+            $response_array = array();
 
-	            $response_array = array();
+            if($email_send == Helper::get_message(106)) {
 
-                if($email_send == Helper::get_message(106)) {
+                $response_array['success'] = true;
+                $response_array['message'] = $email_send;
+                
+            } else {
+                $response_array['success'] = false;
+                $response_array['message'] = $email_send;
+            }
 
-                    $response_array['success'] = true;
-                    $response_array['message'] = $email_send;
-                    
-                } else {
-                    $response_array['success'] = false;
-                    $response_array['message'] = $email_send;
-                }
-
-                $response_code = 200;
-
-	        } else {
-
-	            $response_array = array('success' => false, 'error' => Helper::get(125), 'error_code' => 125);
-	            $response_code = 200;
-	            
-	        }
+            $response_code = 200;
 
 	        $response = response()->json($response_array, $response_code);
 	        return $response;
@@ -633,7 +622,7 @@ class ProviderApiController extends Controller
 		return $response;
 	}
 
-	public function service_decline(Request $request)
+	public function service_reject(Request $request)
 	{
 		$validator = Validator::make(
 				$request->all(),
