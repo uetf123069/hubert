@@ -72,6 +72,9 @@ define('RATINGS', '1,2,3,4,5');
 define('DEVICE_ANDROID', 'android');
 define('DEVICE_IOS', 'ios');
 
+define('WAITING_TO_RESPOND', 1);
+define('WAITING_TO_RESPOND_NORMAL',0);
+
 
 class ProviderApiController extends Controller
 {
@@ -292,7 +295,7 @@ class ProviderApiController extends Controller
         $validator = Validator::make(
             $request->all(),
             array(
-                'email' => 'required|email',
+                'email' => 'required|email|exists:providers,email',
             )
         );
 
@@ -304,42 +307,31 @@ class ProviderApiController extends Controller
 
         } else {
 
-	        $provider_data = Provider::where('email',$email)->first();
+	        $provider = Provider::where('email',$email)->first();
 
-	        if($provider_data)
-	        {
-	            $provider = $provider_data;
+            $new_password = Helper::generate_password();
+            $provider->password = Hash::make($new_password);
+            $provider->save();
 
-	            $new_password = Helper::generate_password();
-	            $provider->password = Hash::make($new_password);
-	            $provider->save();
+            $subject = "Your New Password";
+            $email_data = array();
+            $email_data['password']  = $new_password;
 
-	            $subject = "Your New Password";
-	            $email_data = array();
-	            $email_data['password']  = $new_password;
+            $email_send = Helper::send_provider_forgot_email($provider->email,$email_data,$subject);
 
-	            $email_send = Helper::send_provider_forgot_email($provider->email,$email_data,$subject);
+            $response_array = array();
 
-	            $response_array = array();
+            if($email_send == Helper::get_message(106)) {
 
-                if($email_send == Helper::get_message(106)) {
+                $response_array['success'] = true;
+                $response_array['message'] = $email_send;
+                
+            } else {
+                $response_array['success'] = false;
+                $response_array['message'] = $email_send;
+            }
 
-                    $response_array['success'] = true;
-                    $response_array['message'] = $email_send;
-                    
-                } else {
-                    $response_array['success'] = false;
-                    $response_array['message'] = $email_send;
-                }
-
-                $response_code = 200;
-
-	        } else {
-
-	            $response_array = array('success' => false, 'error' => Helper::get(125), 'error_code' => 125);
-	            $response_code = 200;
-	            
-	        }
+            $response_code = 200;
 
 	        $response = response()->json($response_array, $response_code);
 	        return $response;
@@ -630,7 +622,7 @@ class ProviderApiController extends Controller
 		return $response;
 	}
 
-	public function service_decline(Request $request)
+	public function service_reject(Request $request)
 	{
 		$validator = Validator::make(
 				$request->all(),
@@ -677,8 +669,9 @@ class ProviderApiController extends Controller
                     $request_meta->status = REQUEST_CANCELLED;
                     $request_meta->save();
 
-                    $provider->is_available = PROVIDER_AVAILABLE;
-                    $provider->save();
+                    // change waiting to respond state to normal state
+                    $provider->waiting_to_respond = WAITING_TO_RESPOND_NORMAL;
+					$provider->save();
 
                     $response_array = array('success' => true);
 
@@ -688,9 +681,15 @@ class ProviderApiController extends Controller
                                         ->where('providers.is_activated',DEFAULT_TRUE)
                                         ->where('providers.is_approved',DEFAULT_TRUE)
                                         ->where('providers.is_available',DEFAULT_TRUE)
+                                        ->where('providers.waiting_to_respond',WAITING_TO_RESPOND_NORMAL)
                                         ->select('requests_meta.id','requests_meta.status')
                                         ->orderBy('requests_meta.created_at')->first();
                     if($request_meta_next){
+                    	// change waiting to respond state
+                    	$provider_detail = Provider::find($request_meta_next->provider_id);
+                    	$provider_detail->waiting_to_respond = WAITING_TO_RESPOND;
+                    	$provider_detail->save();
+
                         //Assign the next provider.
                         $request_meta_next->status = REQUEST_META_OFFERED;
                         $request_meta_next->save();
@@ -763,6 +762,10 @@ class ProviderApiController extends Controller
                     $requests->provider_status = PROVIDER_ACCEPTED;
                     $requests->save();
 
+                    // change waiting to respond state to normal state
+                    $provider->waiting_to_respond = WAITING_TO_RESPOND_NORMAL;
+
+                    // update is available state
                     $provider->is_available = PROVIDER_NOT_AVAILABLE;
                     $provider->save();
 

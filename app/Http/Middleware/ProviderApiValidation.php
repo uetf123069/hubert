@@ -12,6 +12,10 @@ use Validator;
 
 use Log;
 
+use App\Provider;
+
+use DB;
+
 
 class ProviderApiValidation
 {
@@ -29,7 +33,7 @@ class ProviderApiValidation
                 $request->all(),
                 array(
                         'token' => 'required|min:5',
-                        'id' => 'required|integer'
+                        'id' => 'required|integer|exists:providers,id'
                 ));
             
         if ($validator->fails()) {

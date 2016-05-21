@@ -92,7 +92,7 @@ Route::group(['prefix' => 'providerApi'], function(){
 
 	Route::post('/serviceAccept', 'ProviderApiController@service_accept');
 
-	Route::post('/serviceDecline', 'ProviderApiController@service_decline');
+	Route::post('/serviceReject', 'ProviderApiController@service_reject');
 
 	Route::post('/providerStarted', 'ProviderApiController@providerstarted');
 

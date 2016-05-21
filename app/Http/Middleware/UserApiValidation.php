@@ -14,6 +14,8 @@ use Log;
 
 use App\User;
 
+use DB;
+
 class UserApiValidation
 {
     /**
@@ -30,7 +32,7 @@ class UserApiValidation
                 $request->all(),
                 array(
                         'token' => 'required|min:5',
-                        'id' => 'required|integer'
+                        'id' => 'required|integer|exists:users,id'
                 ));
 
         if ($validator->fails()) {
