@@ -24,51 +24,53 @@ Route::group(['prefix' => 'userApi'], function(){
 	
 	Route::post('/login','UserapiController@login');
 
-	Route::get('/userDetails','UserapiController@userDetails');
+	Route::get('/userDetails','UserapiController@user_details');
 
-	Route::post('/updateProfile', 'UserapiController@updateProfile');
+	Route::post('/updateProfile', 'UserapiController@update_profile');
 
-	Route::post('/forgotpassword', 'UserapiController@forgotPassword');
+	Route::post('/forgotpassword', 'UserapiController@forgot_password');
 
-	Route::post('/changePassword', 'UserapiController@changePassword');
+	Route::post('/changePassword', 'UserapiController@change_password');
 
-	Route::get('/tokenRenew', 'UserapiController@tokenRenew');
+	Route::get('/tokenRenew', 'UserapiController@token_renew');
 
 	// Service Types Handle
 
-	Route::post('/serviceList', 'UserapiController@serviceList');
+	Route::post('/serviceList', 'UserapiController@service_list');
 
-	Route::post('/singleService', 'UserapiController@singleService');
+	Route::post('/singleService', 'UserapiController@single_service');
 
 	// Request Handle
 
-	Route::post('/sendRequest', 'UserapiController@sendRequest');
+	Route::post('/sendRequest', 'UserapiController@send_request');
 
-	Route::post('/cancelRequest', 'UserapiController@cancelRequest');
+	Route::post('/cancelRequest', 'UserapiController@cancel_request');
 
 	Route::get('/paybypaypal', 'UserapiController@paybypaypal');
 
-	Route::get('/requestStatusCheck', 'UserapiController@requestStatusCheck');
+	Route::post('/requestStatusCheck', 'UserapiController@request_status_check');
 
-	Route::post('/rateProvider', 'UserapiController@rateProvider');
+	Route::post('/rateProvider', 'UserapiController@rate_provider');
 
-	Route::get('/history' , 'UserapiController@history');
+	Route::post('/history' , 'UserapiController@history');
+
+	Route::post('/singleRequest' , 'UserapiController@single_request');
 
 	// Favourite Providers
 
 	Route::get('/favProviders' , 'UserapiController@fav_providers');
 
-	Route::post('/deleteFavProvider' , 'UserapiController@deleteFavProvider');
+	Route::post('/deleteFavProvider' , 'UserapiController@delete_fav_provider');
 
 	// Cards 
 
-	Route::post('/getCards', 'UserapiController@getCards');
+	Route::post('/getCards', 'UserapiController@get_cards');
 
-	Route::post('/addCard', 'UserapiController@addCard');
+	Route::post('/addCard', 'UserapiController@add_card');
 
-	Route::post('/defaultCard', 'UserapiController@defaultCard');
+	Route::post('/defaultCard', 'UserapiController@default_card');
 
-	Route::post('/deleteCard', 'UserapiController@deleteCard');
+	Route::post('/deleteCard', 'UserapiController@delete_card');
 
 
 });
