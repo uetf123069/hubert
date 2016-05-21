@@ -786,7 +786,7 @@ class UserapiController extends Controller
 
                 // Check already request exists 
 
-                $check_status = array(REQUEST_CANCEL_USER,REQUEST_CANCELLED,REQUEST_CANCEL_PROVIDER,REQUEST_COMPLETED);
+                $check_status = array(REQUEST_CANCEL_USER,REQUEST_NO_PROVIDER_AVAILABLE,REQUEST_CANCELLED,REQUEST_CANCEL_PROVIDER,REQUEST_COMPLETED);
 
                 $check_requests = Requests::where('user_id' , $request->id)->whereNotIn('status' , $check_status)->count();
 
@@ -1125,176 +1125,78 @@ class UserapiController extends Controller
 
     }
 
-    public function cancelRequest(Request $request) {
 
-        // Validate the request_id
+    public function cancelRequest(Request $request)
+    {
+        $user_id = $request->id;
 
-        $validator = Validator::make($request->all() , 
+        $validator = Validator::make(
+            $request->all(),
             array(
-                    'request_id' => 'required|integer',
-                ));
+                'request_id' => 'required|numeric|exists:requests,id,user_id,'.$user_id,
+            ));
 
-        if($validator->fails()) {
+        if ($validator->fails())
+        {
+            $error_messages = implode(',', $validator->messages()->all());
+            $response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101, 'error_messages'=>$error_messages);
+        }else
+        {
+            $request_id = $request->request_id;
+            $requests = Requests::find($request_id);
+            $requestStatus = $requests->status;
+            $providerStatus = $requests->provider_status;
+            $allowedCancellationStatuses = array(
+                PROVIDER_NONE,
+                PROVIDER_ACCEPTED,
+                PROVIDER_STARTED,
+            );
 
-            $error_messages = implode(",", $validator->messages()->all());
+            /*Check whether request cancelled previously*/
+            if($requestStatus != REQUEST_CANCELLED)
+            {
+                /*Check whether request eligible for cancellation*/
+                if( in_array($providerStatus, $allowedCancellationStatuses) )
+                {
+                    /*Update status of the request to cancellation*/
+                    $requests->status = REQUEST_CANCELLED;
+                    $requests->save();
 
-            $response_array = array('success' => false , 'error' => Helper::get_error_message(101) , 'error_code' => 101 , 'error_messages' => $error_messages);
+                    /*Send Push Notification to User*/
+                    // send_push_notification($requests->user_id, USER, 'Service Cancelled', 'The service is cancelled.');
 
-        } else {
-
-            // Get the particular request details 
-
-            $request_query = Requests::where('id' , $request->request_id)->where('user_id' , $request->id);
-
-            // Check the request details are not empty 
-
-            if($request_query->count() != 0) {
-
-                $requests = $request_query->first();
-
-                //  Check already request cancelled
-
-                if($requests->status != REQUEST_CANCEL_USER || $requests != REQUEST_CANCEL_PROVIDER) {
-
-                    // Check the status of the request is not reached "SERVICE_STARTED" status
-
-                    if($requests->status <= REQUEST_INPROGRESS && $requests->provider_status <= PROVIDER_ARRIVED)
-                    {
-                        // Request meta delete 
-
-                        //Provider Available change
-
-                        // Change the status of the request
-
-                        $requests->status = REQUEST_CANCEL_USER;
-
-                        $requests->save();
-
-                        // Send notification to the provider
-
-                        // Push Start
-
-                        $user = User::find($request->id);
-
-                        $push_data = array();
-                        $push_data['request_id'] = $requests->id;
-                        $push_data['service_type'] = $requests->request_type;
-                        $push_data['request_start_time'] = $requests->request_start_time;
-                        $push_data['status'] = $requests->status;
-                        $push_data['amount'] = $requests->amount;
-                        $push_data['user_name'] = $user->name;
-                        $push_data['user_picture'] = $user->picture;
-
-                        $title = "Cancel Request";
-                        $message = $user->name." "." cancelled the request";
-
-                        $push_message = array(
-                            'success' => true,
-                            'message' => $message,
-                            'data' => array((object) Helper::null_safe($push_data))
-                        );
-
-                        // Send Push Notification to Provider
-
-                        //  send_push_notification($provider_id, PROVIDER, $title, $push_message);
-
-                        // Push End
-
-                    } else {   
-                        // If reached the "SERVICE_STARTED" status
-                        $response_array = array('success' => false , 'error' => Helper::get_error_message(114) ,'error_code' => 114 );
+                    /*If request has confirmed provider then release him to available status*/
+                    if($request->confirmed_provider != DEFAULT_FALSE){
+                        $provider = Provider::find( $requests->confirmed_provider );
+                        $provider->is_available = PROVIDER_AVAILABLE;
+                        $provider->save();
+                        /*Send Push Notification to Provider*/
+                        // send_push_notification($requests->confirmed_provider, PROVIDER, 'Service Cancelled', 'The service is cancelled by user.');
                     }
 
-                } else {
-                    $response_array = array('success' => false , 'error' => Helper::get_error_message(113) , 'error_code' => 113);
+                    // No longer need request specific rows from RequestMeta
+                    RequestsMeta::where('request_id', '=', $request_id)->delete();
+
+                    $response_array = array(
+                        'success' => true,
+                        'request_id' => $request->id,
+                    );
+                }
+                else
+                {
+                    $response_array = array( 'success' => false, 'error' => Helper::get_error_message(114), 'error_code' => 114 );
                 }
 
-            } else {    // If request details are empty
-
-                $response_array = array('success' => false , 'error' => Helper::get_error_message(129) , 'error_code' => 129);
+            } else {
+                $response_array = array( 'success' => false, 'error' => Helper::get_error_message(113), 'error_code' => 113 );
             }
-            
+
+            $response_array = Helper::null_safe($response_array);
         }
 
-
-        return response()->json(Helper::null_safe($response_array),200);
-
+        $response = response()->json($response_array, 200);
+        return $response;
     }
-
-
-    // public function cancel_request(Request $request)
-    // {
-    //     $user_id = $request->id;
-
-    //     $validator = Validator::make(
-    //         $request->all(),
-    //         array(
-    //             'request_id' => 'required|numeric|exists:requests,id',
-    //         ));
-
-    //     if ($validator->fails())
-    //     {
-    //         $error_messages = implode(',', $validator->messages()->all());
-    //         $response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101, 'error_messages'=>$error_messages);
-    //     }else
-    //     {
-    //         $request_id = $request->request_id;
-    //         $requests = Requests::find($request_id);
-    //         $requestStatus = $requests->status;
-    //         $providerStatus = $requests->provider_status;
-    //         $allowedCancellationStatuses = array(
-    //             PROVIDER_NONE,
-    //             PROVIDER_ACCEPTED,
-    //             PROVIDER_STARTED,
-    //         );
-
-    //         /*Check whether request cancelled previously*/
-    //         if($requestStatus != REQUEST_CANCELLED)
-    //         {
-    //             /*Check whether request eligible for cancellation*/
-    //             if( in_array($providerStatus, $allowedCancellationStatuses) )
-    //             {
-    //                 /*Update status of the request to cancellation*/
-    //                 $request->status = REQUEST_CANCELLED;
-    //                 $request->save();
-
-    //                 /*Send Push Notification to User*/
-    //                 // send_push_notification($requests->user_id, USER, 'Service Cancelled', 'The service is cancelled.');
-
-    //                 /*If request has confirmed provider then release him to available status*/
-    //                 if($request->confirmed_provider != DEFAULT_FALSE){
-    //                     $provider = Provider::find( $requests->confirmed_provider );
-    //                     $provider->is_available = PROVIDER_AVAILABLE;
-    //                     $provider->save();
-    //                     /*Send Push Notification to Provider*/
-    //                     // send_push_notification($requests->confirmed_provider, PROVIDER, 'Service Cancelled', 'The service is cancelled by user.');
-    //                 }
-
-    //                 // No longer need request specific rows from RequestMeta
-    //                 RequestsMeta::where('request_id', '=', $request_id)->delete();
-
-    //                 $response_array = array(
-    //                     'success' => true,
-    //                     'request_id' => $request->id,
-    //                 );
-    //             }
-    //             else
-    //             {
-    //                 $response_array = array( 'success' => false, 'error' => Helper::get_error_message(114), 'error_code' => 114 );
-    //             }
-
-    //         }
-    //         else
-    //         {
-    //             $response_array = array( 'success' => false, 'error' => Helper::get_error_message(113), 'error_code' => 113 );
-    //         }
-
-    //         $response_array = Helper::null_safe($response_array);
-    //     }
-
-    //     $response = response()->json($response_array, 200);
-    //     return $response;
-    // }
 
 
     public function requestStatusCheck(Request $request) {
@@ -1634,7 +1536,7 @@ class UserapiController extends Controller
             $longitude = $request->longitude;
 
             /*Get default search radius*/
-            $settings = Setting::where('key', 'search_radius')->first();
+            $settings = Settings::where('key', 'search_radius')->first();
             $distance = $settings->value;
             $available = 1;
 
