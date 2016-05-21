@@ -954,21 +954,13 @@ class UserapiController extends Controller
                         }
 
                     } else {
-
                         // No provider found
-
                         Log::info("No Provider Found");
-
                         // Send push notification to User
-
                         // Helper::send_push_notification($user->id, USER, Helper::get_push_message(601), Helper::get_push_message(602));
-
                         $response_array = array('success' => false, 'error' => Helper::get_error_message(112), 'error_code' => 112);
-                    
                     }
-
                     // Merge the favourite providers and search providers
-
                     $final_providers = array_unique(array_merge($list_fav_providers,$search_providers));
 
                     $user = User::find($request->id);

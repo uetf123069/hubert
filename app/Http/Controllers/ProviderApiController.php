@@ -685,6 +685,9 @@ class ProviderApiController extends Controller
                                         ->select('requests_meta.id','requests_meta.status','requests_meta.provider_id')
                                         ->orderBy('requests_meta.created_at')->first();
                     if($request_meta_next){
+
+                    	Log::info('Request Reject - Next Provider');
+
                     	// change waiting to respond state
                     	$provider_detail = Provider::where('id',$request_meta_next->provider_id)->first();
                     	$provider_detail->waiting_to_respond = WAITING_TO_RESPOND;
@@ -699,11 +702,11 @@ class ProviderApiController extends Controller
 
                     	/**************************/
                     	// Change status as no providers avaialable in request table
-                    	 Requests::where('id', '=', $request->id)->update( array('status' => REQUEST_NO_PROVIDER_AVAILABLE) );
+                    	 Requests::where('id', '=', $requests->id)->update( array('status' => REQUEST_NO_PROVIDER_AVAILABLE) );
 
 	                    // No longer need request specific rows from RequestMeta
-	                    RequestsMeta::where('request_id', '=', $request->id)->delete();
-	                    // Log::info('assign_next_provider ended the request_id:'.$request->id.' at '.$time);
+	                    RequestsMeta::where('request_id', '=', $requests->id)->delete();
+	                    Log::info('assign_next_provider ended the request_id:'.$request->id);
 
                     }
 
