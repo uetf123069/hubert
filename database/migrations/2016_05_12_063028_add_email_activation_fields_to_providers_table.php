@@ -27,7 +27,9 @@ class AddEmailActivationFieldsToProvidersTable extends Migration
     public function down()
     {
         Schema::table('providers', function (Blueprint $table) {
-            //
+            $table->dropColumn('email_activation_code');
+            $table->dropColumn('is_email_activated');
+            $table->dropColumn('token_refresh');
         });
     }
 }

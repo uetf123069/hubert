@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddRequestMetaIdToRequestsTable extends Migration
+class AddWaitingToRespondToProvidersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,8 +12,8 @@ class AddRequestMetaIdToRequestsTable extends Migration
      */
     public function up()
     {
-        Schema::table('requests' , function(Blueprint $table) {
-            $table->integer('request_meta_id');
+        Schema::table('providers' , function(Blueprint $table) {
+            $table->integer('waiting_to_respond')->after('is_available');
         });
     }
 
@@ -24,6 +24,8 @@ class AddRequestMetaIdToRequestsTable extends Migration
      */
     public function down()
     {
-        $table->dropColumn('request_meta_id');
+        Schema::table('providers' , function(Blueprint $table) {
+            $table->dropColumn('waiting_to_respond');
+        });
     }
 }

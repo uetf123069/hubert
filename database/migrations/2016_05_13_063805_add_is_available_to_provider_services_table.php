@@ -25,7 +25,7 @@ class AddIsAvailableToProviderServicesTable extends Migration
     public function down()
     {
         Schema::table('provider_services', function (Blueprint $table) {
-            //
+            $table->dropColumn('is_available');
         });
     }
 }
