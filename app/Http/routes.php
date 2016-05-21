@@ -106,4 +106,13 @@ Route::group(['prefix' => 'admin'], function(){
 
     Route::get('/', 'AdminController@index')->name('admin.dashboard');
 
+    //User Routes
+    Route::get('/users', 'AdminController@users')->name('admin.user');
+    Route::get('/addUser', 'AdminController@addUser')->name('admin.adduser');
+
+    //Provider Routes
+    Route::get('/providers', 'AdminController@providers')->name('admin.provider');
+    Route::get('/addProvider', 'AdminController@addProvider')->name('admin.addprovider');
+
+
 });
