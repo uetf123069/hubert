@@ -1011,6 +1011,8 @@ class UserapiController extends Controller
                     if($requests) {
 
                         $requests->status = REQUEST_WAITING;
+
+                        //No need fo current provider state
                         $requests->current_provider = $first_provider_id;
                         $requests->save();
 
