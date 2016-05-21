@@ -154,4 +154,6 @@ Route::group([], function(){
     Route::get('/request', 'UserController@request')->name('user.services.request');
     Route::get('/profile', 'UserController@profile')->name('user.profile');
 
+    Route::post('/profile/password', 'UserController@password')->name('user.password');
+
 });

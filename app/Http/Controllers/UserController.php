@@ -57,4 +57,14 @@ class UserController extends Controller
     {
         return view('user.profile');
     }
+
+    /**
+     * Save changed password.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function password()
+    {
+        return view('user.profile');
+    }
 }
