@@ -132,6 +132,16 @@ Route::group(['prefix' => 'admin'], function(){
     Route::post('password/reset', 'Auth\AdminPasswordController@reset');
 
     Route::get('/', 'AdminController@index')->name('admin.dashboard');
+    Route::get('/', 'AdminController@settings')->name('admin.settings');
+
+
+    //User Routes
+    Route::get('/users', 'AdminController@users')->name('admin.user');
+    Route::get('/addUser', 'AdminController@addUser')->name('admin.adduser');
+
+    //Provider Routes
+    Route::get('/providers', 'AdminController@providers')->name('admin.provider');
+    Route::get('/addProvider', 'AdminController@addProvider')->name('admin.addprovider');
 
 });
 
@@ -179,3 +189,4 @@ Route::group(['prefix' => 'provider'], function(){
     Route::post('/profile/password', 'UserController@password')->name('user.password');
 
 });
+

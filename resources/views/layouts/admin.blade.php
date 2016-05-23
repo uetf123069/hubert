@@ -3,8 +3,8 @@
 <head>
     
     <meta charset="utf-8">
-    <title>@yield('title') {{ Setting::get('site_name', 'Uber') }}</title>
-
+    <title>@yield('title') {{ Setting::get('site_name', 'XUBER') }}</title>
+    
     <meta name="description" content="{{ Setting::get('site_name', 'Uber for Services') }}">
     <meta name="viewport" content="width=device-width">
     <link rel="shortcut icon" href="{{ Setting::get('site_name', asset('/favicon.ico') ) }}">
@@ -12,6 +12,7 @@
     <!-- page level plugin styles -->
     <link rel="stylesheet" href="{{ asset('admin_assets/styles/climacons-font.css') }}">
     <link rel="stylesheet" href="{{ asset('vendor/rickshaw/rickshaw.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('vendor/datatables/media/css/jquery.dataTables.css') }}">
     <!-- /page level plugin styles -->
 
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->

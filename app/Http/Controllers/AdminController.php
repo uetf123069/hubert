@@ -13,7 +13,7 @@ class AdminController extends Controller
      *
      * @return void
      */
-    public function __construct()
+     public function __construct()
     {
         // $this->middleware('auth');
     }
@@ -26,5 +26,31 @@ class AdminController extends Controller
     public function index()
     {
         return view('admin.dashboard');
+    }
+
+
+    //User Functions
+
+    public function users()
+    {
+        return view('admin.users');
+    }
+
+    public function addUser()
+    {
+        return view('admin.addUser');
+    }
+
+
+    //Provider Functions
+
+    public function providers()
+    {
+        return view('admin.providers');
+    }
+
+    public function addProvider()
+    {
+        return view('admin.addProvider');
     }
 }

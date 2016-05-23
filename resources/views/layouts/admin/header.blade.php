@@ -31,7 +31,7 @@
     <ul class="nav navbar-nav hidden-xs">
         <li>
             <p class="navbar-text">
-                Dashboard
+                XUBER
             </p>
         </li>
     </ul>

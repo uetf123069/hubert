@@ -31,17 +31,48 @@
                 </a>
             </li>
 
-            <li>
-                <a href="#">
-                    <i class="fa fa-flask"></i>
-                    <span>Service</span>
+            <li >
+                <a href="javascript:;">
+                    <i class="fa fa-user"></i>
+                    <span>Users</span>
                 </a>
+                    <ul class="sub-menu">
+                        <li>
+                        <a href="{{ route('admin.user') }}">
+                            <span>View Users</span>
+                        </a>
+                        </li>
+                        <li>
+                        <a href="{{ route('admin.adduser') }}">
+                          <span>Add User</span>
+                        </a>
+                      </li>
+                    </ul>
+            </li>
+
+            <li >
+                <a href="javascript:;">
+                    <i class="fa fa-user-secret"></i>
+                    <span>Providers</span>
+                </a>
+                    <ul class="sub-menu">
+                        <li>
+                        <a href="{{ route('admin.provider') }}">
+                            <span>View Providers</span>
+                        </a>
+                        </li>
+                        <li>
+                        <a href="{{ route('admin.addprovider') }}">
+                          <span>Add Provider</span>
+                        </a>
+                      </li>
+                    </ul>
             </li>
 
             <li>
-                <a href="#">
+                <a href="{{ route('admin.settings') }}">
                     <i class="fa fa-flask"></i>
-                    <span>Profile</span>
+                    <span>Settings</span>
                 </a>
             </li>
 
