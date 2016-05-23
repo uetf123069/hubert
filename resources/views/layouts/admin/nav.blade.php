@@ -70,9 +70,9 @@
             </li>
 
             <li>
-                <a href="#">
+                <a href="{{ route('admin.settings') }}">
                     <i class="fa fa-flask"></i>
-                    <span>Profile</span>
+                    <span>Settings</span>
                 </a>
             </li>
 

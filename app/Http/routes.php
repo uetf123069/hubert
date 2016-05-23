@@ -105,6 +105,8 @@ Route::group(['prefix' => 'admin'], function(){
     Route::post('password/reset', 'Auth\AdminPasswordController@reset');
 
     Route::get('/', 'AdminController@index')->name('admin.dashboard');
+    Route::get('/', 'AdminController@settings')->name('admin.settings');
+
 
     //User Routes
     Route::get('/users', 'AdminController@users')->name('admin.user');
