@@ -705,8 +705,7 @@ class UserapiController extends Controller
         return $response;
     }
 
-    public function send_request(Request $request)
-    {
+    public function send_request(Request $request) {
         $validator = Validator::make(
                 $request->all(),
                 array(
@@ -719,15 +718,11 @@ class UserapiController extends Controller
         {
             $error_messages = implode(',', $validator->messages()->all());
             $response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101, 'error_messages' => $error_messages);
-        }
-        else 
-        {
+        } else {
             Log::info('Create request start');
-
             // Check the user filled the payment details
 
             $user = User::find($request->id);
-
             if(!$user->payment_mode) {
                 Log::info('Payment Mode is not available');
                 $response_array = array('success' => false , 'error' => Helper::get_error_message(134) , 'error_code' => 134);
@@ -741,44 +736,28 @@ class UserapiController extends Controller
                 if($check_requests == 0) {
 
                     Log::info('Previous requests check is done');
-            
                     $service_type = $request->service_type; // Get the service type 
 
                     // Initialize the variable
                     $list_fav_providers = array(); $first_provider_id = 0; $list_fav_provider = array();
 
                     /** Fav Providers SEARCH started */
-
                     $favProviders = Helper::get_fav_providers($service_type,$request->id);
 
                     // Check Favourite Providers list is not empty
-
                     if($favProviders) {
-
                         foreach ($favProviders as $key => $favProvider) {
-
                             $list_fav_provider['id'] = $favProvider->provider_id;
                             $list_fav_provider['waiting'] = $favProvider->waiting;
                             $list_fav_provider['distance'] = 0;
 
-                            // Assign value to the first_provider_id to send push notifications
-                            if($first_provider_id == 0) {
-                                if($favProvider->waiting == 0) {
-                                    $first_provider_id = $favProvider->provider_id;
-                                }
-                            }
-
                             array_push($list_fav_providers, $list_fav_provider);
                         }                
                     }
-
-                    // Log::info('List Of Favourite Providers' .print_r($list_fav_providers, true));
-
                     /** Fav providers end */
 
                     $latitude = $request->s_latitude;
                     $longitude = $request->s_longitude;
-
                     $request_start_time = time();
 
                     /*Get default search radius*/
@@ -786,86 +765,58 @@ class UserapiController extends Controller
                     $distance = $settings->value;
 
                     // Search Providers
-
                     $providers = array();   // Initialize providers variable
 
                     // Check the service type value to search the providers based on the nearby location
-
                     if($service_type) {
 
                         Log::info('Location Based search started - service_type');
-
                         // Get the providers based on the selected service types
 
                         $service_providers = ProviderService::where('service_type_id' , $service_type)->where('is_available' , 1)->select('provider_id')->get();
 
                         $list_service_ids = array();    // Initialize list_service_ids
-
                         if($service_providers) {
                             foreach ($service_providers as $sp => $service_provider) {
-
-                                    $list_service_ids[] = $service_provider->provider_id;
-
+                                $list_service_ids[] = $service_provider->provider_id;
                             }
                             $list_service_ids = implode(',', $list_service_ids);
-
                         }
 
                         if($list_service_ids) {
-
                             $query = "SELECT providers.id,providers.waiting_to_respond as waiting, 1.609344 * 3956 * acos( cos( radians('$latitude') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians('$longitude') ) + sin( radians('$latitude') ) * sin( radians(latitude) ) ) AS distance FROM providers
                                     WHERE id IN ($list_service_ids) AND is_available = 1 AND is_activated = 1 AND is_approved = 1
                                     AND (1.609344 * 3956 * acos( cos( radians('$latitude') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians('$longitude') ) + sin( radians('$latitude') ) * sin( radians(latitude) ) ) ) <= $distance
                                     ORDER BY distance";
 
                             $providers = DB::select(DB::raw($query));
-
                             Log::info("Search query: " . $query);
-                        
                         } 
-
                     } else {
-
                         Log::info('Location Based search started - without service_type');
 
                         $query = "SELECT providers.id,providers.waiting_to_respond as waiting, 1.609344 * 3956 * acos( cos( radians('$latitude') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians('$longitude') ) + sin( radians('$latitude') ) * sin( radians(latitude) ) ) AS distance FROM providers
                                 WHERE is_available = 1 AND is_activated = 1 AND is_approved = 1
                                 AND (1.609344 * 3956 * acos( cos( radians('$latitude') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians('$longitude') ) + sin( radians('$latitude') ) * sin( radians(latitude) ) ) ) <= $distance
                                 ORDER BY distance";
-
                         $providers = DB::select(DB::raw($query));
-
                         Log::info("Search query: " . $query);
-                    
                     }
-
                     // Log::info('List of providers'." ".print_r($providers));
 
                     $merge_providers = array();
-
-                    if ($providers) 
-                    {
+                    if ($providers) {
                         // Initialize Final list of provider variable
-
                         $search_providers = array();
                         $search_provider = array();
 
-                        foreach ($providers as $provider) 
-                        {
-                            // Check the first_provider_id has already value , because if the user have fav providers means the first_provider_id will be assign over there itself
-
-                            if(!$first_provider_id) {
-                                $first_provider_id = $provider->id;
-                            }
-
-                            // $search_providers[] = $provider->id;
+                        foreach ($providers as $provider) {
                             $search_provider['id'] = $provider->id;
                             $search_provider['waiting'] = $provider->waiting;
                             $search_provider['distance'] = $provider->distance;
                             
                             array_push($search_providers, $search_provider);
                         }
-
                     } else {
                         // No provider found
                         Log::info("No Provider Found");
@@ -889,102 +840,77 @@ class UserapiController extends Controller
                     $requests->status = REQUEST_NEW;
                     $requests->confirmed_provider = NONE;
                     $requests->request_start_time = date("Y-m-d H:i:s", $request_start_time);
-
                     $requests->s_address = $request->s_address ? $request->s_address : "";
                         
-                    if($latitude)
-                        $requests->s_latitude = $latitude;
-
-                    if($longitude)
-                        $requests->s_longitude = $longitude;
+                    if($latitude){ $requests->s_latitude = $latitude; }
+                    if($longitude) { $requests->s_longitude = $longitude; }
                         
                     $requests->save();
 
                     if($requests) {
-
                         $requests->status = REQUEST_WAITING;
-
                         //No need fo current provider state
-                        $requests->current_provider = $first_provider_id;
+                        // $requests->current_provider = $first_provider_id;
                         $requests->save();
 
-                        if ($first_provider_id) {
-
-                            // Availablity status change 
-
-                            if($current_provider = Provider::find($first_provider_id)) {
-
-                                $current_provider->waiting_to_respond = WAITING_TO_RESPOND;
-                                $current_provider->save();
-                            }
-
-                            // Push notification start
-
-                            $settings = Settings::where('key', 'provider_select_timeout')->first();
-                            $provider_timeout = $settings->value;
-
-                            if($service_type)
-                                $service = ServiceType::find($requests->request_type);
-
-                            $push_data = array();
-                            $push_data['request_id'] = $requests->id;
-                            $push_data['service_type'] = $requests->request_type;
-                            $push_data['request_start_time'] = $requests->request_start_time;
-                            $push_data['status'] = $requests->status;
-                            $push_data['user_name'] = $user->name;
-                            $push_data['user_picture'] = $user->picture;
-                            $push_data['s_address'] = $requests->s_address;
-                            $push_data['s_latitude'] = $requests->s_latitude;
-                            $push_data['s_longitude'] = $requests->s_longitude;
-                            $push_data['user_rating'] = ProviderRating::where('provider_id', $first_provider_id)->avg('rating') ?: 0;
-                            $push_data['time_left_to_respond'] = $provider_timeout - (time() - strtotime($requests->request_start_time));
-
-                            $title = "New Request";
-                            $message = "You got a new request from ".$user->name;
-                            $push_message = array(
-                                'success' => true,
-                                'message' => $message,
-                                'data' => array((object) Helper::null_safe($push_data))
-                            );
-
-                            // Send Push Notification to Provider
-
-                            //send_push_notification($first_provider_id, PROVIDER, $title, $push_message);
-                            // Log::info(print_r($push_message,true));
-
-                            // Push End
-                            
-                        }
-
                         // Save all the final providers
+                        $first_provider_id = 0;
 
                         if($final_providers) {
-
                             foreach ($final_providers as $key => $final_provider) {
 
                                 $request_meta = new RequestsMeta;
 
-                                if($first_provider_id == $final_provider) {
+                                if($first_provider_id == 0) {
+
+                                    $first_provider_id = $final_provider;
 
                                     $request_meta->status = REQUEST_META_OFFERED;  // Request status change
 
-                                    // Availablity status change 
-
+                                    // Availablity status change
                                     if($current_provider = Provider::find($first_provider_id)) {
-
                                         $current_provider->waiting_to_respond = WAITING_TO_RESPOND;
                                         $current_provider->save();
                                     }
-                                }
 
+                                    // Send push notifications to the first provider
+                                    $settings = Settings::where('key', 'provider_select_timeout')->first();
+                                    $provider_timeout = $settings->value;
+
+                                    if($service_type)
+                                        $service = ServiceType::find($requests->request_type);
+
+                                    $push_data = array();
+                                    $push_data['request_id'] = $requests->id;
+                                    $push_data['service_type'] = $requests->request_type;
+                                    $push_data['request_start_time'] = $requests->request_start_time;
+                                    $push_data['status'] = $requests->status;
+                                    $push_data['user_name'] = $user->name;
+                                    $push_data['user_picture'] = $user->picture;
+                                    $push_data['s_address'] = $requests->s_address;
+                                    $push_data['s_latitude'] = $requests->s_latitude;
+                                    $push_data['s_longitude'] = $requests->s_longitude;
+                                    $push_data['user_rating'] = ProviderRating::where('provider_id', $first_provider_id)->avg('rating') ?: 0;
+                                    $push_data['time_left_to_respond'] = $provider_timeout - (time() - strtotime($requests->request_start_time));
+
+                                    $title = "New Request";
+                                    $message = "You got a new request from ".$user->name;
+                                    $push_message = array(
+                                        'success' => true,
+                                        'message' => $message,
+                                        'data' => array((object) Helper::null_safe($push_data))
+                                    );
+
+                                    // Send Push Notification to Provider
+                                    //send_push_notification($first_provider_id, PROVIDER, $title, $push_message);
+                                    // Log::info(print_r($push_message,true));
+                                    // Push End
+                                }
                                 $request_meta->request_id = $requests->id;
                                 $request_meta->provider_id = $final_provider; 
                                 $request_meta->save();
-
                             }
-
                         }
-                        
                         $response_array = array(
                             'success' => true,
                             'source_address' => $requests->s_address,
@@ -994,21 +920,18 @@ class UserapiController extends Controller
                             'request_id' => $requests->id,
                         );
 
-                        $response_array = Helper::null_safe($response_array);
-
-                        Log::info('Create request end');
-
+                        $response_array = Helper::null_safe($response_array); Log::info('Create request end');
                     } else {
                         $response_array = array('success' => false , 'error' => Helper::get_error_message(126) , 'error_code' => 126 );
                     }     
                 } else {
                     $response_array = array('success' => false , 'error' => Helper::get_error_message(127) , 'error_code' => 127);
                 }
-
             }
         }
         $response = response()->json($response_array, 200);
         return $response;
+    
     }
 
     public function cancel_request(Request $request)
@@ -1120,8 +1043,6 @@ class UserapiController extends Controller
                 'exists' => 'The :attribute doesn\'t belong to user:'.$user->firstname.' '.$user->last_name,
             )
             );
-
-
         if($validator->fails()) {
 
             $error_messages = implode(',', $validator->messages()->all());
