@@ -19,35 +19,54 @@ Route::group(['prefix' => 'userApi'], function(){
 	
 	Route::post('/login','UserapiController@login');
 
-	Route::get('/userDetails','UserapiController@userDetails');
+	Route::get('/userDetails','UserapiController@user_details');
 
-	Route::post('/updateProfile', 'UserapiController@updateProfile');
+	Route::post('/updateProfile', 'UserapiController@update_profile');
 
 	Route::post('/forgotpassword', 'UserapiController@forgot_password');
 
-	Route::post('/changePassword', 'UserapiController@changePassword');
+	Route::post('/changePassword', 'UserapiController@change_password');
 
-	Route::get('/tokenRenew', 'UserapiController@tokenRenew');
+	Route::get('/tokenRenew', 'UserapiController@token_renew');
 
-	Route::post('/serviceList', 'UserapiController@serviceList');
+	// Service Types Handle
 
-	Route::post('/singleService', 'UserapiController@singleService');
+	Route::post('/serviceList', 'UserapiController@service_list');
 
-	Route::post('/sendRequest', 'UserapiController@sendRequest');
+	Route::post('/singleService', 'UserapiController@single_service');
 
-	Route::post('/cancelRequest', 'UserapiController@cancelRequest');
+	// Request Handle
+
+	Route::post('/sendRequest', 'UserapiController@send_request');
+
+	Route::post('/cancelRequest', 'UserapiController@cancel_request');
 
 	Route::get('/paybypaypal', 'UserapiController@paybypaypal');
 
-	Route::get('/requestStatusCheck', 'UserapiController@requestStatusCheck');
+	Route::post('/requestStatusCheck', 'UserapiController@request_status_check');
 
-	Route::get('/history' , 'UserapiController@history');
+	Route::post('/rateProvider', 'UserapiController@rate_provider');
+
+	Route::post('/history' , 'UserapiController@history');
+
+	Route::post('/singleRequest' , 'UserapiController@single_request');
+
+	// Favourite Providers
 
 	Route::get('/favProviders' , 'UserapiController@fav_providers');
 
-	Route::post('/deleteFavProvider' , 'UserapiController@deleteFavProvider');
+	Route::post('/deleteFavProvider' , 'UserapiController@delete_fav_provider');
 
-	Route::post('/feedback', 'UserapiController@feedback');
+	// Cards 
+
+	Route::post('/getCards', 'UserapiController@get_cards');
+
+	Route::post('/addCard', 'UserapiController@add_card');
+
+	Route::post('/defaultCard', 'UserapiController@default_card');
+
+	Route::post('/deleteCard', 'UserapiController@delete_card');
+
 
 });
 
@@ -68,24 +87,32 @@ Route::group(['prefix' => 'providerApi'], function(){
 
 	Route::get('/tokenRenew', 'ProviderApiController@tokenRenew');
 
-	Route::post('/serviceaccept', 'ProviderApiController@service_accept');
+	Route::post('/serviceAccept', 'ProviderApiController@service_accept');
 
-	Route::post('/servicedecline', 'ProviderApiController@service_decline');
+	Route::post('/serviceReject', 'ProviderApiController@service_reject');
 
-	Route::post('/providerstarted', 'ProviderApiController@providerstarted');
+	Route::post('/providerStarted', 'ProviderApiController@providerstarted');
 
 	Route::post('/arrived', 'ProviderApiController@arrived');
 
-	Route::post('/servicestarted', 'ProviderApiController@servicestarted');
+	Route::post('/serviceStarted', 'ProviderApiController@servicestarted');
 
-	Route::post('/servicecompleted', 'ProviderApiController@servicecompleted');
+	Route::post('/serviceCompleted', 'ProviderApiController@servicecompleted');
 
-	Route::post('/completed', 'ProviderApiController@completed');
+	Route::post('/rateUser', 'ProviderApiController@rate_user');
 
-	Route::post('/feedback', 'ProviderApiController@feedback');
+	Route::post('/cancelrequest', 'ProviderApiController@cancelrequest');
+
+	Route::post('/history', 'ProviderApiController@history');
+
+	Route::post('/incomingRequest', 'ProviderApiController@get_incoming_request');
+
+	Route::post('/requestStatusCheck', 'ProviderApiController@request_status_check');
 
 
 });
+
+Route::get('/assign_next_provider_cron' , 'ApplicationController@assign_next_provider_cron');
 
 // Admin Routes
 
@@ -110,13 +137,13 @@ Route::group(['prefix' => 'admin'], function(){
 
 Route::group([], function(){
 
-    Route::get('login', 'Auth\AuthController@showLoginForm');
-    Route::post('login', 'Auth\AuthController@login');
-    Route::get('logout', 'Auth\AuthController@logout');
+    Route::get('login', 'Auth\AuthController@showLoginForm')->name('user.login.form');
+    Route::post('login', 'Auth\AuthController@login')->name('user.login.post');
+    Route::get('logout', 'Auth\AuthController@logout')->name('user.logout');
 
     // Registration Routes...
-    Route::get('register', 'Auth\AuthController@showRegistrationForm');
-    Route::post('register', 'Auth\AuthController@register');
+    Route::get('register', 'Auth\AuthController@showRegistrationForm')->name('user.register.form');
+    Route::post('register', 'Auth\AuthController@register')->name('user.register.post');
 
     // Password Reset Routes...
     Route::get('password/reset/{token?}', 'Auth\PasswordController@showResetForm');
@@ -144,5 +171,11 @@ Route::group(['prefix' => 'provider'], function(){
     Route::post('password/reset', 'Auth\PasswordController@reset');
 
     Route::get('/', 'ProviderController@index')->name('provider.dashboard');
+
+    Route::get('/services', 'UserController@services')->name('user.services.list');
+    Route::get('/request', 'UserController@request')->name('user.services.request');
+    Route::get('/profile', 'UserController@profile')->name('user.profile');
+
+    Route::post('/profile/password', 'UserController@password')->name('user.password');
 
 });
