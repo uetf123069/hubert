@@ -12,6 +12,8 @@ use App\User;
 
 use App\Provider;
 
+use App\Document;
+
 use Validator;
 
 use Hash;
@@ -192,7 +194,7 @@ class AdminController extends Controller
 
     public function providers()
     {
-        $providers = Provider::orderBy('created_at' , 'desc')->paginate(10);
+        $providers = Provider::orderBy('created_at' , 'asc')->paginate(10);
         return view('admin.providers')->with('providers',$providers);
     }
 
@@ -311,7 +313,7 @@ class AdminController extends Controller
 
     public function ProviderApprove(Request $request)
     {
-        $providers = Provider::orderBy('created_at' , 'desc')->paginate(10);;
+        $providers = Provider::orderBy('created_at' , 'asc')->paginate(10);;
         $provider = Provider::find($request->id);
         $provider->is_approved = $request->status;
         $provider->save();
@@ -349,4 +351,106 @@ class AdminController extends Controller
     {
         return view('admin.addProvider');
     }
+
+    //Documents
+
+    public function documents()
+    {
+        $document = Document::orderBy('created_at' , 'asc')->paginate(10);
+        return view('admin.documents')->with('documents',$document);
+    }
+
+    public function editDocument(Request $request)
+    {
+        $document = Document::find($request->id);
+        return view('admin.addDocuments')->with('name', 'Edit Document')->with('document',$document);
+    }
+
+    public function addDocument()
+    {
+        return view('admin.addDocuments');
+    }
+
+    public function addDocumentProcess(Request $request)
+    {
+
+                $validator = Validator::make(
+                    $request->all(),
+                    array(
+                        'document_name' => 'required|max:255',
+                                         
+                    )
+                );
+            if($validator->fails())
+        {
+            $error_messages = implode(',', $validator->messages()->all());
+            return back()->with('flash_errors', $error_messages);
+        }
+        else
+        {
+            if($request->id != '')
+            {
+                $document = Document::find($request->id);
+                $message = "Document Updated successfully";
+            }
+            else
+            {
+                $document = new Document;
+                $message = "Document Created successfully";
+            }
+                $document->name = $request->document_name;
+                $document->save();
+            
+        if($document)
+        {
+            return back()->with('flash_success',$message);
+        }
+        else
+        {
+            return back()->with('flash_error',"Something went Wrong");
+        }
+        }
+    }
+
+    public function deleteDocument(Request $request)
+    {
+
+            $document = Document::find($request->id)->delete();
+       
+        if($document)
+        {
+            return back()->with('flash_success',"Document deleted successfully");
+        }
+        else
+        {
+            return back()->with('flash_error',"Something went Wrong");
+        }
+    }
+
+    public function providerReviews()
+    {
+            $provider_reviews = DB::table('provider_ratings')
+                ->leftJoin('providers', 'provider_ratings.provider_id', '=', 'providers.id')
+                ->leftJoin('users', 'provider_ratings.user_id', '=', 'users.id')
+                ->select('provider_ratings.id as review_id', 'provider_ratings.rating', 'provider_ratings.comment', 'users.first_name as user_first_name', 'users.last_name as user_last_name', 'providers.first_name as provider_first_name', 'providers.last_name as provider_last_name', 'users.id as user_id', 'providers.id as provider_id', 'provider_ratings.created_at')
+                ->orderBy('provider_ratings.id', 'DESC')
+                ->paginate(10);
+
+            
+            return view('admin.reviews')->with('name', 'Provider')
+                        ->with('reviews', $provider_reviews);
+    }
+
+    public function userReviews()
+    {
+            
+            $user_reviews = DB::table('user_ratings')
+                ->leftJoin('providers', 'user_ratings.provider_id', '=', 'providers.id')
+                ->leftJoin('users', 'user_ratings.user_id', '=', 'users.id')
+                ->select('user_ratings.id as review_id', 'user_ratings.rating', 'user_ratings.comment', 'users.first_name as user_first_name', 'users.last_name as user_last_name', 'providers.first_name as provider_first_name', 'providers.last_name as provider_last_name', 'users.id as user_id', 'providers.id as provider_id', 'user_ratings.created_at')
+                ->orderBy('user_ratings.id', 'DESC')
+                ->paginate(10);
+            return view('admin.reviews')->with('name', 'User')->with('reviews', $user_reviews);
+    }
+
 }

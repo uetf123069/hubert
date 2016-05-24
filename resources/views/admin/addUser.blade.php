@@ -35,7 +35,7 @@
                     </div>
                   </div>
                   
-                  <input type="hidden" name="id" value="@if(isset($user)) {{$user->id}} @else {{}}@endif" />
+                  <input type="hidden" name="id" value="@if(isset($user)) {{$user->id}} @endif" />
                   
                   <div class="form-group">
                     <label class="col-sm-2 control-label">Gender</label>

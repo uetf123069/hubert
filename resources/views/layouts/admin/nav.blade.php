@@ -77,19 +77,42 @@
             </li>
 
             <li>
-                <a href="#">
+                <a href="javascript:;">
                     <i class="fa fa-folder"></i>
-                    <span>Documentation</span>
-                    <span class="label label-success pull-right">2</span>
+                    <span>Documents</span>
                 </a>
+                    <ul class="sub-menu">
+                        <li>
+                        <a href="{{ route('adminDocuments') }}">
+                            <span>View Documents Type</span>
+                        </a>
+                        </li>
+                        <li>
+                        <a href="{{ route('adminAddDocument') }}">
+                          <span>Add Documents</span>
+                        </a>
+                      </li>
+                    </ul>
+                
             </li>
 
             <li>
                 <a href="#" target="_blank">
                     <i class="fa fa-sliders"></i>
                     <span>Rating & Reviews</span>
-                    <span class="label label-danger pull-right">hot</span>
                 </a>
+                <ul class="sub-menu">
+                        <li>
+                        <a href="{{ route('adminUserReviews') }}">
+                            <span>User Reviews</span>
+                        </a>
+                        </li>
+                        <li>
+                        <a href="{{ route('adminProviderReviews') }}">
+                          <span>Provider Reviews</span>
+                        </a>
+                      </li>
+                    </ul>
             </li>
 
             <li>

@@ -140,6 +140,28 @@ Route::group(['prefix' => 'admin'], function(){
 
     Route::get('/settings', 'AdminController@settings')->name('admin.settings');
 
+    //Documents
+
+    Route::get('/documents', 'AdminController@documents')->name('adminDocuments');
+
+    Route::get('/adddocument', 'AdminController@adddocument')->name('adminAddDocument');
+
+    Route::post('/adddocumentProcess', 'AdminController@adddocumentProcess')->name('adminAddDocumentProcess');
+
+    Route::get('/editdocument/{id}', 'AdminController@editDocument')->name('adminDocumentEdit');
+
+    Route::get('/deletedocument/{id}', 'AdminController@deleteDocument')->name('adminDocumentDelete');
+
+    //Reviews & Ratings
+
+    Route::get('/userReviews', 'AdminController@userReviews')->name('adminUserReviews');
+
+    Route::get('/providerReviews', 'AdminController@providerReviews')->name('adminProviderReviews');
+
+    Route::get('/payment', 'AdminController@settings')->name('admin.settings');
+
+    Route::get('/requests', 'AdminController@settings')->name('admin.settings');
+
 
     //User Routes
     Route::get('/users', 'AdminController@users')->name('admin.user');
