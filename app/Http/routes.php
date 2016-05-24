@@ -119,33 +119,55 @@ Route::group(['prefix' => 'providerApi'], function(){
 Route::group(['prefix' => 'admin'], function(){
 
     Route::get('login', 'Auth\AdminAuthController@showLoginForm');
+
     Route::post('login', 'Auth\AdminAuthController@login');
+
     Route::get('logout', 'Auth\AdminAuthController@logout');
 
     // Registration Routes...
     Route::get('register', 'Auth\AdminAuthController@showRegistrationForm');
+
     Route::post('register', 'Auth\AdminAuthController@register');
 
     // Password Reset Routes...
     Route::get('password/reset/{token?}', 'Auth\AdminPasswordController@showResetForm');
+
     Route::post('password/email', 'Auth\AdminPasswordController@sendResetLinkEmail');
+
     Route::post('password/reset', 'Auth\AdminPasswordController@reset');
 
     Route::get('/', 'AdminController@index')->name('admin.dashboard');
+
     Route::get('/settings', 'AdminController@settings')->name('admin.settings');
 
 
     //User Routes
     Route::get('/users', 'AdminController@users')->name('admin.user');
+
     Route::get('/addUser', 'AdminController@addUser')->name('admin.adduser');
+
     Route::get('/editUser/{id}', 'AdminController@editUser')->name('adminUserEdit');
+
     Route::get('/deleteUser/{id}', 'AdminController@deleteUser')->name('adminUserDelete');
+
     Route::get('/UserHistory/{id}', 'AdminController@UserHistory')->name('adminUserHistory');
+
     Route::post('/addUserProcess', 'AdminController@addUserProcess')->name('admin.addUserProcess');
 
     //Provider Routes
     Route::get('/providers', 'AdminController@providers')->name('admin.provider');
+
     Route::get('/addProvider', 'AdminController@addProvider')->name('admin.addprovider');
+
+    Route::get('/editProvider/{id}', 'AdminController@editProvider')->name('adminProviderEdit');
+
+    Route::get('/deleteProvider/{id}', 'AdminController@deleteProvider')->name('adminProviderDelete');
+
+    Route::get('/ProviderHistory/{id}', 'AdminController@ProviderHistory')->name('adminProviderHistory');
+
+    Route::post('/addProviderProcess', 'AdminController@addProviderProcess')->name('adminaddProviderProcess');
+
+    Route::get('/ProviderApprove/{id}/{status}', 'AdminController@ProviderApprove')->name('adminProviderApprove');
 
 });
 

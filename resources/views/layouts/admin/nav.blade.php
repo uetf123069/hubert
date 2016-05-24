@@ -26,7 +26,7 @@
 
             <li>
                 <a href="{{ route('admin.dashboard') }}">
-                    <i class="fa fa-flask"></i>
+                    <i class="fa fa-dashboard"></i>
                     <span>Dashboard</span>
                 </a>
             </li>
@@ -71,7 +71,7 @@
 
             <li>
                 <a href="{{ route('admin.settings') }}">
-                    <i class="fa fa-flask"></i>
+                    <i class="fa fa-gears"></i>
                     <span>Settings</span>
                 </a>
             </li>
@@ -87,21 +87,21 @@
             <li>
                 <a href="#" target="_blank">
                     <i class="fa fa-sliders"></i>
-                    <span>On Going Services</span>
+                    <span>Rating & Reviews</span>
                     <span class="label label-danger pull-right">hot</span>
                 </a>
             </li>
 
             <li>
                 <a href="#">
-                    <i class="fa fa-flask"></i>
+                    <i class="fa fa-money"></i>
                     <span>Payment History</span>
                 </a>
             </li>
 
             <li>
                 <a href="#">
-                    <i class="fa fa-flask"></i>
+                    <i class="fa fa-sign-out"></i>
                     <span>Logout</span>
                 </a>
             </li>

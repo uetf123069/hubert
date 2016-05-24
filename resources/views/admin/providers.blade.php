@@ -3,6 +3,8 @@
 @section('title', 'Providers | ')
 
 @section('content')
+
+@include('notification.notify')
         <div class="panel">
           <div class="panel-heading border">
             <ol class="breadcrumb mb0 no-padding">
@@ -23,36 +25,53 @@
                   <th>Name</th>
                   <th>Email</th>
                   <th>Phone</th>
-                  <th>Address</th>
-                  <th>Total Services</th>
-                  <th>Amount Paid</th>
+                  <th>Services</th>
+                  <th>Income</th>
+                  <th>Availability</th>
                   <th>Status</th>
                   <th>Action</th>
                   </tr>
               </thead>
               <tbody>
-              @for($i=1; $i < 15; $i++)
+              @foreach($providers as $provider)
               <tr>
+                  <td>{{$provider->id}}</td>
+                  <td>{{$provider->first_name}}</td>
+                  <td>{{$provider->email}}</td>
+                  <td>{{$provider->mobile}}</td>
                   <td>1</td>
                   <td>1</td>
-                  <td>1</td>
-                  <td>1</td>
-                  <td>1</td>
-                  <td>1</td>
-                  <td>1</td>
-                  <td>1</td>
-                  <td><div class="col-sm-10">
-
-                      <select class="form-control">
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4</option>
-                        <option>5</option>
-                      </select>
-                      </div></td>
+                  <td>@if($provider->is_available==1) Yes @else N/A @endif</td>
+                  <td>@if($provider->is_approved==1) Approved @else Unapproved @endif</td>
+                  
+                  <td>
+                      <div class="input-group-btn">
+                          <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">Action
+                            <span class="caret"></span>
+                          </button>
+                          <ul class="dropdown-menu">
+                            <li>
+                              <a href="{{route('adminProviderEdit', array('id' => $provider->id))}}">Edit</a>
+                            </li>
+                            <li>
+                            @if($provider->is_approved==0)
+                              <a href="{{route('adminProviderApprove', array('id' => $provider->id, 'status'=>1))}}">Approve</a>
+                            @else
+                              <a href="{{route('adminProviderApprove', array('id' => $provider->id, 'status' => 0))}}">Decline</a>
+                            @endif
+                            </li>
+                            <li>
+                              <a href="{{route('adminProviderDelete', array('id' => $provider->id))}}">Delete</a>
+                            </li>
+                            <li>
+                              <a href="{{route('adminProviderHistory', array('id' => $provider->id))}}">View History</a>
+                            </li>
+                            
+                          </ul>
+                        </div>
+                  </td>
               </tr>
-              @endfor
+              @endforeach
               </tbody>
             </table>
           </div>
