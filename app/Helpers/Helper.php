@@ -10,6 +10,10 @@
 
    use App\Provider;
 
+   use App\FavouriteProvider;
+
+   use App\ProviderService;
+
    use Mail;
 
    use File;
@@ -199,6 +203,40 @@
             }
         }
 
+        public static function send_users_welcome_email($email_data)
+        {
+            $email = $email_data['email'];
+            $email_data = $email_data;
+
+            $subject = "Welcome on Board";
+
+            
+
+            if(env('MAIL_USERNAME') && env('MAIL_PASSWORD')) {
+                try
+                {
+                    Log::info("Provider welcome mail started.....");
+
+                    Mail::send('emails.user.welcome', array('email_data' => $email_data), function ($message) use ($email, $subject) {
+                            $message->to($email)->subject($subject);
+                    });
+
+                } catch(Exception $e) {
+
+                    Log::info('Email send error message***********'.print_r($e,true));
+
+                    return Helper::get_error_message(123);
+                }
+
+                return Helper::get_message(105);
+
+            } else {
+
+                return Helper::get_error_message(123);
+
+            }
+        }
+
         public static function get_error_message($code)
         {
             switch($code) {
@@ -230,7 +268,7 @@
                     $string = "There was a problem with the server. Please try again.";
                     break;
                 case 110:
-                    $string = "There is a delivery already in progress.";
+                    $string = "There is a service already in progress.";
                     break;
                 case 111:
                     $string = "Email is not activated.";
@@ -239,10 +277,10 @@
                     $string = "No provider found for the selected service in your area currently.";
                     break;
                 case 113:
-                    $string = "The delivery is already cancelled.";
+                    $string = "The service is already cancelled.";
                     break;
                 case 114:
-                    $string = "The delivery cancellation is not allowed at this point.";
+                    $string = "The service cancellation is not allowed at this point.";
                     break;
                 case 115:
                     $string = "Invalid refresh token.";
@@ -251,10 +289,10 @@
                     $string = "No provider assigned to this request id.";
                     break;
                 case 117:
-                    $string = "The delivery is cancelled by user.";
+                    $string = "The service is cancelled by user.";
                     break;
                 case 118:
-                    $string = "The delivery is not completed.";
+                    $string = "The service is not completed.";
                     break;
                 case 119:
                     $string = "You have pending payments of completed deliveries.";
@@ -303,6 +341,15 @@
                     break;
                 case 134:
                     $string = 'Payment details is not filled';
+                    break;
+                case 135:
+                    $string = "Request Service ID and Provider ID are mismatched";
+                    break;
+                case 136:
+                    $string = "Request already completed";
+                    break;
+                case 137:
+                    $string = "The service payment is not allowed at this point.";
                     break;
                 default:
                     $string = "Unknown error occurred.";
@@ -453,7 +500,69 @@
 
         }
 
+        public static function get_fav_providers($service_type,$user_id) {
+
+        /** Favourite Providers Search Start */
+
+        Log::info('Favourite Providers Search Start');
+
+        $favProviders = array();  // Initialize the variable
+
+         // Get the favourite providers list
+
+        $fav_providers_query = FavouriteProvider::leftJoin('providers' , 'favourite_providers.provider_id' ,'=' , 'providers.id')
+                ->where('user_id' , $user_id)
+                ->where('providers.is_available' , DEFAULT_TRUE)
+                ->where('providers.is_activated' , DEFAULT_TRUE)
+                ->where('providers.is_approved' , DEFAULT_TRUE)
+                ->select('provider_id' , 'providers.waiting_to_respond as waiting');
+
+        if($service_type) {
+
+            $provider_services = ProviderService::where('service_type_id' , $service_type)
+                                    ->where('is_available' , DEFAULT_TRUE)
+                                    ->get();
+
+            $provider_ids = array();
+
+            if($provider_services ) {
+
+                foreach ($provider_services as $key => $provider_service) {
+                    $provider_ids[] = $provider_service->provider_id;
+                }
+
+                $favProviders = $fav_providers_query->whereIn('provider_id' , $provider_ids)->orderBy('waiting' , 'ASC')->get();
+            }
+                           
+        } else {
+            $favProviders = $fav_providers_query->orderBy('waiting' , 'ASC')->get();
+        }
+
+        return $favProviders;
+
+        /** Favourite Providers Search End */
     }
+
+    public static function sort_waiting_providers($merge_providers) {
+        $waiting_array = array();
+        $non_waiting_array = array();
+
+        foreach ($merge_providers as $key => $val) {
+            if($val['waiting'] == 1) {
+                $waiting_array[] = $val['id']  ;
+            } else {
+                $non_waiting_array[] = $val['id'];
+            }
+        }
+
+        $providers = array_unique(array_merge($non_waiting_array,$waiting_array));
+
+        return $providers;
+    }
+       
+    }
+
+    
 
 
 
