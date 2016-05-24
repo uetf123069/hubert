@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 
+use App\Helpers\Helper;
+
 class UserController extends Controller
 {
     /**
@@ -15,7 +17,7 @@ class UserController extends Controller
      */
     public function __construct()
     {
-        // $this->middleware('auth');
+        $this->middleware('auth');
     }
 
     /**
@@ -53,9 +55,33 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function profile()
+    public function profile_edit()
     {
         return view('user.profile');
+    }
+
+    /**
+     * Save any changes to the users profile.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function profile_save(Request $request)
+    {
+        $url = url('/userApi/updateProfile');
+        $data = $request->all();
+        $auth = [ 
+                'id' => \Auth::user()->id,
+                'token' => \Auth::user()->token,
+                'device_token' => \Auth::user()->device_token,
+            ];
+
+        $client = new \GuzzleHttp\Client();
+        
+        $response = $client->request('POST', $url, [
+            'form_params' => array_merge($data, $auth)
+        ]);
+
+        return redirect('back')->with('success', 'Profile has been saved');
     }
 
     /**
@@ -63,8 +89,9 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function password()
+    public function profile_save_password()
     {
-        return view('user.profile');
+        return redirect('back')->with('success', 'Password has been updated');
+        // return view('user.profile');
     }
 }
