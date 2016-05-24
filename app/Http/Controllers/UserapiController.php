@@ -32,6 +32,8 @@ use App\Settings;
 
 use App\FavouriteProvider;
 
+use App\RequestPayment;
+
 use App\UserRating;
 
 use App\ProviderRating;
@@ -43,16 +45,17 @@ define('USER', 0);
 
 define('PROVIDER',1);
 
-
 define('NONE', 0);
 
-
 define('DEFAULT_FALSE', 0);
-
 define('DEFAULT_TRUE', 1);
 
-// Request table status
+// Payment Constants
+define('COD',   'cod');
+define('PAYPAL', 'paypal');
+define('CARD',  'card');
 
+// Request table status
 define('REQUEST_NEW',        0);
 define('REQUEST_WAITING',      1);
 define('REQUEST_INPROGRESS',    2);
@@ -61,8 +64,6 @@ define('REQUEST_RATING',      4);
 define('REQUEST_COMPLETED',      5);
 define('REQUEST_CANCELLED',      6);
 define('REQUEST_NO_PROVIDER_AVAILABLE',7);
-define('REQUEST_CANCEL_USER',8);
-define('REQUEST_CANCEL_PROVIDER',9);
 
 define('PROVIDER_NOT_AVAILABLE', 0);
 define('PROVIDER_AVAILABLE', 1);
@@ -87,9 +88,7 @@ define('WAITING_TO_RESPOND_NORMAL',0);
 
 define('RATINGS', '1,2,3,4,5');
 
-
 define('DEVICE_ANDROID', 'android');
-
 define('DEVICE_IOS', 'ios');
 
 
@@ -257,10 +256,12 @@ class UserapiController extends Controller
 
                 // Settings table - COD Check is enabled 
 
-                // Save the default payment method
+                if(Settings::where('key' , COD)->where('value' , DEFAULT_TRUE)->first()) {
 
-                $user->payment_mode = 1;
+                    // Save the default payment method
 
+                    $user->payment_mode = COD;
+                }
 
                 $user->save();
 
@@ -632,10 +633,9 @@ class UserapiController extends Controller
     
     }
 
-    public function service_list(Request $request)
-    {
-        if($serviceList = ServiceType::all())
-        {
+    public function service_list(Request $request) {
+    
+        if($serviceList = ServiceType::all()) {
             $response_array = array(
                         'success' => true,
                         'services' => $serviceList,
@@ -647,15 +647,14 @@ class UserapiController extends Controller
                     'error_code' => 115
             );
         }
-
         $response = response()->json(Helper::null_safe($response_array), 200);
         return $response;
 
     }
 
     // Not using now
-    public function single_service(Request $request)
-    {
+    public function single_service(Request $request) {
+    
         $validator = Validator::make(
                 $request->all(),
                 array(
@@ -721,211 +720,226 @@ class UserapiController extends Controller
         } else {
             Log::info('Create request start');
             // Check the user filled the payment details
-
             $user = User::find($request->id);
             if(!$user->payment_mode) {
-                Log::info('Payment Mode is not available');
+                // Log::info('Payment Mode is not available');
                 $response_array = array('success' => false , 'error' => Helper::get_error_message(134) , 'error_code' => 134);
             } else {
 
-                // Check already request exists 
-                $check_status = array(REQUEST_CANCEL_USER,REQUEST_NO_PROVIDER_AVAILABLE,REQUEST_CANCELLED,REQUEST_CANCEL_PROVIDER,REQUEST_COMPLETED);
-
-                $check_requests = Requests::where('user_id' , $request->id)->whereNotIn('status' , $check_status)->count();
-
-                if($check_requests == 0) {
-
-                    Log::info('Previous requests check is done');
-                    $service_type = $request->service_type; // Get the service type 
-
-                    // Initialize the variable
-                    $list_fav_providers = array(); $first_provider_id = 0; $list_fav_provider = array();
-
-                    /** Fav Providers SEARCH started */
-                    $favProviders = Helper::get_fav_providers($service_type,$request->id);
-
-                    // Check Favourite Providers list is not empty
-                    if($favProviders) {
-                        foreach ($favProviders as $key => $favProvider) {
-                            $list_fav_provider['id'] = $favProvider->provider_id;
-                            $list_fav_provider['waiting'] = $favProvider->waiting;
-                            $list_fav_provider['distance'] = 0;
-
-                            array_push($list_fav_providers, $list_fav_provider);
-                        }                
+                $allow = DEFAULT_FALSE;
+                // if the payment mode is CARD , check if any default card is available
+                if($user->payment_mode == CARD) {
+                    if($user_card = Cards::find($user->default_card)) {
+                        $allow = DEFAULT_TRUE;
                     }
-                    /** Fav providers end */
+                } else {
+                    $allow = DEFAULT_TRUE;
+                }
 
-                    $latitude = $request->s_latitude;
-                    $longitude = $request->s_longitude;
-                    $request_start_time = time();
+                if($allow == DEFAULT_TRUE) {
 
-                    /*Get default search radius*/
-                    $settings = Settings::where('key', 'search_radius')->first();
-                    $distance = $settings->value;
+                    // Check already request exists 
+                    $check_status = array(REQUEST_NO_PROVIDER_AVAILABLE,REQUEST_CANCELLED,REQUEST_COMPLETED);
 
-                    // Search Providers
-                    $providers = array();   // Initialize providers variable
+                    $check_requests = Requests::where('user_id' , $request->id)->whereNotIn('status' , $check_status)->count();
 
-                    // Check the service type value to search the providers based on the nearby location
-                    if($service_type) {
+                    if($check_requests == 0) {
 
-                        Log::info('Location Based search started - service_type');
-                        // Get the providers based on the selected service types
+                        Log::info('Previous requests check is done');
+                        $service_type = $request->service_type; // Get the service type 
 
-                        $service_providers = ProviderService::where('service_type_id' , $service_type)->where('is_available' , 1)->select('provider_id')->get();
+                        // Initialize the variable
+                        $list_fav_providers = array(); $first_provider_id = 0; $list_fav_provider = array();
 
-                        $list_service_ids = array();    // Initialize list_service_ids
-                        if($service_providers) {
-                            foreach ($service_providers as $sp => $service_provider) {
-                                $list_service_ids[] = $service_provider->provider_id;
-                            }
-                            $list_service_ids = implode(',', $list_service_ids);
+                        /** Fav Providers SEARCH started */
+                        $favProviders = Helper::get_fav_providers($service_type,$request->id);
+
+                        // Check Favourite Providers list is not empty
+                        if($favProviders) {
+                            foreach ($favProviders as $key => $favProvider) {
+                                $list_fav_provider['id'] = $favProvider->provider_id;
+                                $list_fav_provider['waiting'] = $favProvider->waiting;
+                                $list_fav_provider['distance'] = 0;
+
+                                array_push($list_fav_providers, $list_fav_provider);
+                            }                
                         }
+                        /** Fav providers end */
 
-                        if($list_service_ids) {
+                        $latitude = $request->s_latitude;
+                        $longitude = $request->s_longitude;
+                        $request_start_time = time();
+
+                        /*Get default search radius*/
+                        $settings = Settings::where('key', 'search_radius')->first();
+                        $distance = $settings->value;
+
+                        // Search Providers
+                        $providers = array();   // Initialize providers variable
+
+                        // Check the service type value to search the providers based on the nearby location
+                        if($service_type) {
+
+                            Log::info('Location Based search started - service_type');
+                            // Get the providers based on the selected service types
+
+                            $service_providers = ProviderService::where('service_type_id' , $service_type)->where('is_available' , 1)->select('provider_id')->get();
+
+                            $list_service_ids = array();    // Initialize list_service_ids
+                            if($service_providers) {
+                                foreach ($service_providers as $sp => $service_provider) {
+                                    $list_service_ids[] = $service_provider->provider_id;
+                                }
+                                $list_service_ids = implode(',', $list_service_ids);
+                            }
+
+                            if($list_service_ids) {
+                                $query = "SELECT providers.id,providers.waiting_to_respond as waiting, 1.609344 * 3956 * acos( cos( radians('$latitude') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians('$longitude') ) + sin( radians('$latitude') ) * sin( radians(latitude) ) ) AS distance FROM providers
+                                        WHERE id IN ($list_service_ids) AND is_available = 1 AND is_activated = 1 AND is_approved = 1
+                                        AND (1.609344 * 3956 * acos( cos( radians('$latitude') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians('$longitude') ) + sin( radians('$latitude') ) * sin( radians(latitude) ) ) ) <= $distance
+                                        ORDER BY distance";
+
+                                $providers = DB::select(DB::raw($query));
+                                Log::info("Search query: " . $query);
+                            } 
+                        } else {
+                            Log::info('Location Based search started - without service_type');
+
                             $query = "SELECT providers.id,providers.waiting_to_respond as waiting, 1.609344 * 3956 * acos( cos( radians('$latitude') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians('$longitude') ) + sin( radians('$latitude') ) * sin( radians(latitude) ) ) AS distance FROM providers
-                                    WHERE id IN ($list_service_ids) AND is_available = 1 AND is_activated = 1 AND is_approved = 1
+                                    WHERE is_available = 1 AND is_activated = 1 AND is_approved = 1
                                     AND (1.609344 * 3956 * acos( cos( radians('$latitude') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians('$longitude') ) + sin( radians('$latitude') ) * sin( radians(latitude) ) ) ) <= $distance
                                     ORDER BY distance";
-
                             $providers = DB::select(DB::raw($query));
                             Log::info("Search query: " . $query);
-                        } 
-                    } else {
-                        Log::info('Location Based search started - without service_type');
-
-                        $query = "SELECT providers.id,providers.waiting_to_respond as waiting, 1.609344 * 3956 * acos( cos( radians('$latitude') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians('$longitude') ) + sin( radians('$latitude') ) * sin( radians(latitude) ) ) AS distance FROM providers
-                                WHERE is_available = 1 AND is_activated = 1 AND is_approved = 1
-                                AND (1.609344 * 3956 * acos( cos( radians('$latitude') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians('$longitude') ) + sin( radians('$latitude') ) * sin( radians(latitude) ) ) ) <= $distance
-                                ORDER BY distance";
-                        $providers = DB::select(DB::raw($query));
-                        Log::info("Search query: " . $query);
-                    }
-                    // Log::info('List of providers'." ".print_r($providers));
-
-                    $merge_providers = array();
-                    if ($providers) {
-                        // Initialize Final list of provider variable
-                        $search_providers = array();
-                        $search_provider = array();
-
-                        foreach ($providers as $provider) {
-                            $search_provider['id'] = $provider->id;
-                            $search_provider['waiting'] = $provider->waiting;
-                            $search_provider['distance'] = $provider->distance;
-                            
-                            array_push($search_providers, $search_provider);
                         }
-                    } else {
-                        // No provider found
-                        Log::info("No Provider Found");
-                        // Send push notification to User
-                        // Helper::send_push_notification($user->id, USER, Helper::get_push_message(601), Helper::get_push_message(602));
-                        $response_array = array('success' => false, 'error' => Helper::get_error_message(112), 'error_code' => 112);
-                    }
+                        // Log::info('List of providers'." ".print_r($providers));
 
-                    // Merge the favourite providers and search providers
-                    $merge_providers = array_merge($list_fav_providers,$search_providers);
+                        $merge_providers = array();
+                        if ($providers) {
+                            // Initialize Final list of provider variable
+                            $search_providers = array();
+                            $search_provider = array();
 
-                    $final_providers = Helper::sort_waiting_providers($merge_providers);            
+                            foreach ($providers as $provider) {
+                                $search_provider['id'] = $provider->id;
+                                $search_provider['waiting'] = $provider->waiting;
+                                $search_provider['distance'] = $provider->distance;
+                                
+                                array_push($search_providers, $search_provider);
+                            }
+                        } else {
+                            // No provider found
+                            Log::info("No Provider Found");
+                            // Send push notification to User
+                            // Helper::send_push_notification($user->id, USER, Helper::get_push_message(601), Helper::get_push_message(602));
+                            $response_array = array('success' => false, 'error' => Helper::get_error_message(112), 'error_code' => 112);
+                        }
 
-                    // Create Requests
-                    $requests = new Requests;
-                    $requests->user_id = $user->id;
+                        // Merge the favourite providers and search providers
+                        $merge_providers = array_merge($list_fav_providers,$search_providers);
 
-                    if($service_type)
-                        $requests->request_type = $service_type;
+                        $final_providers = Helper::sort_waiting_providers($merge_providers);            
 
-                    $requests->status = REQUEST_NEW;
-                    $requests->confirmed_provider = NONE;
-                    $requests->request_start_time = date("Y-m-d H:i:s", $request_start_time);
-                    $requests->s_address = $request->s_address ? $request->s_address : "";
-                        
-                    if($latitude){ $requests->s_latitude = $latitude; }
-                    if($longitude) { $requests->s_longitude = $longitude; }
-                        
-                    $requests->save();
+                        // Create Requests
+                        $requests = new Requests;
+                        $requests->user_id = $user->id;
 
-                    if($requests) {
-                        $requests->status = REQUEST_WAITING;
-                        //No need fo current provider state
-                        // $requests->current_provider = $first_provider_id;
+                        if($service_type)
+                            $requests->request_type = $service_type;
+
+                        $requests->status = REQUEST_NEW;
+                        $requests->confirmed_provider = NONE;
+                        $requests->request_start_time = date("Y-m-d H:i:s", $request_start_time);
+                        $requests->s_address = $request->s_address ? $request->s_address : "";
+                            
+                        if($latitude){ $requests->s_latitude = $latitude; }
+                        if($longitude) { $requests->s_longitude = $longitude; }
+                            
                         $requests->save();
 
-                        // Save all the final providers
-                        $first_provider_id = 0;
+                        if($requests) {
+                            $requests->status = REQUEST_WAITING;
+                            //No need fo current provider state
+                            // $requests->current_provider = $first_provider_id;
+                            $requests->save();
 
-                        if($final_providers) {
-                            foreach ($final_providers as $key => $final_provider) {
+                            // Save all the final providers
+                            $first_provider_id = 0;
 
-                                $request_meta = new RequestsMeta;
+                            if($final_providers) {
+                                foreach ($final_providers as $key => $final_provider) {
 
-                                if($first_provider_id == 0) {
+                                    $request_meta = new RequestsMeta;
 
-                                    $first_provider_id = $final_provider;
+                                    if($first_provider_id == 0) {
 
-                                    $request_meta->status = REQUEST_META_OFFERED;  // Request status change
+                                        $first_provider_id = $final_provider;
 
-                                    // Availablity status change
-                                    if($current_provider = Provider::find($first_provider_id)) {
-                                        $current_provider->waiting_to_respond = WAITING_TO_RESPOND;
-                                        $current_provider->save();
+                                        $request_meta->status = REQUEST_META_OFFERED;  // Request status change
+
+                                        // Availablity status change
+                                        if($current_provider = Provider::find($first_provider_id)) {
+                                            $current_provider->waiting_to_respond = WAITING_TO_RESPOND;
+                                            $current_provider->save();
+                                        }
+
+                                        // Send push notifications to the first provider
+                                        $settings = Settings::where('key', 'provider_select_timeout')->first();
+                                        $provider_timeout = $settings->value;
+
+                                        if($service_type)
+                                            $service = ServiceType::find($requests->request_type);
+
+                                        $push_data = array();
+                                        $push_data['request_id'] = $requests->id;
+                                        $push_data['service_type'] = $requests->request_type;
+                                        $push_data['request_start_time'] = $requests->request_start_time;
+                                        $push_data['status'] = $requests->status;
+                                        $push_data['user_name'] = $user->name;
+                                        $push_data['user_picture'] = $user->picture;
+                                        $push_data['s_address'] = $requests->s_address;
+                                        $push_data['s_latitude'] = $requests->s_latitude;
+                                        $push_data['s_longitude'] = $requests->s_longitude;
+                                        $push_data['user_rating'] = ProviderRating::where('provider_id', $first_provider_id)->avg('rating') ?: 0;
+                                        $push_data['time_left_to_respond'] = $provider_timeout - (time() - strtotime($requests->request_start_time));
+
+                                        $title = "New Request";
+                                        $message = "You got a new request from ".$user->name;
+                                        $push_message = array(
+                                            'success' => true,
+                                            'message' => $message,
+                                            'data' => array((object) Helper::null_safe($push_data))
+                                        );
+
+                                        // Send Push Notification to Provider
+                                        //send_push_notification($first_provider_id, PROVIDER, $title, $push_message);
+                                        // Log::info(print_r($push_message,true));
+                                        // Push End
                                     }
-
-                                    // Send push notifications to the first provider
-                                    $settings = Settings::where('key', 'provider_select_timeout')->first();
-                                    $provider_timeout = $settings->value;
-
-                                    if($service_type)
-                                        $service = ServiceType::find($requests->request_type);
-
-                                    $push_data = array();
-                                    $push_data['request_id'] = $requests->id;
-                                    $push_data['service_type'] = $requests->request_type;
-                                    $push_data['request_start_time'] = $requests->request_start_time;
-                                    $push_data['status'] = $requests->status;
-                                    $push_data['user_name'] = $user->name;
-                                    $push_data['user_picture'] = $user->picture;
-                                    $push_data['s_address'] = $requests->s_address;
-                                    $push_data['s_latitude'] = $requests->s_latitude;
-                                    $push_data['s_longitude'] = $requests->s_longitude;
-                                    $push_data['user_rating'] = ProviderRating::where('provider_id', $first_provider_id)->avg('rating') ?: 0;
-                                    $push_data['time_left_to_respond'] = $provider_timeout - (time() - strtotime($requests->request_start_time));
-
-                                    $title = "New Request";
-                                    $message = "You got a new request from ".$user->name;
-                                    $push_message = array(
-                                        'success' => true,
-                                        'message' => $message,
-                                        'data' => array((object) Helper::null_safe($push_data))
-                                    );
-
-                                    // Send Push Notification to Provider
-                                    //send_push_notification($first_provider_id, PROVIDER, $title, $push_message);
-                                    // Log::info(print_r($push_message,true));
-                                    // Push End
+                                    $request_meta->request_id = $requests->id;
+                                    $request_meta->provider_id = $final_provider; 
+                                    $request_meta->save();
                                 }
-                                $request_meta->request_id = $requests->id;
-                                $request_meta->provider_id = $final_provider; 
-                                $request_meta->save();
                             }
-                        }
-                        $response_array = array(
-                            'success' => true,
-                            'source_address' => $requests->s_address,
-                            's_latitude' => $requests->s_latitude,
-                            's_longitude' => $requests->s_longitude,
-                            'service_id' => $requests->service_id,
-                            'request_id' => $requests->id,
-                        );
+                            $response_array = array(
+                                'success' => true,
+                                'source_address' => $requests->s_address,
+                                's_latitude' => $requests->s_latitude,
+                                's_longitude' => $requests->s_longitude,
+                                'service_id' => $requests->service_id,
+                                'request_id' => $requests->id,
+                            );
 
-                        $response_array = Helper::null_safe($response_array); Log::info('Create request end');
+                            $response_array = Helper::null_safe($response_array); Log::info('Create request end');
+                        } else {
+                            $response_array = array('success' => false , 'error' => Helper::get_error_message(126) , 'error_code' => 126 );
+                        }     
                     } else {
-                        $response_array = array('success' => false , 'error' => Helper::get_error_message(126) , 'error_code' => 126 );
-                    }     
+                        $response_array = array('success' => false , 'error' => Helper::get_error_message(127) , 'error_code' => 127);
+                    }
+
                 } else {
-                    $response_array = array('success' => false , 'error' => Helper::get_error_message(127) , 'error_code' => 127);
+                    $response_array = array('success' => false , 'error' => Helper::get_error_message(142) ,'error_code' => 142);
                 }
             }
         }
@@ -934,8 +948,8 @@ class UserapiController extends Controller
     
     }
 
-    public function cancel_request(Request $request)
-    {
+    public function cancel_request(Request $request) {
+    
         $user_id = $request->id;
 
         $validator = Validator::make(
@@ -1036,11 +1050,14 @@ class UserapiController extends Controller
 
         $validator = Validator::make($request->all() , 
             array(
-                'amount' => "required",
-                'is_paid' => "required",
-                'request_id' => "required|integer|exists:requests,id,user_id,".$request->id,
+
+                'request_id' => 'required|exists:requests,id,user_id,'.$request->id,
+                'payment_mode' => 'required|in:'.PAYPAL.'|exists:settings,key,value,1',
+                'is_paid' => 'required|in:'.DEFAULT_TRUE,
+                'payment_id' => 'required',
             ),array(
                 'exists' => 'The :attribute doesn\'t belong to user:'.$user->firstname.' '.$user->last_name,
+                'in'      => 'The :attribute must be one of the following types: :values',
             )
             );
         if($validator->fails()) {
@@ -1050,57 +1067,234 @@ class UserapiController extends Controller
 
         } else {
 
+            $requests = Requests::find($request->request_id);
 
-                $requests = Requests::find($request->request_id);
-                // Check the status is completed
+            // Check the status is completed
+            if( $requests && $requests->status != REQUEST_RATING) {
 
-                if($requests->status == REQUEST_COMPLETED) {
+                if($requests->status == REQUEST_COMPLETE_PENDING) {
 
-                    if($requests->status == REQUEST_COMPLETE_PENDING) {
+                    $requests->status = REQUEST_RATING;
 
-                        // Save the payment details 
+                    $requests->is_paid = DEFAULT_TRUE;
+                    $requests->amount = $request->amount;
+                    $requests->save();
 
-                        $requests->is_paid = 1;
+                    if($request_payment = RequestPayment::where('request_id' , $request->request_id)->first()) {
 
-                        $requests->amount = $request->amount;
-
-                        $requests->save();
-
-                        $user = User::find($request->id);
-
-
-                        // Send push notification to provider
-
-                        if($user)
-                            $title =  "The"." ".$user->name." done the payment";
-                        else
-                            $title = "Payment done";
-
-                        $message = Helper::get_push_message(603);
-
-                        // Helper::send_notifications($requests->confirmed_provider, PROVIDER , $title , $message );
-
-                        // Send push notification to provider
-
-                        // Helper::send_notifications($requests->user_id, USER , $user_title , $user_message );
-
-                        // Send Response
-
-                        $response_array =  array('success' => true , 'message' => Helper::get_message(107));
-
-                    } else {
-                        $response_array = array('success' => 'false' , 'error' => Helper::get_error_message(137) , 'error_code' => 137);
+                        $request_payment->payment_id = $request->payment_id;
+                        $request_payment->payment_mode = $request->payment_mode;
+                        $request_payment->save();
                     }
+
+                    // Send push notification to provider
+
+                    if($user)
+                        $title =  "The"." ".$user->first_name.' '.$user->last_name." done the payment";
+                    else
+                        $title = "Payment done";
+
+                    $message = Helper::get_push_message(603);
+
+                    Helper::send_notifications($requests->confirmed_provider, PROVIDER , $title , $message );
+
+                    // Send Response
+
+                    $response_array =  array('success' => true , 'message' => Helper::get_message(107));
+
                 } else {
-                        $response_array = array('success' => 'false' , 'error' => Helper::get_error_message(136) , 'error_code' => 136);
+                    $response_array = array('success' => 'false' , 'error' => Helper::get_error_message(137) , 'error_code' => 137);
                 }
-
-
+            
+            } else {
+                $response_array = array('success' => 'false' , 'error' => Helper::get_error_message(136) , 'error_code' => 136);
+            }
         }
 
         return response()->json(Helper::null_safe($response_array),200);
 
     }
+
+    public function paynow(Request $request) {
+
+        $validator = Validator::make($request->all() , 
+            array(
+                    'request_id' => 'required|exists:requests,id,user_id,'.$request->id,
+                    'payment_mode' => 'required|in:'.COD.','.PAYPAL.','.CARD.'|exists:settings,key,value,1',
+                    'is_paid' => 'required',
+                ),
+            array(
+                    'exists' => Helper::get_error_message(139),
+                )
+            );
+
+        if($validator->fails()) {
+            $error_messages = implode(',', $validator->messages()->all());
+            $response_array = array('success' => false , 'error' => $error_messages , 'error_messages' => Helper::get_error_message(101));
+        } else {
+
+            $requests = Requests::find($request->request_id);
+            $user = User::find($request->id);
+
+            //Check current status of the request
+            if($requests && intval($requests->status) != REQUEST_RATING ) {
+
+                $total = 0;
+
+                if($request_payment = RequestPayment::where('request_id' , $request->request_id)->first()) {
+                    $request_payment->payment_mode = $request->payment_mode;
+                    $request_payment->save();
+                    $total = $request_payment->total;
+                }
+
+                if($request->payment_mode == COD) {
+
+                    $requests->status = REQUEST_RATING;
+                    $requests->is_paid = DEFAULT_TRUE;
+
+                    $request_payment->payment_id = uniqid();
+
+                } elseif($request->payment_mode == CARD) {
+
+                    $check_card_exists = User::where('users.id' , $request->id)
+                                ->leftJoin('cards' , 'users.id','=','cards.user_id')
+                                ->where('cards.id' , $user->default_card)
+                                ->where('cards.is_default' , DEFAULT_TRUE);
+
+                    if($check_card_exists->count() != 0) {
+
+                        $user_card = $check_card_exists->first();
+
+                        // Get the key from settings table
+                        $settings = Settings::where('key' , 'stripe_secret_key')->first();
+                        $stripe_secret_key = $settings->value;
+
+                        $customer_id = $user_card->customer_id;
+                    
+                        \Stripe\Stripe::setApiKey($stripe_secret_key);
+
+                        try{
+
+                           $user_charge =  \Stripe\Charge::create(array(
+                              "amount" => $total * 100,
+                              "currency" => "usd",
+                              "customer" => $customer_id,
+                            ));
+
+                           $payment_id = $user_charge->id;
+                           $amount = $user_charge->amount/100;
+                           $paid_status = $user_charge->paid;
+
+                           $request_payment->payment_id = $payment_id;
+
+                           if($paid_status) {
+                                $requests->is_paid =  DEFAULT_TRUE;
+                           }
+                            $requests->status = REQUEST_RATING;
+                            $requests->amount = $amount;
+                        
+                        } catch (\Stripe\StripeInvalidRequestError $e) {
+                            Log::info(print_r($e,true));
+                            $response_array = array('success' => false , 'error' => Helper::get_error_message(141) ,'error_code' => 141);
+                        }
+
+                    } else {
+                        $response_array = array('success' => false, 'error' => Helper::get_error_message(140) , 'error_code' => 140);
+                    }
+
+                }   
+
+                $requests->save();
+                $request_payment->save();
+
+                // Send notification to the provider Start
+
+                if($user)
+                    $title =  "The"." ".$user->first_name.' '.$user->last_name." done the payment";
+                else
+                    $title = "User paid the amount";
+
+                $messages = Helper::get_push_message(603);
+                Helper::send_notifications($requests->confirmed_provider,PROVIDER,$title,$messages);
+                // Send notification end
+
+                $response_array = array('success' => true);         
+
+            } else {
+                $response_array = array('success' => false,'error' => Helper::get_error_message(138) , 'error_code' => 138);
+            }
+        }
+
+        return response()->json(Helper::null_safe($response_array) , 200);
+    
+    }
+
+    public function rate_provider(Request $request) {
+
+        $user = User::find($request->id);
+
+        $validator = Validator::make(
+            $request->all(),
+            array(
+                'request_id' => 'required|integer|exists:requests,id,user_id,'.$user->id.'|unique:user_ratings,request_id',
+                'rating' => 'required|integer|in:'.RATINGS,
+                'comments' => 'max:255',
+                'fav_provider' => 'exists:providers,id'
+            ),
+            array(
+                'exists' => 'The :attribute doesn\'t belong to user:'.$user->id,
+                'unique' => 'The :attribute already rated.'
+            )
+        );
+    
+        if ($validator->fails()) {
+            $error_messages = implode(',', $validator->messages()->all());
+            $response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101, 'error_messages'=>$error_messages);
+        
+        } else {
+
+            $request_id = $request->request_id;
+            $comment = $request->comment;
+
+            $req = Requests::find($request_id);
+            //Save Rating
+            $rev_user = new UserRating();
+            $rev_user->provider_id = $req->confirmed_provider;
+            $rev_user->user_id = $req->user_id;
+            $rev_user->request_id = $req->id;
+            $rev_user->rating = $request->rating;
+            $rev_user->comment = $comment ? $comment: '';
+            $rev_user->save();
+
+            $req->status = REQUEST_COMPLETED;
+            $req->save();
+
+            // Save favourite provider details
+            if($request->has('fav_provider')) {
+                $fav_provider = FavouriteProvider::where('provider_id',$request->fav_provider)->where('user_id' , $request->id)->first();
+                if(!$fav_provider){
+                    $favProvider = new FavouriteProvider;
+                    $favProvider->provider_id = $request->fav_provider;
+                    $favProvider->user_id = $request->id;
+                    $favProvider->status = 1;
+                    $favProvider->save();
+                }
+            }
+
+            // Send Push Notification to Provider
+            $title = "User Rated";
+            $messages = "The user rated your service.";
+            Helper::send_notifications($req->confirmed_provider, PROVIDER, $title, $messages);
+
+            $response_array = array(
+                'success' => true
+            );
+
+        }
+
+        $response = response()->json(Helper::null_safe($response_array), 200);
+        return $response;
+    } 
 
     public function fav_providers(Request $request) {
 
@@ -1169,8 +1363,8 @@ class UserapiController extends Controller
 
     }
 
-    public function history(Request $request) 
-    {
+    public function history(Request $request) {
+    
         // Get the completed request details 
 
         $requests = Requests::where('user_id', '=', $request->id)
@@ -1193,62 +1387,25 @@ class UserapiController extends Controller
     }
 
     public function single_request(Request $request) {
-    }
 
-    public function rate_provider(Request $request)
-    {
-        $user = User::find($request->id);
-
-        $validator = Validator::make(
-            $request->all(),
+        $validator = Validator::make($request->all ,
             array(
-                'request_id' => 'required|integer|exists:requests,id,user_id,'.$user->id.'|unique:user_ratings,request_id',
-                'rating' => 'required|integer|in:'.RATINGS,
-                'comments' => 'max:255'
-            ),
-            array(
-                'exists' => 'The :attribute doesn\'t belong to user:'.$user->id,
-                'unique' => 'The :attribute already rated.'
-            )
+                    'request_id' => 'required|exists:requests,id,user_id,'.$request->id,
+                )
         );
-    
-        if ($validator->fails()) {
+
+        if($validator->fails()) {
             $error_messages = implode(',', $validator->messages()->all());
-            $response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101, 'error_messages'=>$error_messages);
-        
+            $response_array = array('success' => false ,'error' => $error_messages , 'error_messages' => Helper::get_error_message(101));
         } else {
-
-            $request_id = $request->request_id;
-            $comment = $request->comment;
-
-            $req = Requests::find($request_id);
-            //Save Rating
-            $rev_user = new UserRating();
-            $rev_user->provider_id = $req->confirmed_provider;
-            $rev_user->user_id = $req->user_id;
-            $rev_user->request_id = $req->id;
-            $rev_user->rating = $request->rating;
-            $rev_user->comment = $comment ? $comment: '';
-            $rev_user->save();
-
-            $req->status = REQUEST_COMPLETED;
-            $req->save();
-
-            // Send Push Notification to Provider
-            // send_push_notification($req->confirmed_provider, PROVIDER, 'User Rated', 'The user rated your service.');
-
-            $response_array = array(
-                'success' => true
-            );
 
         }
 
-        $response = response()->json(Helper::null_safe($response_array), 200);
-        return $response;
-    } 
+        return response()->json(Helper::null_safe($response_array) , 200);
+    
+    }
 
-    public function provider_list(Request $request)
-    {
+    public function provider_list(Request $request) {
         $validator = Validator::make(
             $request->all(),
             array(
@@ -1286,35 +1443,73 @@ class UserapiController extends Controller
         return response()->json(Helper::null_safe($response_array) , 200);
     }
 
-    public function get_cards(Request $request) {
+    public function get_payment_modes(Request $request) {
 
-        $user_cards = Cards::where('user_id' , $request->id)->get();
+        $payment_modes = array();
+        $modes = Settings::whereIn('key' , array('cod','paypal','card'))->where('value' , 1)->get();
+        if($modes) {
+            foreach ($modes as $key => $mode) {
+                $payment_modes[$mode->key] = $mode->key;
+            }            
+        }
 
-        $data = array(); $card_data = array();
+        $response_array = array('success' => true , 'payment_modes' => $payment_modes);
 
-        if($user_cards) {
-            foreach ($user_cards as $c => $card) {
+        return response()->json($response_array,200);
+    }
 
-                $data['id'] = $card->id;
-                $data['customer_id'] = $card->customer_id;
-                $data['card_id'] = $card->card_token;
-                $data['last_four'] = $data->last_four;
-                $data['is_default']= $data->is_default;
+    public function get_user_payment_modes(Request $request) {
 
-                array_push($card_data, $data);
-            
+        $user = User::find($request->id);
+
+        if($user->payment_mode) {
+
+            $payment_data = $data = $card_data = array();
+
+            if($user->payment_mode == CARD) {
+                if($user_cards = Cards::where('user_id' , $request->id)->get()) {
+                    foreach ($user_cards as $c => $card) {
+                        $data['id'] = $card->id;
+                        $data['customer_id'] = $card->customer_id;
+                        $data['card_id'] = $card->card_token;
+                        $data['last_four'] = $card->last_four;
+                        $data['is_default']= $card->is_default;
+
+                        array_push($card_data, $data);
+                    }
+                } 
             }
 
-            $response_array = array('success' => true ,'cards' => $card_data);
+            $response_array = array('success' => true, 'payment_mode' => $user->payment_mode , 'card' => $card_data);
 
-        } else{
+        } else {
             $response_array = array('success' => false , 'error' => Helper::get_error_message(130) , 'error_code' => 130);
         }
         return response()->json(Helper::null_safe($response_array) , 200);
+    
     }
 
-    public function add_card(Request $request)
-    {
+    public function payment_mode_update(Request $request) {
+        
+        $validator = Validator::make($request->all() , 
+            array(
+                'payment_mode' => 'required|in:'.COD.','.PAYPAL.','.CARD,
+                )
+            );
+         if($validator->fails()) {
+            $error_messages = implode(',', $validator->messages()->all());
+            $response_array = array('success' => false ,'error' => $error_messages , 'error_messages' => Helper::get_error_message(101));
+        } else {
+            $user = User::where('id', '=', $request->id)->update( array('payment_mode' => $request->payment_mode));
+
+            $response_array = array('success' => true , 'message' => Helper::get_message(109));
+        }
+
+        return response()->json(Helper::null_safe($response_array) , 200);
+
+    }
+
+    public function add_card(Request $request) {
 
         $user = User::find($request->id);
 
@@ -1335,6 +1530,8 @@ class UserapiController extends Controller
            $response_array = array('success' => false , 'error' => Helper::get_error_message(101) , 'error_code' => 101 , 'error_messages' => $error_messages);
 
         } else {   
+
+            $user = User::find($request->id);
 
             try{
 
@@ -1373,6 +1570,12 @@ class UserapiController extends Controller
                     
                     $cards->save();
 
+                    if($user) {
+                        $user->payment_mode = CARD;
+                        $user->default_card = $cards->id;
+                        $user->save();
+                    }
+
                     $response_array = array('success' => true);
                     $response_code = 200;
                 
@@ -1380,8 +1583,7 @@ class UserapiController extends Controller
                     $response_array = array('success' => false , 'error' => 'Could not create client ID' , 'error_code' => 450);
                     $response_code = 200;
                 }
-                
-                
+            
             } catch(Exception $e) {
                 $response_array = array('success' => false , 'error' => $e , 'error_code' => 101);
                 $response_code = 200;
@@ -1394,8 +1596,8 @@ class UserapiController extends Controller
         return $response; 
     }
 
-    public function delete_card(Request $request)
-    {
+    public function delete_card(Request $request) {
+    
         $card_id = $request->card_id;
 
         $validator = Validator::make(
@@ -1418,12 +1620,21 @@ class UserapiController extends Controller
         } else {
 
             Cards::where('id',$card_id)->delete();
+
+            $user = User::find($request->id);
+
+            if($user) {
+                $user->payment_mode = CARD;
+                $user->default_card = DEFAULT_FALSE;
+                $user->save();
+            }
+
             $response_array = array('success' => true );
         }
     
         return response()->json(Helper::null_safe($response_array) , 200);
-       
     }
+
     public function default_card(Request $request) {
 
         $validator = Validator::make(
@@ -1442,13 +1653,19 @@ class UserapiController extends Controller
             $response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101, 'error_messages'=>$error_messages);
 
         } else {
+
+            $user = User::find($request->id);
             
             $old_default = Cards::where('user_id' , $request->id)->where('is_default', DEFAULT_TRUE)->update(array('is_default' => DEFAULT_FALSE));
 
             $card = Cards::where('id' , $request->card_id)->update(array('is_default' => DEFAULT_TRUE));
 
-
             if($card) {
+                if($user) {
+                    $user->payment_mode = CARD;
+                    $user->default_card = $request->card_id;
+                    $user->save();
+                }
                 $response_array = array('success' => true);
             } else {
                 $response_array = array('success' => false , 'error' => 'Something went wrong');

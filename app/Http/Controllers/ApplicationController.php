@@ -131,12 +131,11 @@ class ApplicationController extends Controller
                     /*Push Start*/
                     
                     $service = ServiceType::find($request->request_type);
-                    $user = Provider::find($request->current_provider);
+                    $user = User::find($request->user_id);
                     $request_data = Requests::find($request->id);
 
 
                     // Push notification has to add
-
                     $push_data = array();
                     $title = "New Service";
                     $push_msg = "You got a new service from ".$user->first_name.''.$user->last_name;
