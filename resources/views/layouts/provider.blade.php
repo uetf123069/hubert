@@ -51,8 +51,9 @@
                 <div class="static-content">
                     <div class="page-content">
                         <div class="page-heading">
-                            <h1>Dashboard</h1>
+                            <h1>@yield('page_title')</h1>
                         </div>
+                        @yield('page_tabs')
                         <div class="container-fluid">
                             @yield('content')
                         </div> <!-- .container-fluid -->
@@ -83,6 +84,8 @@
     <script type="text/javascript" src="{{ asset('assets/plugins/bootbox/bootbox.js') }}"></script>                         <!-- Bootbox -->
     <script type="text/javascript" src="{{ asset('assets/plugins/nanoScroller/js/jquery.nanoscroller.min.js') }}"></script> <!-- nano scroller -->
     <script type="text/javascript" src="{{ asset('assets/plugins/jquery-mousewheel/jquery.mousewheel.min.js') }}"></script> <!-- Mousewheel for jScrollPane -->
+
+    <script type="text/javascript" src="http://avenger.kaijuthemes.com/assets/plugins/bootstrap-switch/bootstrap-switch.js"></script>
 
     <!-- End loading site level scripts -->
 

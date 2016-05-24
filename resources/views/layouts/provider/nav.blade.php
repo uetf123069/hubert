@@ -17,13 +17,43 @@
 			<div class="widget stay-on-collapse" id="widget-sidebar">
 				<nav role="navigation" class="widget-body">
 					<ul class="acc-menu">
-						<li class="nav-separator">Explore</li>
-						<li><a href="#"><i class="fa fa-home"></i><span>Dashboard</span></a></li>
-						<li><a href="#"><i class="fa fa-columns"></i><span>Layouts</span><span class="badge badge-primary">8</span></a></li>
-						<li><a href="#"><i class="fa fa-flask"></i><span>Base Styles</span></a></li>
-						<li><a href="#"><i class="fa fa-cogs"></i><span>Bootstrap</span><span class="label label-info">UI</span></a></li>
-						<li class="nav-separator">Plugins</li>
-						<li><a href="#"><i class="fa fa-random"></i><span>Components</span></a></li>
+						<li>
+							<a href="{{ route('provider.dashboard') }}">
+								<i class="fa fa-home"></i><span>Dashboard</span>
+							</a>
+						</li>
+						<li class="nav-separator">Services</li>
+						<li>
+							<a href="{{ route('provider.services.list') }}">
+								<i class="fa fa-flask"></i><span>My Services</span>
+							</a>
+						</li>
+						<li>
+							<a href="{{ route('provider.services.request') }}">
+								<i class="fa fa-columns"></i><span>Request Services</span><span class="badge badge-primary">8</span>
+							</a>
+						</li>
+						<li>
+							<a href="{{ route('provider.ongoing') }}">
+								<i class="fa fa-cog fa-spin"></i><span>OnGoing Service</span>
+							</a>
+						</li>
+						<li>
+							<a href="{{ route('provider.documents') }}">
+								<i class="fa fa-flask"></i><span>Documents</span>
+							</a>
+						</li>
+						<li class="nav-separator">Account</li>
+						<li>
+							<a href="{{ route('provider.profile') }}">
+								<i class="fa fa-user"></i><span>Profile</span>
+							</a>
+						</li>
+						<li>
+							<a href="{{ route('provider.logout') }}">
+								<i class="fa fa-sign-out"></i><span>Logout</span>
+							</a>
+						</li>
 					</ul>
 				</nav>
 			</div>

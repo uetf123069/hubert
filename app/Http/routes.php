@@ -167,9 +167,9 @@ Route::group([], function(){
 
 Route::group(['prefix' => 'provider'], function(){
 
-    Route::get('login', 'Auth\AuthController@showLoginForm');
-    Route::post('login', 'Auth\AuthController@login');
-    Route::get('logout', 'Auth\AuthController@logout');
+    Route::get('login', 'Auth\AuthController@showLoginForm')->name('provider.login.form');
+    Route::post('login', 'Auth\AuthController@login')->name('provider.login.post');
+    Route::get('logout', 'Auth\AuthController@logout')->name('provider.logout');
 
     // Registration Routes...
     Route::get('register', 'Auth\AuthController@showRegistrationForm');
@@ -182,11 +182,13 @@ Route::group(['prefix' => 'provider'], function(){
 
     Route::get('/', 'ProviderController@index')->name('provider.dashboard');
 
-    Route::get('/services', 'UserController@services')->name('user.services.list');
-    Route::get('/request', 'UserController@request')->name('user.services.request');
-    Route::get('/profile', 'UserController@profile')->name('user.profile');
+    Route::get('/services', 'ProviderController@services')->name('provider.services.list');
+    Route::get('/ongoing', 'ProviderController@ongoing')->name('provider.ongoing');
+    Route::get('/documents', 'ProviderController@documents')->name('provider.documents');
+    Route::get('/request', 'ProviderController@request')->name('provider.services.request');
+    Route::get('/profile', 'ProviderController@profile')->name('provider.profile');
 
-    Route::post('/profile/password', 'UserController@password')->name('user.password');
+    Route::post('/profile/password', 'ProviderController@password')->name('provider.password');
 
 });
 

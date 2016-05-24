@@ -1,6 +1,8 @@
 @extends('layouts.provider')
 
-@section('title', 'Dashboard | ')
+@section('title', 'My Services | ')
+
+@section('page_title', 'My Services')
 
 @section('content')
 
