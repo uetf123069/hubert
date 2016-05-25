@@ -26,7 +26,7 @@
 
             <li>
                 <a href="{{ route('admin.dashboard') }}">
-                    <i class="fa fa-flask"></i>
+                    <i class="fa fa-dashboard"></i>
                     <span>Dashboard</span>
                 </a>
             </li>
@@ -70,38 +70,88 @@
             </li>
 
             <li>
-                <a href="{{ route('admin.settings') }}">
-                    <i class="fa fa-flask"></i>
-                    <span>Settings</span>
+                <a href="{{ route('adminRequests') }}">
+                    <i class="fa fa-paper-plane"></i>
+                    <span>Requests</span>
                 </a>
             </li>
 
             <li>
-                <a href="#">
+                <a href="javascript:;">
                     <i class="fa fa-folder"></i>
-                    <span>Documentation</span>
-                    <span class="label label-success pull-right">2</span>
+                    <span>Service Types</span>
                 </a>
+                    <ul class="sub-menu">
+                        <li>
+                        <a href="{{ route('adminServices') }}">
+                            <span>View Service Type</span>
+                        </a>
+                        </li>
+                        <li>
+                        <a href="{{ route('adminAddServices') }}">
+                          <span>Add Service Types</span>
+                        </a>
+                      </li>
+                    </ul>
+                
+            </li>
+
+            <li>
+                <a href="javascript:;">
+                    <i class="fa fa-folder"></i>
+                    <span>Documents</span>
+                </a>
+                    <ul class="sub-menu">
+                        <li>
+                        <a href="{{ route('adminDocuments') }}">
+                            <span>View Documents Type</span>
+                        </a>
+                        </li>
+                        <li>
+                        <a href="{{ route('adminAddDocument') }}">
+                          <span>Add Documents</span>
+                        </a>
+                      </li>
+                    </ul>
+                
             </li>
 
             <li>
                 <a href="#" target="_blank">
                     <i class="fa fa-sliders"></i>
-                    <span>On Going Services</span>
-                    <span class="label label-danger pull-right">hot</span>
+                    <span>Rating & Reviews</span>
                 </a>
+                <ul class="sub-menu">
+                        <li>
+                        <a href="{{ route('adminUserReviews') }}">
+                            <span>User Reviews</span>
+                        </a>
+                        </li>
+                        <li>
+                        <a href="{{ route('adminProviderReviews') }}">
+                          <span>Provider Reviews</span>
+                        </a>
+                      </li>
+                    </ul>
             </li>
 
             <li>
                 <a href="#">
-                    <i class="fa fa-flask"></i>
+                    <i class="fa fa-money"></i>
                     <span>Payment History</span>
                 </a>
             </li>
 
             <li>
+                <a href="{{ route('admin.settings') }}">
+                    <i class="fa fa-gears"></i>
+                    <span>Settings</span>
+                </a>
+            </li>
+
+            <li>
                 <a href="{{ route('admin.logout') }}">
-                    <i class="fa fa-flask"></i>
+                    <i class="fa fa-sign-out"></i>
                     <span>Logout</span>
                 </a>
             </li>

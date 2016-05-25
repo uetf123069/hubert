@@ -132,20 +132,75 @@ Route::group(['prefix' => 'admin'], function(){
     Route::post('password/reset', 'Auth\AdminPasswordController@reset');
 
     Route::get('/', 'AdminController@index')->name('admin.dashboard');
+
     Route::get('/settings', 'AdminController@settings')->name('admin.settings');
+
+    //Documents
+
+    Route::get('/documents', 'AdminController@documents')->name('adminDocuments');
+
+    Route::get('/adddocument', 'AdminController@adddocument')->name('adminAddDocument');
+
+    Route::post('/adddocumentProcess', 'AdminController@adddocumentProcess')->name('adminAddDocumentProcess');
+
+    Route::get('/editdocument/{id}', 'AdminController@editDocument')->name('adminDocumentEdit');
+
+    Route::get('/deletedocument/{id}', 'AdminController@deleteDocument')->name('adminDocumentDelete');
+
+    //Service Types
+
+    Route::get('/serviceTypes', 'AdminController@serviceTypes')->name('adminServices');
+
+    Route::get('/addServiceType', 'AdminController@addServiceType')->name('adminAddServices');
+
+    Route::post('/addServiceProcess', 'AdminController@addServiceProcess')->name('adminAddServiceProcess');
+
+    Route::get('/editService/{id}', 'AdminController@editService')->name('adminServiceEdit');
+
+    Route::get('/deleteService/{id}', 'AdminController@deleteService')->name('adminServiceDelete');
+
+    //Reviews & Ratings
+
+    Route::get('/userReviews', 'AdminController@userReviews')->name('adminUserReviews');
+
+    Route::get('/providerReviews', 'AdminController@providerReviews')->name('adminProviderReviews');
+
+    Route::get('/providerReviewDelete/{id}', 'AdminController@deleteProviderReviews')->name('adminProviderReviewDelete');
+
+    Route::get('/userReviewDelete/{id}', 'AdminController@deleteUserReviews')->name('adminUserReviewDelete');
+
+    Route::get('/payment', 'AdminController@settings')->name('admin.settings');
+
+    Route::get('/requests', 'AdminController@requests')->name('adminRequests');
 
 
     //User Routes
     Route::get('/users', 'AdminController@users')->name('admin.user');
+
     Route::get('/addUser', 'AdminController@addUser')->name('admin.adduser');
+
     Route::get('/editUser/{id}', 'AdminController@editUser')->name('adminUserEdit');
+
     Route::get('/deleteUser/{id}', 'AdminController@deleteUser')->name('adminUserDelete');
+
     Route::get('/UserHistory/{id}', 'AdminController@UserHistory')->name('adminUserHistory');
+
     Route::post('/addUserProcess', 'AdminController@addUserProcess')->name('admin.addUserProcess');
 
     //Provider Routes
     Route::get('/providers', 'AdminController@providers')->name('admin.provider');
+
     Route::get('/addProvider', 'AdminController@addProvider')->name('admin.addprovider');
+
+    Route::get('/editProvider/{id}', 'AdminController@editProvider')->name('adminProviderEdit');
+
+    Route::get('/deleteProvider/{id}', 'AdminController@deleteProvider')->name('adminProviderDelete');
+
+    Route::get('/ProviderHistory/{id}', 'AdminController@ProviderHistory')->name('adminProviderHistory');
+
+    Route::post('/addProviderProcess', 'AdminController@addProviderProcess')->name('adminaddProviderProcess');
+
+    Route::get('/ProviderApprove/{id}/{status}', 'AdminController@ProviderApprove')->name('adminProviderApprove');
 
 });
 

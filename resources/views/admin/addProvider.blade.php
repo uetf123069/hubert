@@ -1,16 +1,26 @@
 @extends('layouts.admin')
 
-@section('title', 'Add Provider | ')
+          @if(isset($name))
+            @section('title', 'Edit Provider | ')
+          @else
+            @section('title', 'Add Provider | ')
+          @endif
 
 @section('content')
+
+@include('notification.notify')
         <div class="panel mb25">
           <div class="panel-heading border">
+          @if(isset($name))
+          Edit Provider
+          @else
             Create New Provider
+          @endif
           </div>
           <div class="panel-body">
             <div class="row no-margin">
               <div class="col-lg-12">
-                <form class="form-horizontal bordered-group" role="form">
+                <form class="form-horizontal bordered-group" action="{{route('adminaddProviderProcess')}}" method="POST" enctype="multipart/form-data" role="form">
                   <div class="form-group">
                     <label class="col-sm-2 control-label">First Name</label>
                     <div class="col-sm-10">
@@ -24,16 +34,26 @@
                       <input type="text" name="last_name" value="{{ isset($provider->last_name) ? $provider->last_name : '' }}" required class="form-control">
                     </div>
                   </div>
-
+                 <input type="hidden" name="id" value="@if(isset($provider)) {{$provider->id}} @endif" />
                   <div class="form-group">
                     <label class="col-sm-2 control-label">Gender</label>
+
                     <div class="col-sm-10">
-                      <select class="form-control" name="gender">
-                      <option value="{{ isset($provider->gender) ? $provider->gender : '' }}">value="{{ isset($provider->gender) ? $provider->gender : '' }}"</option>
-                      <option value="male">Male</option>
-                      <option value="female">Female</option>
+                      <div class="radio">
+                        <label>
+                          <input name="gender" @if(isset($provider)) @if($provider->gender == 'male') checked @endif @endif value="male" type="radio">Male</label>
+                      </div>
+                      <div class="radio">
+                        <label>
+                          <input type="radio"@if(isset($provider)) @if($provider->gender == 'female') checked @endif @endif name="gender" value="female">Female</label>
+                      </div>
+                      <div class="radio">
+                        <label>
+                          <input type="radio"@if(isset($provider)) @if($provider->gender == 'others') checked @endif @endif name="gender" value="others">Others</label>
+                      </div>
                     </div>
                   </div>
+
                   <div class="form-group">
                     <label class="col-sm-2 control-label">Email</label>
                     <div class="col-sm-10">
@@ -44,7 +64,7 @@
                   <div class="form-group">
                     <label class="col-sm-2 control-label">Contact Number </label>
                     <div class="col-sm-10">
-                      <input type="number" name="contact" value="{{ isset($provider->mobile) ? $provider->mobile : '' }}" required class="form-control">
+                      <input type="number" name="mobile"  value="{{ isset($provider->mobile) ? $provider->mobile : '' }}" required class="form-control">
                     </div>
                   </div>
 
@@ -56,9 +76,13 @@
                   </div>
 
                   <div class="form-group">
-                    <label class="col-sm-2 control-label">Zipcode</label>
+                    <label class="col-sm-2 control-label">Profile Picture</label>
                     <div class="col-sm-10">
-                      <input type="number" name="zip" value="{{ isset($provider->zip) ? $provider->zip : '' }}" required class="form-control">
+                    @if(isset($provider->picture))
+                    <img style="height: 90px; margin-bottom: 15px; border-radius:2em;" src="{{$provider->picture}}">
+                    @endif
+                      <input name="picture" type="file">
+                      <p class="help-block">Upload only .png, .jpg or .jpeg image files only</p>
                     </div>
                   </div>
 

@@ -34,9 +34,9 @@
                       <input type="text" name="last_name" value="{{ isset($user->last_name) ? $user->last_name : '' }}" required class="form-control">
                     </div>
                   </div>
-                  @if(isset($user))
-                  <input type="hidden" name="id" value="{{$user->id}}" />
-                  @endif
+                  
+                  <input type="hidden" name="id" value="@if(isset($user)) {{$user->id}} @endif" />
+                  
                   <div class="form-group">
                     <label class="col-sm-2 control-label">Gender</label>
 

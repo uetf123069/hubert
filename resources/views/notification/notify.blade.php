@@ -8,7 +8,7 @@
 ?>
 @if(Session::has('flash_errors'))
     @if(is_array(Session::get('flash_errors')))
-        <div class="alert alert-danger" style="margin-top: 40px;">
+        <div class="alert alert-danger" >
             <button type="button" class="close" data-dismiss="alert">×</button>
             <ul>
 @foreach(Session::get('flash_errors') as $errors)
@@ -23,7 +23,7 @@
             </ul>
         </div>
 @else
-        <div class="alert alert-danger" style="margin-top: 40px;">
+        <div class="alert alert-danger" >
             <button type="button" class="close" data-dismiss="alert">×</button>
             {{Session::get('flash_errors')}}
         </div>
@@ -31,7 +31,7 @@
 @endif
 
 @if(Session::has('flash_error'))
-    <div class="alert alert-danger" style="margin-top: 40px;">
+    <div class="alert alert-danger" 
         <button type="button" class="close" data-dismiss="alert">×</button>
         {{Session::get('flash_error')}}
     </div>
@@ -39,7 +39,7 @@
 
 
 @if(Session::has('flash_success'))
-    <div class="alert alert-success" style="margin-top: 40px;" >
+    <div class="alert alert-success"  >
         <button type="button" class="close" data-dismiss="alert">×</button>
         {{Session::get('flash_success')}}
     </div>
