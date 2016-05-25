@@ -113,7 +113,7 @@
                     <a href="javascript:;">Help</a>
                 </li>
                 <li>
-                    <a href="signin.html">Logout</a>
+                    <a href="{{ route('admin.logout') }}">Logout</a>
                 </li>
             </ul>
 

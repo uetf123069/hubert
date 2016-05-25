@@ -4,7 +4,7 @@
 
         <!-- logo -->
         <div class="brand-logo">
-            <img src="images/logo.png" height="15" alt="">
+            <img src="{{ asset('logo.png') }}" height="15" alt="">
         </div>
         <!-- /logo -->
 
@@ -100,7 +100,7 @@
             </li>
 
             <li>
-                <a href="#">
+                <a href="{{ route('admin.logout') }}">
                     <i class="fa fa-flask"></i>
                     <span>Logout</span>
                 </a>
