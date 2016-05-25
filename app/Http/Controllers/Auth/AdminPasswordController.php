@@ -21,6 +21,34 @@ class AdminPasswordController extends Controller
     use ResetsPasswords;
 
     /**
+     * Where to redirect users after successful change of password.
+     *
+     * @var string
+     */
+
+    protected $guard = 'admin';
+
+    protected $broker = 'admins';
+
+    protected $redirectTo = '/admin';
+
+    /**
+     * The password reset request view that should be used.
+     *
+     * @var string
+     */
+
+    protected $linkRequestView = 'admin.auth.passwords.email';
+
+    /**
+     * The password reset view that should be used.
+     *
+     * @var string
+     */
+
+    protected $resetView = 'admin.auth.passwords.reset';
+
+    /**
      * Create a new password controller instance.
      *
      * @return void

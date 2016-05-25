@@ -126,22 +126,17 @@ Route::group(['prefix' => 'providerApi'], function(){
 
 Route::group(['prefix' => 'admin'], function(){
 
-    Route::get('login', 'Auth\AdminAuthController@showLoginForm');
-
-    Route::post('login', 'Auth\AdminAuthController@login');
-
-    Route::get('logout', 'Auth\AdminAuthController@logout');
+    Route::get('login', 'Auth\AdminAuthController@showLoginForm')->name('admin.login.form');
+    Route::post('login', 'Auth\AdminAuthController@login')->name('admin.login.post');
+    Route::get('logout', 'Auth\AdminAuthController@logout')->name('admin.logout');
 
     // Registration Routes...
     Route::get('register', 'Auth\AdminAuthController@showRegistrationForm');
-
     Route::post('register', 'Auth\AdminAuthController@register');
 
     // Password Reset Routes...
     Route::get('password/reset/{token?}', 'Auth\AdminPasswordController@showResetForm');
-
     Route::post('password/email', 'Auth\AdminPasswordController@sendResetLinkEmail');
-
     Route::post('password/reset', 'Auth\AdminPasswordController@reset');
 
     Route::get('/', 'AdminController@index')->name('admin.dashboard');
