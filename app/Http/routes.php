@@ -64,6 +64,8 @@ Route::group(['prefix' => 'userApi'], function(){
 
 	// Favourite Providers
 
+	Route::post('/addFavProvider' , 'UserapiController@add_fav_provider');
+
 	Route::get('/favProviders' , 'UserapiController@fav_providers');
 
 	Route::post('/deleteFavProvider' , 'UserapiController@delete_fav_provider');

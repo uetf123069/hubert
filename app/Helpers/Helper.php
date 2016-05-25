@@ -342,6 +342,9 @@
                 case 142:
                     $string = "Default card is not available. Please add a card or change the payment mode";
                     break;
+                case 143:
+                    $string = "The selected provider is already in favourite list.";
+                    break;
                 default:
                     $string = "Unknown error occurred.";
             }

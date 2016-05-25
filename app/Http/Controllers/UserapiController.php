@@ -1060,8 +1060,6 @@ class UserapiController extends Controller
 
     public function request_status_check(Request $request) {
 
-        dd(Helper::tr('test'));
-
         $check_status = array(REQUEST_COMPLETED,REQUEST_CANCELLED,REQUEST_NO_PROVIDER_AVAILABLE);
 
         $requests = Requests::where('requests.user_id', '=', $request->id)
@@ -1358,6 +1356,40 @@ class UserapiController extends Controller
         $response = response()->json(Helper::null_safe($response_array), 200);
         return $response;
     } 
+
+    public function add_fav_provider(Request $request) {
+
+        $validator = Validator::make(
+            $request->all(),
+            array(
+                'fav_provider' => 'exists:providers,id'
+            )
+        );
+    
+        if ($validator->fails()) {
+            $error_messages = implode(',', $validator->messages()->all());
+            $response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101, 'error_messages'=>$error_messages);
+        
+        } else {
+            // Save favourite provider details
+            $fav_provider = FavouriteProvider::where('provider_id',$request->fav_provider)->where('user_id' , $request->id)->first();
+            if(!$fav_provider){
+
+                $favProvider = new FavouriteProvider;
+                $favProvider->provider_id = $request->fav_provider;
+                $favProvider->user_id = $request->id;
+                $favProvider->status = 1;
+                $favProvider->save();
+                $response_array = array('success' => true);
+
+            } else {
+                $response_array = array('success' => false , 'error' => Helper::get_error_message(143) , 'error_code' => 143);
+            }
+        }
+
+        $response = response()->json(Helper::null_safe($response_array), 200);
+        return $response;
+    }
 
     public function fav_providers(Request $request) {
 
