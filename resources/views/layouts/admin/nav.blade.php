@@ -70,9 +70,9 @@
             </li>
 
             <li>
-                <a href="{{ route('admin.settings') }}">
-                    <i class="fa fa-gears"></i>
-                    <span>Settings</span>
+                <a href="{{ route('adminRequests') }}">
+                    <i class="fa fa-paper-plane"></i>
+                    <span>Requests</span>
                 </a>
             </li>
 
@@ -119,6 +119,13 @@
                 <a href="#">
                     <i class="fa fa-money"></i>
                     <span>Payment History</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="{{ route('admin.settings') }}">
+                    <i class="fa fa-gears"></i>
+                    <span>Settings</span>
                 </a>
             </li>
 

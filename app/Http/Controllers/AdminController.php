@@ -453,4 +453,25 @@ class AdminController extends Controller
             return view('admin.reviews')->with('name', 'User')->with('reviews', $user_reviews);
     }
 
+    public function deleteUserReview(Request $request) {
+        $user = UserRating::find('id', $request->id)->delete();
+        return back()->with('flash_success', 'User Review Deleted Successfully');
+    }
+
+    public function deleteProviderReview(Request $request) {
+        $provider = ProviderRating::find('id', $request->id)->delete();
+        return back()->with('flash_success', 'Provider Review Deleted Successfully');
+    }
+
+    public function request()
+    {
+        $requests = DB::table('request')
+                ->leftJoin('providers', 'request.confirmed_provider', '=', 'providers.id')
+                ->leftJoin('users', 'request.user_id', '=', 'users.id')
+                ->select('users.first_name as user_first_name', 'users.last_name as user_last_name', 'providers.first_name as provider_first_name', 'providers.last_name as provider_last_name', 'users.id as user_id', 'providers.id as provider_id', 'request.is_paid',  'request.id as id', 'request.created_at as date', 'request.confirmed_provider', 'request.status',  'request.amount')
+                ->orderBy('request.created_at', 'DESC')
+                ->paginate(10);
+        return view('admin.requests')->with('requests', $requests);
+    }
+
 }

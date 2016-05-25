@@ -158,9 +158,13 @@ Route::group(['prefix' => 'admin'], function(){
 
     Route::get('/providerReviews', 'AdminController@providerReviews')->name('adminProviderReviews');
 
+    Route::get('/providerReviewDelete/{id}', 'AdminController@deleteProviderReviews')->name('adminProviderReviewDelete');
+
+    Route::get('/userReviewDelete/{id}', 'AdminController@deleteUserReviews')->name('adminUserReviewDelete');
+
     Route::get('/payment', 'AdminController@settings')->name('admin.settings');
 
-    Route::get('/requests', 'AdminController@settings')->name('admin.settings');
+    Route::get('/requests', 'AdminController@requests')->name('adminRequests');
 
 
     //User Routes
