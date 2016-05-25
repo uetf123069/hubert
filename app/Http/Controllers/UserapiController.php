@@ -704,6 +704,44 @@ class UserapiController extends Controller
         return $response;
     }
 
+    public function provider_list(Request $request) {
+        $validator = Validator::make(
+            $request->all(),
+            array(
+                'latitude' => 'required|numeric',
+                'longitude' => 'required|numeric'
+            ));
+
+        if ($validator->fails()) {
+            $error_messages = $validator->messages()->all();
+            $response_array = array('success' => false, 'error' => get_error_message(101), 'error_code' => 101, 'error_messages' => $error_messages);
+        } else {
+            $latitude = $request->latitude;
+            $longitude = $request->longitude;
+
+            /*Get default search radius*/
+            $settings = Settings::where('key', 'search_radius')->first();
+            $distance = $settings->value;
+            $available = 1;
+
+            $query = "SELECT providers.id,first_name,last_name,latitude,longitude,
+                            1.609344 * 3956 * acos( cos( radians('$latitude') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians('$longitude') ) + sin( radians('$latitude') ) * sin( radians(latitude) ) ) AS distance
+                      FROM providers
+                      WHERE is_available IN ($available) AND is_activated = 1 AND is_approved = 1
+                            AND (1.609344 * 3956 * acos( cos( radians('$latitude') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians('$longitude') ) + sin( radians('$latitude') ) * sin( radians(latitude) ) ) ) <= $distance
+                      ORDER BY distance";
+
+            $providers = DB::select(DB::raw($query));
+
+            $response_array = array(
+                'success' => true,
+                'providers' => $providers
+            );
+        }
+
+        return response()->json(Helper::null_safe($response_array) , 200);
+    }
+
     public function send_request(Request $request) {
         $validator = Validator::make(
                 $request->all(),
@@ -1022,22 +1060,47 @@ class UserapiController extends Controller
 
     public function request_status_check(Request $request) {
 
+        dd(Helper::tr('test'));
+
+        $check_status = array(REQUEST_COMPLETED,REQUEST_CANCELLED,REQUEST_NO_PROVIDER_AVAILABLE);
+
         $requests = Requests::where('requests.user_id', '=', $request->id)
-                            ->where('requests.status', '!=', REQUEST_COMPLETED)
-                            ->where('requests.status', '!=', REQUEST_CANCELLED)
-                            ->where('requests.status', '!=', REQUEST_NO_PROVIDER_AVAILABLE)
+                            ->whereNotIn('requests.status', $check_status)
                             ->where('provider_status', '!=', PROVIDER_RATED)
                             ->leftJoin('users', 'users.id', '=', 'requests.user_id')
                             ->leftJoin('service_types', 'service_types.id', '=', 'requests.request_type')
-                            ->orderBy('provider_status','desc')
-                            ->select('requests.id as request_id', 'requests.request_type as request_type', 'service_types.name as service_type_name', 'request_start_time as request_start_time', 'requests.status', 'requests.provider_status', 'requests.amount', DB::raw('CONCAT(users.first_name, " ", users.last_name) as user_name'), 'users.picture as user_picture', 'users.id as user_id','requests.s_latitude', 'requests.s_longitude')
+                            ->leftJoin('user_ratings', 'requests.confirmed_provider', '=', 'user_ratings.provider_id')
+                            ->select('requests.id as request_id', 'requests.request_type as request_type', 'service_types.name as service_type_name', 'request_start_time as request_start_time', 'requests.status','requests.confirmed_provider as provider_id', 'requests.provider_status', 'requests.amount', DB::raw('CONCAT(users.first_name, " ", users.last_name) as user_name'), 'users.picture as user_picture', 'users.id as user_id','requests.s_latitude', 'requests.s_longitude',
+                                 DB::raw ('ROUND(AVG(user_ratings.rating)) as rating'))
                             ->get()->toArray();
 
         $requests_data = array();
+        $invoice = array();
+
+        if($requests) {
+            foreach ($requests as  $req) {
+                $allowed_status = array(REQUEST_COMPLETE_PENDING,REQUEST_COMPLETED,REQUEST_RATING);
+
+                if( in_array($req['status'], $allowed_status)) {
+                    $invoice = RequestPayment::where('request_id' , $req['request_id'])
+                                    ->leftJoin('requests' , 'request_payments.request_id' , '=' , 'requests.id')
+                                    ->leftJoin('users' , 'requests.user_id' , '=' , 'users.id')
+                                    ->leftJoin('cards' , 'users.default_card' , '=' , 'cards.id')
+                                    ->where('cards.is_default' , DEFAULT_TRUE)
+                                    ->select('requests.confirmed_provider as provider_id' , 'request_payments.total_time',
+                                        'request_payments.payment_mode as payment_mode' , 'request_payments.base_price',
+                                        'request_payments.time_price' , 'request_payments.tax_price' , 'request_payments.total',
+                                        'cards.card_token','cards.customer_id','cards.last_four')
+                                    ->get()->toArray();
+                }
+                
+            }
+        }
 
         $response_array = array(
             'success' => true,
-            'data' => $requests
+            'data' => $requests,
+            'invoice' => $invoice
         );
     
         $response = response()->json(Helper::null_safe($response_array), 200);
@@ -1403,44 +1466,6 @@ class UserapiController extends Controller
 
         return response()->json(Helper::null_safe($response_array) , 200);
     
-    }
-
-    public function provider_list(Request $request) {
-        $validator = Validator::make(
-            $request->all(),
-            array(
-                'latitude' => 'required|numeric',
-                'longitude' => 'required|numeric'
-            ));
-
-        if ($validator->fails()) {
-            $error_messages = $validator->messages()->all();
-            $response_array = array('success' => false, 'error' => get_error_message(101), 'error_code' => 101, 'error_messages' => $error_messages);
-        } else {
-            $latitude = $request->latitude;
-            $longitude = $request->longitude;
-
-            /*Get default search radius*/
-            $settings = Settings::where('key', 'search_radius')->first();
-            $distance = $settings->value;
-            $available = 1;
-
-            $query = "SELECT providers.id,first_name,last_name,latitude,longitude,
-                            1.609344 * 3956 * acos( cos( radians('$latitude') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians('$longitude') ) + sin( radians('$latitude') ) * sin( radians(latitude) ) ) AS distance
-                      FROM providers
-                      WHERE is_available IN ($available) AND is_activated = 1 AND is_approved = 1
-                            AND (1.609344 * 3956 * acos( cos( radians('$latitude') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians('$longitude') ) + sin( radians('$latitude') ) * sin( radians(latitude) ) ) ) <= $distance
-                      ORDER BY distance";
-
-            $providers = DB::select(DB::raw($query));
-
-            $response_array = array(
-                'success' => true,
-                'providers' => $providers
-            );
-        }
-
-        return response()->json(Helper::null_safe($response_array) , 200);
     }
 
     public function get_payment_modes(Request $request) {

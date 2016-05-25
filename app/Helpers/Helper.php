@@ -25,6 +25,14 @@
     class Helper
     {
 
+        public static function tr($key) {
+
+            if (!\Session::has('locale'))
+                \Session::put('locale', \Config::get('app.locale'));
+            return \Lang::choice('messages.'.$key, 0, Array(), \Session::get('locale'));
+
+        }
+
         public static function clean($string)
         {
             $string = str_replace(' ', '-', $string); // Replaces all spaces with hyphens.

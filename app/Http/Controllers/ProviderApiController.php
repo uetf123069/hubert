@@ -1319,10 +1319,10 @@ class ProviderApiController extends Controller
 	{
 		$provider = Provider::find($request->id);
 
+		 $check_status = array(REQUEST_COMPLETED,REQUEST_CANCELLED,REQUEST_NO_PROVIDER_AVAILABLE);
+
 		$requests = Requests::where('requests.confirmed_provider', '=', $provider->id)
-							->where('requests.status', '!=', REQUEST_COMPLETED)
-							->where('requests.status', '!=', REQUEST_CANCELLED)
-							->where('requests.status', '!=', REQUEST_NO_PROVIDER_AVAILABLE)
+							->whereNotIn('requests.status', $check_status)
 							->where('provider_status', '!=', PROVIDER_RATED)
 							->leftJoin('users', 'users.id', '=', 'requests.user_id')
                             ->leftJoin('service_types', 'service_types.id', '=', 'requests.request_type')
@@ -1331,18 +1331,36 @@ class ProviderApiController extends Controller
                             ->get()->toArray();
 
         $requests_data = array();
+        $invoice = array();
+
 		if($requests)
 		{
             foreach($requests as $each_request){
                 $each_request['user_rating'] = DB::table('user_ratings')->where('user_id', $each_request['user_id'])->avg('rating') ?: 0;
                 unset($each_request['user_id']);
                 $requests_data[] = $each_request;
+
+                $allowed_status = array(REQUEST_COMPLETE_PENDING,REQUEST_COMPLETED,REQUEST_RATING);
+
+                if( in_array($each_request['status'], $allowed_status)) {
+                    $invoice = RequestPayment::where('request_id' , $each_request['request_id'])
+                                    ->leftJoin('requests' , 'request_payments.request_id' , '=' , 'requests.id')
+                                    ->leftJoin('users' , 'requests.user_id' , '=' , 'users.id')
+                                    ->leftJoin('cards' , 'users.default_card' , '=' , 'cards.id')
+                                    ->where('cards.is_default' , DEFAULT_TRUE)
+                                    ->select('requests.confirmed_provider as provider_id' , 'request_payments.total_time',
+                                        'request_payments.payment_mode as payment_mode' , 'request_payments.base_price',
+                                        'request_payments.time_price' , 'request_payments.tax_price' , 'request_payments.total',
+                                        'cards.card_token','cards.customer_id','cards.last_four')
+                                    ->get()->toArray();
+                }
             }
 		}
 
         $response_array = array(
             'success' => true,
-            'data' => $requests_data
+            'data' => $requests_data,
+            'invoice' => $invoice
         );
 	
 		$response = response()->json(Helper::null_safe($response_array), 200);
