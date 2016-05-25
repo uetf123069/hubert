@@ -79,6 +79,26 @@
             <li>
                 <a href="javascript:;">
                     <i class="fa fa-folder"></i>
+                    <span>Service Types</span>
+                </a>
+                    <ul class="sub-menu">
+                        <li>
+                        <a href="{{ route('adminServices') }}">
+                            <span>View Service Type</span>
+                        </a>
+                        </li>
+                        <li>
+                        <a href="{{ route('adminAddServices') }}">
+                          <span>Add Service Types</span>
+                        </a>
+                      </li>
+                    </ul>
+                
+            </li>
+
+            <li>
+                <a href="javascript:;">
+                    <i class="fa fa-folder"></i>
                     <span>Documents</span>
                 </a>
                     <ul class="sub-menu">

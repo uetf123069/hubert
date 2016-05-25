@@ -14,6 +14,8 @@ use App\Provider;
 
 use App\Document;
 
+use App\ServiceType;
+
 use Validator;
 
 use Hash;
@@ -427,6 +429,90 @@ class AdminController extends Controller
         }
     }
 
+    //Service Types
+
+    public function serviceTypes()
+    {
+        $service = ServiceType::orderBy('created_at' , 'asc')->paginate(10);
+        return view('admin.serviceTypes')->with('services',$service);
+    }
+
+    public function editService(Request $request)
+    {
+        $service = ServiceType::find($request->id);
+        return view('admin.addServiceTypes')->with('name', 'Edit Service Types')->with('service',$service);
+    }
+
+    public function addServiceType()
+    {
+        return view('admin.addServiceTypes');
+    }
+
+    public function addServiceProcess(Request $request)
+    {
+
+                $validator = Validator::make(
+                    $request->all(),
+                    array(
+                        'service_name' => 'required|max:255',
+                                         
+                    )
+                );
+            if($validator->fails())
+        {
+            $error_messages = implode(',', $validator->messages()->all());
+            return back()->with('flash_errors', $error_messages);
+        }
+        else
+        {
+            if($request->id != '')
+            {
+                $service = ServiceType::find($request->id);
+                $message = "Service Type Updated successfully";
+            }
+            else
+            {
+                $service = new ServiceType;
+                $message = "Service Type Created successfully";
+
+            }
+                if ($request->is_default == 1) {
+                ServiceType::where('status', 1)->update(array('status' => 0));
+                $service->status = 1;
+            }
+            else
+            {
+                $service->status = 0;
+            }
+                $service->name = $request->service_name;
+                $service->save();
+            
+        if($service)
+        {
+            return back()->with('flash_success',$message);
+        }
+        else
+        {
+            return back()->with('flash_error',"Something went Wrong");
+        }
+        }
+    }
+
+    public function deleteService(Request $request)
+    {
+
+            $service = ServiceType::find($request->id)->delete();
+       
+        if($service)
+        {
+            return back()->with('flash_success',"Service deleted successfully");
+        }
+        else
+        {
+            return back()->with('flash_error',"Something went Wrong");
+        }
+    }
+
     public function providerReviews()
     {
             $provider_reviews = DB::table('provider_ratings')
@@ -463,12 +549,12 @@ class AdminController extends Controller
         return back()->with('flash_success', 'Provider Review Deleted Successfully');
     }
 
-    public function request()
+    public function requests()
     {
-        $requests = DB::table('request')
+        $requests = DB::table('requests')
                 ->leftJoin('providers', 'request.confirmed_provider', '=', 'providers.id')
                 ->leftJoin('users', 'request.user_id', '=', 'users.id')
-                ->select('users.first_name as user_first_name', 'users.last_name as user_last_name', 'providers.first_name as provider_first_name', 'providers.last_name as provider_last_name', 'users.id as user_id', 'providers.id as provider_id', 'request.is_paid',  'request.id as id', 'request.created_at as date', 'request.confirmed_provider', 'request.status',  'request.amount')
+                ->select('users.first_name as user_first_name', 'users.last_name as user_last_name', 'providers.first_name as provider_first_name', 'providers.last_name as provider_last_name', 'users.id as user_id', 'providers.id as provider_id', 'request.is_paid',  'request.id as id', 'request.created_at as date', 'request.confirmed_provider', 'request.status', 'request.provider_status', 'request.amount')
                 ->orderBy('request.created_at', 'DESC')
                 ->paginate(10);
         return view('admin.requests')->with('requests', $requests);

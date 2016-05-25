@@ -152,6 +152,18 @@ Route::group(['prefix' => 'admin'], function(){
 
     Route::get('/deletedocument/{id}', 'AdminController@deleteDocument')->name('adminDocumentDelete');
 
+    //Service Types
+
+    Route::get('/serviceTypes', 'AdminController@serviceTypes')->name('adminServices');
+
+    Route::get('/addServiceType', 'AdminController@addServiceType')->name('adminAddServices');
+
+    Route::post('/addServiceProcess', 'AdminController@addServiceProcess')->name('adminAddServiceProcess');
+
+    Route::get('/editService/{id}', 'AdminController@editService')->name('adminServiceEdit');
+
+    Route::get('/deleteService/{id}', 'AdminController@deleteService')->name('adminServiceDelete');
+
     //Reviews & Ratings
 
     Route::get('/userReviews', 'AdminController@userReviews')->name('adminUserReviews');
