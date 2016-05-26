@@ -46,6 +46,8 @@ Route::group(['prefix' => 'userApi'], function(){
 
 	// Request Handle
 
+	Route::post('/guestProviderList', 'UserapiController@guest_provider_list');
+
 	Route::post('/sendRequest', 'UserapiController@send_request');
 
 	Route::post('/cancelRequest', 'UserapiController@cancel_request');
@@ -91,16 +93,24 @@ Route::group(['prefix' => 'providerApi'], function(){
 	Route::post('/register','ProviderApiController@register');
 
 	Route::post('/login','ProviderApiController@login');
-	
-	Route::get('/userdetails','ProviderApiController@details_fetch');
 
-	Route::post('/updateProfile', 'ProviderApiController@details_save');
+	
+	Route::get('/userdetails','ProviderApiController@profile');
+
+	Route::post('/updateProfile', 'ProviderApiController@update_profile');
 
 	Route::post('/forgotpassword', 'ProviderApiController@forgot_password');
 
 	Route::post('/changePassword', 'ProviderApiController@changePassword');
 
 	Route::get('/tokenRenew', 'ProviderApiController@tokenRenew');
+
+	Route::post('locationUpdate' , 'ProviderApiController@location_update');
+
+	Route::get('checkAvailableStatus' , 'ProviderApiController@check_available');
+
+	Route::post('availableUpdate' , 'ProviderApiController@available_update');
+
 
 	Route::post('/serviceAccept', 'ProviderApiController@service_accept');
 
@@ -119,6 +129,8 @@ Route::group(['prefix' => 'providerApi'], function(){
 	Route::post('/cancelrequest', 'ProviderApiController@cancelrequest');
 
 	Route::post('/history', 'ProviderApiController@history');
+
+	Route::post('/singleRequest' , 'ProviderApiController@single_request');
 
 	Route::post('/incomingRequest', 'ProviderApiController@get_incoming_request');
 

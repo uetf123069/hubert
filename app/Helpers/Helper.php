@@ -20,8 +20,6 @@
 
    use Log;
 
-
-
     class Helper
     {
 
@@ -155,21 +153,16 @@
             }
            
         }
-        public static function send_provider_forgot_email($email,$email_data,$subject)
-        {            
+        public static function send_provider_forgot_email($email,$email_data,$subject) {            
+
             if(env('MAIL_USERNAME') && env('MAIL_PASSWORD')) {
                 try
                 {
-                    // Log::info("mail Started//.....");
-
                     Mail::send('emails.provider.forgot_password', array('email_data' => $email_data), function ($message) use ($email, $subject) {
                             $message->to($email)->subject($subject);
                     });
 
                 } catch(Exception $e) {
-
-                    Log::info('Email Send Error message***********'.print_r($e,true));
-
                     return Helper::get_error_message(123);
                 }
 
@@ -345,6 +338,24 @@
                 case 143:
                     $string = "The selected provider is already in favourite list.";
                     break;
+                case 144:
+                    $string = "Account is disabled by admin";
+                    break;
+                case 145:
+                    $string = "Already provider started";
+                    break;
+                case 146:
+                    $string = "Already provider arrived";
+                    break;
+                case 147:
+                    $string = "Service already started";
+                    break;
+                case 148:
+                    $string = "Service already completed.";
+                    break;
+                case 149:
+                    $string = "Request has not been offered to this provider. Abort.";
+                    break;
                 default:
                     $string = "Unknown error occurred.";
             }
@@ -380,6 +391,33 @@
                     break;
                 case 109:
                     $string = "Payment mode changed successfully";
+                    break;
+                case 110:
+                    $string = "Payment mode changed successfully";
+                    break;
+                case 111:
+                    $string = "Service Accepted";
+                    break;
+                case 112:
+                    $string = "provider started";
+                    break;
+                case 113:
+                    $string = "Arrived to service location";
+                    break;
+                case 114:
+                    $string = "Service started";
+                    break;
+                case 115:
+                    $string = "Service completed";
+                    break;
+                case 116:
+                    $string = "User rating done";
+                    break;
+                case 117:
+                    $string = "Request cancelled successfully.";
+                    break;
+                case 118:
+                    $string = "Request rejected successfully.";
                     break;
                 default:
                     $string = "";
@@ -542,10 +580,12 @@
         public static function sort_waiting_providers($merge_providers) {
             $waiting_array = array();
             $non_waiting_array = array();
+            $check_waiting_provider_count = 0;
 
             foreach ($merge_providers as $key => $val) {
                 if($val['waiting'] == 1) {
-                    $waiting_array[] = $val['id']  ;
+                    $waiting_array[] = $val['id'];
+                    $check_waiting_provider_count ++;
                 } else {
                     $non_waiting_array[] = $val['id'];
                 }
@@ -553,7 +593,7 @@
 
             $providers = array_unique(array_merge($non_waiting_array,$waiting_array));
 
-            return $providers;
+            return array('providers' => $providers , 'check_waiting_provider_count' => $check_waiting_provider_count);
         
         }
 
