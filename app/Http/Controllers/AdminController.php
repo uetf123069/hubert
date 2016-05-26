@@ -14,7 +14,13 @@ use App\Provider;
 
 use App\Document;
 
+use App\Admin;
+
 use App\ServiceType;
+
+use App\RequestPayment;
+
+use App\Settings;
 
 use Validator;
 
@@ -50,6 +56,70 @@ class AdminController extends Controller
         return view('admin.dashboard');
     }
 
+    public function profile()
+    {
+        $admin = Admin::first();
+        return view('admin.adminProfile')->with('admin',$admin);
+    }
+
+    public function profileProcess(Request $request)
+    {
+                $name = $request->name;
+                $paypal_email = $request->paypal_email;
+                $email = $request->email;
+                $mobile = $request->mobile;
+                $gender = $request->gender;
+                $picture = $request->file('picture');
+                $address = $request->address;
+
+                $validator = Validator::make(
+                    $request->all(),
+                    array(
+                        'name' => 'required|max:255',
+                        'paypal_email' => 'required|max:255',
+                        'email' => 'required|email|max:255',
+                        'mobile' => 'required|digits_between:6,13',
+                        'address' => 'required|max:300',
+                       
+                    )
+                );
+            if($validator->fails())
+        {
+            $error_messages = implode(',', $validator->messages()->all());
+            return back()->with('flash_errors', $error_messages);
+        }
+        else
+        {
+                    $admin = Admin::find($request->id);
+                    $admin->name = $name;
+                    $admin->email = $email;
+                    $admin->mobile = $mobile;
+                    if($admin->picture == ''){
+                    $admin->picture = Helper::upload_picture($picture);
+                    }
+                    $admin->remember_token = Helper::generate_token();
+                    $admin->gender = $gender;
+                    $admin->is_activated = 1;
+                    $admin->paypal_email = $request->paypal_email;
+                    $admin->address = $address;
+                    $admin->save();
+
+                if($admin)
+                {
+                    return back()->with('flash_success', 'Admin Details updated Successfully');
+                }
+                else
+                {
+                    return back()->with('flash_error', 'Something Went Wrong, Try Again!');
+                }
+        }
+    }
+
+    public function payment()
+    {
+        $payment = RequestPayment::all();
+        return view('admin.adminPayment')->with('payments',$payment);
+    }
 
     //User Functions
 
@@ -67,7 +137,7 @@ class AdminController extends Controller
 
     public function addUserProcess(Request $request)
     {
-        $first_name = $request->first_name;
+                $first_name = $request->first_name;
                 $last_name = $request->last_name;
                 $email = $request->email;
                 $mobile = $request->mobile;
@@ -351,7 +421,16 @@ class AdminController extends Controller
 
     public function settings()
     {
-        return view('admin.addProvider');
+        $settings = Settings::all();
+        // dd($settings);
+        return view('admin.settings');
+    }
+
+    public function settingsProcess()
+    {
+        $settings = Settings::all();
+        // dd($settings);
+        return view('admin.settings');
     }
 
     //Documents

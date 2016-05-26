@@ -141,7 +141,15 @@ Route::group(['prefix' => 'admin'], function(){
 
     Route::get('/', 'AdminController@index')->name('admin.dashboard');
 
+    Route::get('/profile', 'AdminController@profile')->name('adminProfile');
+
+    Route::post('/profileProcess', 'AdminController@profileProcess')->name('adminProfileProcess');
+
     Route::get('/settings', 'AdminController@settings')->name('admin.settings');
+
+    Route::get('/payment', 'AdminController@payment')->name('adminPayment');
+
+    Route::post('/settingsProcess', 'AdminController@settingsProcess')->name('adminSettingProcess');
 
     //Documents
 
@@ -177,7 +185,6 @@ Route::group(['prefix' => 'admin'], function(){
 
     Route::get('/userReviewDelete/{id}', 'AdminController@deleteUserReviews')->name('adminUserReviewDelete');
 
-    Route::get('/payment', 'AdminController@settings')->name('admin.settings');
 
     Route::get('/requests', 'AdminController@requests')->name('adminRequests');
 

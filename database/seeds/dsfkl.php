@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use DB;
 
 class SettingsSeeder extends Seeder
 {
@@ -36,6 +37,10 @@ class SettingsSeeder extends Seeder
 		        'key' => 'stripe_secret_key',
 		        'value' => ''
 		    ], 
+		     [
+		        'key' => 'stripe_publishable_key',
+		        'value' => ''
+		    ], 
 		    [
 		        'key' => 'cod',
 		        'value' => 1
@@ -47,6 +52,10 @@ class SettingsSeeder extends Seeder
 		    [
 		        'key' => 'card',
 		        'value' => 1
+		    ], 
+		    [
+		        'key' => 'paypal_email',
+		        'value' => ''
 		    ], 
 
 		]);
