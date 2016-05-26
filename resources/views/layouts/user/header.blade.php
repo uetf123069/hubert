@@ -4,50 +4,11 @@
         <a data-toggle="tooltips" data-placement="right" title="Toggle Sidebar"><span class="icon-bg"><i class="fa fa-fw fa-bars"></i></span></a>
     </span>
 
-    <a class="navbar-brand" href="index.html">Avenger</a>
+    <a class="navbar-brand" href="{{ route('user.dashboard') }}">Avenger</a>
 
     <span id="trigger-infobar" class="toolbar-trigger toolbar-icon-bg">
         <a data-toggle="tooltips" data-placement="left" title="Toggle Infobar"><span class="icon-bg"><i class="fa fa-fw fa-bars"></i></span></a>
     </span>
-    
-    
-    <div class="yamm navbar-left navbar-collapse collapse in">
-        <ul class="nav navbar-nav">
-            <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Megamenu<span class="caret"></span></a>
-                <ul class="dropdown-menu" style="width: 600px;">
-                    <li>
-                        <div class="yamm-content container-sm-height">
-                            <div class="row row-sm-height yamm-col-bordered">
-                                <div class="col-sm-6 col-sm-height yamm-col">
-
-                                    <h3 class="yamm-category">Sidebar</h3>
-                                    <ul class="list-unstyled mb20">
-                                        <li><a href="layout-fixed-sidebars.html">Stretch Sidebars</a></li>
-                                        <li><a href="layout-sidebar-scroll.html">Scroll Sidebar</a></li>
-                                        <li><a href="layout-static-leftbar.html">Static Sidebar</a></li>
-                                        <li><a href="layout-leftbar-widgets.html">Sidebar Widgets</a></li>   
-                                    </ul>
-
-                                </div>
-                                <div class="col-sm-6 col-sm-height yamm-col">
-
-                                    <h3 class="yamm-category">Page Content</h3>
-                                    <ul class="list-unstyled mb20">
-                                        <li><a href="layout-breadcrumb-top.html">Breadcrumbs on Top</a></li>
-                                        <li><a href="layout-page-tabs.html">Page Tabs</a></li>
-                                        <li><a href="layout-fullheight-panel.html">Full-Height Panel</a></li>
-                                        <li><a href="layout-fullheight-content.html">Full-Height Content</a></li>
-                                    </ul>
-
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                </ul>
-            </li>
-        </ul>
-    </div>
 
     <ul class="nav navbar-nav toolbar pull-right">
         <li class="dropdown toolbar-icon-bg">
@@ -63,7 +24,6 @@
             <div class="dropdown-menu dropdown-alternate arrow search dropdown-menu-form">
                 <div class="dd-header">
                     <span>Search</span>
-                    <span><a href="#">Advanced search</a></span>
                 </div>
                 <div class="input-group">
                     <input type="text" class="form-control" placeholder="">
