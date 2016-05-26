@@ -5,9 +5,9 @@
     <meta charset="utf-8">
     <title>@yield('title') {{ Setting::get('site_name', 'XUBER') }}</title>
     
-    <meta name="description" content="{{ Setting::get('site_name', 'Uber for Services') }}">
+    <meta name="description" content="{{ Setting::get('site_description', 'Uber for Services') }}">
     <meta name="viewport" content="width=device-width">
-    <link rel="shortcut icon" href="{{ Setting::get('site_name', asset('/favicon.ico') ) }}">
+    <link rel="shortcut icon" href="{{ Setting::get('site_icon', asset('/favicon.ico') ) }}">
 
     <!-- page level plugin styles -->
     <link rel="stylesheet" href="{{ asset('admin_assets/styles/climacons-font.css') }}">

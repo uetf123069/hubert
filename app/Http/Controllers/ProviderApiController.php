@@ -1251,6 +1251,7 @@ class ProviderApiController extends Controller
 		$requests = Requests::where('requests.confirmed_provider', '=', $provider->id)
 							->where('requests.status', '!=', REQUEST_COMPLETED)
 							->where('requests.status', '!=', REQUEST_CANCELLED)
+							->where('requests.status', '!=', REQUEST_NO_PROVIDER_AVAILABLE)
 							->where('provider_status', '!=', PROVIDER_RATED)
 							->leftJoin('users', 'users.id', '=', 'requests.user_id')
                             ->leftJoin('service_types', 'service_types.id', '=', 'requests.request_type')

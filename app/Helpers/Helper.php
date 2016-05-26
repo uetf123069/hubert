@@ -10,6 +10,10 @@
 
    use App\Provider;
 
+   use App\FavouriteProvider;
+
+   use App\ProviderService;
+
    use Mail;
 
    use File;
@@ -180,6 +184,40 @@
                     Log::info("Provider welcome mail started.....");
 
                     Mail::send('emails.provider.welcome', array('email_data' => $email_data), function ($message) use ($email, $subject) {
+                            $message->to($email)->subject($subject);
+                    });
+
+                } catch(Exception $e) {
+
+                    Log::info('Email send error message***********'.print_r($e,true));
+
+                    return Helper::get_error_message(123);
+                }
+
+                return Helper::get_message(105);
+
+            } else {
+
+                return Helper::get_error_message(123);
+
+            }
+        }
+
+        public static function send_users_welcome_email($email_data)
+        {
+            $email = $email_data['email'];
+            $email_data = $email_data;
+
+            $subject = "Welcome on Board";
+
+            
+
+            if(env('MAIL_USERNAME') && env('MAIL_PASSWORD')) {
+                try
+                {
+                    Log::info("Provider welcome mail started.....");
+
+                    Mail::send('emails.user.welcome', array('email_data' => $email_data), function ($message) use ($email, $subject) {
                             $message->to($email)->subject($subject);
                     });
 
@@ -462,8 +500,69 @@
 
         }
 
+        public static function get_fav_providers($service_type,$user_id) {
+
+        /** Favourite Providers Search Start */
+
+        Log::info('Favourite Providers Search Start');
+
+        $favProviders = array();  // Initialize the variable
+
+         // Get the favourite providers list
+
+        $fav_providers_query = FavouriteProvider::leftJoin('providers' , 'favourite_providers.provider_id' ,'=' , 'providers.id')
+                ->where('user_id' , $user_id)
+                ->where('providers.is_available' , DEFAULT_TRUE)
+                ->where('providers.is_activated' , DEFAULT_TRUE)
+                ->where('providers.is_approved' , DEFAULT_TRUE)
+                ->select('provider_id' , 'providers.waiting_to_respond as waiting');
+
+        if($service_type) {
+
+            $provider_services = ProviderService::where('service_type_id' , $service_type)
+                                    ->where('is_available' , DEFAULT_TRUE)
+                                    ->get();
+
+            $provider_ids = array();
+
+            if($provider_services ) {
+
+                foreach ($provider_services as $key => $provider_service) {
+                    $provider_ids[] = $provider_service->provider_id;
+                }
+
+                $favProviders = $fav_providers_query->whereIn('provider_id' , $provider_ids)->orderBy('waiting' , 'ASC')->get();
+            }
+                           
+        } else {
+            $favProviders = $fav_providers_query->orderBy('waiting' , 'ASC')->get();
+        }
+
+        return $favProviders;
+
+        /** Favourite Providers Search End */
+    }
+
+    public static function sort_waiting_providers($merge_providers) {
+        $waiting_array = array();
+        $non_waiting_array = array();
+
+        foreach ($merge_providers as $key => $val) {
+            if($val['waiting'] == 1) {
+                $waiting_array[] = $val['id']  ;
+            } else {
+                $non_waiting_array[] = $val['id'];
+            }
+        }
+
+        $providers = array_unique(array_merge($non_waiting_array,$waiting_array));
+
+        return $providers;
+    }
        
     }
+
+    
 
 
 
