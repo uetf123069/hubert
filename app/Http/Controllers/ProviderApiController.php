@@ -1059,10 +1059,9 @@ class ProviderApiController extends Controller
 
     			// Get the total time from requests table
     			$get_time = Helper::time_diff($requests->request_start_time,$requests->request_end_time);
-    			$total_time = $get_time->format('%i');
+    			$total_time = $get_time->i;
 
     			// Calculate price 
-
     			$total_time_price = $total_time * $price_per_minute;
 
     			$total = $total_time_price + $base_price + $tax_price;

@@ -940,37 +940,12 @@ class UserapiController extends Controller
                                         }
 
                                         // Send push notifications to the first provider
-                                        $settings = Settings::where('key', 'provider_select_timeout')->first();
-                                        $provider_timeout = $settings->value;
-
-                                        if($service_type)
-                                            $service = ServiceType::find($requests->request_type);
-
-                                        $push_data = array();
-                                        $push_data['request_id'] = $requests->id;
-                                        $push_data['service_type'] = $requests->request_type;
-                                        $push_data['request_start_time'] = $requests->request_start_time;
-                                        $push_data['status'] = $requests->status;
-                                        $push_data['user_name'] = $user->name;
-                                        $push_data['user_picture'] = $user->picture;
-                                        $push_data['s_address'] = $requests->s_address;
-                                        $push_data['s_latitude'] = $requests->s_latitude;
-                                        $push_data['s_longitude'] = $requests->s_longitude;
-                                        $push_data['user_rating'] = ProviderRating::where('provider_id', $first_provider_id)->avg('rating') ?: 0;
-                                        $push_data['time_left_to_respond'] = $provider_timeout - (time() - strtotime($requests->request_start_time));
-
-                                        $title = "New Request";
-                                        $message = "You got a new request from ".$user->name;
-                                        $push_message = array(
-                                            'success' => true,
-                                            'message' => $message,
-                                            'data' => array((object) $push_data)
-                                        );
-
-                                        // Send Push Notification to Provider
-                                        Helper::send_notifications($first_provider_id, PROVIDER, $title, $push_message);
+                                        $title = Helper::get_push_message(604);
+                                        $message = "You got a new request from".$user->name;
+                                        Helper::request_push_notification($first_provider_id,PROVIDER,$requests->id,$title,$message);
                                         // Push End
                                     }
+
                                     $request_meta->request_id = $requests->id;
                                     $request_meta->provider_id = $final_provider; 
                                     $request_meta->save();
