@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 
-class PasswordController extends Controller
+class ProviderPasswordController extends Controller
 {
     /*
     |--------------------------------------------------------------------------
@@ -19,6 +19,36 @@ class PasswordController extends Controller
     */
 
     use ResetsPasswords;
+
+
+    /**
+     * Where to redirect users after successful change of password.
+     *
+     * @var string
+     */
+
+    protected $guard = 'provider';
+
+    protected $broker = 'providers';
+
+    protected $redirectTo = '/provider';
+
+    /**
+     * The password reset request view that should be used.
+     *
+     * @var string
+     */
+
+    protected $linkRequestView = 'provider.auth.passwords.email';
+
+    /**
+     * The password reset view that should be used.
+     *
+     * @var string
+     */
+
+    protected $resetView = 'provider.auth.passwords.reset';
+
 
     /**
      * Create a new password controller instance.

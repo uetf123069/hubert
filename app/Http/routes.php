@@ -236,18 +236,18 @@ Route::group([], function(){
 
 Route::group(['prefix' => 'provider'], function(){
 
-    Route::get('login', 'Auth\AuthController@showLoginForm')->name('provider.login.form');
-    Route::post('login', 'Auth\AuthController@login')->name('provider.login.post');
-    Route::get('logout', 'Auth\AuthController@logout')->name('provider.logout');
+    Route::get('login', 'Auth\ProviderAuthController@showLoginForm')->name('provider.login.form');
+    Route::post('login', 'Auth\ProviderAuthController@login')->name('provider.login.post');
+    Route::get('logout', 'Auth\ProviderAuthController@logout')->name('provider.logout');
 
     // Registration Routes...
-    Route::get('register', 'Auth\AuthController@showRegistrationForm');
-    Route::post('register', 'Auth\AuthController@register');
+    Route::get('register', 'Auth\ProviderAuthController@showRegistrationForm');
+    Route::post('register', 'Auth\ProviderAuthController@register');
 
     // Password Reset Routes...
-    Route::get('password/reset/{token?}', 'Auth\PasswordController@showResetForm');
-    Route::post('password/email', 'Auth\PasswordController@sendResetLinkEmail');
-    Route::post('password/reset', 'Auth\PasswordController@reset');
+    Route::get('password/reset/{token?}', 'Auth\ProviderPasswordController@showResetForm');
+    Route::post('password/email', 'Auth\ProviderPasswordController@sendResetLinkEmail');
+    Route::post('password/reset', 'Auth\ProviderPasswordController@reset');
 
     Route::get('/', 'ProviderController@index')->name('provider.dashboard');
 

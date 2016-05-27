@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\User;
+use App\Provider;
 use Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
 
-class AuthController extends Controller
+class ProviderAuthController extends Controller
 {
     /*
     |--------------------------------------------------------------------------
@@ -24,11 +24,41 @@ class AuthController extends Controller
     use AuthenticatesAndRegistersUsers, ThrottlesLogins;
 
     /**
-     * Where to redirect users after login / registration.
+     * Where to redirect users after login / registration / logout.
      *
      * @var string
      */
-    protected $redirectTo = '/';
+    protected $redirectTo = '/provider';
+
+    protected $loginPath = '/provider/login';
+
+    protected $redirectAfterLogout = '/provider/login';
+
+
+    /**
+     * The guard to be used for validation.
+     *
+     * @var string
+     */
+
+    protected $guard = 'provider';
+
+    /**
+     * The Login form view that should be used.
+     *
+     * @var string
+     */
+
+    protected $loginView = 'provider.auth.login';
+
+    /**
+     * The Register form view that should be used.
+     *
+     * @var string
+     */
+
+    protected $registerView = 'provider.auth.register';
+
 
     /**
      * Create a new authentication controller instance.
@@ -50,7 +80,7 @@ class AuthController extends Controller
     {
         return Validator::make($data, [
             'name' => 'required|max:255',
-            'email' => 'required|email|max:255|unique:users',
+            'email' => 'required|email|max:255|unique:providers',
             'password' => 'required|min:6|confirmed',
         ]);
     }
@@ -63,7 +93,7 @@ class AuthController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
+        return Provider::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
