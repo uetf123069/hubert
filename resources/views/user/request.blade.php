@@ -1,8 +1,8 @@
 @extends('layouts.user')
 
-@section('title', 'Dashboard | ')
+@section('title', 'Request Services | ')
 
-@section('page_title', 'Dashboard')
+@section('page_title', 'Request Services')
 
 @section('content')
 

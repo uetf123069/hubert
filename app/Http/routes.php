@@ -11,10 +11,6 @@
 |
 */
 
-Route::get('/register', 'UserapiController@register');
-
-Route::get('/assign_next_provider_cron' , 'ApplicationController@assign_next_provider_cron');
-
 Route::group(['prefix' => 'userApi'], function(){
 
 	Route::post('/register','UserapiController@register');
@@ -121,6 +117,8 @@ Route::group(['prefix' => 'providerApi'], function(){
 
 
 });
+
+Route::get('/assign_next_provider_cron' , 'ApplicationController@assign_next_provider_cron');
 
 // Admin Routes
 
@@ -241,7 +239,10 @@ Route::group([], function(){
 
     Route::get('/services', 'UserController@services')->name('user.services.list');
     Route::get('/request', 'UserController@request')->name('user.services.request');
-    Route::get('/profile', 'UserController@profile')->name('user.profile');
+
+    Route::get('/profile', 'UserController@profile_edit')->name('user.profile.edit');
+    Route::post('/profile', 'UserController@profile_save')->name('user.profile.save');
+    Route::post('/profile/password', 'UserController@profile_save_password')->name('user.profile.password');
 
 });
 

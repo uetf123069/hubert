@@ -5,11 +5,17 @@
 				<div class="widget-body welcome-box tabular">
 					<div class="tabular-row">
 						<div class="tabular-cell welcome-avatar">
-							<a href="#"><img src="{{ asset('logo.png') }}" class="avatar"></a>
+							<a href="#">
+								@if(Auth::user()->picture != "")
+									<img src="{{ Auth::user()->picture }}" class="avatar"></img>
+								@else								
+									<img src="{{ asset('logo.png') }}" class="avatar">
+								@endif
+							</a>
 						</div>
 						<div class="tabular-cell welcome-options">
 							<span class="welcome-text">Welcome,</span>
-							<a href="#" class="name">Jonathan Smith</a>
+							<a href="#" class="name">{{ Auth::user()->name }}</a>
 						</div>
 					</div>
 				</div>
@@ -33,9 +39,20 @@
 								<i class="fa fa-columns"></i><span>Request Services</span><span class="badge badge-primary">8</span>
 							</a>
 						</li>
+						<li class="nav-separator">Payment</li>
+						<li>
+							<a href="{{ route('user.profile.edit') }}">
+								<i class="fa fa-user"></i><span>Payments</span>
+							</a>
+						</li>
+						<li>
+							<a href="{{ route('user.profile.edit') }}">
+								<i class="fa fa-user"></i><span>Payment History</span>
+							</a>
+						</li>
 						<li class="nav-separator">Account</li>
 						<li>
-							<a href="{{ route('user.profile') }}">
+							<a href="{{ route('user.profile.edit') }}">
 								<i class="fa fa-user"></i><span>Profile</span>
 							</a>
 						</li>
