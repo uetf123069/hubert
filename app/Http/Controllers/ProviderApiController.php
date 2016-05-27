@@ -181,20 +181,20 @@ class ProviderApiController extends Controller
 			Log::info("New provider registration: ".print_r($provider, true));
 
 			$response_array = array(
-								'success' => true ,
-								'message' => $provider ? Helper::get_message(105) : Helper::get_error_message(126),
-								'id' 	=> $provider->id,
-			                    'first_name' => $provider->first_name,
-			                    'last_name' => $provider->last_name,
-			                    'mobile' => $provider->mobile,
-			                    'email' => $provider->email,
-			                    'picture' => $provider->picture,
-			                    'token' => $provider->token,
-			                    'token_expiry' => $provider->token_expiry,
-			                    'login_by' => $provider->login_by,
-			                    'social_unique_id' => $provider->social_unique_id,
-			                    'service_type' => $request->service_type,
-								);
+				'success' => true ,
+				'message' => $provider ? Helper::get_message(105) : Helper::get_error_message(126),
+				'id' 	=> $provider->id,
+                'first_name' => $provider->first_name,
+                'last_name' => $provider->last_name,
+                'mobile' => $provider->mobile,
+                'email' => $provider->email,
+                'picture' => $provider->picture,
+                'token' => $provider->token,
+                'token_expiry' => $provider->token_expiry,
+                'login_by' => $provider->login_by,
+                'social_unique_id' => $provider->social_unique_id,
+                'service_type' => $request->service_type,
+				);
 		}
 	
 		$response = response()->json(Helper::null_safe($response_array), 200);
@@ -1058,7 +1058,8 @@ class ProviderApiController extends Controller
     			$tax_price = $admin_tax->value;
 
     			// Get the total time from requests table
-    			$total_time = Helper::time_diff($requests->request_start_time,$requests->request_end_time);
+    			$get_time = Helper::time_diff($requests->request_start_time,$requests->request_end_time);
+    			$total_time = $get_time->format('%i');
 
     			// Calculate price 
 

@@ -603,7 +603,8 @@
 
             $time_interval = date_diff($start_date,$end_date);
             // echo $interval->format('%h:%i:%s');
-            return $time_interval->format('%i');
+            // return $time_interval->format('%i');
+            return $time_interval;
 
         }
     }
