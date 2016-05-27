@@ -42,7 +42,7 @@
         <li>
             <a href="javascript:;" data-toggle="dropdown">
                 <img src="images/avatar.jpg" class="header-avatar img-circle ml10" alt="user" title="user">
-                <span class="pull-left">Samuel Perkins</span>
+                <span class="pull-left"></span>
             </a>
             <ul class="dropdown-menu">
                 <li>

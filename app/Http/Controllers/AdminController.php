@@ -30,6 +30,8 @@ use Mail;
 
 use DB;
 
+use Auth;
+
 use Redirect;
 
 use Setting;
@@ -53,6 +55,7 @@ class AdminController extends Controller
      */
     public function index()
     {
+        $user = Auth::user();
         return view('admin.dashboard');
     }
 
@@ -429,7 +432,6 @@ class AdminController extends Controller
     public function settingsProcess()
     {
         $settings = Settings::all();
-        // dd($settings);
         return view('admin.settings');
     }
 
