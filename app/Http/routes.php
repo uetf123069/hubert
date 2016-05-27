@@ -132,7 +132,7 @@ Route::group(['prefix' => 'admin'], function(){
     Route::post('password/reset', 'Auth\AdminPasswordController@reset');
 
     Route::get('/', 'AdminController@index')->name('admin.dashboard');
-
+    Route::get('/mapview', 'AdminController@mapview')->name('admin.mapmapview');
     Route::get('/settings', 'AdminController@settings')->name('admin.settings');
 
     //Documents

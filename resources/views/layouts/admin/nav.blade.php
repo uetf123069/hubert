@@ -70,6 +70,13 @@
             </li>
 
             <li>
+                <a href="{{ route('admin.mapmapview') }}">
+                    <i class="fa fa-map-marker"></i>
+                    <span>Map View</span>
+                </a>
+            </li>
+
+            <li>
                 <a href="{{ route('adminRequests') }}">
                     <i class="fa fa-paper-plane"></i>
                     <span>Requests</span>

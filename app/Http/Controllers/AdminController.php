@@ -560,4 +560,10 @@ class AdminController extends Controller
         return view('admin.requests')->with('requests', $requests);
     }
 
+    public function mapview()
+    {
+        // dd(\Auth::guard('admin')->user());
+        $Providers = Provider::all();
+        return view('admin.map', compact('Providers'));
+    }
 }
