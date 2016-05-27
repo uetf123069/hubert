@@ -23,6 +23,8 @@ class Authenticate
             } else {
                 if($guard == 'admin') {
                     return redirect()->guest('admin/login');
+                } else if($guard == 'provider') {
+                    return redirect()->guest('provider/login');
                 } else {
                     return redirect()->guest('login');
                 }

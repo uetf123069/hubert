@@ -260,3 +260,31 @@ Route::group([], function(){
 
 });
 
+
+Route::group(['prefix' => 'provider'], function(){
+
+    Route::get('login', 'Auth\ProviderAuthController@showLoginForm')->name('provider.login.form');
+    Route::post('login', 'Auth\ProviderAuthController@login')->name('provider.login.post');
+    Route::get('logout', 'Auth\ProviderAuthController@logout')->name('provider.logout');
+
+    // Registration Routes...
+    Route::get('register', 'Auth\ProviderAuthController@showRegistrationForm');
+    Route::post('register', 'Auth\ProviderAuthController@register');
+
+    // Password Reset Routes...
+    Route::get('password/reset/{token?}', 'Auth\ProviderPasswordController@showResetForm');
+    Route::post('password/email', 'Auth\ProviderPasswordController@sendResetLinkEmail');
+    Route::post('password/reset', 'Auth\ProviderPasswordController@reset');
+
+    Route::get('/', 'ProviderController@index')->name('provider.dashboard');
+
+    Route::get('/services', 'ProviderController@services')->name('provider.services.list');
+    Route::get('/ongoing', 'ProviderController@ongoing')->name('provider.ongoing');
+    Route::get('/documents', 'ProviderController@documents')->name('provider.documents');
+    Route::get('/request', 'ProviderController@request')->name('provider.services.request');
+    Route::get('/profile', 'ProviderController@profile')->name('provider.profile');
+
+    Route::post('/profile/password', 'ProviderController@password')->name('provider.password');
+
+});
+
