@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="{{ asset('admin_assets/styles/climacons-font.css') }}">
     <link rel="stylesheet" href="{{ asset('vendor/rickshaw/rickshaw.min.css') }}">
     <link rel="stylesheet" href="{{ asset('vendor/datatables/media/css/jquery.dataTables.css') }}">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
     <!-- /page level plugin styles -->
 
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
@@ -71,6 +72,8 @@
     <script src="{{ asset('admin_assets/scripts/ui/toggle.js') }}"></script>
     <script src="{{ asset('admin_assets/scripts/urban-constants.js') }}"></script>
     <script src="{{ asset('admin_assets/scripts/extentions/lib.js') }}"></script>
+    <script src="//code.jquery.com/jquery-1.12.3.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
     <!-- endbuild -->
 
     <!-- page level scripts -->

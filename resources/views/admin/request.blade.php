@@ -18,7 +18,7 @@
             </ol>
           </div>
           <div class="panel-body">
-            <table class="table table-bordered bordered table-striped table-condensed datatable">
+            <table id="requests" class="table table-bordered bordered table-striped table-condensed datatable">
               <thead>
                 <tr>
                   <th>ID</th>
@@ -70,10 +70,11 @@
 @endsection
 
 @section('scripts')<!-- page level scripts -->
-  <script src="{{ asset('vendor/datatables/media/js/jquery.dataTables.js') }}"></script>
-  <!-- /page level scripts -->
-
-  <!-- initialize page scripts -->
-  <script src="{{ asset('admin_assets/scripts/extensions/bootstrap-datatables.js') }}"></script>
-  <script src="{{ asset('admin_assets/scripts/pages/datatables.js') }}"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+    $('#requests').DataTable( {
+        "order": [[ 3, "desc" ]]
+    } );
+} );
+</script>
 @endsection

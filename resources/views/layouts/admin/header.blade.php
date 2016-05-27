@@ -37,78 +37,18 @@
     </ul>
 
     <ul class="nav navbar-nav navbar-right hidden-xs">
-        <li>
-            <a href="javascript:;" data-toggle="dropdown">
-                <i class="fa fa-bell-o"></i>
-                <div class="status bg-danger border-danger animated bounce"></div>
-            </a>
-            <ul class="dropdown-menu notifications">
-                <li class="notifications-header">
-                    <p class="text-muted small">You have 3 new messages</p>
-                </li>
-                <li>
-                    <ul class="notifications-list">
-                        <li>
-                            <a href="javascript:;">
-                                <span class="pull-left mt2 mr15">
-                                    <img src="{{ asset('images/avatar.jpg') }}" class="avatar avatar-xs img-circle" alt="">
-                                </span>
-                                <div class="overflow-hidden">
-                                    <span>Sean launched a new application</span>
-                                    <span class="time">2 seconds ago</span>
-                                </div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="javascript:;">
-                                <div class="pull-left mt2 mr15">
-                                    <div class="circle-icon bg-danger">
-                                        <i class="fa fa-chain-broken"></i>
-                                    </div>
-                                </div>
-                                <div class="overflow-hidden">
-                                    <span>Removed chrome from app list</span>
-                                    <span class="time">4 Hours ago</span>
-                                </div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="javascript:;">
-                                <span class="pull-left mt2 mr15">
-                                        <img src="images/face3.jpg" class="avatar avatar-xs img-circle" alt="">
-                                </span>
-                                <div class="overflow-hidden">
-                                    <span class="text-muted">Jack Hunt has registered</span>
-                                    <span class="time">9 hours ago</span>
-                                </div>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="notifications-footer">
-                    <a href="javascript:;">See all messages</a>
-                </li>
-            </ul>
-        </li>
+        
 
         <li>
             <a href="javascript:;" data-toggle="dropdown">
                 <img src="images/avatar.jpg" class="header-avatar img-circle ml10" alt="user" title="user">
-                <span class="pull-left">Samuel Perkins</span>
+                <span class="pull-left"></span>
             </a>
             <ul class="dropdown-menu">
                 <li>
-                    <a href="javascript:;">Settings</a>
+                    <a href="{{ route('adminProfile')}}">Profile</a>
                 </li>
-                <li>
-                    <a href="javascript:;">Upgrade</a>
-                </li>
-                <li>
-                    <a href="javascript:;">
-                        <span class="label bg-danger pull-right">34</span>
-                        <span>Notifications</span>
-                    </a>
-                </li>
+                
                 <li>
                     <a href="javascript:;">Help</a>
                 </li>
@@ -119,12 +59,6 @@
 
         </li>
 
-        <li>
-            <a href="javascript:;" class="hamburger-icon v2" data-toggle="layout-chat-open">
-                <span></span>
-                <span></span>
-                <span></span>
-            </a>
-        </li>
+        
     </ul>
 </header>

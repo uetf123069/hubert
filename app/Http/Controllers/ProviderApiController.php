@@ -26,9 +26,13 @@ use App\Requests;
 
 use App\RequestsMeta;
 
+use App\RequestPayment;
+
 use App\Settings;
 
 use App\ProviderRating;
+
+use App\Cards;
 
 
 define('USER', 0);
@@ -39,6 +43,11 @@ define('NONE', 0);
 define('DEFAULT_FALSE', 0);
 define('DEFAULT_TRUE', 1);
 
+// Payment Constants
+define('COD',   'cod');
+define('PAYPAL', 'paypal');
+define('CARD',  'card');
+
 define('REQUEST_NEW',        0);
 define('REQUEST_WAITING',      1);
 define('REQUEST_INPROGRESS',    2);
@@ -47,9 +56,6 @@ define('REQUEST_RATING',      4);
 define('REQUEST_COMPLETED',      5);
 define('REQUEST_CANCELLED',      6);
 define('REQUEST_NO_PROVIDER_AVAILABLE',7);
-define('REQUEST_CANCEL_USER',8);
-define('REQUEST_CANCEL_PROVIDER',9);
-
 
 define('PROVIDER_NOT_AVAILABLE', 0);
 define('PROVIDER_AVAILABLE', 1);
@@ -1019,7 +1025,7 @@ class ProviderApiController extends Controller
 				if($request->hasFile('after_image'))
 				{
 					$image = $request->file('after_image');
-					$requests->before_image = Helper::upload_picture($image);
+					$requests->after_image = Helper::upload_picture($image);
 				}
 
 	            $requests->status = REQUEST_COMPLETE_PENDING;
@@ -1027,28 +1033,93 @@ class ProviderApiController extends Controller
 	            $requests->provider_status = PROVIDER_SERVICE_COMPLETED;
     			$requests->save();
 
-    			// Invoice details
-
-    			//Get base price from admin panel
-
-    			//Get price per minute detials from admin panel
-
-    			// Calculate price 
-
-    			// get payment mode from user table.
-	            
-
-	            //Update provider availability
+    			//Update provider availability
 	            $provider = Provider::find($requests->confirmed_provider);
 	            $provider->is_available = PROVIDER_AVAILABLE;
 	            $provider->save();
 
+    			// Initialize variables
+    			$base_price = $price_per_minute = $tax_price = $total_time = $total_time_price = $total = 0;
+    			
+    			// Invoice details
+
+    			//Get base price from admin panel
+    			$base = Settings::where('key' , 'base_price')->first();
+    			$base_price = $base->value;
+
+    			//Get price per minute detials from admin panel
+    			$price_minute = Settings::where('key' , 'price_per_minute')->first();
+    			$price_per_minute = $price_minute->value;
+
+    			// Get the tax details from admin panel
+    			$admin_tax = Settings::where('key','tax_price')->first();
+    			$tax_price = $admin_tax->value;
+
+    			// Get the total time from requests table
+    			$total_time = Helper::time_diff($requests->request_start_time,$requests->request_end_time);
+
+    			// Calculate price 
+
+    			$total_time_price = $total_time * $price_per_minute;
+
+    			$total = $total_time_price + $base_price + $tax_price;
+
+	    		// get payment mode from user table.
+	    		$user_payment_mode = $card_token = $customer_id = $last_four = "";
+
+	    		if($user = User::find($requests->user_id)) {
+
+    				$user_payment_mode = $user->payment_mode;
+
+    				if($user_payment_mode == CARD) {
+    					if($user_card = Cards::find($user->default_card)) {
+    						$card_token = $user_card->card_token;
+    						$customer_id = $user_card->customer_id;
+    						$last_four = $user_card->last_four;
+    					}
+    				}
+    			}
+
+    			// Save the payment details
+    			if(!RequestPayment::where('request_id' , $requests->id)->first()) {
+	    			$request_payment = new RequestPayment;
+	    			$request_payment->request_id = $requests->id;
+	    			$request_payment->payment_mode = $user_payment_mode;
+	    			$request_payment->base_price = $base_price;
+	    			$request_payment->time_price = $total_time_price;
+	    			$request_payment->tax_price = $tax_price;
+	    			$request_payment->total_time = $total_time;
+	    			$request_payment->total = $total;
+	    			$request_payment->save();
+	    		}
+
+    			$invoice_data = array();
+
+    			$invoice_data['request_id'] = $requests->id;
+    			$invoice_data['user_id'] = $requests->user_id;
+    			$invoice_data['provider_id'] = $requests->confirmed_provider;
+    			$invoice_data['base_price'] = $base_price;
+    			$invoice_data['total_time_price'] = $total_time_price;
+    			$invoice_data['tax_price'] = $tax_price;
+    			$invoice_data['total'] = $total;
+    			$invoice_data['payment_mode'] = $user_payment_mode;
+    			$invoice_data['payment_mode_status'] = $user_payment_mode ? 1 : 0;
+    			$invoice_data['card_token'] = $card_token;
+    			$invoice_data['customer_id'] = $customer_id;
+    			$invoice_data['last_four'] = $last_four;
+
 	            /*Send Push Notification to User*/
+
+	            $title = "Your Request is completed.Please check the invoice details";
+	            $message = $invoice_data;
+
+	            Helper::send_notifications($requests->user_id,USER,$title,$message);
 
 	            //Invoice details to Provider as well
 	           
 				$response_array = array(
 						'success' => true,
+						'invoice' => $invoice_data
 				);
 			} else {
 				$response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101);
@@ -1248,10 +1319,10 @@ class ProviderApiController extends Controller
 	{
 		$provider = Provider::find($request->id);
 
+		 $check_status = array(REQUEST_COMPLETED,REQUEST_CANCELLED,REQUEST_NO_PROVIDER_AVAILABLE);
+
 		$requests = Requests::where('requests.confirmed_provider', '=', $provider->id)
-							->where('requests.status', '!=', REQUEST_COMPLETED)
-							->where('requests.status', '!=', REQUEST_CANCELLED)
-							->where('requests.status', '!=', REQUEST_NO_PROVIDER_AVAILABLE)
+							->whereNotIn('requests.status', $check_status)
 							->where('provider_status', '!=', PROVIDER_RATED)
 							->leftJoin('users', 'users.id', '=', 'requests.user_id')
                             ->leftJoin('service_types', 'service_types.id', '=', 'requests.request_type')
@@ -1260,18 +1331,36 @@ class ProviderApiController extends Controller
                             ->get()->toArray();
 
         $requests_data = array();
+        $invoice = array();
+
 		if($requests)
 		{
             foreach($requests as $each_request){
                 $each_request['user_rating'] = DB::table('user_ratings')->where('user_id', $each_request['user_id'])->avg('rating') ?: 0;
                 unset($each_request['user_id']);
                 $requests_data[] = $each_request;
+
+                $allowed_status = array(REQUEST_COMPLETE_PENDING,REQUEST_COMPLETED,REQUEST_RATING);
+
+                if( in_array($each_request['status'], $allowed_status)) {
+                    $invoice = RequestPayment::where('request_id' , $each_request['request_id'])
+                                    ->leftJoin('requests' , 'request_payments.request_id' , '=' , 'requests.id')
+                                    ->leftJoin('users' , 'requests.user_id' , '=' , 'users.id')
+                                    ->leftJoin('cards' , 'users.default_card' , '=' , 'cards.id')
+                                    ->where('cards.is_default' , DEFAULT_TRUE)
+                                    ->select('requests.confirmed_provider as provider_id' , 'request_payments.total_time',
+                                        'request_payments.payment_mode as payment_mode' , 'request_payments.base_price',
+                                        'request_payments.time_price' , 'request_payments.tax_price' , 'request_payments.total',
+                                        'cards.card_token','cards.customer_id','cards.last_four')
+                                    ->get()->toArray();
+                }
             }
 		}
 
         $response_array = array(
             'success' => true,
-            'data' => $requests_data
+            'data' => $requests_data,
+            'invoice' => $invoice
         );
 	
 		$response = response()->json(Helper::null_safe($response_array), 200);

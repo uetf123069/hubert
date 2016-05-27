@@ -20,8 +20,18 @@
 
    use Log;
 
+
+
     class Helper
     {
+
+        public static function tr($key) {
+
+            if (!\Session::has('locale'))
+                \Session::put('locale', \Config::get('app.locale'));
+            return \Lang::choice('messages.'.$key, 0, Array(), \Session::get('locale'));
+
+        }
 
         public static function clean($string)
         {
@@ -351,6 +361,21 @@
                 case 137:
                     $string = "The service payment is not allowed at this point.";
                     break;
+                case 138:
+                    $string = "The service already paid.";
+                    break;
+                case 139:
+                    $string = "The selected payment is disabled by admin";
+                    break;
+                case 140:
+                    $string = "No default card is available. Please add a card";
+                    break;
+                case 141:
+                    $string = "Something went wrong while paying amount.";
+                    break;
+                case 142:
+                    $string = "Default card is not available. Please add a card or change the payment mode";
+                    break;
                 default:
                     $string = "Unknown error occurred.";
             }
@@ -383,6 +408,9 @@
                     break;
                 case 108:
                     $string = "Favourite provider deleted successfully";
+                    break;
+                case 109:
+                    $string = "Payment mode changed successfully";
                     break;
                 default:
                     $string = "";
@@ -432,7 +460,7 @@
 
             // Check the user type whether "USER" or "PROVIDER"
 
-            if ($type == 'PROVIDER') {
+            if ($type == PROVIDER) {
                 $user = Provider::find($id);
             } else {
                 $user = User::find($id);
@@ -442,7 +470,6 @@
                 if ($user->device_type == 'ios') {
                     Helper::send_ios_push($user->device_token, $title, $message, $type);
                 } else {
-
                     Helper::send_android_push($user->device_token, $title, $message);
                 }
             }
@@ -471,7 +498,7 @@
             Log::info($deviceTokens);
         }
 
-        public static function send_android_push($user_id, $message, $title)
+        public static function send_android_push($user_id, $title ,$message)
         {
             require_once app_path().'/gcm/GCM_1.php';
             require_once app_path().'/gcm/const.php';
@@ -484,7 +511,7 @@
             if (!isset($message) || empty($message)) {
                 $msg = "Message not set";
             } else {
-                $msg = trim($message);
+                $msg = $message;
             }
             if (!isset($title) || empty($title)) {
                 $title1 = "Message not set";
@@ -494,7 +521,7 @@
 
             $message = array(TEAM => $title1, MESSAGE => $msg);
 
-            $gcm = new GCM();
+            $gcm = new \GCM();
             $registatoin_ids = array($registatoin_ids);
             $gcm->send_notification($registatoin_ids, $message);
 
@@ -502,64 +529,74 @@
 
         public static function get_fav_providers($service_type,$user_id) {
 
-        /** Favourite Providers Search Start */
+            /** Favourite Providers Search Start */
 
-        Log::info('Favourite Providers Search Start');
+            Log::info('Favourite Providers Search Start');
 
-        $favProviders = array();  // Initialize the variable
+            $favProviders = array();  // Initialize the variable
 
-         // Get the favourite providers list
+             // Get the favourite providers list
 
-        $fav_providers_query = FavouriteProvider::leftJoin('providers' , 'favourite_providers.provider_id' ,'=' , 'providers.id')
-                ->where('user_id' , $user_id)
-                ->where('providers.is_available' , DEFAULT_TRUE)
-                ->where('providers.is_activated' , DEFAULT_TRUE)
-                ->where('providers.is_approved' , DEFAULT_TRUE)
-                ->select('provider_id' , 'providers.waiting_to_respond as waiting');
+            $fav_providers_query = FavouriteProvider::leftJoin('providers' , 'favourite_providers.provider_id' ,'=' , 'providers.id')
+                    ->where('user_id' , $user_id)
+                    ->where('providers.is_available' , DEFAULT_TRUE)
+                    ->where('providers.is_activated' , DEFAULT_TRUE)
+                    ->where('providers.is_approved' , DEFAULT_TRUE)
+                    ->select('provider_id' , 'providers.waiting_to_respond as waiting');
 
-        if($service_type) {
+            if($service_type) {
 
-            $provider_services = ProviderService::where('service_type_id' , $service_type)
-                                    ->where('is_available' , DEFAULT_TRUE)
-                                    ->get();
+                $provider_services = ProviderService::where('service_type_id' , $service_type)
+                                        ->where('is_available' , DEFAULT_TRUE)
+                                        ->get();
 
-            $provider_ids = array();
+                $provider_ids = array();
 
-            if($provider_services ) {
+                if($provider_services ) {
 
-                foreach ($provider_services as $key => $provider_service) {
-                    $provider_ids[] = $provider_service->provider_id;
+                    foreach ($provider_services as $key => $provider_service) {
+                        $provider_ids[] = $provider_service->provider_id;
+                    }
+
+                    $favProviders = $fav_providers_query->whereIn('provider_id' , $provider_ids)->orderBy('waiting' , 'ASC')->get();
                 }
-
-                $favProviders = $fav_providers_query->whereIn('provider_id' , $provider_ids)->orderBy('waiting' , 'ASC')->get();
-            }
-                           
-        } else {
-            $favProviders = $fav_providers_query->orderBy('waiting' , 'ASC')->get();
-        }
-
-        return $favProviders;
-
-        /** Favourite Providers Search End */
-    }
-
-    public static function sort_waiting_providers($merge_providers) {
-        $waiting_array = array();
-        $non_waiting_array = array();
-
-        foreach ($merge_providers as $key => $val) {
-            if($val['waiting'] == 1) {
-                $waiting_array[] = $val['id']  ;
+                               
             } else {
-                $non_waiting_array[] = $val['id'];
+                $favProviders = $fav_providers_query->orderBy('waiting' , 'ASC')->get();
             }
+
+            return $favProviders;
+
+            /** Favourite Providers Search End */
         }
 
-        $providers = array_unique(array_merge($non_waiting_array,$waiting_array));
+        public static function sort_waiting_providers($merge_providers) {
+            $waiting_array = array();
+            $non_waiting_array = array();
 
-        return $providers;
-    }
-       
+            foreach ($merge_providers as $key => $val) {
+                if($val['waiting'] == 1) {
+                    $waiting_array[] = $val['id']  ;
+                } else {
+                    $non_waiting_array[] = $val['id'];
+                }
+            }
+
+            $providers = array_unique(array_merge($non_waiting_array,$waiting_array));
+
+            return $providers;
+        
+        }
+
+        public static function time_diff($start,$end) {
+            $start_date = new \DateTime($start);
+            $end_date = new \DateTime($end);
+
+            $time_interval = date_diff($start_date,$end_date);
+            // echo $interval->format('%h:%i:%s');
+            return $time_interval->format('%i');
+
+        }
     }
 
     

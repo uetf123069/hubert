@@ -143,7 +143,7 @@
             </li>
 
             <li>
-                <a href="#">
+                <a href="{{ route('adminPayment') }}">
                     <i class="fa fa-money"></i>
                     <span>Payment History</span>
                 </a>

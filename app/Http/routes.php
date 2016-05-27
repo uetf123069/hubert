@@ -37,15 +37,21 @@ Route::group(['prefix' => 'userApi'], function(){
 
 	Route::post('/singleService', 'UserapiController@single_service');
 
+	// Payment modes 
+
+	Route::get('/getPaymentModes' , 'UserapiController@get_payment_modes');
+
 	// Request Handle
 
 	Route::post('/sendRequest', 'UserapiController@send_request');
 
 	Route::post('/cancelRequest', 'UserapiController@cancel_request');
 
-	Route::get('/paybypaypal', 'UserapiController@paybypaypal');
-
 	Route::post('/requestStatusCheck', 'UserapiController@request_status_check');
+
+	Route::post('/payment' , 'UserapiController@paynow');
+
+	Route::post('/paybypaypal', 'UserapiController@paybypaypal');
 
 	Route::post('/rateProvider', 'UserapiController@rate_provider');
 
@@ -61,7 +67,9 @@ Route::group(['prefix' => 'userApi'], function(){
 
 	// Cards 
 
-	Route::post('/getCards', 'UserapiController@get_cards');
+	Route::post('/getUserPaymentModes', 'UserapiController@get_user_payment_modes');
+
+	Route::post('/PaymentModeUpdate', 'UserapiController@payment_mode_update');
 
 	Route::post('/addCard', 'UserapiController@add_card');
 
@@ -132,8 +140,18 @@ Route::group(['prefix' => 'admin'], function(){
     Route::post('password/reset', 'Auth\AdminPasswordController@reset');
 
     Route::get('/', 'AdminController@index')->name('admin.dashboard');
+
     Route::get('/mapview', 'AdminController@mapview')->name('admin.mapmapview');
+
+    Route::get('/profile', 'AdminController@profile')->name('adminProfile');
+
+    Route::post('/profileProcess', 'AdminController@profileProcess')->name('adminProfileProcess');
+
     Route::get('/settings', 'AdminController@settings')->name('admin.settings');
+
+    Route::get('/payment', 'AdminController@payment')->name('adminPayment');
+
+    Route::post('/settingsProcess', 'AdminController@settingsProcess')->name('adminSettingProcess');
 
     //Documents
 
@@ -169,7 +187,6 @@ Route::group(['prefix' => 'admin'], function(){
 
     Route::get('/userReviewDelete/{id}', 'AdminController@deleteUserReviews')->name('adminUserReviewDelete');
 
-    Route::get('/payment', 'AdminController@settings')->name('admin.settings');
 
     Route::get('/requests', 'AdminController@requests')->name('adminRequests');
 
