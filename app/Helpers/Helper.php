@@ -14,6 +14,12 @@
 
    use App\ProviderService;
 
+   use App\Requests;
+
+   use App\Settings;
+
+   use App\ProviderRating;
+
    use Mail;
 
    use File;
@@ -471,6 +477,9 @@
                 case 603:
                     $string = "Request completed successfully";
                     break;
+                case 604:
+                    $string = "New Request";
+                    break;
                 default:
                     $string = "";
             }
@@ -637,8 +646,47 @@
 
             $time_interval = date_diff($start_date,$end_date);
             // echo $interval->format('%h:%i:%s');
-            return $time_interval->format('%i');
+            // return $time_interval->format('%i');
+            return $time_interval;
 
+        }
+
+        public static function request_push_notification($id,$user_type,$request_id,$title,$message) {
+
+            if($requests = Requests::find($request_id)) {
+
+                if($user_type == USER) {
+                    $user = User::find($id);
+                } else {
+                    $user = Provider::find($id);
+                }
+
+                $settings = Settings::where('key', 'provider_select_timeout')->first();
+                $provider_timeout = $settings->value;
+
+                $push_data = array();
+                $push_data['request_id'] = $requests->id;
+                $push_data['service_type'] = $requests->request_type;
+                $push_data['request_start_time'] = $requests->request_start_time;
+                $push_data['status'] = $requests->status;
+                $push_data['user_name'] = $user->name;
+                $push_data['user_picture'] = $user->picture;
+                $push_data['s_address'] = $requests->s_address;
+                $push_data['s_latitude'] = $requests->s_latitude;
+                $push_data['s_longitude'] = $requests->s_longitude;
+                $push_data['user_rating'] = ProviderRating::where('provider_id', $id)->avg('rating') ?: 0;
+                $push_data['time_left_to_respond'] = $provider_timeout - (time() - strtotime($requests->request_start_time));
+
+                $push_message = array(
+                    'success' => true,
+                    'message' => $message,
+                    'data' => array((object) $push_data)
+                );
+
+                // Send Push Notification to Provider
+                Helper::send_notifications($id, $user_type, $title, $push_message);
+                // Push End
+            }
         }
     }
 
