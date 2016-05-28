@@ -1070,7 +1070,7 @@ class ProviderApiController extends Controller
     			$tax_price = $admin_tax->value;
 
     			// Get the total time from requests table
-    			$get_time = Helper::time_diff($requests->request_start_time,$requests->request_end_time);
+    			$get_time = Helper::time_diff($requests->start_time,$requests->end_time);
     			$total_time = $get_time->i;
 
     			// Calculate price 
