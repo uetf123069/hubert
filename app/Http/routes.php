@@ -46,7 +46,11 @@ Route::group(['prefix' => 'userApi'], function(){
 
 	// Request Handle
 
+	// Automated request
 	Route::post('/sendRequest', 'UserapiController@send_request');
+
+	// Manual request
+	Route::post('/manual_create_request', 'UserapiController@manual_create_request');
 
 	Route::post('/cancelRequest', 'UserapiController@cancel_request');
 

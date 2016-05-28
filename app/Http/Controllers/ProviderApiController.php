@@ -57,6 +57,9 @@ define('REQUEST_COMPLETED',      5);
 define('REQUEST_CANCELLED',      6);
 define('REQUEST_NO_PROVIDER_AVAILABLE',7);
 
+//Only when manual request
+define('REQUEST_REJECTED_BY_PROVIDER', 8);
+
 define('PROVIDER_NOT_AVAILABLE', 0);
 define('PROVIDER_AVAILABLE', 1);
 
@@ -651,6 +654,7 @@ class ProviderApiController extends Controller
 			$provider = Provider::find($request->id);
 			$request_id = $request->request_id;
             $requests = Requests::find($request_id);
+            $user = User::find($requests->user_id);
             //Check whether the request is cancelled by user.
             if($requests->status == REQUEST_CANCELLED) {
                 $response_array = array(
@@ -681,6 +685,14 @@ class ProviderApiController extends Controller
 
                     $response_array = array('success' => true);
 
+                    // Check for manual request status
+                    $manual_request = Settings::where('key','manual_request')->first();
+                    if($manual_request->manual_request == 1){
+                    	// Change status as providers rejected in request table
+                    	 Requests::where('id', '=', $requests->id)->update( array('status' => REQUEST_REJECTED_BY_PROVIDER) );
+                    	 // Send push notification to user "Provider rejected your request"
+                    }
+
                     //Select the new provider who is in the next position.
                     $request_meta_next = RequestsMeta::where('request_id', '=', $request_id)->where('status', REQUEST_META_NONE)
                                         ->leftJoin('providers', 'providers.id', '=', 'requests_meta.provider_id')
@@ -705,7 +717,6 @@ class ProviderApiController extends Controller
                         //Update the request start time in request table
                         Requests::where('id', '=', $request->id)->update( array('request_start_time' => date("Y-m-d H:i:s")) );
                     } else {
-
                     	/**************************/
                     	// Change status as no providers avaialable in request table
                     	 Requests::where('id', '=', $requests->id)->update( array('status' => REQUEST_NO_PROVIDER_AVAILABLE) );
@@ -714,6 +725,7 @@ class ProviderApiController extends Controller
 	                    RequestsMeta::where('request_id', '=', $requests->id)->delete();
 	                    Log::info('assign_next_provider ended the request_id:'.$request->id);
 
+	                    //send pushnotification to user "No provider found"
                     }
 
                 }
