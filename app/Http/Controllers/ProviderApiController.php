@@ -1242,7 +1242,7 @@ class ProviderApiController extends Controller
                     Helper::send_notifications($requests->user_id, USER, $title, $messages);
 
                     /*If request has confirmed provider then release him to available status*/
-                    if($request->confirmed_provider != DEFAULT_FALSE){
+                    if($requests->confirmed_provider != DEFAULT_FALSE){
                         $provider = Provider::find( $requests->confirmed_provider );
                         $provider->is_available = PROVIDER_AVAILABLE;
                         $provider->save();
