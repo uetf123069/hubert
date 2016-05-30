@@ -5,7 +5,35 @@
 @section('page_title', 'My Services')
 
 @section('content')
-
+<div class="panel panel-sky">
+	<div class="panel-heading">
+		<h2>My Services</h2>
+	</div>
+	<div class="panel-body">
+		<table class="table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Service Type</th>
+                    <th>Pickup</th>
+                    <th>Mechanic</th>
+                    <th>Fare</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>100.00</td>
+                    <td>7675</td>
+                    <td>100.00</td>
+                    <td>0.804</td>
+                </tr>
+            </tbody>
+            <caption>List of services that you've used</caption>
+        </table>
+	</div>
+</div>
+            
 @endsection
 
 @section('scripts')

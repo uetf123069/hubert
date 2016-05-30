@@ -45,9 +45,34 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function request()
+    public function request(Request $request)
     {
-        return view('user.request');
+        $request->request->add([ 
+            'id' => \Auth::user()->id,
+            'token' => \Auth::user()->token,
+            'device_token' => \Auth::user()->device_token,
+        ]);
+
+
+        $api = new UserapiController($request);
+
+        $response = $api->service_list($request);
+        $ServiceTypes = json_decode($response->content());
+
+        $response = $api->get_payment_modes($request);
+        $PaymentMethods = json_decode($response->content());
+
+        return view('user.request', compact('ServiceTypes', 'PaymentMethods'));
+    }
+
+    /**
+     * Show the payment methods.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function payment()
+    {
+        return view('user.payment');
     }
 
     /**
@@ -67,19 +92,17 @@ class UserController extends Controller
      */
     public function profile_save(Request $request)
     {
-        $url = url('/userApi/updateProfile');
-        $data = $request->all();
-        $auth = [ 
-                'id' => \Auth::user()->id,
-                'token' => \Auth::user()->token,
-                'device_token' => \Auth::user()->device_token,
-            ];
-
-        $client = new \GuzzleHttp\Client();
-        
-        $response = $client->request('POST', $url, [
-            'form_params' => array_merge($data, $auth)
+        $request->request->add([ 
+            'id' => \Auth::user()->id,
+            'token' => \Auth::user()->token,
+            'device_token' => \Auth::user()->device_token,
         ]);
+
+        dd($request->all());
+
+        $response = UserapiController::update_profile($request);
+
+        dd($response);
 
         return redirect('back')->with('success', 'Profile has been saved');
     }

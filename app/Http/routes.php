@@ -159,4 +159,6 @@ Route::group([], function(){
     Route::post('/profile', 'UserController@profile_save')->name('user.profile.save');
     Route::post('/profile/password', 'UserController@profile_save_password')->name('user.profile.password');
 
+    Route::get('/payment', 'UserController@payment')->name('user.payment.form');
+
 });

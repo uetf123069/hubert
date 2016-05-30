@@ -41,8 +41,8 @@
 						</li>
 						<li class="nav-separator">Payment</li>
 						<li>
-							<a href="{{ route('user.profile.edit') }}">
-								<i class="fa fa-user"></i><span>Payments</span>
+							<a href="{{ route('user.payment.form') }}">
+								<i class="fa fa-user"></i><span>Payment Methods</span>
 							</a>
 						</li>
 						<li>
