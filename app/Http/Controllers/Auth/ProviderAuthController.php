@@ -7,6 +7,7 @@ use Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
+use Illuminate\Http\Request;
 
 class ProviderAuthController extends Controller
 {
@@ -33,7 +34,6 @@ class ProviderAuthController extends Controller
     protected $loginPath = '/provider/login';
 
     protected $redirectAfterLogout = '/provider/login';
-
 
     /**
      * The guard to be used for validation.
@@ -67,7 +67,7 @@ class ProviderAuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware($this->guestMiddleware(), ['except' => 'logout']);
+        // $this->middleware($this->guestMiddleware(), ['except' => 'logout']);
     }
 
     /**

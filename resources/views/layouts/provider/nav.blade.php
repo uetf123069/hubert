@@ -5,11 +5,17 @@
 				<div class="widget-body welcome-box tabular">
 					<div class="tabular-row">
 						<div class="tabular-cell welcome-avatar">
-							<a href="#"><img src="{{ asset('logo.png') }}" class="avatar"></a>
+							<a href="#">
+								@if(Auth::guard('provider')->user()->picture != "")
+									<img src="{{ Auth::guard('provider')->user()->picture }}" class="avatar"></img>
+								@else								
+									<img src="{{ asset('logo.png') }}" class="avatar">
+								@endif
+							</a>
 						</div>
 						<div class="tabular-cell welcome-options">
 							<span class="welcome-text">Welcome,</span>
-							<a href="#" class="name">Jonathan Smith</a>
+							<a href="#" class="name">{{Auth::guard('provider')->user()->name}}</a>
 						</div>
 					</div>
 				</div>

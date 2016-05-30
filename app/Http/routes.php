@@ -256,8 +256,13 @@ Route::group(['prefix' => 'provider'], function(){
     Route::get('/documents', 'ProviderController@documents')->name('provider.documents');
     Route::get('/request', 'ProviderController@request')->name('provider.services.request');
     Route::get('/profile', 'ProviderController@profile')->name('provider.profile');
+    Route::post('/profile', 'ProviderController@profile_save')->name('provider.profile.save');
+
 
     Route::post('/profile/password', 'ProviderController@password')->name('provider.password');
 
 });
+
+Route::post('/change/state', 'ProviderController@change_state')->name('provider.change.state');
+
 

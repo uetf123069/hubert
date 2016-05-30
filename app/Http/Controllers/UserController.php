@@ -8,16 +8,24 @@ use App\Http\Requests;
 
 use App\Helpers\Helper;
 
+use App\Http\Controllers\UserapiController;
+
+
+
 class UserController extends Controller
 {
+
+    protected $UserapiController;
+
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(UserapiController $UserapiController)
     {
         $this->middleware('auth');
+        $this->UserapiController = $UserapiController;
     }
 
     /**
@@ -69,17 +77,16 @@ class UserController extends Controller
     {
         $url = url('/userApi/updateProfile');
         $data = $request->all();
-        $auth = [ 
-                'id' => \Auth::user()->id,
-                'token' => \Auth::user()->token,
-                'device_token' => \Auth::user()->device_token,
-            ];
 
-        $client = new \GuzzleHttp\Client();
-        
-        $response = $client->request('POST', $url, [
-            'form_params' => array_merge($data, $auth)
+        $request->request->add([ 
+            'id' => \Auth::user()->id,
+            'token' => \Auth::user()->token,
+            'device_token' => \Auth::user()->device_token,
         ]);
+
+        $data = $this->UserapiController->update_profile($request);
+
+        dd($data);
 
         return redirect('back')->with('success', 'Profile has been saved');
     }

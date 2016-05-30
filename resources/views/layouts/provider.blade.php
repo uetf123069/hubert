@@ -53,6 +53,8 @@
                         <div class="page-heading">
                             <h1>@yield('page_title')</h1>
                         </div>
+                        @include('layouts.provider.message')
+                        
                         @yield('page_tabs')
                         <div class="container-fluid">
                             @yield('content')
