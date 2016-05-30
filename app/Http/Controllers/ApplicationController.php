@@ -156,7 +156,7 @@ class ApplicationController extends Controller
                     // Send Push Notification to Provider 
                     Helper::send_notifications($next_request_meta->provider_id, PROVIDER, $title, $messages);
 
-                    Log::info(print_r($push_message,true));
+                    Log::info(print_r($messages,true));
 
                 }else{
                     //End the request
