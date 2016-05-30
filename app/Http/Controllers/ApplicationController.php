@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use App\Helpers\Helper;
+
 use App\Settings;
 
 use App\Requests;
@@ -94,7 +96,10 @@ class ApplicationController extends Controller
 
             if ($request->time_since_request_assigned >= $provider_timeout) {
 
-                $current_offered_provider = RequestsMeta::where('request_id',$request->id)->where('status', REQUEST_META_OFFERED)->first();
+                $current_offered_provider = RequestsMeta::where('request_id',$request->id)
+                                ->where('status', REQUEST_META_OFFERED)
+                                ->first();
+
                 // Change waiting to respond state
                 $get_offered_provider = Provider::where('id',$current_offered_provider->provider_id)->first();
                 $get_offered_provider->waiting_to_respond = WAITING_TO_RESPOND_NORMAL;
@@ -104,6 +109,7 @@ class ApplicationController extends Controller
                 // RequestsMeta::where('request_id', $request->id)->where('status', REQUEST_META_OFFERED)->update(array('status' => REQUEST_META_TIMEDOUT));
                 $current_offered_provider->status = REQUEST_META_TIMEDOUT;
                 $current_offered_provider->save();
+
                 //Select the new provider who is in the next position.
                 $next_request_meta = RequestsMeta::where('request_id', '=', $request->id)->where('status', REQUEST_META_NONE)
                                     ->leftJoin('providers', 'providers.id', '=', 'requests_meta.provider_id')
@@ -115,41 +121,42 @@ class ApplicationController extends Controller
                                     ->orderBy('requests_meta.created_at')->first();
 
                 //Check the next provider exist or not.
+
                 if($next_request_meta){
 
                     // change waiting to respond state
                     $provider_detail = Provider::find($next_request_meta->provider_id);
                     $provider_detail->waiting_to_respond = WAITING_TO_RESPOND;
                     $provider_detail->save();
+
                     //Assign the next provider.
                     $next_request_meta->status = REQUEST_META_OFFERED;
                     $next_request_meta->save();
+
                     //Update the request start time in request table
                     Requests::where('id', '=', $request->id)->update( array('request_start_time' => date("Y-m-d H:i:s")) );
                     Log::info('assign_next_provider_cron assigned provider to request_id:'.$request->id.' at '.$time);
 
-                    /*Push Start*/
+                    // Push Start
                     
                     $service = ServiceType::find($request->request_type);
-                    $user = Provider::find($request->current_provider);
+                    $user = User::find($request->user_id);
                     $request_data = Requests::find($request->id);
 
 
                     // Push notification has to add
-
                     $push_data = array();
                     $title = "New Service";
                     $push_msg = "You got a new service from ".$user->first_name.''.$user->last_name;
-                    $push_message = array(
+                    $messages = array(
                         'success' => true,
                         'msg' => $push_msg,
                         'data' => array((object) $push_data)
                     );
-                    /* Send Push Notification to Provider */
+                    // Send Push Notification to Provider 
+                    Helper::send_notifications($next_request_meta->provider_id, PROVIDER, $title, $messages);
 
-                    // send_push_notification($next_request_meta->provider_id, PROVIDER, $title, $push_message);
-
-                    Log::info(print_r($push_message,true));
+                    Log::info(print_r($messages,true));
 
                 }else{
                     //End the request
@@ -163,8 +170,11 @@ class ApplicationController extends Controller
                     //Notify the admin
                     // send_no_provider_found_notification_to_admin($request->id);
 
-                    /*Send Push Notification to User*/
-                    // send_push_notification($request->user_id, USER, 'No Provider Available', 'No provider available to take the service.');
+                    // Send Push Notification to User
+                    $title = "No Provider Available";
+                    $messages = "No provider available to take the service.";
+
+                    Helper::send_notifications($request->user_id, USER, $title, $messages);
 
                 }
             } else {
