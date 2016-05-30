@@ -35,15 +35,27 @@ Route::group(['prefix' => 'userApi'], function(){
 
 	Route::post('/singleService', 'UserapiController@single_service');
 
+	// Payment modes 
+
+	Route::get('/getPaymentModes' , 'UserapiController@get_payment_modes');
+
 	// Request Handle
 
+	Route::post('/guestProviderList', 'UserapiController@guest_provider_list');
+
+	// Automated request
 	Route::post('/sendRequest', 'UserapiController@send_request');
+
+	// Manual request
+	Route::post('/manual_create_request', 'UserapiController@manual_create_request');
 
 	Route::post('/cancelRequest', 'UserapiController@cancel_request');
 
-	Route::get('/paybypaypal', 'UserapiController@paybypaypal');
-
 	Route::post('/requestStatusCheck', 'UserapiController@request_status_check');
+
+	Route::post('/payment' , 'UserapiController@paynow');
+
+	Route::post('/paybypaypal', 'UserapiController@paybypaypal');
 
 	Route::post('/rateProvider', 'UserapiController@rate_provider');
 
@@ -53,13 +65,17 @@ Route::group(['prefix' => 'userApi'], function(){
 
 	// Favourite Providers
 
+	Route::post('/addFavProvider' , 'UserapiController@add_fav_provider');
+
 	Route::get('/favProviders' , 'UserapiController@fav_providers');
 
 	Route::post('/deleteFavProvider' , 'UserapiController@delete_fav_provider');
 
 	// Cards 
 
-	Route::post('/getCards', 'UserapiController@get_cards');
+	Route::post('/getUserPaymentModes', 'UserapiController@get_user_payment_modes');
+
+	Route::post('/PaymentModeUpdate', 'UserapiController@payment_mode_update');
 
 	Route::post('/addCard', 'UserapiController@add_card');
 
@@ -76,16 +92,24 @@ Route::group(['prefix' => 'providerApi'], function(){
 	Route::post('/register','ProviderApiController@register');
 
 	Route::post('/login','ProviderApiController@login');
-	
-	Route::get('/userdetails','ProviderApiController@details_fetch');
 
-	Route::post('/updateProfile', 'ProviderApiController@details_save');
+	
+	Route::get('/userdetails','ProviderApiController@profile');
+
+	Route::post('/updateProfile', 'ProviderApiController@update_profile');
 
 	Route::post('/forgotpassword', 'ProviderApiController@forgot_password');
 
 	Route::post('/changePassword', 'ProviderApiController@changePassword');
 
 	Route::get('/tokenRenew', 'ProviderApiController@tokenRenew');
+
+	Route::post('locationUpdate' , 'ProviderApiController@location_update');
+
+	Route::get('checkAvailableStatus' , 'ProviderApiController@check_available');
+
+	Route::post('availableUpdate' , 'ProviderApiController@available_update');
+
 
 	Route::post('/serviceAccept', 'ProviderApiController@service_accept');
 
@@ -104,6 +128,8 @@ Route::group(['prefix' => 'providerApi'], function(){
 	Route::post('/cancelrequest', 'ProviderApiController@cancelrequest');
 
 	Route::post('/history', 'ProviderApiController@history');
+
+	Route::post('/singleRequest' , 'ProviderApiController@single_request');
 
 	Route::post('/incomingRequest', 'ProviderApiController@get_incoming_request');
 
