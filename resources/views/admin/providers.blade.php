@@ -25,8 +25,8 @@
                   <th>Name</th>
                   <th>Email</th>
                   <th>Phone</th>
-                  <th>Services</th>
-                  <th>Income</th>
+                  <th>Total Requests</th>
+                  <th>Accepted Requests</th>
                   <th>Availability</th>
                   <th>Status</th>
                   <th>Action</th>
@@ -39,8 +39,8 @@
                   <td>{{$provider->first_name}}</td>
                   <td>{{$provider->email}}</td>
                   <td>{{$provider->mobile}}</td>
-                  <td>1</td>
-                  <td>1</td>
+                  <td>{{$provider->total_requests}}</td>
+                  <td>{{$provider->accepted_requests}}</td>
                   <td>@if($provider->is_available==1) Yes @else N/A @endif</td>
                   <td>@if($provider->is_approved==1) Approved @else Unapproved @endif</td>
                   

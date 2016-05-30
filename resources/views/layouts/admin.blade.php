@@ -72,8 +72,8 @@
     <script src="{{ asset('admin_assets/scripts/ui/toggle.js') }}"></script>
     <script src="{{ asset('admin_assets/scripts/urban-constants.js') }}"></script>
     <script src="{{ asset('admin_assets/scripts/extentions/lib.js') }}"></script>
-    <script src="//code.jquery.com/jquery-1.12.3.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+    <script src="{{ asset('admin_assets/scripts/jquery-1.12.3.min.js')}}"></script>
+    <script src="{{ asset('admin_assets/scripts/jquery.dataTables.min.js')}}"></script>
     <!-- endbuild -->
 
     <!-- page level scripts -->

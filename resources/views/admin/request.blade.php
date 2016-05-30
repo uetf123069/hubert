@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Users | ')
+@section('title', 'Requests | ')
 
 @section('content')
 
@@ -12,9 +12,9 @@
                 <a href="javascript:;">Home</a>
               </li>
               <li>
-                <a href="javascript:;">Users</a>
+                <a href="javascript:;">Requests</a>
               </li>
-              <li class="active">Users List</li>
+              <li class="active">Request List</li>
             </ol>
           </div>
           <div class="panel-body">
@@ -33,29 +33,62 @@
                   </tr>
               </thead>
               <tbody>
-              @foreach($requestsss as $index => $requestssss)
+              @foreach($requests as $index => $requestss)
               <tr>
                   <td>{{$requestss->id}}</td>
                   <td>{{$requestss->user_first_name . " " . $requestss->user_last_name}}</td>
-                  <td>@if($requestss->confirmed_provider){{$requestss->provider_first_name . " " . $requestss->provider_last_name}}</td>
+                  <td>@if($requestss->confirmed_provider){{$requestss->provider_first_name . " " . $requestss->provider_last_name}} @endif</td>
                   <td>{{$requestss->date}}</td>
-                  <td>{{$requestss->address}}</td>
-                  <td>{{ucfirst($requestss->gender)}}</td>
-                  <td>@if($requestss->picture!='')<a href='{{$requestss->picture}}' target="_blank" >View Photo</a>@else NA @endif</td>
+                  <td>@if($requestss->status == 0) 
+      New
+@elseif($requestss->status == 1)
+      Waiting
+@elseif($requestss->status == 2)
+
+      @if($requestss->provider_status == 0)
+      Provider Not Found
+      @elseif($requestss->provider_status == 1)
+      Provider Accepted
+      @elseif($requestss->provider_status == 2)
+      Provider Started
+      @elseif($requestss->provider_status == 3)
+      Provider Arrived
+      @elseif($requestss->provider_status == 4)
+      Service Started
+      @elseif($requestss->provider_status == 5)
+      Service Completed
+      @elseif($requestss->provider_status == 6)
+      Provider Rated
+      @endif
+
+@elseif($requestss->status == 3)
+
+      Payment Pending
+@elseif($requestss->status == 4)
+
+      Request Rating
+@elseif($requestss->status == 5)
+
+      Request Completed
+@elseif($requestss->status == 6)
+
+      Request Cancelled
+@elseif($requestss->status == 7)
+
+      Provider Not Available
+@endif</td>
+                  <td>{{$requestss->amount}}</td>
+                  <td>{{$requestss->payment_mode}}</td>
+                  <td>@if($requestss->payment_status==0) Not Paid @else Paid @endif</td>
                   <td>
                       <div class="input-group-btn">
                           <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">Action
                             <span class="caret"></span>
                           </button>
                           <ul class="dropdown-menu">
+                            
                             <li>
-                              <a href="{{route('adminUserEdit', array('id' => $requestss->id))}}">Edit</a>
-                            </li>
-                            <li>
-                              <a href="{{route('adminUserDelete', array('id' => $requestss->id))}}">Delete</a>
-                            </li>
-                            <li>
-                              <a href="{{route('adminUserHistory', array('id' => $requestss->id))}}">View History</a>
+                              <a href="{{route('adminViewRequest', array('id' => $requestss->id))}}">View Request</a>
                             </li>
                             
                           </ul>

@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Map | ')
+@section('title', 'Request View | ')
 
 @section('content')
 
@@ -13,7 +13,10 @@
                 <a href="#">Home</a>
             </li>
             <li>
-                <a href="#">Map View</a>
+                <a href="#">Requests</a>
+            </li>
+            <li>
+                <a href="#">View Request</a>
             </li>
         </ol>
     </div>
@@ -30,6 +33,20 @@
             <div class="col-xs-12">
                 <div id="map"></div>
             </div>
+        </div>
+        <br><br><br>
+        <div class="row">
+            <div class="col-xs-12">
+        @foreach($requests as $request)
+        <strong>Booked by :</strong> {{$request->user_first_name}} <br>
+        <strong>Provider Name :</strong> {{$request->provider_first_name}} <br>
+        <strong>Total time :</strong> {{$request->total_time}} <br>
+        <strong>Base Price :</strong> {{$request->base_price}} <br>
+        <strong>Time Price :</strong> {{$request->time_price}} <br>
+        <strong>Tax :</strong> {{$request->tax}} <br>
+        <strong>Total Amount :</strong> {{$request->total_amount}}
+        @endforeach
+        </div>
         </div>
     </div>
 </div>
@@ -87,8 +104,8 @@
 <script>
     var map;
     var markers = [
-        @foreach($Providers as $Provider)
-        { name: "{{ $Provider->name }}", lat: {{ $Provider->latitude }}, lng: {{ $Provider->longitude }} }, 
+        @foreach($requests as $request)
+        { name: "{{ $request->provider_first_name }}", lat: {{ $request->latitude }}, lng: {{ $request->longitude }} }, 
         @endforeach
     ];
     var mapMarkers = [];

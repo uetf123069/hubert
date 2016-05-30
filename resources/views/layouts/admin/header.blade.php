@@ -41,8 +41,8 @@
 
         <li>
             <a href="javascript:;" data-toggle="dropdown">
-                <img src="images/avatar.jpg" class="header-avatar img-circle ml10" alt="user" title="user">
-                <span class="pull-left"></span>
+                <img src="{{Auth::guard('admin')->user()->picture}}" class="header-avatar img-circle ml10" alt="user" title="user">
+                <span class="pull-left">{{Auth::guard('admin')->user()->name}}</span>
             </a>
             <ul class="dropdown-menu">
                 <li>

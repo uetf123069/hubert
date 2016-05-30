@@ -55,7 +55,8 @@ class AdminController extends Controller
      */
     public function index()
     {
-        $user = Auth::user();
+        $user = Auth::guard('admin')->user()->name;
+        // dd(json_encode($user));
         return view('admin.dashboard');
     }
 
@@ -269,7 +270,18 @@ class AdminController extends Controller
 
     public function providers()
     {
-        $providers = Provider::orderBy('created_at' , 'asc')->paginate(10);
+        $subQuery = DB::table('requests')
+                ->select(DB::raw('count(*)'))
+                ->whereRaw('provider_id = providers.id and status != 0');
+        $subQuery1 = DB::table('requests')
+                ->select(DB::raw('count(*)'))
+                ->whereRaw('provider_id = providers.id and status=1');
+
+        $providers = DB::table('providers')
+                ->select('providers.*', DB::raw("(" . $subQuery->toSql() . ") as 'total_requests'"), DB::raw("(" . $subQuery1->toSql() . ") as 'accepted_requests'"))
+                ->orderBy('providers.created_at', 'DESC')
+                ->paginate(10);
+
         return view('admin.providers')->with('providers',$providers);
     }
 
@@ -425,14 +437,28 @@ class AdminController extends Controller
     public function settings()
     {
         $settings = Settings::all();
-        // dd($settings);
-        return view('admin.settings');
+        return view('admin.settings')->with('setting',$settings);
     }
 
-    public function settingsProcess()
+    public function settingsProcess(Request $request)
     {
         $settings = Settings::all();
-        return view('admin.settings');
+        foreach ($settings as $setting) {
+            $key = $setting->key;
+           
+                $temp_setting = Settings::find($setting->id);
+
+                // if($temp_setting->key == 'site_logo'){
+                  
+                //     $temp_setting->value = Helper::upload_picture($request->picture);
+                // }
+
+                $temp_setting->value = $request->$key;
+                $temp_setting->save();
+              
+            }
+        
+        return view('admin.settings')->with('setting', $settings);
     }
 
     //Documents
@@ -630,15 +656,55 @@ class AdminController extends Controller
         return back()->with('flash_success', 'Provider Review Deleted Successfully');
     }
 
+    public function UserHistory(Request $request)
+    {
+        $requests = DB::table('requests')
+                ->Where('user_id',$request->id)
+                ->leftJoin('providers', 'requests.confirmed_provider', '=', 'providers.id')
+                ->leftJoin('users', 'requests.user_id', '=', 'users.id')
+                ->leftJoin('request_payments', 'requests.id', '=', 'request_payments.request_id')
+                ->select('users.first_name as user_first_name', 'users.last_name as user_last_name', 'providers.first_name as provider_first_name', 'providers.last_name as provider_last_name', 'users.id as user_id', 'providers.id as provider_id', 'requests.is_paid',  'requests.id as id', 'requests.created_at as date', 'requests.confirmed_provider', 'requests.status', 'requests.provider_status', 'requests.amount', 'request_payments.payment_mode as payment_mode', 'request_payments.status as payment_status')
+                ->orderBy('requests.created_at', 'DESC')
+                ->paginate(10);
+        return view('admin.request')->with('requests', $requests);
+    }
+
+    public function ProviderHistory(Request $request)
+    {
+        $requests = DB::table('requests')
+                ->Where('provider_id',$request->id)
+                ->leftJoin('providers', 'requests.confirmed_provider', '=', 'providers.id')
+                ->leftJoin('users', 'requests.user_id', '=', 'users.id')
+                ->leftJoin('request_payments', 'requests.id', '=', 'request_payments.request_id')
+                ->select('users.first_name as user_first_name', 'users.last_name as user_last_name', 'providers.first_name as provider_first_name', 'providers.last_name as provider_last_name', 'users.id as user_id', 'providers.id as provider_id', 'requests.is_paid',  'requests.id as id', 'requests.created_at as date', 'requests.confirmed_provider', 'requests.status', 'requests.provider_status', 'requests.amount', 'request_payments.payment_mode as payment_mode', 'request_payments.status as payment_status')
+                ->orderBy('requests.created_at', 'DESC')
+                ->paginate(10);
+        return view('admin.request')->with('requests', $requests);
+    }
+
     public function requests()
     {
         $requests = DB::table('requests')
-                ->leftJoin('providers', 'request.confirmed_provider', '=', 'providers.id')
-                ->leftJoin('users', 'request.user_id', '=', 'users.id')
-                ->select('users.first_name as user_first_name', 'users.last_name as user_last_name', 'providers.first_name as provider_first_name', 'providers.last_name as provider_last_name', 'users.id as user_id', 'providers.id as provider_id', 'request.is_paid',  'request.id as id', 'request.created_at as date', 'request.confirmed_provider', 'request.status', 'request.provider_status', 'request.amount')
-                ->orderBy('request.created_at', 'DESC')
+                ->leftJoin('providers', 'requests.confirmed_provider', '=', 'providers.id')
+                ->leftJoin('users', 'requests.user_id', '=', 'users.id')
+                ->leftJoin('request_payments', 'requests.id', '=', 'request_payments.request_id')
+                ->select('users.first_name as user_first_name', 'users.last_name as user_last_name', 'providers.first_name as provider_first_name', 'providers.last_name as provider_last_name', 'users.id as user_id', 'providers.id as provider_id', 'requests.is_paid',  'requests.id as id', 'requests.created_at as date', 'requests.confirmed_provider', 'requests.status', 'requests.provider_status', 'requests.amount', 'request_payments.payment_mode as payment_mode', 'request_payments.status as payment_status')
+                ->orderBy('requests.created_at', 'DESC')
                 ->paginate(10);
-        return view('admin.requests')->with('requests', $requests);
+        return view('admin.request')->with('requests', $requests);
+    }
+
+    public function ViewRequest(Request $request)
+    {
+        $requests = DB::table('requests')
+                ->where('requests.id',$request->id)
+                ->leftJoin('providers', 'requests.confirmed_provider', '=', 'providers.id')
+                ->leftJoin('users', 'requests.user_id', '=', 'users.id')
+                ->leftJoin('request_payments', 'requests.id', '=', 'request_payments.request_id')
+                ->select('users.first_name as user_first_name', 'users.last_name as user_last_name', 'providers.first_name as provider_first_name', 'providers.last_name as provider_last_name', 'users.id as user_id', 'providers.id as provider_id', 'requests.is_paid',  'requests.id as id', 'requests.created_at as date', 'requests.confirmed_provider', 'requests.status', 'requests.provider_status', 'requests.amount', 'request_payments.payment_mode as payment_mode', 'request_payments.status as payment_status', 'request_payments.total_time as total_time','request_payments.base_price as base_price', 'request_payments.time_price as time_price', 'request_payments.tax_price as tax', 'request_payments.total as total_amount', 'requests.s_latitude as latitude', 'requests.s_longitude as longitude')
+                ->orderBy('requests.created_at', 'DESC')
+                ->paginate(10);
+        return view('admin.requestView')->with('requests', $requests);
     }
 
     public function mapview()

@@ -202,6 +202,8 @@ Route::group(['prefix' => 'admin'], function(){
 
     Route::get('/requests', 'AdminController@requests')->name('adminRequests');
 
+    Route::get('/viewRequest/{id}', 'AdminController@ViewRequest')->name('adminViewRequest');
+
 
     //User Routes
     Route::get('/users', 'AdminController@users')->name('admin.user');

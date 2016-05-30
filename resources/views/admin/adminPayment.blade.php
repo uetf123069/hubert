@@ -43,7 +43,7 @@
                   <td>{{$payment->tax_price}}</td>
                   <td>{{$payment->total_time}}</td>
                   <td>{{$payment->payment_mode}}</td>
-                  <td>{{$payment->status}}</td>
+                  <td>@if($payment->status==0) Not Paid @else Paid @endif</td>
                  
               </tr>
               @endforeach

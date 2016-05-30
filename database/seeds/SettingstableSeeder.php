@@ -14,6 +14,15 @@ class SettingstableSeeder extends Seeder
     {
     	DB::table('settings')->delete();
     	DB::table('settings')->insert([
+    		[
+		        'key' => 'site_name',
+		        'value' => 'Xuber'
+		    ],
+		    [
+		        'key' => 'site_logo',
+		        'value' => ''
+		    ],
+		    
 		    [
 		        'key' => 'provider_select_timeout',
 		        'value' => 60
@@ -53,7 +62,11 @@ class SettingstableSeeder extends Seeder
 		    [
 		        'key' => 'card',
 		        'value' => 1
-		    ], 
+		    ],
+		    [
+		        'key' => 'manual_request',
+		        'value' => 1
+		    ],  
 		    [
 		        'key' => 'paypal_email',
 		        'value' => ''
