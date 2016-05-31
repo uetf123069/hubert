@@ -48,6 +48,8 @@ class Kernel extends HttpKernel
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'can' => \Illuminate\Foundation\Http\Middleware\Authorize::class,
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
+        'admin' => \App\Http\Middleware\RedirectIfNotAdmin::class,
+        'provider' => \App\Http\Middleware\RedirectIfNotProvider::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'UserApiVal' => \App\Http\Middleware\UserApiValidation::class,
         'ProviderApiVal' => \App\Http\Middleware\ProviderApiValidation::class,
