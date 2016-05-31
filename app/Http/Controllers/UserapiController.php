@@ -1206,6 +1206,36 @@ class UserapiController extends Controller
         return $response;
     }
 
+    public function waiting_request_cancel(Request $request) {
+
+        $get_requests = Requests::where('user_id' , $request->id)->where('status' , REQUEST_WAITING)->get();
+
+        if($get_requests) {
+            foreach ($get_requests as $key => $requests) {
+                $requests->status = REQUEST_CANCELLED;
+                $requests->save();
+
+                $requests_meta = RequestsMeta::where('request_id' , $requests->id);
+                $current_provider = $requests_meta->where('status' , DEFAULT_TRUE)->first()->provider_id;
+                if($provider = Provider::find($current_provider)) {
+                    $provider->waiting_to_respond = WAITING_TO_RESPOND_NORMAL;
+                    $provider->save();
+                }
+
+                $delete_request_meta = RequestsMeta::where('request_id' , $requests->id)->delete();
+            }
+        } else {
+
+        }
+
+        $response_array = array('success' => true);
+
+
+
+        return response()->json(Helper::null_safe($response_array) , 200);
+
+    }
+
     public function request_status_check(Request $request) {
 
         $check_status = array(REQUEST_COMPLETED,REQUEST_CANCELLED,REQUEST_NO_PROVIDER_AVAILABLE);

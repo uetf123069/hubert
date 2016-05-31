@@ -54,7 +54,10 @@ Route::group(['prefix' => 'userApi'], function(){
 	// Manual request
 	Route::post('/manual_create_request', 'UserapiController@manual_create_request');
 
+
 	Route::post('/cancelRequest', 'UserapiController@cancel_request');
+
+	Route::post('/waitingRequestCancel' ,'UserapiController@waiting_request_cancel');
 
 	Route::post('/requestStatusCheck', 'UserapiController@request_status_check');
 
