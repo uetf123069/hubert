@@ -134,7 +134,7 @@ class AdminController extends Controller
 
     public function users()
     {
-        $user = User::orderBy('created_at' , 'desc')->paginate(10);
+        $user = User::orderBy('created_at' , 'desc')->get();
         return view('admin.users')->with('users',$user);
     }
 
@@ -284,7 +284,7 @@ class AdminController extends Controller
         $providers = DB::table('providers')
                 ->select('providers.*', DB::raw("(" . $subQuery->toSql() . ") as 'total_requests'"), DB::raw("(" . $subQuery1->toSql() . ") as 'accepted_requests'"))
                 ->orderBy('providers.created_at', 'DESC')
-                ->paginate(10);
+                ->get();
 
 
         return view('admin.providers')->with('providers',$providers);
@@ -418,7 +418,7 @@ class AdminController extends Controller
 
     public function ProviderApprove(Request $request)
     {
-        $providers = Provider::orderBy('created_at' , 'asc')->paginate(10);;
+        $providers = Provider::orderBy('created_at' , 'asc')->get();
         $provider = Provider::find($request->id);
         $provider->is_approved = $request->status;
         $provider->save();
@@ -467,8 +467,10 @@ class AdminController extends Controller
                 $temp_setting = Settings::find($setting->id);
 
                 // if($temp_setting->key == 'site_logo'){
-                  
-                //     $temp_setting->value = Helper::upload_picture($request->picture);
+                //     $picture = $request->file('picture');
+
+                //     $temp_setting->value = Helper::upload_picture($picture);
+                //     $temp_setting->save();
                 // }
 
                 $temp_setting->value = $request->$key;
@@ -476,14 +478,14 @@ class AdminController extends Controller
               
             }
         
-        return view('admin.settings')->with('setting', $settings);
+        return back()->with('setting', $settings);
     }
 
     //Documents
 
     public function documents()
     {
-        $document = Document::orderBy('created_at' , 'asc')->paginate(10);
+        $document = Document::orderBy('created_at' , 'asc')->get();
         return view('admin.documents')->with('documents',$document);
     }
 
@@ -558,7 +560,7 @@ class AdminController extends Controller
 
     public function serviceTypes()
     {
-        $service = ServiceType::orderBy('created_at' , 'asc')->paginate(10);
+        $service = ServiceType::orderBy('created_at' , 'asc')->get();
         return view('admin.serviceTypes')->with('services',$service);
     }
 
@@ -645,7 +647,7 @@ class AdminController extends Controller
                 ->leftJoin('users', 'provider_ratings.user_id', '=', 'users.id')
                 ->select('provider_ratings.id as review_id', 'provider_ratings.rating', 'provider_ratings.comment', 'users.first_name as user_first_name', 'users.last_name as user_last_name', 'providers.first_name as provider_first_name', 'providers.last_name as provider_last_name', 'users.id as user_id', 'providers.id as provider_id', 'provider_ratings.created_at')
                 ->orderBy('provider_ratings.id', 'DESC')
-                ->paginate(10);
+                ->get();
 
             
             return view('admin.reviews')->with('name', 'Provider')
@@ -660,7 +662,7 @@ class AdminController extends Controller
                 ->leftJoin('users', 'user_ratings.user_id', '=', 'users.id')
                 ->select('user_ratings.id as review_id', 'user_ratings.rating', 'user_ratings.comment', 'users.first_name as user_first_name', 'users.last_name as user_last_name', 'providers.first_name as provider_first_name', 'providers.last_name as provider_last_name', 'users.id as user_id', 'providers.id as provider_id', 'user_ratings.created_at')
                 ->orderBy('user_ratings.id', 'DESC')
-                ->paginate(10);
+                ->get();
             return view('admin.reviews')->with('name', 'User')->with('reviews', $user_reviews);
     }
 
@@ -683,7 +685,7 @@ class AdminController extends Controller
                 ->leftJoin('request_payments', 'requests.id', '=', 'request_payments.request_id')
                 ->select('users.first_name as user_first_name', 'users.last_name as user_last_name', 'providers.first_name as provider_first_name', 'providers.last_name as provider_last_name', 'users.id as user_id', 'providers.id as provider_id', 'requests.is_paid',  'requests.id as id', 'requests.created_at as date', 'requests.confirmed_provider', 'requests.status', 'requests.provider_status', 'requests.amount', 'request_payments.payment_mode as payment_mode', 'request_payments.status as payment_status')
                 ->orderBy('requests.created_at', 'DESC')
-                ->paginate(10);
+                ->get();
         return view('admin.request')->with('requests', $requests);
     }
 
@@ -696,7 +698,7 @@ class AdminController extends Controller
                 ->leftJoin('request_payments', 'requests.id', '=', 'request_payments.request_id')
                 ->select('users.first_name as user_first_name', 'users.last_name as user_last_name', 'providers.first_name as provider_first_name', 'providers.last_name as provider_last_name', 'users.id as user_id', 'providers.id as provider_id', 'requests.is_paid',  'requests.id as id', 'requests.created_at as date', 'requests.confirmed_provider', 'requests.status', 'requests.provider_status', 'requests.amount', 'request_payments.payment_mode as payment_mode', 'request_payments.status as payment_status')
                 ->orderBy('requests.created_at', 'DESC')
-                ->paginate(10);
+                ->get();
         return view('admin.request')->with('requests', $requests);
     }
 
@@ -708,7 +710,7 @@ class AdminController extends Controller
                 ->leftJoin('request_payments', 'requests.id', '=', 'request_payments.request_id')
                 ->select('users.first_name as user_first_name', 'users.last_name as user_last_name', 'providers.first_name as provider_first_name', 'providers.last_name as provider_last_name', 'users.id as user_id', 'providers.id as provider_id', 'requests.is_paid',  'requests.id as id', 'requests.created_at as date', 'requests.confirmed_provider', 'requests.status', 'requests.provider_status', 'requests.amount', 'request_payments.payment_mode as payment_mode', 'request_payments.status as payment_status')
                 ->orderBy('requests.created_at', 'DESC')
-                ->paginate(10);
+                ->get();
         return view('admin.request')->with('requests', $requests);
     }
 
@@ -721,7 +723,7 @@ class AdminController extends Controller
                 ->leftJoin('request_payments', 'requests.id', '=', 'request_payments.request_id')
                 ->select('users.first_name as user_first_name', 'users.last_name as user_last_name', 'providers.first_name as provider_first_name', 'providers.last_name as provider_last_name', 'users.id as user_id', 'providers.id as provider_id', 'requests.is_paid',  'requests.id as id', 'requests.created_at as date', 'requests.confirmed_provider', 'requests.status', 'requests.provider_status', 'requests.amount', 'request_payments.payment_mode as payment_mode', 'request_payments.status as payment_status', 'request_payments.total_time as total_time','request_payments.base_price as base_price', 'request_payments.time_price as time_price', 'request_payments.tax_price as tax', 'request_payments.total as total_amount', 'requests.s_latitude as latitude', 'requests.s_longitude as longitude')
                 ->orderBy('requests.created_at', 'DESC')
-                ->paginate(10);
+                ->get();    
         return view('admin.requestView')->with('requests', $requests);
     }
 

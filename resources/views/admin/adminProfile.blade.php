@@ -85,7 +85,7 @@
                   <label></label>
                   <div>
                     <button class="btn btn-primary mr10">Submit</button>
-                    <button class="btn btn-default">Reset</button>
+                    
                   </div>
                 </div>
 
