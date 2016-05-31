@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-use App\Http\Requests;
-
 use App\Helpers\Helper;
 
 use App\User;
@@ -17,6 +15,8 @@ use App\Document;
 use App\Admin;
 
 use App\ServiceType;
+
+use App\Requests;
 
 use App\RequestPayment;
 
@@ -56,8 +56,11 @@ class AdminController extends Controller
     public function index()
     {
         $user = Auth::guard('admin')->user()->name;
-        // dd(json_encode($user));
-        return view('admin.dashboard');
+        $reg_users = User::count();
+        $comp_req = Requests::where('status','5')->count();
+        return view('admin.dashboard')
+                ->with('reg_users', $reg_users)
+                ->with('comp_req', $comp_req);
     }
 
     public function profile()
