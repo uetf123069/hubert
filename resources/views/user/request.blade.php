@@ -11,42 +11,50 @@
 		<h2>Select Service Location</h2>
 	</div>
 	<div class="panel-body">
-		<div class="row">
-			<div class="col-md-10">
-				<input id="pac-input" class="controls" type="text" placeholder="Enter a location">
+		@include('layouts.user.notification')
+		<form class="form-horizontal" action="{{ route('user.services.request.submit') }}" method="POST">
+			<input type="hidden" name="s_latitude" id="s_latitude"></input>
+			<input type="hidden" name="s_longitude" id="s_longitude"></input>
+			<div class="row">
+				<div class="col-md-10">
+					<input id="pac-input" class="controls" type="text" placeholder="Enter a location" name="s_address">
+				</div>
+				<div class="col-md-2">
+					<button class="btn btn-success controls" id="location-search">Search</button>
+				</div>
 			</div>
-			<div class="col-md-2">
-				<button class="btn btn-success controls" id="location-search">Search</button>
+			<div class="row">
+				<div class="col-xs-12">
+					<div id="map"></div>
+				</div>
 			</div>
-		</div>
-		<div class="row">
-			<div class="col-xs-12">
-				<div id="map"></div>
+
+			<div class="form-group">
+				<label for="service_type" class="control-label">Select Service Type</label>
+				<select name="service_type" id="service_type" class="form-control">
+					<option disabled>Select Service Type</option>
+					@foreach($ServiceTypes->services as $ServiceType)
+					<option value="{{ $ServiceType->id }}">{{ $ServiceType->name }}</option>
+					@endforeach
+				</select>
 			</div>
-		</div>
 
-		<div class="form-group">
-			<label for="service-type" class="control-label">Select Service Type</label>
-			<select name="service-type" id="service-type" class="form-control">
-				<option disabled>Select Service Type</option>
-				@foreach($ServiceTypes->services as $ServiceType)
-				<option value="{{ $ServiceType->id }}">{{ $ServiceType->name }}</option>
-				@endforeach
-			</select>
-		</div>
+			<div class="form-group">
+				<label for="payment_method" class="control-label">Select Payment Method</label>
+				<select name="payment_method" id="payment_method" class="form-control">
+					<option disabled>Select Payment Method</option>
+					@foreach($PaymentMethods->payment_modes as $Value => $PaymentMethod)
+					<option value="{{ $Value }}">{{ $PaymentMethod }}</option>
+					@endforeach
+				</select>
+			</div>
 
-		<div class="form-group">
-			<label for="service-type" class="control-label">Select Payment Method</label>
-			<select name="service-type" id="service-type" class="form-control">
-				<option disabled>Select Payment Method</option>
-				@foreach($PaymentMethods->payment_modes as $PaymentMethod)
-				<option value="{{ $PaymentMethod->id }}">{{ $PaymentMethod->name }}</option>
-				@endforeach
-			</select>
-		</div>
-
-
+			<div class="panel-footer row">
+				<button class="btn-primary btn col-xs-2 col-xs-offset-5">Submit Request</button>
+			</div>
+		</form>
 	</div>
+
 </div>
 
 
@@ -60,61 +68,87 @@
 <script>
 	var map;
 	var infowindow;
+	var appoets = {lat: 11.8508117, lng: 79.7854668};
+
+	var input = document.getElementById('pac-input');
+	var s_latitude = document.getElementById('s_latitude');
+	var s_longitude = document.getElementById('s_longitude');
 
 	function initMap() {
-		var pyrmont = {lat: -33.867, lng: 151.195};
 
 		map = new google.maps.Map(document.getElementById('map'), {
-			center: pyrmont,
+			center: appoets,
 			zoom: 15
 		});
+        var service = new google.maps.places.PlacesService(map);
+        var autocomplete = new google.maps.places.Autocomplete(input);
+		var infowindow = new google.maps.InfoWindow();
 
-		infowindow = new google.maps.InfoWindow();
-		var service = new google.maps.places.PlacesService(map);
-		service.nearbySearch({
-			location: pyrmont,
-			radius: 500,
-			type: ['store']
-		}, callback);
-	}
+        autocomplete.bindTo('bounds', map);
 
-	function callback(results, status) {
-		if (status === google.maps.places.PlacesServiceStatus.OK) {
-			for (var i = 0; i < results.length; i++) {
-				createMarker(results[i]);
+        var marker = new google.maps.Marker({
+          map: map,
+          draggable: true,
+          anchorPoint: new google.maps.Point(0, -29)
+        });
+
+        google.maps.event.addListener(map, 'click', function(event) {
+            console.log(event);
+
+            service.nearbySearch({
+	            location: event.latLng,
+	            radius: 5,
+	        }, function(place, status) {
+	        	console.log('place', place);
+	        	console.log('status', google.maps.places.PlacesServiceStatus.OK);
+	        	console.log('status', status);
+
+	            if (status === google.maps.places.PlacesServiceStatus.OK) {
+		            google.maps.event.addListener(marker, 'click', function() {
+		                infowindow.setContent('<div><strong>' + place.name + '</strong><br>' +
+			                'Place ID: ' + place.place_id + '<br>' +
+			                place.formatted_address + '</div>');
+		                infowindow.open(map, this);
+		            });
+	            }
+	        });
+
+
+
+            marker.setVisible(true);
+            marker.setPosition(event.latLng);
+        	updateForm(event.latLng.lat(), event.latLng.lng());
+        });
+        
+        google.maps.event.addListener(marker, 'dragend', function(event) {
+            updateForm(event.latLng.lat(), event.latLng.lng())
+        });
+
+        autocomplete.addListener('place_changed', function() {
+			marker.setVisible(false);
+			
+			var place = autocomplete.getPlace();
+
+			updateForm(place.geometry.location.lat(), place.geometry.location.lng());
+
+			if (!place.geometry) {
+	            window.alert("Autocomplete's returned place contains no geometry");
+	            return;
 			}
+
+			map.setCenter(place.geometry.location);
+
+			marker.setPosition(place.geometry.location);
+			marker.setVisible(true);
+		});
+
+		function updateForm(lat, lng) {
+			s_latitude.value = lat;
+			s_longitude.value = lng;
 		}
-	}
-
-	function createMarker(place) {
-		var placeLoc = place.geometry.location;
-		var marker = new google.maps.Marker({
-			map: map,
-			position: place.geometry.location
-		});
-
-		google.maps.event.addListener(marker, 'click', function() {
-			infowindow.setContent(place.name);
-			infowindow.open(map, this);
-		});
 	}
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyALHyNTDk1K_lmcFoeDRsrCgeMGJW6mGsY&libraries=places&callback=initMap" async defer></script>
-@endsection
-
-@section('unusedscripts')
-
-<!-- Load page level scripts-->
-
-<script type="text/javascript" src="{{ asset('assets/plugins/fullcalendar/fullcalendar.min.js') }}"></script>                  <!-- FullCalendar -->
-<script type="text/javascript" src="{{ asset('assets/plugins/wijets/wijets.js') }}"></script>                                  <!-- Wijet -->
-<script type="text/javascript" src="{{ asset('assets/plugins/charts-chartistjs/chartist.min.js') }}"></script>                 <!-- Chartist -->
-<script type="text/javascript" src="{{ asset('assets/plugins/charts-chartistjs/chartist-plugin-tooltip.js') }}"></script>      <!-- Chartist -->
-<script type="text/javascript" src="{{ asset('assets/plugins/form-daterangepicker/moment.min.js') }}"></script>                <!-- Moment.js for Date Range -->
-<script type="text/javascript" src="{{ asset('assets/plugins/form-daterangepicker/daterangepicker.js') }}"></script>           <!-- Date Range Picker -->
-
-<!-- End loading page level scripts-->
-
 @endsection
 
 @section('styles')

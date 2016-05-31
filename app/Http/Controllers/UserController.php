@@ -10,13 +10,17 @@ use App\Helpers\Helper;
 
 class UserController extends Controller
 {
+
+    protected $UserAPI;
+    
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(UserapiController $API)
     {
+        $this->UserAPI = $API;
         $this->middleware('auth');
     }
 
@@ -35,17 +39,7 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function services()
-    {
-        return view('user.services');
-    }
-
-    /**
-     * Show the request list.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function request(Request $request)
+    public function services(Request $request)
     {
         $request->request->add([ 
             'id' => \Auth::user()->id,
@@ -53,16 +47,62 @@ class UserController extends Controller
             'device_token' => \Auth::user()->device_token,
         ]);
 
+        $Services = $this->UserAPI->history($request)->getData();
 
-        $api = new UserapiController($request);
+        return view('user.services', compact('Services'));
+    }
 
-        $response = $api->service_list($request);
-        $ServiceTypes = json_decode($response->content());
+    /**
+     * Show the request list.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function request_form(Request $request)
+    {
+        $request->request->add([ 
+            'id' => \Auth::user()->id,
+            'token' => \Auth::user()->token,
+            'device_token' => \Auth::user()->device_token,
+        ]);
 
-        $response = $api->get_payment_modes($request);
-        $PaymentMethods = json_decode($response->content());
+        $CurrentRequest = $this->UserAPI->request_status_check($request)->getData();
 
-        return view('user.request', compact('ServiceTypes', 'PaymentMethods'));
+        if($CurrentRequest->success) {
+
+            $ServiceTypes = $this->UserAPI->service_list($request)->getData();
+
+            $PaymentMethods = $this->UserAPI->get_payment_modes($request)->getData();
+
+            return view('user.request', compact('ServiceTypes', 'PaymentMethods'));
+
+        } else {
+
+            return view('user.request_pending', compact('CurrentRequest'));        
+
+        }
+    }
+
+    /**
+     * Process user request.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function request_submit(Request $request)
+    {
+        $request->request->add([ 
+            'id' => \Auth::user()->id,
+            'token' => \Auth::user()->token,
+        ]);
+        
+        $response = $this->UserAPI->send_request($request)->getData();
+
+        if($response->success) {
+            $response->message = "Your request has been posted. Waiting for provider to respond";
+        } else {
+            $response->message = $response->error;
+        }
+
+        return back()->with('response', $response);
     }
 
     /**
@@ -80,7 +120,7 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function profile_edit()
+    public function profile_form()
     {
         return view('user.profile');
     }
@@ -99,10 +139,6 @@ class UserController extends Controller
         ]);
 
         dd($request->all());
-
-        $response = UserapiController::update_profile($request);
-
-        dd($response);
 
         return redirect('back')->with('success', 'Profile has been saved');
     }

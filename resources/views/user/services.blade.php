@@ -5,35 +5,27 @@
 @section('page_title', 'My Services')
 
 @section('content')
-<div class="panel panel-sky">
-	<div class="panel-heading">
-		<h2>My Services</h2>
-	</div>
-	<div class="panel-body">
-		<table class="table">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Service Type</th>
-                    <th>Pickup</th>
-                    <th>Mechanic</th>
-                    <th>Fare</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>100.00</td>
-                    <td>7675</td>
-                    <td>100.00</td>
-                    <td>0.804</td>
-                </tr>
-            </tbody>
-            <caption>List of services that you've used</caption>
-        </table>
-	</div>
+<div class="row ui-sortable" data-widget-group="group-demo">
+    @foreach($Services->requests as $Index => $Service)
+    <div class="col-md-4">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h2>{{ get_service_name($Service->request_type) }}</h2>
+            </div>
+            <div class="panel-body">
+                <div class="col-xs-8">
+                    <p>Provider : <strong>{{ $Service->provider_name }}</strong></p>
+                    <p>Date : {{ $Service->date }}</p>
+                    <p>Amount : {{ $Service->total }}</p>
+                </div>
+                <div class="col-xs-4">
+                    <img src="{{ $Service->picture }}" width="100%">
+                </div>
+            </div>
+        </div>
+    </div>
+    @endforeach
 </div>
-            
 @endsection
 
 @section('scripts')
