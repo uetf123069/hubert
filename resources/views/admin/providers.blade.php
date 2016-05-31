@@ -7,15 +7,8 @@
 @include('notification.notify')
         <div class="panel">
           <div class="panel-heading border">
-            <ol class="breadcrumb mb0 no-padding">
-              <li>
-                <a href="javascript:;">Home</a>
-              </li>
-              <li>
-                <a href="javascript:;">Providers</a>
-              </li>
-              <li class="active">Providers List</li>
-            </ol>
+            Providers Lists
+            <a style="float: right; display: inline-block; " href="{{ route('admin.addprovider') }}"><button type="button" class="btn btn-primary btn-outline">Add Providers</button></a>
           </div>
           <div class="panel-body">
             <table id="providers" class="table table-bordered bordered table-striped table-condensed datatable">
@@ -65,6 +58,9 @@
                             </li>
                             <li>
                               <a href="{{route('adminProviderHistory', array('id' => $provider->id))}}">View History</a>
+                            </li>
+                            <li>
+                              <a href="{{route('adminProviderDocument', array('id' => $provider->id))}}">View Documents</a>
                             </li>
                             
                           </ul>

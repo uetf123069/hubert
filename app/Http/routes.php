@@ -206,6 +206,7 @@ Route::group(['prefix' => 'admin'], function(){
 
     Route::get('/userReviewDelete/{id}', 'AdminController@deleteUserReviews')->name('adminUserReviewDelete');
 
+    Route::get('/providerDocuments', 'AdminController@providerDocuments')->name('adminProviderDocument');
 
     Route::get('/requests', 'AdminController@requests')->name('adminRequests');
 

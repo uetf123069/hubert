@@ -7,15 +7,8 @@
 @include('notification.notify')
         <div class="panel">
           <div class="panel-heading border">
-            <ol class="breadcrumb mb0 no-padding">
-              <li>
-                <a href="javascript:;">Home</a>
-              </li>
-              <li>
-                <a href="javascript:;">Documents</a>
-              </li>
-              <li class="active">Document List</li>
-            </ol>
+           Documents Lists
+            <a style="float: right; display: inline-block; " href="{{ route('adminAddDocument') }}"><button type="button" class="btn btn-primary btn-outline">Add Documents</button></a>
           </div>
           <div class="panel-body">
             <table id="documents" class="table table-bordered bordered table-striped table-condensed datatable">

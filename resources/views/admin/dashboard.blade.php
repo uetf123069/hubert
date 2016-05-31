@@ -26,7 +26,7 @@
                 <div class="widget-icon bg-success pull-left fa fa-paper-plane">
                 </div>
                 <div class="overflow-hidden">
-                    <span class="widget-title">{{$acc_req}}</span>
+                    <span class="widget-title">0</span>
                     <span class="widget-subtitle">Accepted Requests</span>
                 </div>
             </div>

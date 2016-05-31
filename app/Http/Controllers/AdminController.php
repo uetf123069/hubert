@@ -12,6 +12,8 @@ use App\Provider;
 
 use App\Document;
 
+use App\ProviderDocument;
+
 use App\Admin;
 
 use App\ServiceType;
@@ -279,11 +281,11 @@ class AdminController extends Controller
         $subQuery1 = DB::table('requests')
                 ->select(DB::raw('count(*)'))
                 ->whereRaw('provider_id = providers.id and status=1');
-
         $providers = DB::table('providers')
                 ->select('providers.*', DB::raw("(" . $subQuery->toSql() . ") as 'total_requests'"), DB::raw("(" . $subQuery1->toSql() . ") as 'accepted_requests'"))
                 ->orderBy('providers.created_at', 'DESC')
                 ->paginate(10);
+
 
         return view('admin.providers')->with('providers',$providers);
     }
@@ -399,6 +401,19 @@ class AdminController extends Controller
     {
         $provider = Provider::find($request->id);
         return view('admin.addProvider')->with('name', 'Edit Provider')->with('provider',$provider);
+    }
+
+    public function providerDocuments(Request $request) {
+        $provider_id = $request->id;
+        $provider = Provider::find($provider_id);
+        $documents = Document::all();
+        $provider_document = ProviderDocument::where('provider_id', $provider_id)->get();
+
+
+        return view('admin.providerDocuments')
+                        ->with('provider', $provider)
+                        ->with('documents', $documents)
+                        ->with('provider_document', $provider_document);
     }
 
     public function ProviderApprove(Request $request)
