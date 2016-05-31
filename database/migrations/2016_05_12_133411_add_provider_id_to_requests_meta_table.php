@@ -25,7 +25,7 @@ class AddProviderIdToRequestsMetaTable extends Migration
     public function down()
     {
         Schema::table('requests_meta', function (Blueprint $table) {
-            //
+            $table->dropColumn('provider_id');
         });
     }
 }
