@@ -71,9 +71,7 @@ class UserController extends Controller
 
             $ServiceTypes = $this->UserAPI->service_list($request)->getData();
 
-            $PaymentMethods = $this->UserAPI->get_payment_modes($request)->getData();
-
-            return view('user.request', compact('ServiceTypes', 'PaymentMethods'));
+            return view('user.request', compact('ServiceTypes'));
 
         } else {
 
