@@ -147,6 +147,7 @@ class UserapiController extends Controller
                                 'email' => 'email|max:255',
                                 'mobile' => 'digits_between:6,13',
                                 'picture' => 'mimes:jpeg,jpg,bmp,png',
+                                'gender' => 'in:male,female,others',
                             )
                         );
 
@@ -242,8 +243,10 @@ class UserapiController extends Controller
                 $user->email = $email;
                 $user->mobile = $mobile!=NULL ? $mobile : '';
                 $user->password = $password!=NULL ? Hash::make($password) : '';
+                if($request->has('gender')) {
+                    $user->gender = $request->gender;
+                }
                 
-
                 $user->token = Helper::generate_token();
                 $user->token_expiry = Helper::generate_token_expiry();
                 $user->device_token = $device_token;
@@ -281,6 +284,7 @@ class UserapiController extends Controller
                     'first_name' => $user->first_name,
                     'last_name' => $user->last_name,
                     'mobile' => $user->mobile,
+                    'gender' => $user->gender,
                     'email' => $user->email,
                     'picture' => $user->picture,
                     'token' => $user->token,
@@ -416,6 +420,7 @@ class UserapiController extends Controller
                     'name' => $user->name,
                     'mobile' => $user->mobile,
                     'email' => $user->email,
+                    'gender' => $user->gender,
                     'picture' => $user->picture,
                     'token' => $user->token,
                     'token_expiry' => $user->token_expiry,
@@ -522,6 +527,7 @@ class UserapiController extends Controller
             'first_name' => $user->first_name,
             'last_name' => $user->last_name,
             'mobile' => $user->mobile,
+            'gender' => $user->gender,
             'email' => $user->email,
             'picture' => $user->picture,
             'token' => $user->token,
@@ -546,6 +552,7 @@ class UserapiController extends Controller
                 'email' => 'email|unique:users,email,'.$user_id.'|max:255',
                 'mobile' => 'required|digits_between:6,13',
                 'picture' => 'mimes:jpeg,bmp,png',
+                'gender' => 'in:male,female,others',
                 'device_token' => 'required',
             ));
 
@@ -567,13 +574,18 @@ class UserapiController extends Controller
 
             $user = User::find($user_id);
             $user->name = $name;
-            $user->email = $email;
+            if($request->has('email')) {
+                $user->email = $email;
+            }
             if ($mobile != "")
                 $user->mobile = $mobile;
             // Upload picture
             if ($picture != "") {
                 Helper::delete_picture($user->picture); // Delete the old pic
                 $user->picture = Helper::upload_picture($picture);
+            }
+            if($request->has('gender')) {
+                $user->gender = $request->gender;
             }
 
             // Generate new tokens
@@ -590,6 +602,7 @@ class UserapiController extends Controller
                 'first_name' => $user->first_name,
                 'last_name' => $user->last_name,
                 'mobile' => $user->mobile,
+                'gender' => $user->gender,
                 'email' => $user->email,
                 'picture' => $user->picture,
                 'token' => $user->token,
