@@ -20,7 +20,7 @@ class ProviderController extends Controller
      */
     public function __construct(ProviderApiController $ProviderApiController)
     {
-        $this->middleware('provider');
+        $this->middleware('provider',['except' => ['change_state']]);
         $this->ProviderApiController = $ProviderApiController;
     }
 
@@ -130,10 +130,36 @@ class ProviderController extends Controller
             'device_token' => \Auth::guard('provider')->user()->device_token,
         ]);
 
-        $data = $this->ProviderApiController->status_update($request);
+        $data = $this->ProviderApiController->available_update($request);
         $ApiResponse = $data->getData();
 
-        return $ApiResponse;
+        return response()->json($ApiResponse);
+    }
+
+
+    /**
+     * Update location.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function update_location(Request $request)
+    {
+        $request->request->add([ 
+            'id' => \Auth::guard('provider')->user()->id,
+            'token' => \Auth::guard('provider')->user()->token,
+            'device_token' => \Auth::guard('provider')->user()->device_token,
+        ]);
+
+        $data = $this->ProviderApiController->location_update($request);
+        $ApiResponse = $data->getData();
+
+        // dd($ApiResponse);
+
+        if($ApiResponse->success == true){
+            return back()->with('success', 'Location Updated');
+        }elseif($ApiResponse->success == false){
+            return back()->with('error', $ApiResponse->error);
+        }
     }
 
     /**
