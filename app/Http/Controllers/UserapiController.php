@@ -1223,14 +1223,15 @@ class UserapiController extends Controller
                 }
 
                 $delete_request_meta = RequestsMeta::where('request_id' , $requests->id)->delete();
-            }
-        } else {
 
+                //Send notification to the provider
+                $title = "Request Cancel";
+                $message = "Request cancelled by user";
+                Helper::request_push_notification($current_provider,PROVIDER,$requests->id,$title,$message);
+            }
         }
 
         $response_array = array('success' => true);
-
-
 
         return response()->json(Helper::null_safe($response_array) , 200);
 
@@ -1746,7 +1747,7 @@ class UserapiController extends Controller
         return response()->json(Helper::null_safe($response_array) , 200);
     
     }
-
+    
     public function payment_mode_update(Request $request) {
         
         $validator = Validator::make($request->all() , 
@@ -1932,8 +1933,6 @@ class UserapiController extends Controller
         return response()->json(Helper::null_safe($response_array) , 200);
     
     }
-
-
 }
 
 
