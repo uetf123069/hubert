@@ -65,6 +65,9 @@ define('REQUEST_COMPLETED',      5);
 define('REQUEST_CANCELLED',      6);
 define('REQUEST_NO_PROVIDER_AVAILABLE',7);
 
+//Only when manual request
+define('REQUEST_REJECTED_BY_PROVIDER', 8);
+
 define('PROVIDER_NOT_AVAILABLE', 0);
 define('PROVIDER_AVAILABLE', 1);
 
@@ -144,6 +147,7 @@ class UserapiController extends Controller
                                 'email' => 'email|max:255',
                                 'mobile' => 'digits_between:6,13',
                                 'picture' => 'mimes:jpeg,jpg,bmp,png',
+                                'gender' => 'in:male,female,others',
                             )
                         );
 
@@ -239,8 +243,10 @@ class UserapiController extends Controller
                 $user->email = $email;
                 $user->mobile = $mobile!=NULL ? $mobile : '';
                 $user->password = $password!=NULL ? Hash::make($password) : '';
+                if($request->has('gender')) {
+                    $user->gender = $request->gender;
+                }
                 
-
                 $user->token = Helper::generate_token();
                 $user->token_expiry = Helper::generate_token_expiry();
                 $user->device_token = $device_token;
@@ -278,6 +284,7 @@ class UserapiController extends Controller
                     'first_name' => $user->first_name,
                     'last_name' => $user->last_name,
                     'mobile' => $user->mobile,
+                    'gender' => $user->gender,
                     'email' => $user->email,
                     'picture' => $user->picture,
                     'token' => $user->token,
@@ -413,6 +420,7 @@ class UserapiController extends Controller
                     'name' => $user->name,
                     'mobile' => $user->mobile,
                     'email' => $user->email,
+                    'gender' => $user->gender,
                     'picture' => $user->picture,
                     'token' => $user->token,
                     'token_expiry' => $user->token_expiry,
@@ -519,6 +527,7 @@ class UserapiController extends Controller
             'first_name' => $user->first_name,
             'last_name' => $user->last_name,
             'mobile' => $user->mobile,
+            'gender' => $user->gender,
             'email' => $user->email,
             'picture' => $user->picture,
             'token' => $user->token,
@@ -543,6 +552,7 @@ class UserapiController extends Controller
                 'email' => 'email|unique:users,email,'.$user_id.'|max:255',
                 'mobile' => 'required|digits_between:6,13',
                 'picture' => 'mimes:jpeg,bmp,png',
+                'gender' => 'in:male,female,others',
                 'device_token' => 'required',
             ));
 
@@ -564,13 +574,18 @@ class UserapiController extends Controller
 
             $user = User::find($user_id);
             $user->name = $name;
-            $user->email = $email;
+            if($request->has('email')) {
+                $user->email = $email;
+            }
             if ($mobile != "")
                 $user->mobile = $mobile;
             // Upload picture
             if ($picture != "") {
                 Helper::delete_picture($user->picture); // Delete the old pic
                 $user->picture = Helper::upload_picture($picture);
+            }
+            if($request->has('gender')) {
+                $user->gender = $request->gender;
             }
 
             // Generate new tokens
@@ -587,6 +602,7 @@ class UserapiController extends Controller
                 'first_name' => $user->first_name,
                 'last_name' => $user->last_name,
                 'mobile' => $user->mobile,
+                'gender' => $user->gender,
                 'email' => $user->email,
                 'picture' => $user->picture,
                 'token' => $user->token,
@@ -746,6 +762,7 @@ class UserapiController extends Controller
         return response()->json(Helper::null_safe($response_array) , 200);
     }
 
+// Automated Request
     public function send_request(Request $request) {
 
         $validator = Validator::make(
@@ -978,6 +995,147 @@ class UserapiController extends Controller
     
     }
 
+    // Manual request
+    public function manual_create_request(Request $request) {
+        $validator = Validator::make(
+                $request->all(),
+                array(
+                    's_latitude' => 'required|numeric',
+                    's_longitude' => 'required|numeric',
+                    'service_type' => 'numeric|exists:service_types,id',
+                    'provider_id' => 'required|exists:providers,id',
+                ));
+
+        if ($validator->fails()) 
+        {
+            $error_messages = implode(',', $validator->messages()->all());
+            $response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101, 'error_messages' => $error_messages);
+        } else {
+            Log::info('Create request start');
+            // Check the user filled the payment details
+            $user = User::find($request->id);
+            if(!$user->payment_mode) {
+                // Log::info('Payment Mode is not available');
+                $response_array = array('success' => false , 'error' => Helper::get_error_message(134) , 'error_code' => 134);
+            } else {
+
+                $allow = DEFAULT_FALSE;
+                // if the payment mode is CARD , check if any default card is available
+                if($user->payment_mode == CARD) {
+                    if($user_card = Cards::find($user->default_card)) {
+                        $allow = DEFAULT_TRUE;
+                    }
+                } else {
+                    $allow = DEFAULT_TRUE;
+                }
+
+                if($allow == DEFAULT_TRUE) {
+
+                    // Check already request exists 
+                    $check_status = array(REQUEST_NO_PROVIDER_AVAILABLE,REQUEST_CANCELLED,REQUEST_COMPLETED);
+
+                    $check_requests = Requests::where('user_id' , $request->id)->whereNotIn('status' , $check_status)->count();
+
+                    if($check_requests == 0) {
+
+                        Log::info('Previous requests check is done');
+                       
+                        // Create Requests
+                        $requests = new Requests;
+                        $requests->user_id = $user->id;
+
+                        if($service_type)
+                            $requests->request_type = $service_type;
+
+                        $requests->status = REQUEST_NEW;
+                        $requests->confirmed_provider = NONE;
+                        $requests->request_start_time = date("Y-m-d H:i:s", $request_start_time);
+                        $requests->s_address = $request->s_address ? $request->s_address : "";
+                            
+                        if($latitude){ $requests->s_latitude = $latitude; }
+                        if($longitude) { $requests->s_longitude = $longitude; }
+                            
+                        $requests->save();
+
+                        if($requests) {
+                            $requests->status = REQUEST_WAITING;
+                            //No need fo current provider state
+                            // $requests->current_provider = $first_provider_id;
+                            $requests->save();
+
+                            $request_meta = new RequestsMeta;
+
+                            $request_meta->status = REQUEST_META_OFFERED;  // Request status change
+
+                            // Availablity status change
+                            if($current_provider = Provider::find($first_provider_id)) {
+                                $current_provider->waiting_to_respond = WAITING_TO_RESPOND;
+                                $current_provider->save();
+                            }
+
+                            // Send push notifications to the first provider
+                            $settings = Settings::where('key', 'provider_select_timeout')->first();
+                            $provider_timeout = $settings->value;
+
+                            if($service_type)
+                                $service = ServiceType::find($requests->request_type);
+
+                            $push_data = array();
+                            $push_data['request_id'] = $requests->id;
+                            $push_data['service_type'] = $requests->request_type;
+                            $push_data['request_start_time'] = $requests->request_start_time;
+                            $push_data['status'] = $requests->status;
+                            $push_data['user_name'] = $user->name;
+                            $push_data['user_picture'] = $user->picture;
+                            $push_data['s_address'] = $requests->s_address;
+                            $push_data['s_latitude'] = $requests->s_latitude;
+                            $push_data['s_longitude'] = $requests->s_longitude;
+                            $push_data['user_rating'] = ProviderRating::where('provider_id', $first_provider_id)->avg('rating') ?: 0;
+                            $push_data['time_left_to_respond'] = $provider_timeout - (time() - strtotime($requests->request_start_time));
+
+                            $title = "New Request";
+                            $message = "You got a new request from ".$user->name;
+                            $push_message = array(
+                                'success' => true,
+                                'message' => $message,
+                                'data' => array((object) Helper::null_safe($push_data))
+                            );
+
+                            // Send Push Notification to Provider
+                            //send_push_notification($first_provider_id, PROVIDER, $title, $push_message);
+                            // Log::info(print_r($push_message,true));
+                            // Push End
+
+                            $request_meta->request_id = $requests->id;
+                            $request_meta->provider_id = $final_provider; 
+                            $request_meta->save();
+
+                            $response_array = array(
+                                'success' => true,
+                                'source_address' => $requests->s_address,
+                                's_latitude' => $requests->s_latitude,
+                                's_longitude' => $requests->s_longitude,
+                                'service_id' => $requests->service_id,
+                                'request_id' => $requests->id,
+                            );
+
+                            $response_array = Helper::null_safe($response_array); Log::info('Create request end');
+                        } else {
+                            $response_array = array('success' => false , 'error' => Helper::get_error_message(126) , 'error_code' => 126 );
+                        }     
+                    } else {
+                        $response_array = array('success' => false , 'error' => Helper::get_error_message(127) , 'error_code' => 127);
+                    }
+
+                } else {
+                    $response_array = array('success' => false , 'error' => Helper::get_error_message(142) ,'error_code' => 142);
+                }
+            }
+        }
+        $response = response()->json($response_array, 200);
+        return $response;   
+    }
+
     public function cancel_request(Request $request) {
     
         $user_id = $request->id;
@@ -1046,6 +1204,37 @@ class UserapiController extends Controller
 
         $response = response()->json($response_array, 200);
         return $response;
+    }
+
+    public function waiting_request_cancel(Request $request) {
+
+        $get_requests = Requests::where('user_id' , $request->id)->where('status' , REQUEST_WAITING)->get();
+
+        if($get_requests) {
+            foreach ($get_requests as $key => $requests) {
+                $requests->status = REQUEST_CANCELLED;
+                $requests->save();
+
+                $requests_meta = RequestsMeta::where('request_id' , $requests->id);
+                $current_provider = $requests_meta->where('status' , DEFAULT_TRUE)->first()->provider_id;
+                if($provider = Provider::find($current_provider)) {
+                    $provider->waiting_to_respond = WAITING_TO_RESPOND_NORMAL;
+                    $provider->save();
+                }
+
+                $delete_request_meta = RequestsMeta::where('request_id' , $requests->id)->delete();
+
+                //Send notification to the provider
+                $title = "Request Cancel";
+                $message = "Request cancelled by user";
+                Helper::request_push_notification($current_provider,PROVIDER,$requests->id,$title,$message);
+            }
+        }
+
+        $response_array = array('success' => true);
+
+        return response()->json(Helper::null_safe($response_array) , 200);
+
     }
 
     public function request_status_check(Request $request) {
@@ -1558,7 +1747,7 @@ class UserapiController extends Controller
         return response()->json(Helper::null_safe($response_array) , 200);
     
     }
-
+    
     public function payment_mode_update(Request $request) {
         
         $validator = Validator::make($request->all() , 
@@ -1744,8 +1933,6 @@ class UserapiController extends Controller
         return response()->json(Helper::null_safe($response_array) , 200);
     
     }
-
-
 }
 
 

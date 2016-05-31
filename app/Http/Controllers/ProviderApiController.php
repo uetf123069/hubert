@@ -57,6 +57,9 @@ define('REQUEST_COMPLETED',      5);
 define('REQUEST_CANCELLED',      6);
 define('REQUEST_NO_PROVIDER_AVAILABLE',7);
 
+//Only when manual request
+define('REQUEST_REJECTED_BY_PROVIDER', 8);
+
 define('PROVIDER_NOT_AVAILABLE', 0);
 define('PROVIDER_AVAILABLE', 1);
 
@@ -100,6 +103,7 @@ class ProviderApiController extends Controller
 					'mobile' => 'required|digits_between:6,13',
 					'password' => 'required|min:6',
 					'picture' => 'mimes:jpeg,bmp,png',
+					'gender' => 'in:male,female,others',
 					'device_type' => 'required|in:'.DEVICE_ANDROID.','.DEVICE_IOS,
 					'device_token' => 'required'
 				));
@@ -137,6 +141,9 @@ class ProviderApiController extends Controller
 			$provider->email = $email;
 			$provider->mobile = $mobile;
 			$provider->password = Hash::make($password);
+			if($request->has('gender')) {
+				$provider->gender = $request->gender;
+			}
 			
 			// Temp purpose 
 
@@ -153,8 +160,6 @@ class ProviderApiController extends Controller
 			$provider->device_token = $device_token;
 			$provider->device_type = $device_type;
 
-			
-				
 			// Upload picture
 			if($request->hasFile('picture'))
 				$provider->picture = Helper::upload_picture($picture);
@@ -187,6 +192,7 @@ class ProviderApiController extends Controller
                 'first_name' => $provider->first_name,
                 'last_name' => $provider->last_name,
                 'mobile' => $provider->mobile,
+                'gender' => $provider->gender,
                 'email' => $provider->email,
                 'picture' => $provider->picture,
                 'token' => $provider->token,
@@ -252,6 +258,7 @@ class ProviderApiController extends Controller
                             'first_name' => $provider->first_name,
                             'last_name' => $provider->last_name,
                             'mobile' => $provider->mobile,
+                            'gender' => $provider->gender,
                             'email' => $provider->email,
                             'picture' => $provider->picture,
                             'token' => $provider->token,
@@ -431,8 +438,12 @@ class ProviderApiController extends Controller
 					'last_name' => 'required|max:255',
 					'mobile' => 'required|digits_between:6,13',
 					'picture' => 'mimes:jpeg,bmp,png',
-					'email' => 'required|email|max:255|unique:users,email'
-				));
+					'gender' => 'in:male,female,others',
+					'email' => 'email|max:255|unique:providers,email'
+				),
+				array(
+						'unique' => 'Email ID already exists',
+					));
 			
 		if ($validator->fails()) {
             $error_messages = implode(',', $validator->messages()->all());
@@ -462,15 +473,17 @@ class ProviderApiController extends Controller
 				$provider->mobile = $request->mobile;
 			}
 
+			if ($request->has('gender')) {
+				$provider->gender = $request->gender;
+			}
+
 			$picture = $request->file('picture');
 
 			// Upload picture
             if ($picture != ""){
 
                 //deleting old image if exists
-
                 Helper::delete_picture($provider->picture);
-
                 $provider->picture = Helper::upload_picture($picture);
             }
 
@@ -515,6 +528,7 @@ class ProviderApiController extends Controller
                 'mobile' => $provider->mobile,
                 'email' => $provider->email,
                 'picture' => $provider->picture,
+                'gender' => $provider->gender,
                 'token' => $provider->token,
                 'token_expiry' => $provider->token_expiry,
                 'service_type' => $service_type_id,
@@ -657,6 +671,7 @@ class ProviderApiController extends Controller
 			$provider = Provider::find($request->id);
 			$request_id = $request->request_id;
             $requests = Requests::find($request_id);
+            $user = User::find($requests->user_id);
             //Check whether the request is cancelled by user.
             if($requests->status == REQUEST_CANCELLED) {
                 $response_array = array(
@@ -692,6 +707,14 @@ class ProviderApiController extends Controller
                     	'message' => Helper::get_message(118),
                     	);
 
+                    // Check for manual request status
+                    $manual_request = Settings::where('key','manual_request')->first();
+                    if($manual_request->manual_request == 1){
+                    	// Change status as providers rejected in request table
+                    	 Requests::where('id', '=', $requests->id)->update( array('status' => REQUEST_REJECTED_BY_PROVIDER) );
+                    	 // Send push notification to user "Provider rejected your request"
+                    }
+
                     //Select the new provider who is in the next position.
                     $request_meta_next = RequestsMeta::where('request_id', '=', $request_id)->where('status', REQUEST_META_NONE)
                                         ->leftJoin('providers', 'providers.id', '=', 'requests_meta.provider_id')
@@ -716,7 +739,6 @@ class ProviderApiController extends Controller
                         //Update the request start time in request table
                         Requests::where('id', '=', $request->id)->update( array('request_start_time' => date("Y-m-d H:i:s")) );
                     } else {
-
                     	/**************************/
                     	// Change status as no providers avaialable in request table
                     	 Requests::where('id', '=', $requests->id)->update( array('status' => REQUEST_NO_PROVIDER_AVAILABLE) );
@@ -725,6 +747,7 @@ class ProviderApiController extends Controller
 	                    RequestsMeta::where('request_id', '=', $requests->id)->delete();
 	                    Log::info('assign_next_provider ended the request_id:'.$request->id);
 
+	                    //send pushnotification to user "No provider found"
                     }
 
                 }
@@ -1058,7 +1081,7 @@ class ProviderApiController extends Controller
     			$tax_price = $admin_tax->value;
 
     			// Get the total time from requests table
-    			$get_time = Helper::time_diff($requests->request_start_time,$requests->request_end_time);
+    			$get_time = Helper::time_diff($requests->start_time,$requests->end_time);
     			$total_time = $get_time->i;
 
     			// Calculate price 
@@ -1230,7 +1253,7 @@ class ProviderApiController extends Controller
                     Helper::send_notifications($requests->user_id, USER, $title, $messages);
 
                     /*If request has confirmed provider then release him to available status*/
-                    if($request->confirmed_provider != DEFAULT_FALSE){
+                    if($requests->confirmed_provider != DEFAULT_FALSE){
                         $provider = Provider::find( $requests->confirmed_provider );
                         $provider->is_available = PROVIDER_AVAILABLE;
                         $provider->save();
