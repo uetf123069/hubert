@@ -251,11 +251,15 @@ Route::group([], function(){
     Route::get('/', 'UserController@index')->name('user.dashboard');
 
     Route::get('/services', 'UserController@services')->name('user.services.list');
-    Route::get('/request', 'UserController@request')->name('user.services.request');
 
-    Route::get('/profile', 'UserController@profile_edit')->name('user.profile.edit');
+    Route::get('/request', 'UserController@request_form')->name('user.services.request');
+    Route::post('/request', 'UserController@request_submit')->name('user.services.request.submit');
+
+    Route::get('/profile', 'UserController@profile_form')->name('user.profile.form');
     Route::post('/profile', 'UserController@profile_save')->name('user.profile.save');
     Route::post('/profile/password', 'UserController@profile_save_password')->name('user.profile.password');
+
+    Route::get('/payment', 'UserController@payment')->name('user.payment.form');
 
 });
 

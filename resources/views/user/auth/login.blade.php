@@ -21,12 +21,12 @@
                                     </span>
                                     <input type="email" name="email" class="form-control" placeholder="Email Username" data-parsley-minlength="6" placeholder="At least 6 characters" value="{{ old('email') }}" required>
 
-                                    @if ($errors->has('email'))
-                                        <span class="help-block">
-                                            <strong>{{ $errors->first('email') }}</strong>
-                                        </span>
-                                    @endif
                                 </div>
+                                @if ($errors->has('email'))
+                                    <span class="help-block">
+                                        <strong>{{ $errors->first('email') }}</strong>
+                                    </span>
+                                @endif
                             </div>
                         </div>
 
@@ -37,12 +37,12 @@
                                         <i class="fa fa-key"></i>
                                     </span>
                                     <input type="password" class="form-control" name="password" placeholder="Password">
-                                    @if ($errors->has('password'))
-                                        <span class="help-block">
-                                            <strong>{{ $errors->first('password') }}</strong>
-                                        </span>
-                                    @endif
                                 </div>
+                                @if ($errors->has('password'))
+                                    <span class="help-block">
+                                        <strong>{{ $errors->first('password') }}</strong>
+                                    </span>
+                                @endif
                             </div>
                         </div>
 

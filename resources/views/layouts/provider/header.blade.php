@@ -4,7 +4,7 @@
         <a data-toggle="tooltips" data-placement="right" title="Toggle Sidebar"><span class="icon-bg"><i class="fa fa-fw fa-bars"></i></span></a>
     </span>
 
-    <a class="navbar-brand" href="index.html">Avenger</a>
+    <a class="navbar-brand" href="">Provider Dashboard</a>
 
     <span id="trigger-infobar" class="toolbar-trigger toolbar-icon-bg">
         <a data-toggle="tooltips" data-placement="left" title="Toggle Infobar"><span class="icon-bg"><i class="fa fa-fw fa-bars"></i></span></a>

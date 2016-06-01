@@ -22,7 +22,7 @@
 
     <link type="text/css" href="{{ asset('assets/user/fonts/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet">
     <link type="text/css" href="{{ asset('assets/user/css/styles.css') }}" rel="stylesheet">
-
+    
     <link type="text/css" href="{{ asset('assets/plugins/jstree/dist/themes/avenger/style.min.css') }}" rel="stylesheet">
     <link type="text/css" href="{{ asset('assets/plugins/iCheck/skins/minimal/blue.css') }}" rel="stylesheet">
 
@@ -87,7 +87,6 @@
     <script type="text/javascript" src="{{ asset('assets/plugins/nanoScroller/js/jquery.nanoscroller.min.js') }}"></script> <!-- nano scroller -->
     <script type="text/javascript" src="{{ asset('assets/plugins/jquery-mousewheel/jquery.mousewheel.min.js') }}"></script> <!-- Mousewheel for jScrollPane -->
 
-    <script type="text/javascript" src="http://avenger.kaijuthemes.com/assets/plugins/bootstrap-switch/bootstrap-switch.js"></script>
 
     <!-- End loading site level scripts -->
 

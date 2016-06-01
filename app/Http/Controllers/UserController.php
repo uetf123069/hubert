@@ -15,17 +15,19 @@ use App\Http\Controllers\UserapiController;
 class UserController extends Controller
 {
 
-    protected $UserapiController;
 
+    protected $UserAPI;
+    
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct(UserapiController $UserapiController)
+
+    public function __construct(UserapiController $API)
     {
+        $this->UserAPI = $API;
         $this->middleware('auth');
-        $this->UserapiController = $UserapiController;
     }
 
     /**
@@ -43,9 +45,17 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function services()
+    public function services(Request $request)
     {
-        return view('user.services');
+        $request->request->add([ 
+            'id' => \Auth::user()->id,
+            'token' => \Auth::user()->token,
+            'device_token' => \Auth::user()->device_token,
+        ]);
+
+        $Services = $this->UserAPI->history($request)->getData();
+
+        return view('user.services', compact('Services'));
     }
 
     /**
@@ -53,9 +63,60 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function request()
+    public function request_form(Request $request)
     {
-        return view('user.request');
+        $request->request->add([ 
+            'id' => \Auth::user()->id,
+            'token' => \Auth::user()->token,
+            'device_token' => \Auth::user()->device_token,
+        ]);
+
+        $CurrentRequest = $this->UserAPI->request_status_check($request)->getData();
+
+        if($CurrentRequest->success) {
+
+            $ServiceTypes = $this->UserAPI->service_list($request)->getData();
+
+            return view('user.request', compact('ServiceTypes'));
+
+        } else {
+
+            return view('user.request_pending', compact('CurrentRequest'));        
+
+        }
+    }
+
+    /**
+     * Process user request.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function request_submit(Request $request)
+    {
+        $request->request->add([ 
+            'id' => \Auth::user()->id,
+            'token' => \Auth::user()->token,
+        ]);
+        
+        $response = $this->UserAPI->send_request($request)->getData();
+
+        if($response->success) {
+            $response->message = "Your request has been posted. Waiting for provider to respond";
+        } else {
+            $response->message = $response->error;
+        }
+
+        return back()->with('response', $response);
+    }
+
+    /**
+     * Show the payment methods.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function payment()
+    {
+        return view('user.payment');
     }
 
     /**
@@ -63,7 +124,7 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function profile_edit()
+    public function profile_form()
     {
         return view('user.profile');
     }
@@ -76,7 +137,6 @@ class UserController extends Controller
     public function profile_save(Request $request)
     {
         $url = url('/userApi/updateProfile');
-        $data = $request->all();
 
         $request->request->add([ 
             'id' => \Auth::user()->id,
@@ -85,8 +145,6 @@ class UserController extends Controller
         ]);
 
         $data = $this->UserapiController->update_profile($request);
-
-        dd($data);
 
         return redirect('back')->with('success', 'Profile has been saved');
     }

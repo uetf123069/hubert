@@ -16,6 +16,12 @@
 						<div class="tabular-cell welcome-options">
 							<span class="welcome-text">Welcome,</span>
 							<a href="#" class="name">{{Auth::guard('provider')->user()->name}}</a>
+							@if(Auth::guard('provider')->user()->is_approved == 1)
+								<span class="label label-info">Approved</span>
+							@else
+								<span class="label label-danger">UnApproved</span>
+							@endif
+
 						</div>
 					</div>
 				</div>

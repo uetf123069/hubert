@@ -8,6 +8,8 @@ use App\Http\Requests;
 
 use App\Http\Controllers\ProviderApiController;
 
+use App\Document;
+
 
 class ProviderController extends Controller
 {
@@ -179,6 +181,27 @@ class ProviderController extends Controller
      */
     public function documents()
     {
-        return view('provider.documents');
+        $get_documents = Document::all();
+        return view('provider.documents')->withDocuments($get_documents);
+    }
+
+
+    /**
+     * Popup incoming request.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function incoming_request()
+    {
+        $request->request->add([ 
+            'id' => \Auth::guard('provider')->user()->id,
+            'token' => \Auth::guard('provider')->user()->token,
+            'device_token' => \Auth::guard('provider')->user()->device_token,
+        ]);
+
+        $data = $this->ProviderApiController->get_incoming_request($request);
+        $ApiResponse = $data->getData();
+
+        return response()->json($ApiResponse);
     }
 }
