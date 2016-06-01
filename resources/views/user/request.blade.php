@@ -5,13 +5,11 @@
 @section('page_title', 'Request Services')
 
 @section('content')
-
 <div class="panel panel-default">
     <div class="panel-heading">
         <h2>Select Service Location</h2>
     </div>
     <div class="panel-body">
-        @include('layouts.user.notification')
         <form class="form-horizontal" id="service_request_form" action="{{ route('user.services.request.submit') }}" method="POST">
             <input type="hidden" name="s_latitude" id="s_latitude"></input>
             <input type="hidden" name="s_longitude" id="s_longitude"></input>
@@ -44,16 +42,13 @@
             <div class="row">
                 <div class="col-xs-12">
                     <div class="panel-footer">
-                        <button class="btn-primary btn col-xs-4 col-xs-offset-4">Submit Request</button>
+                        <button class="btn-primary btn col-xs-4 col-xs-offset-4" id="submit_request">Submit Request</button>
                     </div>
                 </div>
             </div>
         </form>
     </div>
-
 </div>
-
-
 @endsection
 
 @section('scripts')
@@ -63,7 +58,6 @@
 <script type="text/javascript" src="{{ asset('assets/user/js/demo-index.js') }}"></script>
 <script>
     var map;
-    var infowindow;
     var appoets = {lat: 11.8508117, lng: 79.7854668};
 
     var input = document.getElementById('pac-input');
@@ -88,44 +82,39 @@
             anchorPoint: new google.maps.Point(0, -29)
         });
 
-        google.maps.event.addListener(map, 'click', function(event) {
-            console.log(event);
+        var infowindow = new google.maps.InfoWindow({
+            content: "Service Location",
+        });
 
-            // Changes need to be made
-            service.nearbySearch({
-                location: event.latLng,
-                radius: 5,
-            }, function(place, status) {
-                console.log('place', place);
-                console.log('status', google.maps.places.PlacesServiceStatus.OK);
-                console.log('status', status);
+        google.maps.event.addListener(map, 'click', updateMarker);
+        
+        google.maps.event.addListener(marker, 'dragend', updateMarker);
 
-                if (status === google.maps.places.PlacesServiceStatus.OK) {
-                    google.maps.event.addListener(marker, 'click', function() {
-                        infowindow.setContent('<div><strong>' + place.name + '</strong><br>' +
-                            'Place ID: ' + place.place_id + '<br>' +
-                            place.formatted_address + '</div>');
-                        infowindow.open(map, this);
-                    });
-                }
-            });
-            // Changes
-
+        function updateMarker(event) {
 
             marker.setVisible(true);
             marker.setPosition(event.latLng);
+            infowindow.open(map, marker);
+
+            var geocoder = new google.maps.Geocoder();
+            geocoder.geocode({'latLng': event.latLng}, function (results, status) {
+                if (status == google.maps.GeocoderStatus.OK) {
+                    if (results[0]) {
+                        input.value = results[0].formatted_address;
+                    } else {
+                        alert('No Address Found');
+                    }
+                } else {
+                    alert('Geocoder failed due to: ' + status);
+                }
+            });
 
             updateForm(event.latLng.lat(), event.latLng.lng());
-        });
-        
-        google.maps.event.addListener(marker, 'dragend', function(event) {
-            updateForm(event.latLng.lat(), event.latLng.lng())
-        });
+        }
 
         autocomplete.addListener('place_changed', function(event) {
             marker.setVisible(false);
             var place = autocomplete.getPlace();
-            var searchLocation;
             console.log(place);
 
             if (place.hasOwnProperty('place_id')) {
@@ -133,23 +122,27 @@
                     window.alert("Autocomplete's returned place contains no geometry");
                     return;
                 }
-                searchLocation = place.geometry.location;
+                updateLocation(place.geometry.location);
             } else {
                 service.textSearch({
                     query: place.name
                 }, function(results, status) {
                     if (status == google.maps.places.PlacesServiceStatus.OK) {
-                        searchLocation = results[0].geometry.location;
+                        console.log(results);
+                        updateLocation(results[0].geometry.location);
+                        input.value = results[0].formatted_address;
                     }
                 });
             }
-            updateForm(searchLocation.lat(), searchLocation.lng());
-            map.setCenter(searchLocation);
-            marker.setPosition(searchLocation);
-            marker.setVisible(true);
         });
 
-
+        function updateLocation(location) {
+            map.setCenter(location);
+            marker.setPosition(location);
+            marker.setVisible(true);
+            infowindow.open(map, marker);
+            updateForm(location.lat(), location.lng());
+        }
 
         function updateForm(lat, lng) {
             s_latitude.value = lat;
@@ -160,15 +153,11 @@
             event.preventDefault()
             // alert("Was preventDefault() called: " + event.defaultPrevented);
         });
+        document.getElementById("submit_request").addEventListener("click", function(event){
+            document.getElementById("service_request_form").submit();
+            // alert("Was preventDefault() called: " + event.defaultPrevented);
+        });
 
-        // input.addEventListener("keyup", function(event) {
-        //     event.preventDefault();
-        //     if (event.keyCode == 13 && input.value != '') {
-        //         var place = autocomplete.getPlace();
-
-        //         console.log('enter key press', place);
-        //     }
-        // });
     }
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyALHyNTDk1K_lmcFoeDRsrCgeMGJW6mGsY&libraries=places&callback=initMap" async defer></script>
