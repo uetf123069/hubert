@@ -303,6 +303,8 @@ Route::group(['prefix' => 'provider'], function(){
     Route::post('/profile/password', 'ProviderController@password')->name('provider.password');
     Route::post('/change/state', 'ProviderController@change_state')->name('provider.change.state');
     Route::post('/update/location', 'ProviderController@update_location')->name('provider.update.location');
+    Route::post('/upload/documents', 'ProviderController@upload_documents')->name('provider.upload.documents');
+    Route::get('/document/{document_id}', 'ProviderController@delete_document')->name('provider.delete.document');
 
 
 });

@@ -160,7 +160,7 @@
 								<div class="panel-footer">
 									<div class="row">
 										<div class="col-sm-8 col-sm-offset-2">
-											<button type="" class="btn-primary btn">Submit</button>
+											<button type="submit" class="btn-primary btn">Submit</button>
 										</div>
 									</div>
 								</div>

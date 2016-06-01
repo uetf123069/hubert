@@ -19,7 +19,7 @@
 							@if(Auth::guard('provider')->user()->is_approved == 1)
 								<span class="label label-info">Approved</span>
 							@else
-								<span class="label label-danger">UnApproved</span>
+								<span class="label label-danger">Waiting for approval</span>
 							@endif
 
 						</div>

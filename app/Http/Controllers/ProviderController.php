@@ -10,6 +10,13 @@ use App\Http\Controllers\ProviderApiController;
 
 use App\Document;
 
+use App\ProviderDocument;
+
+use App\Provider;
+
+use Auth;
+
+use App\Helpers\Helper;
 
 class ProviderController extends Controller
 {
@@ -24,6 +31,7 @@ class ProviderController extends Controller
     {
         $this->middleware('provider',['except' => ['change_state']]);
         $this->ProviderApiController = $ProviderApiController;
+
     }
 
     /**
@@ -33,7 +41,7 @@ class ProviderController extends Controller
      */
     public function index()
     {
-        // dd(\Auth::guard('provider')->user());
+        // dd(\::guard('provider')->user());
         return view('provider.dashboard');
     }
 
@@ -182,9 +190,61 @@ class ProviderController extends Controller
     public function documents()
     {
         $get_documents = Document::all();
-        return view('provider.documents')->withDocuments($get_documents);
+
+        if(Auth::guard('provider')->user()->is_approved == 0){
+            return view('provider.documents')->withDocuments($get_documents)->with('error','Please upload your document to get approve from admin');
+        }else{
+
+            return view('provider.documents')->withDocuments($get_documents);
+        }
+
+
     }
 
+    /**
+     * Upload Documents.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function upload_documents(Request $request)
+    {
+        $get_documents = Document::all();
+
+        foreach ($get_documents as $document) {
+            if($request['document_'.$document->id] != ""){
+
+                $provider_document =  new ProviderDocument;
+                $provider_document->provider_id = \Auth::guard('provider')->user()->id;
+                $provider_document->document_id = $document->id;
+
+                delete_document($request['document_'.$document->id]);
+                $provider_document->document_url = upload_document($request['document_'.$document->id]);
+                $provider_document->save();
+            }
+        }
+
+        return back()->with('success', 'Your Documents Updated');
+    }
+
+
+    public function delete_document($document_id)
+    {
+        if(delete_document($document_id)){
+
+            ProviderDocument::where('provider_id',Auth::guard('provider')->user()->id)
+                            ->where('document_id',$document_id)
+                            ->delete();
+
+            $provider = Provider::find(Auth::guard('provider')->user()->id);
+            $provider->is_approved = 0;
+            $provider->save();
+            
+            return back()->with('success','your document Deleted! and please upload your new document');
+        }else{
+            return back()->with('error','something went wrong');
+        }
+
+    }
 
     /**
      * Popup incoming request.
