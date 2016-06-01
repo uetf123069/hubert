@@ -67,16 +67,11 @@ class UserController extends Controller
 
         $CurrentRequest = $this->UserAPI->request_status_check($request)->getData();
 
-        if($CurrentRequest->success) {
-
+        if(empty($CurrentRequest->data)) {
             $ServiceTypes = $this->UserAPI->service_list($request)->getData();
-
             return view('user.request', compact('ServiceTypes'));
-
         } else {
-
-            return view('user.request_pending', compact('CurrentRequest'));        
-
+            return view('user.request_pending', compact('CurrentRequest'));
         }
     }
 
@@ -97,6 +92,35 @@ class UserController extends Controller
         if($response->success) {
             $response->message = "Your request has been posted. Waiting for provider to respond";
         } else {
+            $response->success = false;
+            $response->message = $response->error;
+        }
+
+        return back()->with('response', $response);
+    }
+
+    /**
+     * Process user request.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function request_cancel(Request $request)
+    {
+        $request->request->add([ 
+            'id' => \Auth::user()->id,
+            'token' => \Auth::user()->token,
+        ]);
+
+        // dd($request->all());
+        
+        $response = $this->UserAPI->cancel_request($request)->getData();
+
+        // dd($response);
+
+        if($response->success) {
+            $response->message = "Your request has been cancelled.";
+        } else {
+            $response->success = false;
             $response->message = $response->error;
         }
 
@@ -150,5 +174,10 @@ class UserController extends Controller
     {
         return redirect('back')->with('success', 'Password has been updated');
         // return view('user.profile');
+    }
+
+    public function test(Request $request)
+    {
+        dd($request);
     }
 }

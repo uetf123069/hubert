@@ -8,13 +8,65 @@
 
 <div class="panel panel-default">
     <div class="panel-heading">
-        <h2>Requests Under Process</h2>
+        <h2>Current Request</h2>
     </div>
     <div class="panel-body">
-        
+        @foreach($CurrentRequest->data as $Service)
+            <div class="row">
+                <div class="col-md-6">
+                        <table class="table table-striped">
+                            <tbody>
+                                <tr>
+                                    <th>Request #</th>
+                                    <td data-title="Service" align="left">{{ $Service->request_id }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Service</th>
+                                    <td data-title="Service" align="left">{{ $Service->service_type_name }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Requested Time</th>
+                                    <td data-title="Requested Time">{{ $Service->request_start_time }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Amount</th>
+                                    <td data-title="Amount">{{ $Service->amount }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Request Status</th>
+                                    <td data-title="Request Status">{{ get_user_request_status($Service->status) }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Provider Status</th>
+                                    <td data-title="Provider Status">{{ $Service->provider_status ? "Accepted (Provider accepted service request.)" : "Pending (Waiting for Providers to accept your request.)" }}</td>
+                                </tr>
+                                @if($Service->provider_status)
+                                <tr>
+                                    <th>Provider Rating</th>
+                                    <td data-title="Provider Rating">{{ $Service->rating }}</td>
+                                </tr>
+                                @endif
+                                <tr>
+                                    <td colspan="2">
+                                        <form action="{{ route('user.services.request.cancel') }}" method="POST">
+                                            {!! csrf_field() !!}
+                                            <input type="hidden" name="_method" value="DELETE">
+                                            <input type="hidden" name="request_id" value="{{ $Service->request_id }}">
+                                            <button class="btn-primary btn col-xs-12" id="submit_request">Cancel Request</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <!-- <caption>List of countries by distribution wealth</caption> -->
+                        </table>
+                </div>
+                <div class="col-md-6">
+                    <div id="map"></div>
+                </div>
+            </div>
+        @endforeach
     </div>
 </div>
-
 
 @endsection
 
@@ -23,88 +75,45 @@
 <script type="text/javascript" src="{{ asset('assets/user/js/demo.js') }}"></script>
 <script type="text/javascript" src="{{ asset('assets/user/js/demo-switcher.js') }}"></script>
 <script type="text/javascript" src="{{ asset('assets/user/js/demo-index.js') }}"></script>
-<script>
+<script type="text/javascript">
     var map;
-    var infowindow;
-    var appoets = {lat: 11.8508117, lng: 79.7854668};
-
-    var input = document.getElementById('pac-input');
-    var s_latitude = document.getElementById('s_latitude');
-    var s_longitude = document.getElementById('s_longitude');
-
+    var serviceLocation = {lat: {{ $Service->s_latitude }}, lng: {{ $Service->s_longitude }}};
     function initMap() {
-
         map = new google.maps.Map(document.getElementById('map'), {
-            center: appoets,
+            center: serviceLocation,
             zoom: 15
         });
-        var service = new google.maps.places.PlacesService(map);
-        var autocomplete = new google.maps.places.Autocomplete(input);
-        var infowindow = new google.maps.InfoWindow();
-
-        autocomplete.bindTo('bounds', map);
 
         var marker = new google.maps.Marker({
-          map: map,
-          draggable: true,
-          anchorPoint: new google.maps.Point(0, -29)
+            map: map,
+            position: serviceLocation,
+            visible: true,
+            animation: google.maps.Animation.DROP,
         });
 
-        google.maps.event.addListener(map, 'click', function(event) {
-            console.log(event);
-
-            // Needs changes
-            service.nearbySearch({
-                location: event.latLng,
-                radius: 5,
-            }, function(place, status) {
-                console.log('place', place);
-                console.log('status', google.maps.places.PlacesServiceStatus.OK);
-                console.log('status', status);
-
-                if (status === google.maps.places.PlacesServiceStatus.OK) {
-                    google.maps.event.addListener(marker, 'click', function() {
-                        infowindow.setContent('<div><strong>' + place.name + '</strong><br>' +
-                            'Place ID: ' + place.place_id + '<br>' +
-                            place.formatted_address + '</div>');
-                        infowindow.open(map, this);
-                    });
-                }
-            });
-            // Till here
-
-            marker.setVisible(true);
-            marker.setPosition(event.latLng);
-            updateForm(event.latLng.lat(), event.latLng.lng());
-        });
-        
-        google.maps.event.addListener(marker, 'dragend', function(event) {
-            updateForm(event.latLng.lat(), event.latLng.lng())
+        var infowindow = new google.maps.InfoWindow({
+            content: "Service Location",
         });
 
-        autocomplete.addListener('place_changed', function() {
-            marker.setVisible(false);
-            
-            var place = autocomplete.getPlace();
-
-            updateForm(place.geometry.location.lat(), place.geometry.location.lng());
-
-            if (!place.geometry) {
-                window.alert("Autocomplete's returned place contains no geometry");
-                return;
-            }
-
-            map.setCenter(place.geometry.location);
-
-            marker.setPosition(place.geometry.location);
-            marker.setVisible(true);
-        });
-
-        function updateForm(lat, lng) {
-            s_latitude.value = lat;
-            s_longitude.value = lng;
-        }
+        infowindow.open(map, marker);
     }
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyALHyNTDk1K_lmcFoeDRsrCgeMGJW6mGsY&libraries=places&callback=initMap" async defer></script>
+@endsection
+
+@section('styles')
+
+@section('styles')
+<style type="text/css">
+    html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    #map {
+        height: 100%;
+        min-height: 400px; 
+    }
+</style>
 @endsection

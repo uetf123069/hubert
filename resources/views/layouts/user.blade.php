@@ -55,6 +55,7 @@
                         </div>
                         @yield('page_tabs')
                         <div class="container-fluid">
+                            @include('layouts.user.notification')
                             @yield('content')
                         </div> <!-- .container-fluid -->
                     </div> <!-- #page-content -->

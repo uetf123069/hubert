@@ -182,11 +182,16 @@ Route::group([], function(){
 
     Route::get('/request', 'UserController@request_form')->name('user.services.request');
     Route::post('/request', 'UserController@request_submit')->name('user.services.request.submit');
+    Route::delete('/request', 'UserController@request_cancel')->name('user.services.request.cancel');
 
     Route::get('/profile', 'UserController@profile_form')->name('user.profile.form');
     Route::post('/profile', 'UserController@profile_save')->name('user.profile.save');
     Route::post('/profile/password', 'UserController@profile_save_password')->name('user.profile.password');
 
-    Route::get('/payment', 'UserController@payment')->name('user.payment.form');
+    Route::get('/payment', 'UserController@payment_form')->name('user.payment.form');
+    Route::post('/payment', 'UserController@payment_submit')->name('user.payment.form');
+    Route::delete('/payment', 'UserController@payment_submit')->name('user.payment.form');
+
+    Route::get('/test', 'UserController@test')->name('user.test');
 
 });
