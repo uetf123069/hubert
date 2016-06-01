@@ -168,7 +168,7 @@ class UserController extends Controller
             'device_token' => \Auth::user()->device_token,
         ]);
 
-        $data = $this->UserapiController->update_profile($request);
+        $data = $this->UserAPI->update_profile($request);
 
         return redirect('back')->with('success', 'Profile has been saved');
     }

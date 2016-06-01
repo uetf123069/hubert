@@ -41,24 +41,20 @@
 							</a>
 						</li>
 						<li>
-							<a href="{{ route('provider.services.request') }}">
-								<i class="fa fa-columns"></i><span>Request Services</span><span class="badge badge-primary">8</span>
-							</a>
-						</li>
-						<li>
 							<a href="{{ route('provider.ongoing') }}">
 								<i class="fa fa-cog fa-spin"></i><span>OnGoing Service</span>
+							</a>
+						</li>
+
+						<li class="nav-separator">Account</li>
+						<li>
+							<a href="{{ route('provider.profile') }}">
+								<i class="fa fa-user"></i><span>Profile</span>
 							</a>
 						</li>
 						<li>
 							<a href="{{ route('provider.documents') }}">
 								<i class="fa fa-flask"></i><span>Documents</span>
-							</a>
-						</li>
-						<li class="nav-separator">Account</li>
-						<li>
-							<a href="{{ route('provider.profile') }}">
-								<i class="fa fa-user"></i><span>Profile</span>
 							</a>
 						</li>
 						<li>

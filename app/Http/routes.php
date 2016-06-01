@@ -305,12 +305,16 @@ Route::group(['prefix' => 'provider'], function(){
     Route::post('/profile', 'ProviderController@profile_save')->name('provider.profile.save');
 
 
+
     Route::post('/profile/password', 'ProviderController@password')->name('provider.password');
     Route::post('/change/state', 'ProviderController@change_state')->name('provider.change.state');
     Route::post('/update/location', 'ProviderController@update_location')->name('provider.update.location');
     Route::post('/upload/documents', 'ProviderController@upload_documents')->name('provider.upload.documents');
     Route::get('/document/{document_id}', 'ProviderController@delete_document')->name('provider.delete.document');
 
+    Route::get('/incoming_request', 'ProviderController@incoming_request')->name('provider.incoming.request');
+    Route::get('/request/accept', 'ProviderController@accept_request')->name('provider.request.accept');
+    Route::get('/request/decline', 'ProviderController@decline_request')->name('provider.request.decline');
 
 });
 

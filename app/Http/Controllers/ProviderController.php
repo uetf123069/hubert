@@ -88,10 +88,7 @@ class ProviderController extends Controller
             'device_token' => \Auth::guard('provider')->user()->device_token,
         ]);
 
-        $data = $this->ProviderApiController->details_save($request);
-        $ApiResponse = $data->getData();
-
-        // dd($ApiResponse->error_messages);
+        $ApiResponse = $this->ProviderApiController->details_save($request)->getData();
 
         if($ApiResponse->success == true){
             return back()->with('success', 'Profile has been saved');
@@ -114,10 +111,7 @@ class ProviderController extends Controller
             'device_token' => \Auth::guard('provider')->user()->device_token,
         ]);
 
-        $data = $this->ProviderApiController->changePassword($request);
-        $ApiResponse = $data->getData();
-
-        // dd($ApiResponse);
+        $ApiResponse = $this->ProviderApiController->changePassword($request)->getData();
 
         if($ApiResponse->success == true){
             return back()->with('success', 'Password Updated');
@@ -140,8 +134,7 @@ class ProviderController extends Controller
             'device_token' => \Auth::guard('provider')->user()->device_token,
         ]);
 
-        $data = $this->ProviderApiController->available_update($request);
-        $ApiResponse = $data->getData();
+        $ApiResponse = $this->ProviderApiController->available_update($request)->getData();
 
         return response()->json($ApiResponse);
     }
@@ -160,10 +153,7 @@ class ProviderController extends Controller
             'device_token' => \Auth::guard('provider')->user()->device_token,
         ]);
 
-        $data = $this->ProviderApiController->location_update($request);
-        $ApiResponse = $data->getData();
-
-        // dd($ApiResponse);
+        $ApiResponse = $this->ProviderApiController->location_update($request)->getData();
 
         if($ApiResponse->success == true){
             return back()->with('success', 'Location Updated');
@@ -238,7 +228,7 @@ class ProviderController extends Controller
             $provider = Provider::find(Auth::guard('provider')->user()->id);
             $provider->is_approved = 0;
             $provider->save();
-            
+
             return back()->with('success','your document Deleted! and please upload your new document');
         }else{
             return back()->with('error','something went wrong');
@@ -251,7 +241,7 @@ class ProviderController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function incoming_request()
+    public function incoming_request(Request $request)
     {
         $request->request->add([ 
             'id' => \Auth::guard('provider')->user()->id,
@@ -259,9 +249,45 @@ class ProviderController extends Controller
             'device_token' => \Auth::guard('provider')->user()->device_token,
         ]);
 
-        $data = $this->ProviderApiController->get_incoming_request($request);
-        $ApiResponse = $data->getData();
+        $ApiResponse = $this->ProviderApiController->get_incoming_request($request)->getData();
 
         return response()->json($ApiResponse);
+    }
+
+
+    public function accept_request(Request $request)
+    {
+        $request->request->add([ 
+            'id' => \Auth::guard('provider')->user()->id,
+            'token' => \Auth::guard('provider')->user()->token,
+            'device_token' => \Auth::guard('provider')->user()->device_token,
+        ]);
+
+        $ApiResponse = $this->ProviderApiController->service_accept($request)->getData();
+
+        if($ApiResponse->success == true){
+            return back()->with('success', 'New Request Accepted');
+        }elseif($ApiResponse->success == false){
+            return back()->with('error', 'Something Went Wrong');
+        }
+
+    }
+
+    public function decline_request(Request $request)
+    {
+        $request->request->add([ 
+            'id' => \Auth::guard('provider')->user()->id,
+            'token' => \Auth::guard('provider')->user()->token,
+            'device_token' => \Auth::guard('provider')->user()->device_token,
+        ]);
+
+        $ApiResponse = $this->ProviderApiController->service_reject($request)->getData();
+
+        if($ApiResponse->success == true){
+            return back()->with('success', 'Request Declined!');
+        }elseif($ApiResponse->success == false){
+            return back()->with('error', 'Something Went Wrong');
+        }
+
     }
 }
