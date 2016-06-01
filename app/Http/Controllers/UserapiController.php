@@ -147,6 +147,7 @@ class UserapiController extends Controller
                                 'email' => 'email|max:255',
                                 'mobile' => 'digits_between:6,13',
                                 'picture' => 'mimes:jpeg,jpg,bmp,png',
+                                'gender' => 'in:male,female,others',
                             )
                         );
 
@@ -242,8 +243,10 @@ class UserapiController extends Controller
                 $user->email = $email;
                 $user->mobile = $mobile!=NULL ? $mobile : '';
                 $user->password = $password!=NULL ? Hash::make($password) : '';
+                if($request->has('gender')) {
+                    $user->gender = $request->gender;
+                }
                 
-
                 $user->token = Helper::generate_token();
                 $user->token_expiry = Helper::generate_token_expiry();
                 $user->device_token = $device_token;
@@ -281,6 +284,7 @@ class UserapiController extends Controller
                     'first_name' => $user->first_name,
                     'last_name' => $user->last_name,
                     'mobile' => $user->mobile,
+                    'gender' => $user->gender,
                     'email' => $user->email,
                     'picture' => $user->picture,
                     'token' => $user->token,
@@ -416,6 +420,7 @@ class UserapiController extends Controller
                     'name' => $user->name,
                     'mobile' => $user->mobile,
                     'email' => $user->email,
+                    'gender' => $user->gender,
                     'picture' => $user->picture,
                     'token' => $user->token,
                     'token_expiry' => $user->token_expiry,
@@ -522,6 +527,7 @@ class UserapiController extends Controller
             'first_name' => $user->first_name,
             'last_name' => $user->last_name,
             'mobile' => $user->mobile,
+            'gender' => $user->gender,
             'email' => $user->email,
             'picture' => $user->picture,
             'token' => $user->token,
@@ -546,6 +552,7 @@ class UserapiController extends Controller
                 'email' => 'email|unique:users,email,'.$user_id.'|max:255',
                 'mobile' => 'required|digits_between:6,13',
                 'picture' => 'mimes:jpeg,bmp,png',
+                'gender' => 'in:male,female,others',
                 'device_token' => 'required',
             ));
 
@@ -567,13 +574,18 @@ class UserapiController extends Controller
 
             $user = User::find($user_id);
             $user->name = $name;
-            $user->email = $email;
+            if($request->has('email')) {
+                $user->email = $email;
+            }
             if ($mobile != "")
                 $user->mobile = $mobile;
             // Upload picture
             if ($picture != "") {
                 Helper::delete_picture($user->picture); // Delete the old pic
                 $user->picture = Helper::upload_picture($picture);
+            }
+            if($request->has('gender')) {
+                $user->gender = $request->gender;
             }
 
             // Generate new tokens
@@ -590,6 +602,7 @@ class UserapiController extends Controller
                 'first_name' => $user->first_name,
                 'last_name' => $user->last_name,
                 'mobile' => $user->mobile,
+                'gender' => $user->gender,
                 'email' => $user->email,
                 'picture' => $user->picture,
                 'token' => $user->token,
@@ -1193,6 +1206,37 @@ class UserapiController extends Controller
         return $response;
     }
 
+    public function waiting_request_cancel(Request $request) {
+
+        $get_requests = Requests::where('user_id' , $request->id)->where('status' , REQUEST_WAITING)->get();
+
+        if($get_requests) {
+            foreach ($get_requests as $key => $requests) {
+                $requests->status = REQUEST_CANCELLED;
+                $requests->save();
+
+                $requests_meta = RequestsMeta::where('request_id' , $requests->id);
+                $current_provider = $requests_meta->where('status' , DEFAULT_TRUE)->first()->provider_id;
+                if($provider = Provider::find($current_provider)) {
+                    $provider->waiting_to_respond = WAITING_TO_RESPOND_NORMAL;
+                    $provider->save();
+                }
+
+                $delete_request_meta = RequestsMeta::where('request_id' , $requests->id)->delete();
+
+                //Send notification to the provider
+                $title = "Request Cancel";
+                $message = "Request cancelled by user";
+                Helper::request_push_notification($current_provider,PROVIDER,$requests->id,$title,$message);
+            }
+        }
+
+        $response_array = array('success' => true);
+
+        return response()->json(Helper::null_safe($response_array) , 200);
+
+    }
+
     public function request_status_check(Request $request) {
 
         $check_status = array(REQUEST_COMPLETED,REQUEST_CANCELLED,REQUEST_NO_PROVIDER_AVAILABLE);
@@ -1703,7 +1747,7 @@ class UserapiController extends Controller
         return response()->json(Helper::null_safe($response_array) , 200);
     
     }
-
+    
     public function payment_mode_update(Request $request) {
         
         $validator = Validator::make($request->all() , 
@@ -1889,8 +1933,6 @@ class UserapiController extends Controller
         return response()->json(Helper::null_safe($response_array) , 200);
     
     }
-
-
 }
 
 

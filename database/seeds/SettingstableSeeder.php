@@ -1,8 +1,9 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use Illuminate\Database\Eloquent\Model;
 
-class SettingsSeeder extends Seeder
+class SettingstableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -11,7 +12,17 @@ class SettingsSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('settings')->insert([
+    	DB::table('settings')->delete();
+    	DB::table('settings')->insert([
+    		[
+		        'key' => 'site_name',
+		        'value' => 'Xuber'
+		    ],
+		    [
+		        'key' => 'site_logo',
+		        'value' => ''
+		    ],
+		    
 		    [
 		        'key' => 'provider_select_timeout',
 		        'value' => 60
@@ -36,6 +47,10 @@ class SettingsSeeder extends Seeder
 		        'key' => 'stripe_secret_key',
 		        'value' => ''
 		    ], 
+		     [
+		        'key' => 'stripe_publishable_key',
+		        'value' => ''
+		    ], 
 		    [
 		        'key' => 'cod',
 		        'value' => 1
@@ -47,6 +62,14 @@ class SettingsSeeder extends Seeder
 		    [
 		        'key' => 'card',
 		        'value' => 1
+		    ],
+		    [
+		        'key' => 'manual_request',
+		        'value' => 1
+		    ],  
+		    [
+		        'key' => 'paypal_email',
+		        'value' => ''
 		    ], 
 
 		]);

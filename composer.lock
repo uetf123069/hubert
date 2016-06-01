@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "41d2bb51670e1bd9ff269dc556cfe5ed",
+    "hash": "5bc18ce2abeb58d1da69c4955f810b62",
     "content-hash": "fe0b43c736707b3b7db288bbc9174d85",
     "packages": [
         {
@@ -525,16 +525,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v5.2.32",
+            "version": "v5.2.34",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "f688217113f70b01d0e127da9035195415812bef"
+                "reference": "6a26f3bb6a6e00c53654a661221643ad1b98e146"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/f688217113f70b01d0e127da9035195415812bef",
-                "reference": "f688217113f70b01d0e127da9035195415812bef",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/6a26f3bb6a6e00c53654a661221643ad1b98e146",
+                "reference": "6a26f3bb6a6e00c53654a661221643ad1b98e146",
                 "shasum": ""
             },
             "require": {
@@ -650,7 +650,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2016-05-17 13:24:40"
+            "time": "2016-05-26 21:59:46"
         },
         {
             "name": "league/flysystem",
@@ -1164,16 +1164,16 @@
         },
         {
             "name": "stripe/stripe-php",
-            "version": "v3.13.0",
+            "version": "v3.14.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stripe/stripe-php.git",
-                "reference": "7ba7ff9765e3ba530bf4801a8ffc841a1cc1f77d"
+                "reference": "ef3ad438156872a00890f2d590b8b415ed84dbab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/7ba7ff9765e3ba530bf4801a8ffc841a1cc1f77d",
-                "reference": "7ba7ff9765e3ba530bf4801a8ffc841a1cc1f77d",
+                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/ef3ad438156872a00890f2d590b8b415ed84dbab",
+                "reference": "ef3ad438156872a00890f2d590b8b415ed84dbab",
                 "shasum": ""
             },
             "require": {
@@ -1215,7 +1215,7 @@
                 "payment processing",
                 "stripe"
             ],
-            "time": "2016-05-04 22:02:14"
+            "time": "2016-05-25 22:54:42"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -2250,16 +2250,16 @@
         },
         {
             "name": "mockery/mockery",
-            "version": "0.9.4",
+            "version": "0.9.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/padraic/mockery.git",
-                "reference": "70bba85e4aabc9449626651f48b9018ede04f86b"
+                "reference": "4db079511a283e5aba1b3c2fb19037c645e70fc2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/padraic/mockery/zipball/70bba85e4aabc9449626651f48b9018ede04f86b",
-                "reference": "70bba85e4aabc9449626651f48b9018ede04f86b",
+                "url": "https://api.github.com/repos/padraic/mockery/zipball/4db079511a283e5aba1b3c2fb19037c645e70fc2",
+                "reference": "4db079511a283e5aba1b3c2fb19037c645e70fc2",
                 "shasum": ""
             },
             "require": {
@@ -2311,7 +2311,7 @@
                 "test double",
                 "testing"
             ],
-            "time": "2015-04-02 19:54:00"
+            "time": "2016-05-22 21:52:33"
         },
         {
             "name": "phpdocumentor/reflection-docblock",

@@ -11,10 +11,6 @@
 |
 */
 
-Route::get('/register', 'UserapiController@register');
-
-Route::get('/assign_next_provider_cron' , 'ApplicationController@assign_next_provider_cron');
-
 Route::group(['prefix' => 'userApi'], function(){
 
 	Route::post('/register','UserapiController@register');
@@ -51,7 +47,10 @@ Route::group(['prefix' => 'userApi'], function(){
 	// Manual request
 	Route::post('/manual_create_request', 'UserapiController@manual_create_request');
 
+
 	Route::post('/cancelRequest', 'UserapiController@cancel_request');
+
+	Route::post('/waitingRequestCancel' ,'UserapiController@waiting_request_cancel');
 
 	Route::post('/requestStatusCheck', 'UserapiController@request_status_check');
 
@@ -161,7 +160,17 @@ Route::group(['prefix' => 'admin'], function(){
 
     Route::get('/', 'AdminController@index')->name('admin.dashboard');
 
+    Route::get('/mapview', 'AdminController@mapview')->name('admin.mapmapview');
+
+    Route::get('/profile', 'AdminController@profile')->name('adminProfile');
+
+    Route::post('/profileProcess', 'AdminController@profileProcess')->name('adminProfileProcess');
+
     Route::get('/settings', 'AdminController@settings')->name('admin.settings');
+
+    Route::get('/payment', 'AdminController@payment')->name('adminPayment');
+
+    Route::post('/settingsProcess', 'AdminController@settingsProcess')->name('adminSettingProcess');
 
     //Documents
 
@@ -197,9 +206,11 @@ Route::group(['prefix' => 'admin'], function(){
 
     Route::get('/userReviewDelete/{id}', 'AdminController@deleteUserReviews')->name('adminUserReviewDelete');
 
-    Route::get('/payment', 'AdminController@settings')->name('admin.settings');
+    Route::get('/providerDocuments', 'AdminController@providerDocuments')->name('adminProviderDocument');
 
     Route::get('/requests', 'AdminController@requests')->name('adminRequests');
+
+    Route::get('/viewRequest/{id}', 'AdminController@ViewRequest')->name('adminViewRequest');
 
 
     //User Routes

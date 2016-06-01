@@ -103,6 +103,7 @@ class ProviderApiController extends Controller
 					'mobile' => 'required|digits_between:6,13',
 					'password' => 'required|min:6',
 					'picture' => 'mimes:jpeg,bmp,png',
+					'gender' => 'in:male,female,others',
 					'device_type' => 'required|in:'.DEVICE_ANDROID.','.DEVICE_IOS,
 					'device_token' => 'required'
 				));
@@ -140,6 +141,9 @@ class ProviderApiController extends Controller
 			$provider->email = $email;
 			$provider->mobile = $mobile;
 			$provider->password = Hash::make($password);
+			if($request->has('gender')) {
+				$provider->gender = $request->gender;
+			}
 			
 			// Temp purpose 
 
@@ -156,8 +160,6 @@ class ProviderApiController extends Controller
 			$provider->device_token = $device_token;
 			$provider->device_type = $device_type;
 
-			
-				
 			// Upload picture
 			if($request->hasFile('picture'))
 				$provider->picture = Helper::upload_picture($picture);
@@ -190,6 +192,7 @@ class ProviderApiController extends Controller
                 'first_name' => $provider->first_name,
                 'last_name' => $provider->last_name,
                 'mobile' => $provider->mobile,
+                'gender' => $provider->gender,
                 'email' => $provider->email,
                 'picture' => $provider->picture,
                 'token' => $provider->token,
@@ -255,6 +258,7 @@ class ProviderApiController extends Controller
                             'first_name' => $provider->first_name,
                             'last_name' => $provider->last_name,
                             'mobile' => $provider->mobile,
+                            'gender' => $provider->gender,
                             'email' => $provider->email,
                             'picture' => $provider->picture,
                             'token' => $provider->token,
@@ -434,8 +438,12 @@ class ProviderApiController extends Controller
 					'last_name' => 'required|max:255',
 					'mobile' => 'required|digits_between:6,13',
 					'picture' => 'mimes:jpeg,bmp,png',
-					'email' => 'required|email|max:255|unique:users,email'
-				));
+					'gender' => 'in:male,female,others',
+					'email' => 'email|max:255|unique:providers,email'
+				),
+				array(
+						'unique' => 'Email ID already exists',
+					));
 			
 		if ($validator->fails()) {
             $error_messages = implode(',', $validator->messages()->all());
@@ -465,15 +473,17 @@ class ProviderApiController extends Controller
 				$provider->mobile = $request->mobile;
 			}
 
+			if ($request->has('gender')) {
+				$provider->gender = $request->gender;
+			}
+
 			$picture = $request->file('picture');
 
 			// Upload picture
             if ($picture != ""){
 
                 //deleting old image if exists
-
                 Helper::delete_picture($provider->picture);
-
                 $provider->picture = Helper::upload_picture($picture);
             }
 
@@ -518,6 +528,7 @@ class ProviderApiController extends Controller
                 'mobile' => $provider->mobile,
                 'email' => $provider->email,
                 'picture' => $provider->picture,
+                'gender' => $provider->gender,
                 'token' => $provider->token,
                 'token_expiry' => $provider->token_expiry,
                 'service_type' => $service_type_id,
