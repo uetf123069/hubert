@@ -13,14 +13,23 @@
         <form class="form-horizontal" id="service_request_form" action="{{ route('user.services.request.submit') }}" method="POST">
             <input type="hidden" name="s_latitude" id="s_latitude"></input>
             <input type="hidden" name="s_longitude" id="s_longitude"></input>
+
             <div class="row">
-                <div class="col-md-10">
-                    <input id="pac-input" class="controls" type="text" placeholder="Enter a location" name="s_address">
+                <div class="col-md-6">
+                    <label for="service_type" class="control-label"><h5 style="margin-bottom: 0;">Select Service Type</h5></label>
+                    <select tabindex="1" name="service_type" id="service_type" class="form-control">
+                        <option disabled>Select Service Type</option>
+                        @foreach($ServiceTypes->services as $ServiceType)
+                        <option value="{{ $ServiceType->id }}">{{ $ServiceType->name }}</option>
+                        @endforeach
+                    </select>
                 </div>
-                <div class="col-md-2">
-                    <button class="btn btn-success controls" id="location-search">Search</button>
+                <div class="col-md-6">
+                    <label for="pac-input" class="control-label"><h5 style="margin-bottom: 0;">Search Location</h5></label>
+                    <input tabindex="2" id="pac-input" class="controls" type="text" placeholder="Enter a location" name="s_address">
                 </div>
             </div>
+
             <div class="row">
                 <div class="col-xs-12">
                     <div id="map"></div>
@@ -29,20 +38,8 @@
 
             <div class="row">
                 <div class="col-xs-12">
-                    <label for="service_type" class="control-label"><h5 style="margin-bottom: 0;">Select Service Type</h5></label>
-                    <select name="service_type" id="service_type" class="form-control">
-                        <option disabled>Select Service Type</option>
-                        @foreach($ServiceTypes->services as $ServiceType)
-                        <option value="{{ $ServiceType->id }}">{{ $ServiceType->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-xs-12">
                     <div class="panel-footer">
-                        <button class="btn-primary btn col-xs-4 col-xs-offset-4" id="submit_request">Submit Request</button>
+                        <a class="btn-primary btn col-xs-4 col-xs-offset-4" tabindex="3" id="submit_request">Submit Request</a>
                     </div>
                 </div>
             </div>
@@ -115,7 +112,6 @@
         autocomplete.addListener('place_changed', function(event) {
             marker.setVisible(false);
             var place = autocomplete.getPlace();
-            console.log(place);
 
             if (place.hasOwnProperty('place_id')) {
                 if (!place.geometry) {
@@ -128,7 +124,6 @@
                     query: place.name
                 }, function(results, status) {
                     if (status == google.maps.places.PlacesServiceStatus.OK) {
-                        console.log(results);
                         updateLocation(results[0].geometry.location);
                         input.value = results[0].formatted_address;
                     }
@@ -150,12 +145,20 @@
         }
 
         document.getElementById("service_request_form").addEventListener("submit", function(event){
-            event.preventDefault()
+            event.preventDefault();
             // alert("Was preventDefault() called: " + event.defaultPrevented);
         });
+
         document.getElementById("submit_request").addEventListener("click", function(event){
             document.getElementById("service_request_form").submit();
-            // alert("Was preventDefault() called: " + event.defaultPrevented);
+        });
+
+        document.getElementById("submit_request").addEventListener("keyup", function(event){
+            event.preventDefault();
+            if (event.which == 13 || event.keyCode == 13) {
+                document.getElementById("service_request_form").submit();
+                return false;
+            }
         });
 
     }
@@ -201,10 +204,6 @@
 
     #pac-input:focus {
         border-color: #4d90fe;
-    }
-
-    #location-search {
-        width: 100%;
     }
 
 </style>

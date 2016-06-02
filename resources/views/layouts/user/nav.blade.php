@@ -31,7 +31,7 @@
 						<li class="nav-separator">Services</li>
 						<li>
 							<a href="{{ route('user.services.list') }}">
-								<i class="fa fa-flask"></i><span>My Services</span>
+								<i class="fa fa-flask"></i><span>Service History</span>
 							</a>
 						</li>
 						<li>

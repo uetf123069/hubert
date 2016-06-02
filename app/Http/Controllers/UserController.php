@@ -93,7 +93,7 @@ class UserController extends Controller
             $response->message = "Your request has been posted. Waiting for provider to respond";
         } else {
             $response->success = false;
-            $response->message = $response->error;
+            $response->message = $response->error." ".$response->error_messages;
         }
 
         return back()->with('response', $response);
@@ -121,7 +121,7 @@ class UserController extends Controller
             $response->message = "Your request has been cancelled.";
         } else {
             $response->success = false;
-            $response->message = $response->error;
+            $response->message = $response->error." ".$response->error_messages;
         }
 
         return back()->with('response', $response);
@@ -160,9 +160,16 @@ class UserController extends Controller
             'device_token' => \Auth::user()->device_token,
         ]);
 
-        dd($request->all());
+        $response = $this->UserAPI->update_profile($request)->getData();
 
-        return redirect('back')->with('success', 'Profile has been saved');
+        if($response->success) {
+            $response->message = "Profile has been updated";
+        } else {
+            $response->success = false;
+            $response->message = $response->error." ".$response->error_messages;
+        }
+
+        return back()->with('response', $response);
     }
 
     /**
@@ -170,10 +177,24 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function profile_save_password()
+    public function profile_save_password(Request $request)
     {
-        return redirect('back')->with('success', 'Password has been updated');
-        // return view('user.profile');
+        $request->request->add([ 
+            'id' => \Auth::user()->id,
+            'token' => \Auth::user()->token,
+            'device_token' => \Auth::user()->device_token,
+        ]);
+
+        $response = $this->UserAPI->change_password($request)->getData();
+
+        if($response->success) {
+            $response->message = "Password has been updated. You can log in with the new password from next time.";
+        } else {
+            $response->success = false;
+            $response->message = $response->error." ".$response->error_messages;
+        }
+
+        return back()->with('response', $response);
     }
 
     public function test(Request $request)
