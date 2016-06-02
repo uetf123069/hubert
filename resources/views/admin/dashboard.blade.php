@@ -7,10 +7,10 @@
     <div class="col-md-3">
         <div>
             <div class="widget bg-white">
-                <div class="widget-icon bg-blue pull-left fa fa-microphone">
+                <div class="widget-icon bg-blue pull-left fa fa-users">
                 </div>
                 <div class="overflow-hidden">
-                    <span class="widget-title">8,372K</span>
+                    <span class="widget-title">{{$reg_users}}</span>
                     <span class="widget-subtitle">Registered users</span>
                 </div>
             </div>
@@ -18,16 +18,16 @@
                 <div class="widget-icon bg-danger pull-left fa fa-tint">
                 </div>
                 <div class="overflow-hidden">
-                    <span class="widget-title percent">86</span>
-                    <span class="widget-subtitle">Revenue increase</span>
+                    <span class="widget-title percent">{{$comp_req}}</span>
+                    <span class="widget-subtitle">Completed Requests</span>
                 </div>
             </div>
             <div class="widget bg-white">
                 <div class="widget-icon bg-success pull-left fa fa-paper-plane">
                 </div>
                 <div class="overflow-hidden">
-                    <span class="widget-title">7,355K</span>
-                    <span class="widget-subtitle">Pending orders</span>
+                    <span class="widget-title">0</span>
+                    <span class="widget-subtitle">Accepted Requests</span>
                 </div>
             </div>
         </div>

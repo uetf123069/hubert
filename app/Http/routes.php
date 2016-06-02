@@ -11,8 +11,6 @@
 |
 */
 
-Route::get('/register', 'UserapiController@register');
-
 Route::group(['prefix' => 'userApi'], function(){
 
 	Route::post('/register','UserapiController@register');
@@ -49,7 +47,10 @@ Route::group(['prefix' => 'userApi'], function(){
 	// Manual request
 	Route::post('/manual_create_request', 'UserapiController@manual_create_request');
 
+
 	Route::post('/cancelRequest', 'UserapiController@cancel_request');
+
+	Route::post('/waitingRequestCancel' ,'UserapiController@waiting_request_cancel');
 
 	Route::post('/requestStatusCheck', 'UserapiController@request_status_check');
 
@@ -144,9 +145,9 @@ Route::get('/assign_next_provider_cron' , 'ApplicationController@assign_next_pro
 
 Route::group(['prefix' => 'admin'], function(){
 
-    Route::get('login', 'Auth\AdminAuthController@showLoginForm');
-    Route::post('login', 'Auth\AdminAuthController@login');
-    Route::get('logout', 'Auth\AdminAuthController@logout');
+    Route::get('login', 'Auth\AdminAuthController@showLoginForm')->name('admin.login.form');
+    Route::post('login', 'Auth\AdminAuthController@login')->name('admin.login.post');
+    Route::get('logout', 'Auth\AdminAuthController@logout')->name('admin.logout');
 
     // Registration Routes...
     Route::get('register', 'Auth\AdminAuthController@showRegistrationForm');
@@ -159,7 +160,89 @@ Route::group(['prefix' => 'admin'], function(){
 
     Route::get('/', 'AdminController@index')->name('admin.dashboard');
 
+    Route::get('/mapview', 'AdminController@mapview')->name('admin.mapmapview');
+
+    Route::get('/profile', 'AdminController@profile')->name('adminProfile');
+
+    Route::post('/profileProcess', 'AdminController@profileProcess')->name('adminProfileProcess');
+
+    Route::get('/settings', 'AdminController@settings')->name('admin.settings');
+
+    Route::get('/payment', 'AdminController@payment')->name('adminPayment');
+
+    Route::post('/settingsProcess', 'AdminController@settingsProcess')->name('adminSettingProcess');
+
+    //Documents
+
+    Route::get('/documents', 'AdminController@documents')->name('adminDocuments');
+
+    Route::get('/adddocument', 'AdminController@adddocument')->name('adminAddDocument');
+
+    Route::post('/adddocumentProcess', 'AdminController@adddocumentProcess')->name('adminAddDocumentProcess');
+
+    Route::get('/editdocument/{id}', 'AdminController@editDocument')->name('adminDocumentEdit');
+
+    Route::get('/deletedocument/{id}', 'AdminController@deleteDocument')->name('adminDocumentDelete');
+
+    //Service Types
+
+    Route::get('/serviceTypes', 'AdminController@serviceTypes')->name('adminServices');
+
+    Route::get('/addServiceType', 'AdminController@addServiceType')->name('adminAddServices');
+
+    Route::post('/addServiceProcess', 'AdminController@addServiceProcess')->name('adminAddServiceProcess');
+
+    Route::get('/editService/{id}', 'AdminController@editService')->name('adminServiceEdit');
+
+    Route::get('/deleteService/{id}', 'AdminController@deleteService')->name('adminServiceDelete');
+
+    //Reviews & Ratings
+
+    Route::get('/userReviews', 'AdminController@userReviews')->name('adminUserReviews');
+
+    Route::get('/providerReviews', 'AdminController@providerReviews')->name('adminProviderReviews');
+
+    Route::get('/providerReviewDelete/{id}', 'AdminController@deleteProviderReviews')->name('adminProviderReviewDelete');
+
+    Route::get('/userReviewDelete/{id}', 'AdminController@deleteUserReviews')->name('adminUserReviewDelete');
+
+    Route::get('/providerDocuments', 'AdminController@providerDocuments')->name('adminProviderDocument');
+
+    Route::get('/requests', 'AdminController@requests')->name('adminRequests');
+
+    Route::get('/viewRequest/{id}', 'AdminController@ViewRequest')->name('adminViewRequest');
+
+
+    //User Routes
+    Route::get('/users', 'AdminController@users')->name('admin.user');
+
+    Route::get('/addUser', 'AdminController@addUser')->name('admin.adduser');
+
+    Route::get('/editUser/{id}', 'AdminController@editUser')->name('adminUserEdit');
+
+    Route::get('/deleteUser/{id}', 'AdminController@deleteUser')->name('adminUserDelete');
+
+    Route::get('/UserHistory/{id}', 'AdminController@UserHistory')->name('adminUserHistory');
+
+    Route::post('/addUserProcess', 'AdminController@addUserProcess')->name('admin.addUserProcess');
+
+    //Provider Routes
+    Route::get('/providers', 'AdminController@providers')->name('admin.provider');
+
+    Route::get('/addProvider', 'AdminController@addProvider')->name('admin.addprovider');
+
+    Route::get('/editProvider/{id}', 'AdminController@editProvider')->name('adminProviderEdit');
+
+    Route::get('/deleteProvider/{id}', 'AdminController@deleteProvider')->name('adminProviderDelete');
+
+    Route::get('/ProviderHistory/{id}', 'AdminController@ProviderHistory')->name('adminProviderHistory');
+
+    Route::post('/addProviderProcess', 'AdminController@addProviderProcess')->name('adminaddProviderProcess');
+
+    Route::get('/ProviderApprove/{id}/{status}', 'AdminController@ProviderApprove')->name('adminProviderApprove');
+
 });
+
 
 Route::group([], function(){
 
@@ -195,3 +278,46 @@ Route::group([], function(){
     Route::get('/test', 'UserController@test')->name('user.test');
 
 });
+
+
+Route::group(['prefix' => 'provider'], function(){
+
+    Route::get('login', 'Auth\ProviderAuthController@showLoginForm')->name('provider.login.form');
+    Route::post('login', 'Auth\ProviderAuthController@login')->name('provider.login.post');
+    Route::get('logout', 'Auth\ProviderAuthController@logout')->name('provider.logout');
+
+    // Registration Routes...
+    Route::get('register', 'Auth\ProviderAuthController@showRegistrationForm');
+    Route::post('register', 'Auth\ProviderAuthController@register');
+
+    // Password Reset Routes...
+    Route::get('password/reset/{token?}', 'Auth\ProviderPasswordController@showResetForm');
+    Route::post('password/email', 'Auth\ProviderPasswordController@sendResetLinkEmail');
+    Route::post('password/reset', 'Auth\ProviderPasswordController@reset');
+
+    Route::get('/', 'ProviderController@index')->name('provider.dashboard');
+
+    Route::get('/services', 'ProviderController@services')->name('provider.services.list');
+    Route::get('/ongoing', 'ProviderController@ongoing')->name('provider.ongoing');
+    Route::get('/documents', 'ProviderController@documents')->name('provider.documents');
+    Route::get('/request', 'ProviderController@request')->name('provider.services.request');
+    Route::get('/profile', 'ProviderController@profile')->name('provider.profile');
+    Route::post('/profile', 'ProviderController@profile_save')->name('provider.profile.save');
+
+
+
+    Route::post('/profile/password', 'ProviderController@password')->name('provider.password');
+    Route::post('/change/state', 'ProviderController@change_state')->name('provider.change.state');
+    Route::post('/update/location', 'ProviderController@update_location')->name('provider.update.location');
+    Route::post('/upload/documents', 'ProviderController@upload_documents')->name('provider.upload.documents');
+    Route::get('/document/{document_id}', 'ProviderController@delete_document')->name('provider.delete.document');
+
+    Route::get('/incoming_request', 'ProviderController@incoming_request')->name('provider.incoming.request');
+    Route::get('/request/accept', 'ProviderController@accept_request')->name('provider.request.accept');
+    Route::get('/request/decline', 'ProviderController@decline_request')->name('provider.request.decline');
+
+});
+
+
+
+

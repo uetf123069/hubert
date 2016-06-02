@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\User;
+use App\Admin;
 use Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
@@ -24,11 +24,23 @@ class AdminAuthController extends Controller
     use AuthenticatesAndRegistersUsers, ThrottlesLogins;
 
     /**
-     * Where to redirect users after login / registration.
+     * Where to redirect users after login / registration / logout.
      *
      * @var string
      */
     protected $redirectTo = '/admin';
+
+    protected $loginPath = '/admin/login';
+
+    protected $redirectAfterLogout = '/admin/login';
+
+    /**
+     * The guard to be used for validation.
+     *
+     * @var string
+     */
+
+    protected $guard = 'admin';
 
     /**
      * The Login form view that should be used.
@@ -66,7 +78,7 @@ class AdminAuthController extends Controller
     {
         return Validator::make($data, [
             'name' => 'required|max:255',
-            'email' => 'required|email|max:255|unique:users',
+            'email' => 'required|email|max:255|unique:admins',
             'password' => 'required|min:6|confirmed',
         ]);
     }
@@ -79,7 +91,7 @@ class AdminAuthController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
+        return Admin::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),

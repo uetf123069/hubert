@@ -3,15 +3,17 @@
 <head>
     
     <meta charset="utf-8">
-    <title>@yield('title') {{ Setting::get('site_name', 'Uber') }}</title>
-
-    <meta name="description" content="{{ Setting::get('site_name', 'Uber for Services') }}">
+    <title>@yield('title') {{ Setting::get('site_name', 'XUBER') }}</title>
+    
+    <meta name="description" content="{{ Setting::get('site_description', 'Uber for Services') }}">
     <meta name="viewport" content="width=device-width">
-    <link rel="shortcut icon" href="{{ Setting::get('site_name', asset('/favicon.ico') ) }}">
+    <link rel="shortcut icon" href="{{ Setting::get('site_icon', asset('/favicon.ico') ) }}">
 
     <!-- page level plugin styles -->
     <link rel="stylesheet" href="{{ asset('admin_assets/styles/climacons-font.css') }}">
     <link rel="stylesheet" href="{{ asset('vendor/rickshaw/rickshaw.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('vendor/datatables/media/css/jquery.dataTables.css') }}">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
     <!-- /page level plugin styles -->
 
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
@@ -70,6 +72,8 @@
     <script src="{{ asset('admin_assets/scripts/ui/toggle.js') }}"></script>
     <script src="{{ asset('admin_assets/scripts/urban-constants.js') }}"></script>
     <script src="{{ asset('admin_assets/scripts/extentions/lib.js') }}"></script>
+    <script src="{{ asset('admin_assets/scripts/jquery-1.12.3.min.js')}}"></script>
+    <script src="{{ asset('admin_assets/scripts/jquery.dataTables.min.js')}}"></script>
     <!-- endbuild -->
 
     <!-- page level scripts -->
