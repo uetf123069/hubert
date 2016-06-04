@@ -7,7 +7,12 @@
 @section('content')
 <div class="panel panel-default">
     <div class="panel-heading">
-        <h2>Select Service Location</h2>
+        <ul class="stepy-header" id="service-state">
+            <li class="stepy-active" id="wizard-head-0"><div>Step 1</div><span>Request</span></li>
+            <li class="" id="wizard-head-1"><div>Step 2</div><span>Waiting</span></li>
+            <li class="" id="wizard-head-2"><div>Step 3</div><span>Servicing</span></li>
+            <li class="" id="wizard-head-2"><div>Step 4</div><span>Review</span></li>
+        </ul>
     </div>
     <div class="panel-body">
         <form class="form-horizontal" id="service_request_form" action="{{ route('user.services.request.submit') }}" method="POST">
@@ -206,5 +211,9 @@
         border-color: #4d90fe;
     }
 
+    #service-state {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
 </style>
 @endsection

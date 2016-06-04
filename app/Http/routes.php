@@ -272,8 +272,10 @@ Route::group([], function(){
     Route::post('/profile/password', 'UserController@profile_save_password')->name('user.profile.password');
 
     Route::get('/payment', 'UserController@payment_form')->name('user.payment.form');
-    Route::post('/payment', 'UserController@payment_submit')->name('user.payment.form');
-    Route::delete('/payment', 'UserController@payment_submit')->name('user.payment.form');
+    Route::post('/payment', 'UserController@payment_card_add')->name('user.payment.card.add');
+    Route::patch('/payment', 'UserController@payment_card_def')->name('user.payment.card.def');
+    Route::delete('/payment', 'UserController@payment_card_del')->name('user.payment.card.del');
+    Route::post('/payment/paypal', 'UserController@payment_update_paypal')->name('user.payment.paypal');
 
     Route::get('/test', 'UserController@test')->name('user.test');
 

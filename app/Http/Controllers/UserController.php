@@ -111,11 +111,7 @@ class UserController extends Controller
             'token' => \Auth::user()->token,
         ]);
 
-        // dd($request->all());
-        
         $response = $this->UserAPI->cancel_request($request)->getData();
-
-        // dd($response);
 
         if($response->success) {
             $response->message = "Your request has been cancelled.";
@@ -132,9 +128,102 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function payment()
+    public function payment_form(Request $request)
     {
+        $request->request->add([ 
+            'id' => \Auth::user()->id,
+            'token' => \Auth::user()->token,
+        ]);
+
+        $PaymentMethods = $this->UserAPI->get_user_payment_modes($request)->getData();
+
+        $PaypalID = \Auth::user()->paypal_email;
+        
+        return view('user.payment', compact('PaymentMethods', 'PaypalID'));
+    }
+
+    /**
+     * Show the payment methods.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function payment_card_add(Request $request)
+    {
+        $request->request->add([ 
+            'id' => \Auth::user()->id,
+            'token' => \Auth::user()->token,
+        ]);
+
+        $PaymentMethods = $this->UserAPI->get_user_payment_modes($request)->getData();
+        
         return view('user.payment');
+    }
+
+    /**
+     * Show the payment methods.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function payment_card_def(Request $request)
+    {
+        $request->request->add([ 
+            'id' => \Auth::user()->id,
+            'token' => \Auth::user()->token,
+        ]);
+
+        $response = $this->UserAPI->default_card($request)->getData();
+        
+        if($response->success) {
+            $response->message = "Successfully made card as default";
+        } else {
+            $response->message = "Unknown error please try again later";
+        }
+
+        return back()->with('response', $response);
+    }
+
+    /**
+     * Show the payment methods.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function payment_card_del(Request $request)
+    {
+        $request->request->add([ 
+            'id' => \Auth::user()->id,
+            'token' => \Auth::user()->token,
+        ]);
+
+        $response = $this->UserAPI->delete_card($request)->getData();
+        
+        if($response->success) {
+            $response->message = "Successfully made card as default";
+        } else {
+            $response->message = "Unknown error please try again later";
+        }
+
+        return back()->with('response', $response);
+    }
+
+    /**
+     * Show the payment methods.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function payment_update_paypal(Request $request)
+    {
+        $this->validate($request, [
+                'paypal_email' => 'email',
+            ]);
+
+        \Auth::user()->paypal_email = $request->paypal_email;
+        \Auth::user()->save();
+
+        $response = response()->json([]);
+        $response->success = true;
+        $response->message = 'Paypal Account has been successfully updated.';
+
+        return back()->with('response', $response);
     }
 
     /**

@@ -46,7 +46,7 @@
 							</a>
 						</li>
 						<li>
-							<a href="{{ route('user.profile.form') }}">
+							<a href="{{ route('user.payment.form') }}">
 								<i class="fa fa-user"></i><span>Payment History</span>
 							</a>
 						</li>

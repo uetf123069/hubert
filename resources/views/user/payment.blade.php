@@ -6,18 +6,74 @@
 
 @section('content')
 <div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-default" data-widget='{"draggable": "false"}'>
+                <div class="panel-heading">
+                    <h2>Saved Cards</h2>
+                </div>
+                <div class="panel-body">
+                    @foreach($PaymentMethods->card as $Method)
+                        <div class="row">
+                            <div class="col-xs-9 text-center">
+                                <h4>xxxx-xxxx-xxxx-{{ $Method->last_four }}</h4>
+                            </div>
+                            <div class="col-xs-3">
+                                <h4>
+                                    <ul class="demo-btns">
+                                        @if($Method->is_default)
+                                        <li><button class="btn btn-success disabled"><i class="fa fa-check"></i></button></li>
+                                        @else
+                                        <li>
+                                            <form action="{{ route('user.payment.card.def') }}" method="POST">
+                                                <input type="hidden" name="_method" value="PATCH">
+                                                <input type="hidden" name="card_id" value="{{ $Method->id }}">
+                                                <button class="btn btn-success"><i class="fa fa-check"></i></button>
+                                            </form>
+                                        </li>
+                                        <li>
+                                            <form action="{{ route('user.payment.card.del') }}" method="POST">
+                                                <input type="hidden" name="_method" value="DELETE">
+                                                <input type="hidden" name="card_id" value="{{ $Method->id }}">
+                                                <button class="btn btn-danger"><i class="fa fa-times"></i></button>
+                                            </form>
+                                        </li>
+                                        @endif
+                                    </ul>
+                                </h4>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-default" data-widget='{"draggable": "false"}'>
+                <div class="panel-heading">
+                    <h2>Paypal</h2>
+                </div>
+                <div class="panel-body">
+                    <form action="{{ route('user.payment.paypal') }}" class="form-horizontal card" method="POST">
+                        <div class="form-group">
+                            <label for="#" class="col-sm-3 control-label">Paypal Mail ID</label>   
+                            <div class="col-sm-9">
+                                <input placeholder="Paypal Mail ID" type="text" name="paypal_email" class="form-control" value="{{ $PaypalID }}">
+                            </div>
+                        </div>
+                        <div class="panel-footer">
+                            <div class="row">
+                                <button class="btn-primary btn col-sm-4 col-sm-offset-4">Submit</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="panel panel-default" data-widget='{"draggable": "false"}'>
         <div class="panel-heading">
-            <h2>Card</h2>
-                <div class="panel-ctrls"
-                    data-actions-container="" 
-                    data-action-collapse='{"target": ".panel-body"}'
-                    data-action-expand=''
-                    data-action-colorpicker=''
-                >
-                </div>
+            <h2>Add Card</h2>
         </div>
-        <div class="panel-editbox" data-widget-controls=""></div>
         <div class="panel-body">
             <div class="row">
                 <div class="col-sm-6" id="card-payment">
@@ -51,6 +107,9 @@
                 <div class="col-sm-6">
                     <div class="card-wrapper"></div>
                 </div>
+            </div>
+            <div class="panel-footer">
+                <button class="btn-primary btn col-sm-4 col-sm-offset-4">Submit</button>
             </div>
         </div>
     </div>
