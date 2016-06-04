@@ -55,7 +55,6 @@
                             <h1>@yield('page_title')</h1>
                         </div>
                         @include('layouts.provider.message')
-<a data-toggle="modal" href="#myModal" class="btn btn-primary btn-lg">Launch demo modal</a>
                         
                         @yield('page_tabs')
                         <div class="container-fluid">

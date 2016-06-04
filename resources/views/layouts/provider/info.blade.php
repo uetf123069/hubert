@@ -32,7 +32,7 @@
 						<ul class="recent-activities">
 							<li>
 								<div class="avatar">
-									<img src="http://placehold.it/300&text=Placeholder" class="img-responsive img-circle">
+									<img src="{{ asset('logo.png') }}" class="img-responsive img-circle">
 								</div>
 								<div class="content">
 									<span class="msg"><a href="#" class="person">Jean Alanis</a> invited 3 unconfirmed members</span>
@@ -42,7 +42,7 @@
 							</li>
 							<li>
 								<div class="avatar">
-									<img src="http://placehold.it/300&text=Placeholder" class="img-responsive img-circle">
+									<img src="{{ asset('logo.png') }}" class="img-responsive img-circle">
 								</div>
 								<div class="content">
 									<span class="msg"><a href="#" class="person">Anthony Ware</a> is now following you</span>
@@ -52,7 +52,7 @@
 							</li>
 							<li>
 								<div class="avatar">
-									<img src="http://placehold.it/300&text=Placeholder" class="img-responsive img-circle">
+									<img src="{{ asset('logo.png') }}" class="img-responsive img-circle">
 								</div>
 								<div class="content">
 									<span class="msg"><a href="#" class="person">Bruce Ory</a> commented on <a href="#">Dashboard UI</a></span>
@@ -61,7 +61,7 @@
 							</li>
 							<li>
 								<div class="avatar">
-									<img src="http://placehold.it/300&text=Placeholder" class="img-responsive img-circle">
+									<img src="{{ asset('logo.png') }}" class="img-responsive img-circle">
 								</div>
 								<div class="content">
 									<span class="msg"><a href="#" class="person">Roxann Hollingworth</a>is now following you</span>
@@ -127,22 +127,22 @@
 					<div class="widget-body">
 						<ul class="contact-list">
 							<li id="contact-1">
-								<a href="javascript:;"><img src="http://placehold.it/300&text=Placeholder" alt=""><span>Jeremy Potter</span></a>
+								<a href="javascript:;"><img src="{{ asset('logo.png') }}" alt=""><span>Jeremy Potter</span></a>
 							</li>
 							<li id="contact-2">
-								<a href="javascript:;"><img src="http://placehold.it/300&text=Placeholder" alt=""><span>David Tennant</span></a>
+								<a href="javascript:;"><img src="{{ asset('logo.png') }}" alt=""><span>David Tennant</span></a>
 							</li>
 							<li id="contact-3">
-								<a href="javascript:;"><img src="http://placehold.it/300&text=Placeholder" alt=""><span>Anna Johansson</span></a>
+								<a href="javascript:;"><img src="{{ asset('logo.png') }}" alt=""><span>Anna Johansson</span></a>
 							</li>
 							<li id="contact-4">
-								<a href="javascript:;"><img src="http://placehold.it/300&text=Placeholder" alt=""><span>Alan Doyle</span></a>
+								<a href="javascript:;"><img src="{{ asset('logo.png') }}" alt=""><span>Alan Doyle</span></a>
 							</li>
 							<li id="contact-5">
-								<a href="javascript:;"><img src="http://placehold.it/300&text=Placeholder" alt=""><span>Simon Corbett</span></a>
+								<a href="javascript:;"><img src="{{ asset('logo.png') }}" alt=""><span>Simon Corbett</span></a>
 							</li>
 							<li id="contact-6">
-								<a href="javascript:;"><img src="http://placehold.it/300&text=Placeholder" alt=""><span>Polly Paton</span></a>
+								<a href="javascript:;"><img src="{{ asset('logo.png') }}" alt=""><span>Polly Paton</span></a>
 							</li>
 						</ul>
 						<a href="#" class="more">See All</a>
