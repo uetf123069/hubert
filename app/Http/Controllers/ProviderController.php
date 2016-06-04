@@ -88,7 +88,7 @@ class ProviderController extends Controller
             'device_token' => \Auth::guard('provider')->user()->device_token,
         ]);
 
-        $ApiResponse = $this->ProviderApiController->details_save($request)->getData();
+        $ApiResponse = $this->ProviderApiController->update_profile($request)->getData();
 
         if($ApiResponse->success == true){
             return back()->with('success', 'Profile has been saved');
@@ -167,9 +167,21 @@ class ProviderController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function ongoing()
+    public function ongoing(Request $request)
     {
-        return view('provider.ongoing');
+        $request->request->add([ 
+            'id' => \Auth::guard('provider')->user()->id,
+            'token' => \Auth::guard('provider')->user()->token,
+            'device_token' => \Auth::guard('provider')->user()->device_token,
+        ]);
+
+        $ApiResponse = $this->ProviderApiController->request_status_check($request)->getData();
+
+        if($ApiResponse->success == true){
+            return view('provider.ongoing')->with('request_data',$ApiResponse->data);
+        }elseif($ApiResponse->success == false){
+            return view('provider.ongoing')->with('error', 'Something Went Wrong');
+        }
     }
 
     /**
@@ -254,7 +266,11 @@ class ProviderController extends Controller
         return response()->json($ApiResponse);
     }
 
-
+    /**
+     * Accept request.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function accept_request(Request $request)
     {
         $request->request->add([ 
@@ -266,13 +282,18 @@ class ProviderController extends Controller
         $ApiResponse = $this->ProviderApiController->service_accept($request)->getData();
 
         if($ApiResponse->success == true){
-            return back()->with('success', 'New Request Accepted');
+            return redirect(route('provider.ongoing'))->with('success', 'New Request Accepted');
         }elseif($ApiResponse->success == false){
             return back()->with('error', 'Something Went Wrong');
         }
 
     }
 
+    /**
+     * Decline request.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function decline_request(Request $request)
     {
         $request->request->add([ 
@@ -284,10 +305,65 @@ class ProviderController extends Controller
         $ApiResponse = $this->ProviderApiController->service_reject($request)->getData();
 
         if($ApiResponse->success == true){
-            return back()->with('success', 'Request Declined!');
+            return redirect(route('provider.ongoing'))->with('success', 'Request Declined!');
         }elseif($ApiResponse->success == false){
             return back()->with('error', 'Something Went Wrong');
         }
 
+    }
+
+    /**
+     * switch provider action.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function switch_state(Request $request)
+    {
+        $ApiResponse = '';
+
+        $request->request->add([ 
+            'id' => \Auth::guard('provider')->user()->id,
+            'token' => \Auth::guard('provider')->user()->token,
+            'device_token' => \Auth::guard('provider')->user()->device_token,
+        ]);
+
+        switch ($request->type) {
+            case "STARTED":
+                $ApiResponse = $this->ProviderApiController->providerstarted($request)->getData();
+                break;
+            case "ARRIVED":
+                $ApiResponse = $this->ProviderApiController->arrived($request)->getData();
+                break;
+            case "SERVICE_STARTED":
+                $ApiResponse = $this->ProviderApiController->servicestarted($request)->getData();
+                break;
+            case "SERVICE_COMPLETED":
+                $ApiResponse = $this->ProviderApiController->servicecompleted($request)->getData();
+                break;
+            default:
+                return back()->with('error','something went wrong');
+        }
+
+        if($ApiResponse->success == true){
+            return redirect(route('provider.ongoing'))->with('success', 'YOU ARE '.$request->type);
+        }elseif($ApiResponse->success == false){
+            return back()->with('error', 'Something Went Wrong');
+        }
+    }
+
+    /**
+     * submit review.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function submit_review(Request $request)
+    {
+        dd($request->all());
+
+        $request->request->add([ 
+            'id' => \Auth::guard('provider')->user()->id,
+            'token' => \Auth::guard('provider')->user()->token,
+            'device_token' => \Auth::guard('provider')->user()->device_token,
+        ]);
     }
 }

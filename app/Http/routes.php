@@ -317,6 +317,9 @@ Route::group(['prefix' => 'provider'], function(){
     Route::get('/incoming_request', 'ProviderController@incoming_request')->name('provider.incoming.request');
     Route::get('/request/accept', 'ProviderController@accept_request')->name('provider.request.accept');
     Route::get('/request/decline', 'ProviderController@decline_request')->name('provider.request.decline');
+    Route::post('/switch/state', 'ProviderController@switch_state')->name('provider.switch.state');
+    Route::post('/submit/review', 'ProviderController@submit_review')->name('provider.submit.review');
+
 
 });
 
