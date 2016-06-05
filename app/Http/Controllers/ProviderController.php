@@ -46,16 +46,6 @@ class ProviderController extends Controller
     }
 
     /**
-     * Show the services list.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function services()
-    {
-        return view('provider.services');
-    }
-
-    /**
      * Show the request list.
      *
      * @return \Illuminate\Http\Response
@@ -358,12 +348,44 @@ class ProviderController extends Controller
      */
     public function submit_review(Request $request)
     {
-        dd($request->all());
 
         $request->request->add([ 
             'id' => \Auth::guard('provider')->user()->id,
             'token' => \Auth::guard('provider')->user()->token,
             'device_token' => \Auth::guard('provider')->user()->device_token,
         ]);
+
+        $ApiResponse = $this->ProviderApiController->rate_user($request)->getData();
+
+        if($ApiResponse->success == true){
+            return redirect(route('provider.ongoing'))->with('success', 'Service Completed!');
+        }elseif($ApiResponse->success == false){
+            return back()->with('error', 'Something Went Wrong');
+        }
+
+    }
+
+    /**
+     * service history.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function history(Request $request)
+    {
+
+        $request->request->add([ 
+            'id' => \Auth::guard('provider')->user()->id,
+            'token' => \Auth::guard('provider')->user()->token,
+            'device_token' => \Auth::guard('provider')->user()->device_token,
+        ]);
+
+        $ApiResponse = $this->ProviderApiController->history($request)->getData();
+
+        if($ApiResponse->success == true){
+            return view('provider.services')->with('requests',$ApiResponse->requests);
+        }elseif($ApiResponse->success == false){
+            return back()->with('error', 'Something Went Wrong');
+        }
+
     }
 }
