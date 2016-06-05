@@ -174,6 +174,8 @@
 <script type="text/javascript" src="{{ asset('assets/user/js/demo-switcher.js') }}"></script>
 <script type="text/javascript" src="{{ asset('assets/user/js/demo-index.js') }}"></script>
 <script type="text/javascript" src="{{ asset('assets/plugins/Ion.RangeSlider/js/ion-rangeSlider/ion.rangeSlider.min.js') }}"></script>
+
+@if(!empty($request_data))
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyALHyNTDk1K_lmcFoeDRsrCgeMGJW6mGsY&libraries=places&callback=initMap" async defer></script>
 <script type="text/javascript">
 $("#range-month").ionRangeSlider({
@@ -199,6 +201,7 @@ $("#range-month").ionRangeSlider({
 	}
 });
 </script>
+
 <script>
 
 function initMap() {
@@ -227,4 +230,5 @@ function initMap() {
 }
 
 </script>
+@endif
 @endsection
