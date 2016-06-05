@@ -69,6 +69,7 @@
 		<div class="panel panel-default">
 			<div class="panel-body">
 				<h3 style="text-align:center" class="mt0">Request Details</h3>
+
 				<div style="padding:30px">
                  <img style="margin:0 auto" src="{{$request_data[0]->user_picture ? $request_data[0]->user_picture : 'http://localhost:8000/logo.png'}}" class="img-responsive img-circle">
 					
@@ -173,6 +174,7 @@
 <script type="text/javascript" src="{{ asset('assets/user/js/demo-switcher.js') }}"></script>
 <script type="text/javascript" src="{{ asset('assets/user/js/demo-index.js') }}"></script>
 <script type="text/javascript" src="{{ asset('assets/plugins/Ion.RangeSlider/js/ion-rangeSlider/ion.rangeSlider.min.js') }}"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyALHyNTDk1K_lmcFoeDRsrCgeMGJW6mGsY&libraries=places&callback=initMap" async defer></script>
 <script type="text/javascript">
 $("#range-month").ionRangeSlider({
     values: [
@@ -188,13 +190,41 @@ $("#range-month").ionRangeSlider({
 	onChange: function(obj){
 		delete obj.input;
 	    delete obj.slider;
-	     console.log(JSON.stringify(obj));
+	     $("#rating_value").val(JSON.stringify(obj.fromNumber));
 	},
 	onLoad: function(obj) {
 	    delete obj.input;
 	    delete obj.slider;
-	    JSON.stringify(obj, "", 2);
+	    $("#rating_value").val(JSON.stringify(obj.fromNumber));
 	}
 });
+</script>
+<script>
+
+function initMap() {
+        var myLatLng = {lat: {{$request_data[0]->s_latitude}}, lng: {{$request_data[0]->s_longitude}}};
+
+        var map = new google.maps.Map(document.getElementById('user_location_map'), {
+          zoom: 16,
+          center: myLatLng
+        });
+
+        var marker = new google.maps.Marker({
+          position: myLatLng,
+          map: map,
+          title: 'service location!',
+			animation: google.maps.Animation.DROP,
+        });
+
+        var infowindow = new google.maps.InfoWindow({
+		    content: "Service Location"
+		});
+
+         google.maps.event.addListener(marker, 'mouseover', function () {
+		    infowindow.open(map, marker);
+		});
+		infowindow.open(map, marker);
+}
+
 </script>
 @endsection
