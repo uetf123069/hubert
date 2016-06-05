@@ -191,18 +191,17 @@
 							<div class="panel-body">
 								<div class="panel-header">
 									<div class="row">
-										<div class="col-sm-8 col-sm-offset-2">
-										<input type="text" class="form-control" name="my_address" id="my-dest"  placeholder="Search Place" style="margin-bottom:10px;width:65%;float:left;">
-											<button id="getCords" class="btn btn-success pull-right" onClick="codeAddress();">Go</button>
+										<div class="col-sm-12">
+										<input type="text" style="width:100%" class="form-control" name="my_address" id="my-dest"  placeholder="Search Place" style="margin-bottom:10px;width:65%;float:left;">
 
 										</div>
 
 									</div>
 								</div>
 
+			                        <div id="map" style="width:100%;height:400px;"></div>
 
 
-			                        <div id="map-dest" style="width:100%;height:300px;"></div>
 
 								<form action="{{ route('provider.update.location') }}" method="POST" class="form-horizontal row-border">
 
@@ -241,9 +240,9 @@
 
 @section('scripts')
 <script type="text/javascript" src="{{ asset('assets/user/js/application.js') }}"></script>
-<script type="text/javascript" src="{{ asset('assets/user/js/demo.js') }}"></script>
+<!-- <script type="text/javascript" src="{{ asset('assets/user/js/demo.js') }}"></script> -->
 <!-- <script type="text/javascript" src="{{ asset('assets/user/js/demo-switcher.js') }}"></script> -->
-<script type="text/javascript" src="{{ asset('assets/user/js/demo-index.js') }}"></script>
+<!-- <script type="text/javascript" src="{{ asset('assets/user/js/demo-index.js') }}"></script> -->
 <script type="text/javascript" src="{{ asset('assets/user/js/fileinput.js') }}"></script>
 
 <script type="text/javascript">
@@ -264,90 +263,69 @@ function change_availability(){
 			}
 
 }
+
 </script>
 
+<script type="text/javascript"
+  src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyALHyNTDk1K_lmcFoeDRsrCgeMGJW6mGsY&libraries=places">
+  </script>
 
-<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places"></script>
+<script>
+    	    var map;
+		    var center_point = new google.maps.LatLng(11.8508117,79.7854668);
+		    var input = document.getElementById('my-dest');
+		    var s_latitude = document.getElementById('latitude');
+		    var s_longitude = document.getElementById('longitude');
+		    var latitude_text = document.getElementById("latitude_text");
+		    var longitude_text = document.getElementById("longitude_text");
 
-        <script type="text/javascript">
-                var latitude_point = 0;
-                var longitude_point = 0;
-
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(successFunction);
-            } else {
-                alert('It seems like Geolocation, which is required for this page, is not enabled in your browser. Please use a browser which supports it.');
-            }
-
-                @if(Auth::guard('provider')->user()->latitude != 0)
-                	longitude_point = {{Auth::guard('provider')->user()->longitude}};
-                	latitude_point = {{Auth::guard('provider')->user()->latitude}};
-                @endif
-
-            function successFunction(position) {
-
-
-            	@if(Auth::guard('provider')->user()->latitude == 0)
-                	longitude_point = position.coords.longitude;
-                	latitude_point = position.coords.latitude;
-                @endif
-
-                document.getElementById('latitude').value = latitude_point;
-                document.getElementById('longitude').value = longitude_point;
-                init_map(latitude_point, longitude_point);
-
-            }
-
-        </script>
-
-<script type="text/javascript">
+		    @if(Auth::guard('provider')->user()->latitude != 0)
+		    	center_point = new google.maps.LatLng( {{Auth::guard('provider')->user()->latitude}}, {{Auth::guard('provider')->user()->longitude}});
+		    	latitude_text.innertext = {{Auth::guard('provider')->user()->latitude}};
+		    	longitude_text.innertext = {{Auth::guard('provider')->user()->longitude}};
+		    	s_latitude.value = {{Auth::guard('provider')->user()->latitude}};
+		    	s_longitude.value = {{Auth::guard('provider')->user()->longitude}};
+		    @endif
 
 
+    function initMap() {
 
-    // destination map script
+        map = new google.maps.Map(document.getElementById('map'), {
+            center: center_point,
+            zoom: 16
+        });
+        var service = new google.maps.places.PlacesService(map);
+        var autocomplete = new google.maps.places.Autocomplete(input);
+        var infowindow = new google.maps.InfoWindow();
 
-    function init_map(lati, lngi) {
-        var mapOptions = {
-            center: {lat: lati, lng: lngi},
-            zoom: 16,
-            scrollwheel: false,
-        };
-        var map = new google.maps.Map(document.getElementById('map-dest'),
-                mapOptions);
-        var myLatlng = new google.maps.LatLng(lati, lngi);
+        autocomplete.bindTo('bounds', map);
+
         var marker = new google.maps.Marker({
-            position: myLatlng,
             map: map,
-            title: 'You!',
-            animation: google.maps.Animation.DROP,
+            position: center_point,
             draggable: true,
+            anchorPoint: new google.maps.Point(0, -29)
         });
 
         var infowindow = new google.maps.InfoWindow({
-            content: "Point your Location"
+            content: "Point your location",
         });
-        google.maps.event.addListener(marker, 'click', function () {
+
+        google.maps.event.addListener(map, 'click', updateMarker);
+        
+        google.maps.event.addListener(marker, 'dragend', updateMarker);
+
+        function updateMarker(event) {
+
+            marker.setVisible(true);
+            marker.setPosition(event.latLng);
             infowindow.open(map, marker);
-            if (marker.getAnimation() != null) {
-                marker.setAnimation(null);
-            } else {
-                marker.setAnimation(google.maps.Animation.BOUNCE);
-            }
-        });
-        infowindow.open(map, marker);
 
-        google.maps.event.addListener(marker, 'dragend', function () {
-            // updating the marker position
-            var latLng2 = marker.getPosition();
             var geocoder = new google.maps.Geocoder();
-            document.getElementById("latitude").value = latLng2.lat();
-            document.getElementById("longitude").value = latLng2.lng();
-
-            var latlngplace = new google.maps.LatLng(latLng2.lat(), latLng2.lng());
-            geocoder.geocode({'latLng': latlngplace}, function (results, status) {
+            geocoder.geocode({'latLng': event.latLng}, function (results, status) {
                 if (status == google.maps.GeocoderStatus.OK) {
-                    if (results[1]) {
-                        document.getElementById("my-dest").value = results[1].formatted_address;
+                    if (results[0]) {
+                        input.value = results[0].formatted_address;
                     } else {
                         alert('No Address Found');
                     }
@@ -356,61 +334,54 @@ function change_availability(){
                 }
             });
 
+            updateForm(event.latLng.lat(), event.latLng.lng());
+        }
+
+        autocomplete.addListener('place_changed', function(event) {
+            marker.setVisible(false);
+            var place = autocomplete.getPlace();
+
+            if (place.hasOwnProperty('place_id')) {
+                if (!place.geometry) {
+                    window.alert("Autocomplete's returned place contains no geometry");
+                    return;
+                }
+                updateLocation(place.geometry.location);
+            } else {
+                service.textSearch({
+                    query: place.name
+                }, function(results, status) {
+                    if (status == google.maps.places.PlacesServiceStatus.OK) {
+                        updateLocation(results[0].geometry.location);
+                        input.value = results[0].formatted_address;
+                    }
+                });
+            }
         });
 
+        function updateLocation(location) {
+            map.setCenter(location);
+            marker.setPosition(location);
+            marker.setVisible(true);
+            infowindow.open(map, marker);
+            updateForm(location.lat(), location.lng());
+        }
+
+        function updateForm(lat, lng) {
+            s_latitude.value = lat;
+            s_longitude.value = lng;
+            latitude_text.textContent = lat;
+            longitude_text.textContent = lng;
+        }
 
     }
-    google.maps.event.addDomListener(window, 'load', init_map);
+
+setTimeout(function() { initMap() },2000);
+
 
 </script>
 
 
-<script type="text/javascript">
-	function initialize() {
 
-    var dest = (document.getElementById('my-dest'));
-    var autocomplete = new google.maps.places.Autocomplete(dest);
-    autocomplete.setTypes(['geocode']);
-    google.maps.event.addListener(autocomplete, 'place_changed', function () {
-        var place = autocomplete.getPlace();
-        if (!place.geometry) {
-            return;
-        }
-
-
-        var address2 = '';
-        if (place.address_components) {
-            address2 = [
-                (place.address_components[0] && place.address_components[0].short_name || ''),
-                (place.address_components[1] && place.address_components[1].short_name || ''),
-                (place.address_components[2] && place.address_components[2].short_name || '')
-            ].join(' ');
-        }
-    });
-}
-
-function codeAddress(id) {
-    geocoder = new google.maps.Geocoder();
-
-        var address = document.getElementById("my-dest").value;
-        geocoder.geocode({'address': address}, function (results, status) {
-            if (status == google.maps.GeocoderStatus.OK) {
-                document.getElementById('latitude').value = results[0].geometry.location.lat();
-                document.getElementById('longitude').value = results[0].geometry.location.lng();
-                document.getElementById('latitude_text').innerHTML = results[0].geometry.location.lat().toFixed(4);
-                document.getElementById('longitude_text').innerHTML = results[0].geometry.location.lng().toFixed(4);
-                
-                init_map(results[0].geometry.location.lat(), results[0].geometry.location.lng());
-            }
-
-            else {
-                //alert("Geocode was not successful for the following reason: " + status);
-            }
-        });
-}
-
-
-google.maps.event.addDomListener(window, 'load', initialize);
-</script>
 
 @endsection
