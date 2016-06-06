@@ -1199,8 +1199,9 @@ class UserapiController extends Controller
         $requests = Requests::where('requests.user_id', '=', $request->id)
                             ->whereNotIn('requests.status', $check_status)
                             ->leftJoin('users', 'users.id', '=', 'requests.user_id')
+                            ->leftJoin('providers', 'providers.id', '=', 'requests.confirmed_provider')
                             ->leftJoin('service_types', 'service_types.id', '=', 'requests.request_type')
-                            ->select('requests.id as request_id', 'requests.request_type as request_type', 'service_types.name as service_type_name', 'request_start_time as request_start_time', 'requests.status','requests.confirmed_provider as provider_id', 'requests.provider_status', 'requests.amount', DB::raw('CONCAT(users.first_name, " ", users.last_name) as user_name'), 'users.picture as user_picture', 'users.id as user_id','requests.s_latitude', 'requests.s_longitude')
+                            ->select('requests.id as request_id', 'requests.request_type as request_type', 'service_types.name as service_type_name', 'request_start_time as request_start_time', 'requests.status','providers.id as provider_id', DB::raw('CONCAT(providers.first_name, " ", providers.last_name) as provider_name'),'providers.picture as provider_picture','requests.provider_status', 'requests.amount', DB::raw('CONCAT(users.first_name, " ", users.last_name) as user_name'), 'users.picture as user_picture', 'users.id as user_id','requests.s_latitude', 'requests.s_longitude')
                             ->get()->toArray();
 
         $requests_data = array();
@@ -1210,7 +1211,7 @@ class UserapiController extends Controller
             foreach ($requests as  $req) {
 
                 $req['rating'] = DB::table('user_ratings')->where('provider_id', $req['provider_id'])->avg('rating') ?: 0;
-                unset($req['provider_id']);
+                // unset($req['provider_id']);
                 $requests_data[] = $req;
 
                 $allowed_status = array(REQUEST_COMPLETE_PENDING,REQUEST_COMPLETED,REQUEST_RATING);

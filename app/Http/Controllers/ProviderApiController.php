@@ -1176,7 +1176,7 @@ class ProviderApiController extends Controller
 
 	            // Send invoice notification to the user and provider
                 $subject = Helper::tr('request_completed_invoice');
-                $email = Helper::get_emails(3,$request->id,$requests->confirmed_provider);
+                $email = Helper::get_emails(3,$requests->user_id,$requests->confirmed_provider);
                 $page = "emails.provider.invoice";
                 $email_send = Helper::send_email($page,$subject,$user->email,$invoice_data);
 
