@@ -69,6 +69,24 @@
                             </div>
                         </div>
 
+                         <div class="form-group{{ $errors->has('service_type') ? ' has-error' : '' }}">
+                            <label class="col-md-4 control-label">Service Type</label>
+
+                            <div class="col-md-8">
+                            <select class="form-control" name="service_type">
+                                <option value="">Select Service Type</option>
+                                @foreach(get_all_service_types() as $type)
+                                <option value="{{$type->id}}">{{$type->name}}</option>
+                                @endforeach
+                            </select>
+                                @if ($errors->has('service_type'))
+                                    <span class="help-block">
+                                        <strong>{{ $errors->first('service_type') }}</strong>
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+
                         <div class="panel-footer">
                             <div class="clearfix">
                                 <a href="{{ url('provider/login') }}" class="btn btn-default pull-left">Already Registered? Login</a>

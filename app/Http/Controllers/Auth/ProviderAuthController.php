@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Provider;
+use App\ProviderService;
 use Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
@@ -82,6 +83,7 @@ class ProviderAuthController extends Controller
             'name' => 'required|max:255',
             'email' => 'required|email|max:255|unique:providers',
             'password' => 'required|min:6|confirmed',
+            'service_type' => 'required'
         ]);
     }
 
@@ -93,10 +95,18 @@ class ProviderAuthController extends Controller
      */
     protected function create(array $data)
     {
-        return Provider::create([
+        $provider = Provider::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
         ]);
+
+        ProviderService::create([
+            'provider_id' => $provider['attributes']['id'],
+            'is_available' => 1,
+            'service_type_id' => $data['service_type']
+            ]);
+
+        return $provider;
     }
 }
