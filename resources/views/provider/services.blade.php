@@ -26,6 +26,7 @@
 							<th>Request #ID</th>
 							<th>Username</th>
 							<th>Total</th>
+							<th>Service Type</th>
 							<th>Dated On</th>
 						</tr>
 					</thead>
@@ -36,6 +37,7 @@
 
 							<td>{{ $request->user_name }}</td>
 							<td>{{$request->total ? $request->total : 0 }}</td>
+							<td>{{get_service_name($request->request_type)}}</td>
 							<td class="center">{{date('d M, Y',strtotime($request->date))}}</td>
 						</tr>
 					@endforeach

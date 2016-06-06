@@ -8,6 +8,10 @@ use App\ProviderDocument;
 
 use App\Helpers\Helper;
 
+use App\Requests;
+
+use Carbon\Carbon;
+
 
 function get_service_name($id)
 {
@@ -65,4 +69,22 @@ function get_user_request_status($id)
 	];
 
 	return $status[$id];
+}
+
+function get_provider_requests($provider_id)
+{
+	$request_count = Requests::where('confirmed_provider',$provider_id)->count();
+	return $request_count;
+}
+
+function get_provider_request_this_month($provider_id)
+{
+	$req_count = Requests::where('confirmed_provider',$provider_id)->where('created_at', '>=', \Carbon\Carbon::now()->subMonths(1))->count();
+	return $req_count;
+}
+
+function get_provider_completed_request($provider_id)
+{
+	$request_count = Requests::where('confirmed_provider',$provider_id)->where('provider_status',6)->count();
+	return $request_count;
 }
