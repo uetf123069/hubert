@@ -88,3 +88,8 @@ function get_provider_completed_request($provider_id)
 	$request_count = Requests::where('confirmed_provider',$provider_id)->where('provider_status',6)->count();
 	return $request_count;
 }
+
+function get_all_service_types()
+{
+	return ServiceType::all();
+}
