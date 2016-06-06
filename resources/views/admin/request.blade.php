@@ -35,7 +35,7 @@
               <tbody>
               @foreach($requests as $index => $requestss)
               <tr>
-                  <td>{{$requestss->id}}</td>
+                  <td>{{$index + 1}}</td>
                   <td>{{$requestss->user_first_name . " " . $requestss->user_last_name}}</td>
                   <td>@if($requestss->confirmed_provider){{$requestss->provider_first_name . " " . $requestss->provider_last_name}} @endif</td>
                   <td>{{$requestss->date}}</td>

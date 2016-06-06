@@ -21,7 +21,7 @@
                     </div>
                   </div>
 
-                  <!-- <div class="form-group">
+                  <div class="form-group">
                     <label class="col-sm-2 control-label">Site Logo</label>
                     <div class="col-sm-10">
                     @if(isset($setting[1]['value']))
@@ -30,7 +30,7 @@
                       <input name="picture" type="file">
                       <p class="help-block">Upload only .png, .jpg or .jpeg image files only</p>
                     </div>
-                  </div> -->
+                  </div>
 
                   <div class="form-group">
                     <label class="col-sm-2 control-label">Provider Timeout</label>

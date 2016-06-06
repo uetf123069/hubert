@@ -17,7 +17,7 @@
                   <th>ID</th>
                   <th>Name</th>
                   <th>Email</th>
-                  <th>Phone</th>
+                  <!-- <th>Phone</th> -->
                   <th>Total Requests</th>
                   <th>Accepted Requests</th>
                   <th>Availability</th>
@@ -26,12 +26,12 @@
                   </tr>
               </thead>
               <tbody>
-              @foreach($providers as $provider)
+              @foreach($providers as $index => $provider)
               <tr>
-                  <td>{{$provider->id}}</td>
+                  <td>{{$index + 1}}</td>
                   <td>{{$provider->first_name}}</td>
                   <td>{{$provider->email}}</td>
-                  <td>{{$provider->mobile}}</td>
+                  <!-- <td>{{$provider->mobile}}</td> -->
                   <td>{{$provider->total_requests}}</td>
                   <td>{{$provider->accepted_requests}}</td>
                   <td>@if($provider->is_available==1) Yes @else N/A @endif</td>
@@ -54,7 +54,7 @@
                             @endif
                             </li>
                             <li>
-                              <a href="{{route('adminProviderDelete', array('id' => $provider->id))}}">Delete</a>
+                              <a onclick="return confirm('Are you sure want to Delete?')" href="{{route('adminProviderDelete', array('id' => $provider->id))}}">Delete</a>
                             </li>
                             <li>
                               <a href="{{route('adminProviderHistory', array('id' => $provider->id))}}">View History</a>

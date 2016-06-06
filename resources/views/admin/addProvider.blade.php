@@ -24,14 +24,14 @@
                   <div class="form-group">
                     <label class="col-sm-2 control-label">First Name</label>
                     <div class="col-sm-10">
-                      <input type="text" name="first_name" value="{{ isset($provider->first_name) ? $provider->first_name : '' }}" required class="form-control">
+                      <input type="text" name="first_name" value="{{ isset($provider->first_name) ? $provider->first_name : old('first_name') }}" required class="form-control">
                     </div>
                   </div>
 
                   <div class="form-group">
                     <label class="col-sm-2 control-label">Last Name</label>
                     <div class="col-sm-10">
-                      <input type="text" name="last_name" value="{{ isset($provider->last_name) ? $provider->last_name : '' }}" required class="form-control">
+                      <input type="text" name="last_name" value="{{ isset($provider->last_name) ? $provider->last_name : old('last_name') }}" required class="form-control">
                     </div>
                   </div>
                  <input type="hidden" name="id" value="@if(isset($provider)) {{$provider->id}} @endif" />
@@ -57,21 +57,21 @@
                   <div class="form-group">
                     <label class="col-sm-2 control-label">Email</label>
                     <div class="col-sm-10">
-                      <input type="email" name="email" value="{{ isset($provider->email) ? $provider->email : '' }}" required class="form-control">
+                      <input type="email" name="email" value="{{ isset($provider->email) ? $provider->email : old('email') }}" required class="form-control">
                     </div>
                   </div>
 
                   <div class="form-group">
                     <label class="col-sm-2 control-label">Contact Number </label>
                     <div class="col-sm-10">
-                      <input type="number" name="mobile"  value="{{ isset($provider->mobile) ? $provider->mobile : '' }}" required class="form-control">
+                      <input type="number" name="mobile"  value="{{ isset($provider->mobile) ? $provider->mobile : old('mobile') }}" required class="form-control">
                     </div>
                   </div>
 
                   <div class="form-group">
                     <label class="col-sm-2 control-label">Address</label>
                     <div class="col-sm-10">
-                      <textarea name="address" required class="form-control" rows="3">{{ isset($provider->address) ? $provider->address : '' }}</textarea>
+                      <textarea name="address" required class="form-control" rows="3">{{ isset($provider->address) ? $provider->address : old('address') }}</textarea>
                     </div>
                   </div>
 
@@ -89,7 +89,7 @@
                   <div class="form-group">
                     <label class="col-sm-2 control-label">Paypal Email</label>
                     <div class="col-sm-10">
-                      <input type="email" name="paypal_email" value="{{ isset($provider->paypal_email) ? $provider->paypal_email : '' }}" required class="form-control">
+                      <input type="email" name="paypal_email" value="{{ isset($provider->paypal_email) ? $provider->paypal_email : old('paypal_email') }}" required class="form-control">
                     </div>
                   </div>
 

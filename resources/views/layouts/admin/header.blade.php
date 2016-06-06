@@ -13,7 +13,7 @@
 
         <!-- logo -->
         <div class="brand-logo">
-            <img src="{{ asset('logo.png') }}" height="15" alt="">
+            <img src="{{ Setting::get('site_logo', asset('logo.png')) }}" height="15" alt="">
         </div>
         <!-- /logo -->
 
@@ -31,7 +31,7 @@
     <ul class="nav navbar-nav hidden-xs">
         <li>
             <p class="navbar-text">
-                XUBER
+                {{ Setting::get('site_name', 'Xuber') }}
             </p>
         </li>
     </ul>
