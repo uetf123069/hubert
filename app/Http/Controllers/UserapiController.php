@@ -1142,7 +1142,6 @@ class UserapiController extends Controller
                     $user =User::find($requests->user_id);
                     $email_data['user'] = $user;
                     $email_data['provider'] = Provider::find($requests->confirmed_provider);
-                    $title = 
                     $subject = Helper::tr('request_cancel_provider');
                     $page = "emails.user.request_cancel";
                     Helper::send_email($page,$subject,$user->email,$email_data);

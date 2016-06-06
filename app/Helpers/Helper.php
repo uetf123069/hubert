@@ -281,6 +281,40 @@
             return $email;
         }
 
+        public static function send_users_welcome_email($email_data)
+        {
+            $email = $email_data['email'];
+            $email_data = $email_data;
+
+            $subject = "Welcome on Board";
+
+            
+
+            if(env('MAIL_USERNAME') && env('MAIL_PASSWORD')) {
+                try
+                {
+                    Log::info("Provider welcome mail started.....");
+
+                    Mail::send('emails.user.welcome', array('email_data' => $email_data), function ($message) use ($email, $subject) {
+                            $message->to($email)->subject($subject);
+                    });
+
+                } catch(Exception $e) {
+
+                    Log::info('Email send error message***********'.print_r($e,true));
+
+                    return Helper::get_error_message(123);
+                }
+
+                return Helper::get_message(105);
+
+            } else {
+
+                return Helper::get_error_message(123);
+
+            }
+        }
+
         public static function get_error_message($code)
         {
             switch($code) {
