@@ -13,6 +13,7 @@
                     <h2>Saved Cards</h2>
                 </div>
                 <div class="panel-body">
+                    @if(!empty($PaymentMethods->card))
                     @foreach($PaymentMethods->card as $Method)
                         <div class="row">
                             <div class="col-xs-9 text-center">
@@ -44,6 +45,9 @@
                             </div>
                         </div>
                     @endforeach
+                    @else
+                        <h4>No Cards Added</h4>
+                    @endif
                 </div>
             </div>
         </div>
