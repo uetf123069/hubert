@@ -79,7 +79,7 @@ class ProviderController extends Controller
         ]);
 
         $ApiResponse = $this->ProviderApiController->update_profile($request)->getData();
-
+        
         if($ApiResponse->success == true){
             return back()->with('success', 'Profile has been saved');
         }elseif($ApiResponse->success == false){

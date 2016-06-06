@@ -36,7 +36,7 @@
 						</li>
 						<li>
 							<a href="{{ route('user.services.request') }}">
-								<i class="fa fa-columns"></i><span>Request Services</span><span class="badge badge-primary">8</span>
+								<i class="fa fa-columns"></i><span>Request Services</span>
 							</a>
 						</li>
 						<li class="nav-separator">Payment</li>
