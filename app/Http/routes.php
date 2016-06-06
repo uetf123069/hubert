@@ -100,7 +100,6 @@ Route::group(['prefix' => 'providerApi'], function(){
 	Route::post('/register','ProviderApiController@register');
 
 	Route::post('/login','ProviderApiController@login');
-
 	
 	Route::get('/userdetails','ProviderApiController@profile');
 

@@ -16,9 +16,13 @@
 
    use App\Requests;
 
+   use App\RequestPayment;
+
    use App\Settings;
 
    use App\ProviderRating;
+
+   use App\Jobs\sendPushNotification;
 
    use Mail;
 
@@ -71,33 +75,25 @@
 
         public static function send_user_welcome_email($user)
         {
-            $email  = $user->email;
-            $id     = $user->id;
-            $referral_code = mt_rand(100000,999999); 
-            
+            $email = $provider->email;
 
-            $name = "$user->first_name $user->last_name";
-            $admin   = Admin::find(1);
-            $message = array(
-                'subject' => 'Welcome to Uber X',
-                'from_email' => $admin->email,
-                'from_name' => "Admin",
-                'to' => array(array('email' => $email, 'name' => $name)),
-                'global_merge_vars' => array(
-                array(
-                    'name' => 'NAME',
-                    'content' => $name),
-                array(
-                    'name' => 'REFERRALCODE',
-                    'content' => $referral_code)
-                    )
-                );
+            $subject = "Welcome to XUBER";
 
-            $template_name = 'bienvenido-v2-0-1';
+            $email_data = $provider;
 
-            $_params = array("template_name" => $template_name, "template_content" => '', "message" => $message);
-
-            $response = Mandrill::request('messages/send-template', $_params);
+            if(env('MAIL_USERNAME') && env('MAIL_PASSWORD')) {
+                try
+                {
+                    Mail::send('emails.user.welcome', array('email_data' => $email_data), function ($message) use ($email, $subject) {
+                            $message->to($email)->subject($subject);
+                    });
+                } catch(Exception $e) {
+                    return Helper::get_error_message(123);
+                }
+                return Helper::get_message(105);
+            } else {
+                return Helper::get_error_message(123);
+            }
         }
 
         public static function upload_picture($picture)
@@ -183,33 +179,106 @@
         {
             $email = $provider->email;
 
-            $subject = "Account Verification";
+            $subject = "Welcome to XUBER";
 
             $email_data = $provider;
 
             if(env('MAIL_USERNAME') && env('MAIL_PASSWORD')) {
                 try
                 {
-                    Log::info("Provider welcome mail started.....");
-
                     Mail::send('emails.provider.welcome', array('email_data' => $email_data), function ($message) use ($email, $subject) {
                             $message->to($email)->subject($subject);
                     });
-
                 } catch(Exception $e) {
-
-                    Log::info('Email send error message***********'.print_r($e,true));
-
                     return Helper::get_error_message(123);
                 }
-
                 return Helper::get_message(105);
-
             } else {
-
                 return Helper::get_error_message(123);
-
             }
+        }
+
+        public static function send_email($page,$subject,$email,$email_data)
+        {       
+            if(env('MAIL_USERNAME') && env('MAIL_PASSWORD')) {
+                try
+                {
+                    Mail::queue($page, array('email_data' => $email_data), function ($message) use ($email, $subject) {
+                            $message->to($email)->subject($subject);
+                    });
+                } catch(Exception $e) {
+                    return Helper::get_error_message(123);
+                }
+                return Helper::get_message(105);
+            } else {
+                return Helper::get_error_message(123);
+            }
+        }
+
+        public static function send_invoice($request_id,$page,$subject,$email) {
+
+            if($requests = Requests::find($request_id)) {
+
+                if($request_payment = RequestPayment::where('request_id' , $request_id)->first()) {
+
+                    $user = User::find($requests->user_id);
+                    $provider = Provider::find($requests->confirmed_provider);
+
+                    $card_token = $customer_id = $last_four = "";
+
+                    if($request_payment->payment_mode == CARD) {
+                        if($user_card = Cards::find($user->default_card)) {
+                            $card_token = $user_card->card_token;
+                            $customer_id = $user_card->customer_id;
+                            $last_four = $user_card->last_four;
+                        }
+                    }
+
+                    $invoice_data = array();
+                    $invoice_data['request_id'] = $requests->id;
+                    $invoice_data['user_id'] = $requests->user_id;
+                    $invoice_data['provider_id'] = $requests->confirmed_provider;
+                    $invoice_data['provider_name'] = $provider->first_name." ".$provider->last_name;
+                    $invoice_data['provider_address'] = $provider->address;
+                    $invoice_data['user_name'] = $user->first_name." ".$user->last_name;
+                    $invoice_data['user_address'] = $user->address;
+                    $invoice_data['base_price'] = $request_payment->base_price;
+                    $invoice_data['other_price'] = 0;
+                    $invoice_data['tax_price'] = $request_payment->tax_price;;
+                    $invoice_data['total_time_price'] = $request_payment->time_price;
+                    $invoice_data['sub_total'] = $request_payment->time_price+$request_payment->base_price;
+                    $invoice_data['bill_no'] = $request_payment->payment_id;
+
+                    $invoice_data['total_time'] = $request_payment->total_time;
+                    $invoice_data['start_time'] = $requests->start_time;
+                    $invoice_data['end_time'] = $requests->end_time;
+
+                    $invoice_data['total'] = $request_payment->total;
+                    $invoice_data['payment_mode'] = $request_payment->payment_mode;
+                    $invoice_data['payment_mode_status'] = $request_payment->payment_mode ? 1 : 0;
+                    $invoice_data['card_token'] = $card_token;
+                    $invoice_data['customer_id'] = $customer_id;
+                    $invoice_data['last_four'] = $last_four;
+
+                    Helper::send_email($page,$subject,$email,$invoice_data);
+                }
+            }
+        }
+
+        public static function get_emails($status,$user_id,$provider_id) {
+
+            $email = array();
+
+            $user = User::find($user_id);
+            $provider = Provider::find($provider_id);
+            if($status == 3) {
+                $admin = Admin::first();
+                $email = array($admin->email,$user->email,$provider->email);
+            } else {
+                $email = array($user->email,$provider->email);
+            }
+
+            return $email;
         }
 
         public static function get_error_message($code)
@@ -348,19 +417,22 @@
                     $string = "Account is disabled by admin";
                     break;
                 case 145:
-                    $string = "Already provider started";
+                    $string = "Already provider started or previous status is mismatched";
                     break;
                 case 146:
-                    $string = "Already provider arrived";
+                    $string = "Already provider arrived or previous status is mismatched";
                     break;
                 case 147:
-                    $string = "Service already started";
+                    $string = "Service already started or previous status is mismatched";
                     break;
                 case 148:
-                    $string = "Service already completed.";
+                    $string = "Service already completed or previous status is mismatched";
                     break;
                 case 149:
                     $string = "Request has not been offered to this provider. Abort.";
+                    break;
+                case 150:
+                    $string = "user rating already done or previous status is mismatched";
                     break;
                 default:
                     $string = "Unknown error occurred.";
@@ -611,48 +683,18 @@
             $end_date = new \DateTime($end);
 
             $time_interval = date_diff($start_date,$end_date);
-            // echo $interval->format('%h:%i:%s');
-            // return $time_interval->format('%i');
             return $time_interval;
 
         }
 
         public static function request_push_notification($id,$user_type,$request_id,$title,$message) {
+            // Trigger the job
+            new sendPushNotification($id,$user_type,$request_id,$title,$message);
+        }
 
-            if($requests = Requests::find($request_id)) {
-
-                if($user_type == USER) {
-                    $user = User::find($id);
-                } else {
-                    $user = Provider::find($id);
-                }
-
-                $settings = Settings::where('key', 'provider_select_timeout')->first();
-                $provider_timeout = $settings->value;
-
-                $push_data = array();
-                $push_data['request_id'] = $requests->id;
-                $push_data['service_type'] = $requests->request_type;
-                $push_data['request_start_time'] = $requests->request_start_time;
-                $push_data['status'] = $requests->status;
-                $push_data['user_name'] = $user->name;
-                $push_data['user_picture'] = $user->picture;
-                $push_data['s_address'] = $requests->s_address;
-                $push_data['s_latitude'] = $requests->s_latitude;
-                $push_data['s_longitude'] = $requests->s_longitude;
-                $push_data['user_rating'] = ProviderRating::where('provider_id', $id)->avg('rating') ?: 0;
-                $push_data['time_left_to_respond'] = $provider_timeout - (time() - strtotime($requests->request_start_time));
-
-                $push_message = array(
-                    'success' => true,
-                    'message' => $message,
-                    'data' => array((object) $push_data)
-                );
-
-                // Send Push Notification to Provider
-                Helper::send_notifications($id, $user_type, $title, $push_message);
-                // Push End
-            }
+        public static function settings($key) {
+            $settings = Settings::where('key' , $key)->first();
+            return $settings->value;
         }
     }
 

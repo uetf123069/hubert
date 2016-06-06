@@ -1,13 +1,12 @@
 <?php
-use App\Helpers\Helper;
+    use app\Helpers\Helper;
 ?>
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1" />
-    <title>Email Verification</title>
+    <title>Welcome</title>
     <style type="text/css">
 .ReadMsgBody { width: 100%; background-color: #ffffff; }
 .ExternalClass { width: 100%; background-color: #ffffff; }
@@ -40,39 +39,44 @@ table[class="table3-3"] { width: 100% !important; text-align: center !important;
 <body>
 
     <!-- Layout -->
-    <table data-thumb="noti-1.jpg" data-module="Layou-1" data-bgcolor="Background Color" width="100%" border="0" align="center" cellpadding="0" cellspacing="0" bgcolor="#21b6ae">
+    <table data-thumb="noti-2.jpg" data-module="Layout-2" data-bgcolor="Background Color" width="100%" border="0" align="center" cellpadding="0" cellspacing="0" bgcolor="#3cb2d0">
         <tr>
-            <td data-bg="Background" align="center" background="{{asset('email/bg-3.jpg')}}" style="background-size:cover; background-position:top;">
+            <td data-bg="Background" align="center" background="{{asset('email/bg-2.jpg')}}" style="background-size:cover; background-position:top;">
                 <table class="table600" width="600" border="0" align="center" cellpadding="0" cellspacing="0">
                     <tr>
-                        <td height="50"></td>
-                    </tr>
-                    
-                    <!-- logo -->
-                    <tr>
-                        <td align="center" style="line-height: 0px;">
-                            <img data-crop="false" mc:edit="logo" style="display:block; line-height:0px; font-size:0px; border:0px;max-height:70px;" src="{{Helper::settings('site_logo')}}" alt="logo" />
-                        </td>
-                    </tr>
-                    <!-- end logo -->
-                    
-
-                    <tr>
-                        <td height="30"></td>
+                        <td height="60"></td>
                     </tr>
                     <tr>
                         <td align="center">
-                            <table align="center" bgcolor="#FFFFFF" style="border-radius:4px; box-shadow: 0px -3px 0px #d4d2d2;" width="100%" border="0" cellspacing="0" cellpadding="0">
+                            <table align="center" bgcolor="#FFFFFF" style="border-radius:4px; box-shadow: 0px 3px 0px #d4d2d2;" width="100%" border="0" cellspacing="0" cellpadding="0">
                                 <tr>
-                                    <td height="50"></td>
+                                    <td height="30"></td>
                                 </tr>
-
+                                <!-- logo -->
                                 <tr>
-                                    <td align="center">
+                                    <td align="center" style="line-height: 0px;">
+                                        <img data-crop="false" mc:edit="logo" style="display:block; line-height:0px; font-size:0px; border:0px;max-height:70px;" src="{{Helper::settings('site_logo')}}" alt="logo" />
+                                    </td>
+                                </tr>
+                                <!-- end logo -->
+                                
+                                <!-- slogan -->
+                                <!-- <tr>
+                                    <td data-link-style="text-decoration:none; color:#3cb2d0;" data-link-color="Slogan Link" data-color="Slogan" data-size="Slogan" mc:edit="slogan" align="center" style="font-family: 'Open Sans', Arial, sans-serif; font-size:12px; color:#3b3b3b; line-height:26px; text-transform:uppercase; letter-spacing:2px; font-weight: normal;">Powered by a Community of Millions.</td>
+                                </tr> -->
+                                <!-- end slogan -->
+                                <tr>
+                                    <td height="30"></td>
+                                </tr>
+                                <tr>
+                                    <td data-bgcolor="Content BG" align="center" bgcolor="#f3f3f3">
                                         <table align="center" class="table-inner" width="500" border="0" cellspacing="0" cellpadding="0">
+                                            <tr>
+                                                <td height="50"></td>
+                                            </tr>
                                             <!-- title -->
                                             <tr>
-                                                <td data-link-style="text-decoration:none; color:#21b6ae;" data-link-color="Content Link" data-color="Headline" data-size="Headline" mc:edit="title" align="center" style="font-family: 'Open Sans', Arial, sans-serif; font-size:28px; color:#3b3b3b; font-weight: bold; letter-spacing:1px;line-height:45px;">Don't worry, we all forget sometimes</td>
+                                                <td data-link-style="text-decoration:none; color:#3cb2d0;" data-link-color="Content Link" data-color="Headline" data-size="Headline" mc:edit="title" align="center" style="font-family: 'Open Sans', Arial, sans-serif; font-size:36px; color:#3b3b3b; font-weight: bold; letter-spacing:4px;">Welcome to {{Helper::settings('site_name')}}</td>
                                             </tr>
                                             <!-- end title -->
 
@@ -80,7 +84,7 @@ table[class="table3-3"] { width: 100% !important; text-align: center !important;
                                                 <td align="center">
                                                     <table width="25" border="0" cellspacing="0" cellpadding="0">
                                                         <tr>
-                                                            <td data-border-bottom-color="Main Color" height="20" style="border-bottom:2px solid #21b6ae;"></td>
+                                                            <td height="15" style="border-bottom:2px solid #3cb2d0;"></td>
                                                         </tr>
                                                     </table>
                                                 </td>
@@ -88,19 +92,22 @@ table[class="table3-3"] { width: 100% !important; text-align: center !important;
                                             <tr>
                                                 <td height="20"></td>
                                             </tr>
+
                                             <!-- content -->
                                             <tr>
-                                                <td data-link-style="text-decoration:none; color:#21b6ae;" data-link-color="Content Link" data-color="Main Text" data-size="Main Text" mc:edit="content" align="center" style="font-family: 'Open Sans', Arial, sans-serif; font-size:13px; color:#7f8c8d; line-height:30px;">
-                                                    Hi, {{$email_data['user']->first_name}} {{$email_data['user']->last_name}}. You've recently asked to reset the password for this Xuber account: {{$email_data['user']->email}}.
-                                                    
+                                                <td data-link-style="text-decoration:none; color:#3cb2d0;" data-link-color="Content Link" data-color="Main Text" data-size="Main Text" mc:edit="content" align="center" style="font-family: 'Open Sans', Arial, sans-serif; font-size:13px; color:#7f8c8d; line-height:30px;">
+                                                    Hi admin, 
+                                                        New provider joined in {{Helper::settings('site_name')}}
                                                     <br>
-                                                    <!-- To update your password, click the button below -->
-                                                    Your New Password : {{$email_data['password']}}
+                                                    <b>Provider username is : {{$email_data->first_name}} {{$email_data->last_name}}</b>
                                                     <br>
                                                     Thank you!
                                                 </td>
                                             </tr>
                                             <!-- end content -->
+                                            <tr>
+                                                <td height="40"></td>
+                                            </tr>
                                         </table>
                                     </td>
                                 </tr>
@@ -112,10 +119,10 @@ table[class="table3-3"] { width: 100% !important; text-align: center !important;
                                 <!-- button -->
                                 <!-- <tr>
                                     <td align="center">
-                                        <table data-bgcolor="Main Color" align="center" bgcolor="#21b6ae" border="0" cellspacing="0" cellpadding="0" style=" border-radius:30px; box-shadow: 0px 1px 0px #d4d2d2;">
+                                        <table data-bgcolor="Main Color" align="center" bgcolor="#3cb2d0" border="0" cellspacing="0" cellpadding="0" style=" border-radius:4px; box-shadow: 0px 2px 0px #dedfdf;">
                                             <tr>
-                                                <td mc:edit="button" height="55" align="center" style="font-family: 'Open Sans', Arial, sans-serif; font-size:18px; color:#7f8c8d; line-height:30px; font-weight: bold;padding-left: 25px;padding-right: 25px;">
-                                                    <a href="#" style="color:#ffffff;text-decoration:none;" data-color="Button Link">Reset My Password</a>
+                                                <td mc:edit="button" height="55" align="center" style="font-family: 'Open Sans', Arial, sans-serif; font-size:16px; color:#7f8c8d; line-height:30px; font-weight: bold;padding-left: 25px;padding-right: 25px;">
+                                                    <a href="#" style="color:#ffffff;text-decoration:none;" data-color="Button Link">Login Here</a>
                                                 </td>
                                             </tr>
                                         </table>
@@ -123,14 +130,15 @@ table[class="table3-3"] { width: 100% !important; text-align: center !important;
                                 </tr> -->
                                 <!-- end button -->
 
-                                <tr>
-                                    <td height="45"></td>
-                                </tr>
                                 
+                                <tr>
+                                    <td height="30"></td>
+                                </tr>
+
                             </table>
                         </td>
                     </tr>
-                            
+
                     <tr>
                         <td height="30"></td>
                     </tr>
@@ -145,7 +153,8 @@ table[class="table3-3"] { width: 100% !important; text-align: center !important;
                     </tr>
                     <!-- end copyright -->
 
-
+                    
+                    
                     <tr>
                         <td height="30"></td>
                     </tr>
@@ -155,6 +164,5 @@ table[class="table3-3"] { width: 100% !important; text-align: center !important;
     </table>
     <!-- end Layout -->
 
-    
 </body>
 </html>
