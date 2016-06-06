@@ -465,7 +465,7 @@ class ProviderApiController extends Controller
 					'mobile' => 'required|digits_between:6,13',
 					'picture' => 'mimes:jpeg,bmp,png',
 					'gender' => 'in:male,female,others',
-					'email' => 'email|max:255|unique:providers,email'
+					'email' => 'email|max:255|unique:providers,email,'.$request->id
 				),
 				array(
 						'unique' => 'Email ID already exists',
@@ -1443,7 +1443,7 @@ class ProviderApiController extends Controller
 	{
 		$provider = Provider::find($request->id);
 
-		 $check_status = array(REQUEST_COMPLETED,REQUEST_CANCELLED,REQUEST_NO_PROVIDER_AVAILABLE);
+		$check_status = array(REQUEST_COMPLETED,REQUEST_CANCELLED,REQUEST_NO_PROVIDER_AVAILABLE);
 
 		$requests = Requests::where('requests.confirmed_provider', '=', $provider->id)
 							->whereNotIn('requests.status', $check_status)

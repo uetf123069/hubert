@@ -1444,7 +1444,7 @@ class UserapiController extends Controller
                 'request_id' => 'required|integer|exists:requests,id,user_id,'.$user->id.'|unique:user_ratings,request_id',
                 'rating' => 'required|integer|in:'.RATINGS,
                 'comments' => 'max:255',
-                'fav_provider' => 'exists:providers,id'
+                'is_favorite' => 'in:'.DEFAULT_TRUE.','.DEFAULT_FALSE,
             ),
             array(
                 'exists' => 'The :attribute doesn\'t belong to user:'.$user->id,
@@ -1475,13 +1475,13 @@ class UserapiController extends Controller
             $req->save();
 
             // Save favourite provider details
-            if($request->has('fav_provider')) {
-                $fav_provider = FavouriteProvider::where('provider_id',$request->fav_provider)->where('user_id' , $request->id)->first();
+            if($request->is_favorite ==  DEFAULT_TRUE) {
+                $fav_provider = FavouriteProvider::where('provider_id',$req->confirmed_provider)->where('user_id' , $request->id)->first();
                 if(!$fav_provider){
                     $favProvider = new FavouriteProvider;
-                    $favProvider->provider_id = $request->fav_provider;
+                    $favProvider->provider_id = $req->confirmed_provider;
                     $favProvider->user_id = $request->id;
-                    $favProvider->status = 1;
+                    $favProvider->status = DEFAULT_TRUE;
                     $favProvider->save();
                 }
             }
