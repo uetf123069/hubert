@@ -56,12 +56,27 @@ function get_user_request_status($id)
 	$status = [
 		'REQUEST_NEW', // What is this ?
 		'REQUEST_WAITING',
-		'REQUEST_INPROGRESS',
+		'REQUEST_INPROGRESS', // This is active till Provider has reached the location
 		'REQUEST_COMPLETE_PENDING', // And this ?
 		'REQUEST_RATING', // And this ?
 		'REQUEST_COMPLETED',
 		'REQUEST_CANCELLED',
 		'REQUEST_NO_PROVIDER_AVAILABLE', // Isnt this kinda request filtered ?
+	];
+
+	return $status[$id];
+}
+
+function get_provider_request_status($id)
+{
+	$status = [
+		'PROVIDER_NONE',
+		'PROVIDER_ACCEPTED', // Provider has accepted your request and will soon start towards the service location
+		'PROVIDER_STARTED', // Provider is travelling towards the service location
+		'PROVIDER_ARRIVED', // Provider has arrived at the service location
+		'PROVIDER_SERVICE_STARTED', //
+		'PROVIDER_SERVICE_COMPLETED',
+		'PROVIDER_RATED',
 	];
 
 	return $status[$id];

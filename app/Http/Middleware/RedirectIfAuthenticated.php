@@ -20,15 +20,15 @@ class RedirectIfAuthenticated
         // dd($request);
         // dd($guard);
         if (Auth::guard($guard)->check()) {
-            dd(Auth::guard($guard)->user());
+            // dd(Auth::guard($guard)->user());
             if($guard == 'admin') {
-                dd('admin', $guard);
+                // dd('admin', $guard);
                 return redirect('/admin');
             } else if($guard == "provider") {
-                dd('provider', $guard);
+                // dd('provider', $guard);
                 return redirect('/provider');
             } else {
-                dd('sid', $guard);
+                // dd('sid', $guard);
                 return redirect('/');
             }
         }

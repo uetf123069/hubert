@@ -266,6 +266,9 @@ Route::group([], function(){
     Route::get('/request', 'UserController@request_form')->name('user.services.request');
     Route::post('/request', 'UserController@request_submit')->name('user.services.request.submit');
     Route::delete('/request', 'UserController@request_cancel')->name('user.services.request.cancel');
+    Route::get('/request/updates', 'UserController@request_updates')->name('user.services.updates');
+    Route::post('/request/payment', 'UserController@request_payment')->name('user.services.request.payment');
+    Route::post('/request/review', 'UserController@request_review')->name('user.services.request.review');
 
     Route::get('/profile', 'UserController@profile_form')->name('user.profile.form');
     Route::post('/profile', 'UserController@profile_save')->name('user.profile.save');

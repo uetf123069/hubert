@@ -11,7 +11,8 @@
             <li class="stepy-active" id="wizard-head-0"><div>Step 1</div><span>Request</span></li>
             <li class="" id="wizard-head-1"><div>Step 2</div><span>Waiting</span></li>
             <li class="" id="wizard-head-2"><div>Step 3</div><span>Servicing</span></li>
-            <li class="" id="wizard-head-2"><div>Step 4</div><span>Review</span></li>
+            <li class="" id="wizard-head-3"><div>Step 4</div><span>Payment</span></li>
+            <li class="" id="wizard-head-4"><div>Step 5</div><span>Review</span></li>
         </ul>
     </div>
     <div class="panel-body">

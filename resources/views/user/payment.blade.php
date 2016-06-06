@@ -54,10 +54,15 @@
                 </div>
                 <div class="panel-body">
                     <form action="{{ route('user.payment.paypal') }}" class="form-horizontal card" method="POST">
-                        <div class="form-group">
+                        <div class="form-group{{ $errors->has('paypal_email') ? ' has-error' : '' }}">
                             <label for="#" class="col-sm-3 control-label">Paypal Mail ID</label>   
                             <div class="col-sm-9">
-                                <input placeholder="Paypal Mail ID" type="text" name="paypal_email" class="form-control" value="{{ $PaypalID }}">
+                                <input placeholder="Paypal Mail ID" type="email" name="paypal_email" class="form-control" value="{{ $PaypalID }}">
+                                @if ($errors->has('paypal_email'))
+                                    <span class="help-block">
+                                        <strong>{{ $errors->first('paypal_email') }}</strong>
+                                    </span>
+                                @endif
                             </div>
                         </div>
                         <div class="panel-footer">

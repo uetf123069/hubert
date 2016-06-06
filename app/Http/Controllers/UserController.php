@@ -67,11 +67,21 @@ class UserController extends Controller
 
         $CurrentRequest = $this->UserAPI->request_status_check($request)->getData();
 
+        // dd($CurrentRequest);
+
         if(empty($CurrentRequest->data)) {
             $ServiceTypes = $this->UserAPI->service_list($request)->getData();
             return view('user.request', compact('ServiceTypes'));
         } else {
-            return view('user.request_pending', compact('CurrentRequest'));
+            if($CurrentRequest->data[0]->status < 3) {
+                return view('user.request_waiting', compact('CurrentRequest'));
+            } else if($CurrentRequest->data[0]->status == 3) {
+                $PaymentMethods = $this->UserAPI->get_payment_modes($request)->getData();
+                // dd($PaymentMethods);
+                return view('user.request_payment', compact('CurrentRequest','PaymentMethods'));
+            } else if($CurrentRequest->data[0]->status == 4) {
+                return view('user.request_rating', compact('CurrentRequest'));
+            }
         }
     }
 
@@ -93,7 +103,11 @@ class UserController extends Controller
             $response->message = "Your request has been posted. Waiting for provider to respond";
         } else {
             $response->success = false;
-            $response->message = $response->error." ".$response->error_messages;
+            if(isset($response->error_messages)) {
+                $response->message = $response->error." ".$response->error_messages;
+            } else {
+                $response->message = $response->error;
+            }
         }
 
         return back()->with('response', $response);
@@ -122,6 +136,78 @@ class UserController extends Controller
 
         return back()->with('response', $response);
     }
+
+    /**
+     * Get Latest update.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function request_updates(Request $request)
+    {
+        $request->request->add([ 
+            'id' => \Auth::user()->id,
+            'token' => \Auth::user()->token,
+            'device_token' => \Auth::user()->device_token,
+        ]);
+
+        $response = $this->UserAPI->request_status_check($request)->getData();
+
+        return response()->json($response);
+    }
+
+    /**
+     * Process user request.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function request_payment(Request $request)
+    {
+        $request->request->add([ 
+            'id' => \Auth::user()->id,
+            'token' => \Auth::user()->token,
+            'is_paid' => 1
+        ]);
+
+        $response = $this->UserAPI->paynow($request)->getData();
+
+        if($response->success) {
+            $response->message = "Payment successful.";
+        } else {
+            $response->success = false;
+            $response->message = $response->error;
+        }
+
+        return back()->with('response', $response);
+    }
+
+    /**
+     * Process user request.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function request_review(Request $request)
+    {
+        $request->request->add([ 
+            'id' => \Auth::user()->id,
+            'token' => \Auth::user()->token,
+        ]);
+
+        // dd($request->all());
+
+        $response = $this->UserAPI->rate_provider($request)->getData();
+
+        // dd($response);
+
+        if($response->success) {
+            $response->message = "Thank you for reviewing the provider.";
+        } else {
+            $response->success = false;
+            $response->message = $response->error;
+        }
+
+        return back()->with('response', $response);
+    }
+
 
     /**
      * Show the payment methods.
