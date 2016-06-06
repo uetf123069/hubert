@@ -24,6 +24,6 @@ class AddRequestMetaIdToRequestsTable extends Migration
      */
     public function down()
     {
-        //
+        $table->dropColumn('request_meta_id');
     }
 }
