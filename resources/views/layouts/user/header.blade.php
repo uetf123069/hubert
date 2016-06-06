@@ -19,21 +19,6 @@
             </a>
         </li>
 
-        <li class="dropdown toolbar-icon-bg demo-search-hidden">
-            <a href="#" class="dropdown-toggle tooltips" data-toggle="dropdown"><span class="icon-bg"><i class="fa fa-fw fa-search"></i></span></a>
-            <div class="dropdown-menu dropdown-alternate arrow search dropdown-menu-form">
-                <div class="dd-header">
-                    <span>Search</span>
-                </div>
-                <div class="input-group">
-                    <input type="text" class="form-control" placeholder="">
-                    <span class="input-group-btn">
-                        <a class="btn btn-primary" href="#">Search</a>
-                    </span>
-                </div>
-            </div>
-        </li>
-
         <li class="toolbar-icon-bg hidden-xs" id="trigger-fullscreen">
             <a href="#" class="toggle-fullscreen"><span class="icon-bg"><i class="fa fa-fw fa-arrows-alt"></i></span></i></a>
         </li>

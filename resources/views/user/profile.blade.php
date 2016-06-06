@@ -127,20 +127,6 @@
 		                            </div>
 		                        </div>
 
-		                        <div class="form-group{{ $errors->has('description') ? ' has-error' : '' }}">
-		                            <label class="col-md-2 control-label">Bio</label>
-
-		                            <div class="col-md-8">
-		                                <input type="text" class="form-control" name="description" value="{{ Auth::user()->description }}">
-
-		                                @if ($errors->has('description'))
-		                                    <span class="help-block">
-		                                        <strong>{{ $errors->first('description') }}</strong>
-		                                    </span>
-		                                @endif
-		                            </div>
-		                        </div>
-
 								<div class="panel-footer">
 									<div class="row">
 										<div class="col-sm-6 col-sm-offset-4">
@@ -170,15 +156,15 @@
 						<div class="panel-body">
 							<form action="{{ route('user.profile.password') }}" method="POST" class="form-horizontal row-border">
 
-		                        <div class="form-group{{ $errors->has('password_old') ? ' has-error' : '' }}">
+		                        <div class="form-group{{ $errors->has('old_password') ? ' has-error' : '' }}">
 		                            <label class="col-md-2 control-label">Old Password</label>
 
 		                            <div class="col-md-8">
-		                                <input type="password" class="form-control tooltips" name="password_old" data-trigger="hover" data-original-title="Enter your current password here.">
+		                                <input type="password" class="form-control tooltips" name="old_password" data-trigger="hover" data-original-title="Enter your current password here.">
 
-		                                @if ($errors->has('password_old'))
+		                                @if ($errors->has('old_password'))
 		                                    <span class="help-block">
-		                                        <strong>{{ $errors->first('password_old') }}</strong>
+		                                        <strong>{{ $errors->first('old_password') }}</strong>
 		                                    </span>
 		                                @endif
 		                            </div>
@@ -211,15 +197,15 @@
 		                            </div>
 		                        </div>
 
-							</form>
-							<div class="panel-footer">
-								<div class="row">
-									<div class="col-sm-8 col-sm-offset-2">
-										<button class="btn-primary btn">Submit</button>
-										<button class="btn-default btn">Cancel</button>
+								<div class="panel-footer">
+									<div class="row">
+										<div class="col-sm-8 col-sm-offset-2">
+											<button class="btn-primary btn">Submit</button>
+											<button class="btn-default btn">Cancel</button>
+										</div>
 									</div>
 								</div>
-							</div>
+							</form>
 						</div>
 					</div>
 				</div>

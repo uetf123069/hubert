@@ -27,7 +27,7 @@
                     @if(isset($setting[1]['value']))
                     <img style="height: 90px; margin-bottom: 15px; border-radius:2em;" src="{{$setting[1]['value']}}">
                     @endif
-                      <input name="site_logo" type="file">
+                      <input name="picture" type="file">
                       <p class="help-block">Upload only .png, .jpg or .jpeg image files only</p>
                     </div>
                   </div> -->
@@ -119,7 +119,7 @@
                   <label></label>
                   <div>
                     <button class="btn btn-primary mr10">Submit</button>
-                    <button class="btn btn-default">Reset</button>
+                    
                   </div>
                 </div>
 

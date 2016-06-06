@@ -5,11 +5,23 @@
 				<div class="widget-body welcome-box tabular">
 					<div class="tabular-row">
 						<div class="tabular-cell welcome-avatar">
-							<a href="#"><img src="{{ asset('logo.png') }}" class="avatar"></a>
+							<a href="#">
+								@if(Auth::guard('provider')->user()->picture != "")
+									<img src="{{ Auth::guard('provider')->user()->picture }}" class="avatar"></img>
+								@else								
+									<img src="{{ asset('logo.png') }}" class="avatar">
+								@endif
+							</a>
 						</div>
 						<div class="tabular-cell welcome-options">
 							<span class="welcome-text">Welcome,</span>
-							<a href="#" class="name">Jonathan Smith</a>
+							<a href="#" class="name">{{Auth::guard('provider')->user()->name}}</a>
+							@if(Auth::guard('provider')->user()->is_approved == 1)
+								<span class="label label-info">Approved</span>
+							@else
+								<span class="label label-danger">Waiting for approval</span>
+							@endif
+
 						</div>
 					</div>
 				</div>
@@ -24,13 +36,8 @@
 						</li>
 						<li class="nav-separator">Services</li>
 						<li>
-							<a href="{{ route('provider.services.list') }}">
-								<i class="fa fa-flask"></i><span>My Services</span>
-							</a>
-						</li>
-						<li>
-							<a href="{{ route('provider.services.request') }}">
-								<i class="fa fa-columns"></i><span>Request Services</span><span class="badge badge-primary">8</span>
+							<a href="{{ route('provider.history') }}">
+								<i class="fa fa-flask"></i><span>Service History</span>
 							</a>
 						</li>
 						<li>
@@ -38,15 +45,16 @@
 								<i class="fa fa-cog fa-spin"></i><span>OnGoing Service</span>
 							</a>
 						</li>
-						<li>
-							<a href="{{ route('provider.documents') }}">
-								<i class="fa fa-flask"></i><span>Documents</span>
-							</a>
-						</li>
+
 						<li class="nav-separator">Account</li>
 						<li>
 							<a href="{{ route('provider.profile') }}">
 								<i class="fa fa-user"></i><span>Profile</span>
+							</a>
+						</li>
+						<li>
+							<a href="{{ route('provider.documents') }}">
+								<i class="fa fa-flask"></i><span>Documents</span>
 							</a>
 						</li>
 						<li>

@@ -262,11 +262,25 @@ Route::group([], function(){
     Route::get('/', 'UserController@index')->name('user.dashboard');
 
     Route::get('/services', 'UserController@services')->name('user.services.list');
-    Route::get('/request', 'UserController@request')->name('user.services.request');
 
-    Route::get('/profile', 'UserController@profile_edit')->name('user.profile.edit');
+    Route::get('/request', 'UserController@request_form')->name('user.services.request');
+    Route::post('/request', 'UserController@request_submit')->name('user.services.request.submit');
+    Route::delete('/request', 'UserController@request_cancel')->name('user.services.request.cancel');
+    Route::get('/request/updates', 'UserController@request_updates')->name('user.services.updates');
+    Route::post('/request/payment', 'UserController@request_payment')->name('user.services.request.payment');
+    Route::post('/request/review', 'UserController@request_review')->name('user.services.request.review');
+
+    Route::get('/profile', 'UserController@profile_form')->name('user.profile.form');
     Route::post('/profile', 'UserController@profile_save')->name('user.profile.save');
     Route::post('/profile/password', 'UserController@profile_save_password')->name('user.profile.password');
+
+    Route::get('/payment', 'UserController@payment_form')->name('user.payment.form');
+    Route::post('/payment', 'UserController@payment_card_add')->name('user.payment.card.add');
+    Route::patch('/payment', 'UserController@payment_card_def')->name('user.payment.card.def');
+    Route::delete('/payment', 'UserController@payment_card_del')->name('user.payment.card.del');
+    Route::post('/payment/paypal', 'UserController@payment_update_paypal')->name('user.payment.paypal');
+
+    Route::get('/test', 'UserController@test')->name('user.test');
 
 });
 
@@ -288,13 +302,28 @@ Route::group(['prefix' => 'provider'], function(){
 
     Route::get('/', 'ProviderController@index')->name('provider.dashboard');
 
-    Route::get('/services', 'ProviderController@services')->name('provider.services.list');
+    Route::get('/history', 'ProviderController@history')->name('provider.history');
     Route::get('/ongoing', 'ProviderController@ongoing')->name('provider.ongoing');
     Route::get('/documents', 'ProviderController@documents')->name('provider.documents');
     Route::get('/request', 'ProviderController@request')->name('provider.services.request');
     Route::get('/profile', 'ProviderController@profile')->name('provider.profile');
+    Route::post('/profile', 'ProviderController@profile_save')->name('provider.profile.save');
 
     Route::post('/profile/password', 'ProviderController@password')->name('provider.password');
+    Route::post('/change/state', 'ProviderController@change_state')->name('provider.change.state');
+    Route::post('/update/location', 'ProviderController@update_location')->name('provider.update.location');
+    Route::post('/upload/documents', 'ProviderController@upload_documents')->name('provider.upload.documents');
+    Route::get('/document/{document_id}', 'ProviderController@delete_document')->name('provider.delete.document');
+
+    Route::get('/incoming_request', 'ProviderController@incoming_request')->name('provider.incoming.request');
+    Route::get('/request/accept', 'ProviderController@accept_request')->name('provider.request.accept');
+    Route::get('/request/decline', 'ProviderController@decline_request')->name('provider.request.decline');
+    Route::post('/switch/state', 'ProviderController@switch_state')->name('provider.switch.state');
+    Route::post('/submit/review', 'ProviderController@submit_review')->name('provider.submit.review');
+
 
 });
+
+
+
 
