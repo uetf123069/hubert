@@ -31,28 +31,28 @@
 						<li class="nav-separator">Services</li>
 						<li>
 							<a href="{{ route('user.services.list') }}">
-								<i class="fa fa-flask"></i><span>My Services</span>
+								<i class="fa fa-flask"></i><span>Service History</span>
 							</a>
 						</li>
 						<li>
 							<a href="{{ route('user.services.request') }}">
-								<i class="fa fa-columns"></i><span>Request Services</span><span class="badge badge-primary">8</span>
+								<i class="fa fa-columns"></i><span>Request Services</span>
 							</a>
 						</li>
 						<li class="nav-separator">Payment</li>
 						<li>
-							<a href="{{ route('user.profile.edit') }}">
-								<i class="fa fa-user"></i><span>Payments</span>
+							<a href="{{ route('user.payment.form') }}">
+								<i class="fa fa-user"></i><span>Payment Methods</span>
 							</a>
 						</li>
 						<li>
-							<a href="{{ route('user.profile.edit') }}">
+							<a href="{{ route('user.payment.form') }}">
 								<i class="fa fa-user"></i><span>Payment History</span>
 							</a>
 						</li>
 						<li class="nav-separator">Account</li>
 						<li>
-							<a href="{{ route('user.profile.edit') }}">
+							<a href="{{ route('user.profile.form') }}">
 								<i class="fa fa-user"></i><span>Profile</span>
 							</a>
 						</li>

@@ -50,11 +50,12 @@
             <div class="static-content-wrapper">
                 <div class="static-content">
                     <div class="page-content">
-                        <div class="page-heading mb0">
+                        <div class="page-heading">
                             <h1>@yield('page_title')</h1>
                         </div>
                         @yield('page_tabs')
                         <div class="container-fluid">
+                            @include('layouts.user.notification')
                             @yield('content')
                         </div> <!-- .container-fluid -->
                     </div> <!-- #page-content -->
