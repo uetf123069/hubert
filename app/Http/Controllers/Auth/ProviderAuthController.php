@@ -99,6 +99,7 @@ class ProviderAuthController extends Controller
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
+            'is_available' => 1
         ]);
 
         ProviderService::create([
