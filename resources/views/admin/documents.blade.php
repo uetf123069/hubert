@@ -22,7 +22,7 @@
               <tbody>
               @foreach($documents as $index => $document)
               <tr>
-                  <td>{{$document->id}}</td>
+                  <td>{{$index + 1}}</td>
                   <td>{{$document->name}}</td>
                   <td>
                       <div class="input-group-btn">
@@ -34,7 +34,7 @@
                               <a href="{{route('adminDocumentEdit', array('id' => $document->id))}}">Edit</a>
                             </li>
                             <li>
-                              <a href="{{route('adminDocumentDelete', array('id' => $document->id))}}">Delete</a>
+                              <a onclick="return confirm('Are you sure want to Delete?')" href="{{route('adminDocumentDelete', array('id' => $document->id))}}">Delete</a>
                             </li>
                           </ul>
                         </div>

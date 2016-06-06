@@ -48,6 +48,7 @@ class AdminController extends Controller
      public function __construct()
     {
         $this->middleware('admin');
+       
     }
 
     /**
@@ -60,9 +61,11 @@ class AdminController extends Controller
         $user = Auth::guard('admin')->user()->name;
         $reg_users = User::count();
         $comp_req = Requests::where('status','5')->count();
+        $acc_req = Requests::where('provider_status','2')->count();
         return view('admin.dashboard')
                 ->with('reg_users', $reg_users)
-                ->with('comp_req', $comp_req);
+                ->with('comp_req', $comp_req)
+                ->with('acc_req', $acc_req);
     }
 
     public function profile()
@@ -178,6 +181,7 @@ class AdminController extends Controller
                         'email' => 'required|email|max:255|unique:users,email',
                         'mobile' => 'required|digits_between:6,13',
                         'address' => 'required|max:300',
+                        'picture' => 'required|mimes:jpeg,jpg,bmp,png',
                        
                     )
                 );
@@ -327,9 +331,10 @@ class AdminController extends Controller
                     array(
                         'first_name' => 'required|max:255',
                         'last_name' => 'required|max:255',
-                        'email' => 'required|email|max:255|unique:users,email',
+                        'email' => 'required|email|max:255|unique:providers,email',
                         'mobile' => 'required|digits_between:6,13',
                         'address' => 'required|max:300',
+                        'picture' => 'required|mimes:jpeg,jpg,bmp,png',
                        
                     )
                 );
@@ -466,15 +471,24 @@ class AdminController extends Controller
            
                 $temp_setting = Settings::find($setting->id);
 
-                // if($temp_setting->key == 'site_logo'){
-                //     $picture = $request->file('picture');
-
-                //     $temp_setting->value = Helper::upload_picture($picture);
-                //     $temp_setting->save();
-                // }
-
+                if($temp_setting->key == 'site_logo'){
+                    $picture = $request->file('picture');
+                    if($picture == null){
+                    $logo = $temp_setting->value;
+                    }
+                    else
+                    {
+                        $logo = Helper::upload_picture($picture);
+                    }
+                    $temp_setting->value = $logo;
+                    $temp_setting->save();
+                }
+                else
+                {
                 $temp_setting->value = $request->$key;
                 $temp_setting->save();
+            }
+
               
             }
         
