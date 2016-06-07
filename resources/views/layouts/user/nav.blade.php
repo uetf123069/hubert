@@ -44,7 +44,7 @@
 						<li class="nav-separator">Payment</li>
 						<li>
 							<a href="{{ route('user.payment.form') }}">
-								<i class="fa fa-user"></i><span>Payment Methods</span>
+								<i class="fa fa-credit-card"></i><span>Payment Methods</span>
 							</a>
 						</li>
 <!-- 						

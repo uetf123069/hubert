@@ -4,7 +4,7 @@
         <a data-toggle="tooltips" data-placement="right" title="Toggle Sidebar"><span class="icon-bg"><i class="fa fa-fw fa-bars"></i></span></a>
     </span>
 
-    <a class="navbar-brand" href="{{ route('user.dashboard') }}">Avenger</a>
+    <a class="navbar-brand" href="{{ route('user.dashboard') }}">{{ Setting::get('site_name', 'Xuber') }}</a>
 
     <span id="trigger-infobar" class="toolbar-trigger toolbar-icon-bg">
         <a title="Toggle Infobar"></a>
@@ -32,7 +32,7 @@
                 <li><a href="{{ route('user.profile.form') }}"><span class="pull-left">Profile</span> <i class="pull-right fa fa-user"></i></a></li>
                 <li><a href="{{ route('user.payment.form') }}"><span class="pull-left">Payment</span> <i class="pull-right fa fa-cog"></i></a></li>
                 <li class="divider"></li>
-                <li><a href="#"><span class="pull-left">Sign Out</span> <i class="pull-right fa fa-sign-out"></i></a></li>
+                <li><a href="{{ route('user.logout') }}"><span class="pull-left">Logout</span> <i class="pull-right fa fa-sign-out"></i></a></li>
             </ul>
         </li>
 
