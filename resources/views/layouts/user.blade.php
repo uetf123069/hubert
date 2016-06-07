@@ -65,7 +65,7 @@
         </div>
     </div>
 
-    @include('layouts.user.info')
+    <!-- @include('layouts.user.info') -->
 
 
 

@@ -1,3 +1,4 @@
+
 @extends('layouts.user')
 
 @section('title', 'Profile | ')
@@ -31,20 +32,6 @@
 						</div>
 						<div class="panel-body">
 							<form action="{{ route('user.profile.save') }}" method="POST" class="form-horizontal row-border" enctype="multipart/form-data">
-
-		                        <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
-		                            <label class="col-md-2 control-label">Display Name</label>
-
-		                            <div class="col-md-8">
-		                                <input type="text" class="form-control" name="name" value="{{ Auth::user()->name }}">
-
-		                                @if ($errors->has('name'))
-		                                    <span class="help-block">
-		                                        <strong>{{ $errors->first('name') }}</strong>
-		                                    </span>
-		                                @endif
-		                            </div>
-		                        </div>
 
 		                        <div class="form-group{{ $errors->has('first_name') ? ' has-error' : '' }}">
 		                            <label class="col-md-2 control-label">First Name</label>
