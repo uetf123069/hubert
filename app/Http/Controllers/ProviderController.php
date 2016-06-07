@@ -46,16 +46,6 @@ class ProviderController extends Controller
     }
 
     /**
-     * Show the request list.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function request()
-    {
-        return view('provider.request');
-    }
-
-    /**
      * Show the profile list.
      *
      * @return \Illuminate\Http\Response

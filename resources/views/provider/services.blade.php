@@ -31,6 +31,7 @@
 						</tr>
 					</thead>
 					<tbody>
+					@if(!empty($requests))
 					@foreach($requests as $request)
 						<tr>
 							<td># {{$request->id}}</td>
@@ -41,6 +42,9 @@
 							<td class="center">{{date('d M, Y',strtotime($request->date))}}</td>
 						</tr>
 					@endforeach
+					@else
+						<p>No Request found!</p>
+					@endif
 					</tbody>
 				</table>
 				<div class="panel-footer"></div>

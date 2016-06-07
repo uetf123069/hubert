@@ -12,14 +12,6 @@
     
 
     <ul class="nav navbar-nav toolbar pull-right">
-        <li class="dropdown toolbar-icon-bg">
-            <a href="#" id="navbar-links-toggle" data-toggle="collapse" data-target="header>.navbar-collapse">
-                <span class="icon-bg">
-                    <i class="fa fa-fw fa-ellipsis-h"></i>
-                </span>
-            </a>
-        </li>
-
 
         <li class="toolbar-icon-bg hidden-xs" id="trigger-fullscreen">
             <a href="#" class="toggle-fullscreen"><span class="icon-bg"><i class="fa fa-fw fa-arrows-alt"></i></span></i></a>

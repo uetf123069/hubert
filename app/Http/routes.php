@@ -304,7 +304,6 @@ Route::group(['prefix' => 'provider'], function(){
     Route::get('/history', 'ProviderController@history')->name('provider.history');
     Route::get('/ongoing', 'ProviderController@ongoing')->name('provider.ongoing');
     Route::get('/documents', 'ProviderController@documents')->name('provider.documents');
-    Route::get('/request', 'ProviderController@request')->name('provider.services.request');
     Route::get('/profile', 'ProviderController@profile')->name('provider.profile');
     Route::post('/profile', 'ProviderController@profile_save')->name('provider.profile.save');
 
