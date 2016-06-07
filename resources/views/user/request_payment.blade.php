@@ -66,7 +66,7 @@
                             <select tabindex="1" name="payment_mode" readonly="true" id="payment_mode" class="form-control">
                                 <option disabled>Select Payment Mode</option>
                                 @foreach($PaymentMethods->payment_modes as $Index => $PaymentMethod)
-                                <option value="{{ $Index }}">{{ $PaymentMethod }}</option>
+                                <option value="{{ $PaymentMethod }}">{{ $PaymentMethod }}</option>
                                 @endforeach
                             </select>
                             @if ($errors->has('payment_mode'))

@@ -49,8 +49,9 @@
                   <td>{{$review->user_first_name . $review->user_last_name}}</td>
                   @endif
                   <td>{{$review->rating}}</td>
-                  <td>{{$review->comment}}</td>
                   <td>{{$review->created_at}}</td>
+                  <td>{{$review->comment}}</td>
+                  
                   <td>
                       <div class="input-group-btn">
                       @if($name == 'User')

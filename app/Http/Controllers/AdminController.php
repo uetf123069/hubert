@@ -281,16 +281,16 @@ class AdminController extends Controller
     {
         $subQuery = DB::table('requests')
                 ->select(DB::raw('count(*)'))
-                ->whereRaw('provider_id = providers.id and status != 0');
+                ->whereRaw('confirmed_provider = providers.id and status != 0');
         $subQuery1 = DB::table('requests')
                 ->select(DB::raw('count(*)'))
-                ->whereRaw('provider_id = providers.id and status=1');
+                ->whereRaw('confirmed_provider = providers.id and status=1');
         $providers = DB::table('providers')
                 ->select('providers.*', DB::raw("(" . $subQuery->toSql() . ") as 'total_requests'"), DB::raw("(" . $subQuery1->toSql() . ") as 'accepted_requests'"))
                 ->orderBy('providers.created_at', 'DESC')
                 ->get();
 
-
+                // dd($providers);
         return view('admin.providers')->with('providers',$providers);
     }
 
@@ -412,13 +412,16 @@ class AdminController extends Controller
         $provider_id = $request->id;
         $provider = Provider::find($provider_id);
         $documents = Document::all();
-        $provider_document = ProviderDocument::where('provider_id', $provider_id)->get();
+        $provider_document = DB::table('provider_documents')
+                            ->leftJoin('documents', 'provider_documents.document_id', '=', 'documents.id')
+                            ->select('provider_documents.*', 'documents.name as document_name')
+                            ->where('provider_id', $provider_id)->get();
 
 
         return view('admin.providerDocuments')
                         ->with('provider', $provider)
-                        ->with('documents', $documents)
-                        ->with('provider_document', $provider_document);
+                        ->with('document', $documents)
+                        ->with('documents', $provider_document);
     }
 
     public function ProviderApprove(Request $request)
