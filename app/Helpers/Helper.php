@@ -73,7 +73,7 @@
             return FALSE;
         }
 
-        public static function send_user_welcome_email($user)
+        public static function send_user_welcome_email($provider)
         {
             $email = $provider->email;
 
@@ -288,8 +288,7 @@
 
             $subject = "Welcome on Board";
 
-            
-
+        
             if(env('MAIL_USERNAME') && env('MAIL_PASSWORD')) {
                 try
                 {

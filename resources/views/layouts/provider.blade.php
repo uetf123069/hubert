@@ -175,7 +175,7 @@
                             if(return_data.data[0].user_picture != ""){
                                 $('#request_user_image').attr('src',return_data.data[0].user_picture);
                             }else{
-                                $('#request_user_image').attr('src', {{ Setting::get('site_logo', asset('logo.png'))}});
+                                $('#request_user_image').attr('src', "{{  asset('logo.png')}}");
                             }
 
                             $('#request_service_name').text(return_data.data[0].service_type_name);

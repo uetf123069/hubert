@@ -1143,6 +1143,10 @@ class ProviderApiController extends Controller
 	    			$request_payment->save();
 	    		}
 
+	    		$request_save = Requests::find($requests->id);
+	    		$request_save->amount = $total;
+	    		$request_save->save();
+
     			$invoice_data = array();
 
     			$user = User::find($requests->user_id);
@@ -1154,7 +1158,7 @@ class ProviderApiController extends Controller
     			$invoice_data['provider_name'] = $provider->first_name." ".$provider->last_name;
     			$invoice_data['provider_address'] = $provider->address;
     			$invoice_data['user_name'] = $user->first_name." ".$user->last_name;
-    			$invoice_data['user_address'] = $user->address;
+    			$invoice_data['user_address'] = $requests->s_address;
     			$invoice_data['base_price'] = $base_price;
     			$invoice_data['other_price'] = 0;
     			$invoice_data['total_time_price'] = $total_time_price;

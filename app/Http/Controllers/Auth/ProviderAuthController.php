@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
 use Illuminate\Http\Request;
+use App\Helpers\Helper;
 
 class ProviderAuthController extends Controller
 {
@@ -107,6 +108,8 @@ class ProviderAuthController extends Controller
             'is_available' => 1,
             'service_type_id' => $data['service_type']
             ]);
+
+        Helper::send_user_welcome_email($provider);
 
         return $provider;
     }

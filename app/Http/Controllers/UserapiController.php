@@ -743,7 +743,7 @@ class UserapiController extends Controller
                     's_latitude' => 'required|numeric',
                     's_longitude' => 'required|numeric',
                     'service_type' => 'numeric|exists:service_types,id',
-                ));
+                ), array( 'required' => 'Location Selected was incorrect! Please try again!'));
 
         if ($validator->fails()) 
         {
@@ -1404,7 +1404,8 @@ class UserapiController extends Controller
                         $response_array = array('success' => false, 'error' => Helper::get_error_message(140) , 'error_code' => 140);
                     }
 
-                }   
+                }  
+
                 $requests->save();
                 $request_payment->save();
 
