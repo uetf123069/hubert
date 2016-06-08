@@ -31,9 +31,7 @@ class ProviderAuthController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/provider';
-
-    protected $loginPath = '/provider/login';
+    protected $redirectTo = 'provider';
 
     protected $redirectAfterLogout = '/provider/login';
 
@@ -69,7 +67,7 @@ class ProviderAuthController extends Controller
      */
     public function __construct()
     {
-        // $this->middleware($this->guestMiddleware(), ['except' => 'logout']);
+        $this->middleware('guestprovider', ['except' => 'logout']);
     }
 
     /**

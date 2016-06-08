@@ -28,9 +28,7 @@ class AdminAuthController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/admin';
-
-    protected $loginPath = '/admin/login';
+    protected $redirectTo = 'admin';
 
     protected $redirectAfterLogout = '/admin/login';
 
@@ -65,7 +63,7 @@ class AdminAuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware($this->guestMiddleware(), ['except' => 'logout']);
+        $this->middleware('guestadmin', ['except' => 'logout']);
     }
 
     /**
