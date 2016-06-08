@@ -261,11 +261,15 @@ class AdminController extends Controller
                    
                     
                     if($request->id == ''){
-                    $email_data['name'] = $user->first_name;
+                    $email_data['first_name'] = $user->first_name;
+                    $email_data['last_name'] = $user->last_name;
                     $email_data['password'] = $new_password;
                     $email_data['email'] = $user->email;
 
-                    // $check_mail = Helper::send_users_welcome_email($email_data);
+                    $subject = Helper::tr('user_welcome_title');
+                    $page = "emails.admin.welcome";
+                    $email = $user->email;
+                    Helper::send_email($page,$subject,$email,$email_data);
                     }
 
                     $user->save();
@@ -412,16 +416,21 @@ class AdminController extends Controller
                     $provider->paypal_email = $request->paypal_email;
                     $provider->address = $address;
                     
-                    
+                     
                     if($request->id == ''){
-                    $email_data['name'] = $provider->first_name;
+                    
+                
+                $subject = Helper::tr('provider_welcome_title');
+                $page = "emails.admin.welcome";
+                $email_data['first_name'] = $provider->first_name;
+                    $email_data['last_name'] = $provider->last_name;
                     $email_data['password'] = $new_password;
                     $email_data['email'] = $provider->email;
-
-                    // $check_mail = Helper::send_provider_welcome_email($email_data);
+                $email = $provider->email;
+                Helper::send_email($page,$subject,$email,$email_data);
                     }
 
-                    $provider->save();
+                   $provider->save();
 
                     if($provider)
                     {
@@ -771,7 +780,7 @@ class AdminController extends Controller
                 ->leftJoin('providers', 'requests.confirmed_provider', '=', 'providers.id')
                 ->leftJoin('users', 'requests.user_id', '=', 'users.id')
                 ->leftJoin('request_payments', 'requests.id', '=', 'request_payments.request_id')
-                ->select('users.first_name as user_first_name', 'users.last_name as user_last_name', 'providers.first_name as provider_first_name', 'providers.last_name as provider_last_name', 'users.id as user_id', 'providers.id as provider_id', 'requests.is_paid',  'requests.id as id', 'requests.created_at as date', 'requests.confirmed_provider', 'requests.status', 'requests.provider_status', 'requests.amount', 'request_payments.payment_mode as payment_mode', 'request_payments.status as payment_status', 'request_payments.total_time as total_time','request_payments.base_price as base_price', 'request_payments.time_price as time_price', 'request_payments.tax_price as tax', 'request_payments.total as total_amount', 'requests.s_latitude as latitude', 'requests.s_longitude as longitude','requests.start_time','requests.end_time')
+                ->select('users.first_name as user_first_name', 'users.last_name as user_last_name', 'providers.first_name as provider_first_name', 'providers.last_name as provider_last_name', 'users.id as user_id', 'providers.id as provider_id', 'requests.is_paid',  'requests.id as id', 'requests.created_at as date', 'requests.confirmed_provider', 'requests.status', 'requests.provider_status', 'requests.amount', 'request_payments.payment_mode as payment_mode', 'request_payments.status as payment_status', 'request_payments.total_time as total_time','request_payments.base_price as base_price', 'request_payments.time_price as time_price', 'request_payments.tax_price as tax', 'request_payments.total as total_amount', 'requests.s_latitude as latitude', 'requests.s_longitude as longitude','requests.start_time','requests.end_time','requests.before_image', 'requests.after_image')
                 ->first();    
         return view('admin.requestView')->with('request', $requests);
     }
