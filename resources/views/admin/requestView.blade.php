@@ -40,6 +40,8 @@
         <strong>Booked by :</strong> {{$request->user_first_name}} <br>
         <strong>Provider Name :</strong> {{$request->provider_first_name}} <br>
         <strong>Total time :</strong> {{$request->total_time}} <br>
+        <strong>Request started :</strong> {{ date('jS \of F Y h:i:s A', strtotime($request->start_time)) }} <br>
+        <strong>Request ended :</strong> {{ date('jS \of F Y h:i:s A', strtotime($request->end_time)) }} <br>
         <strong>Base Price :</strong> {{$request->base_price}} <br>
         <strong>Time Price :</strong> {{$request->time_price}} <br>
         <strong>Tax :</strong> {{$request->tax}} <br>
