@@ -508,6 +508,7 @@ class AdminController extends Controller
         return view('admin.settings')->with('setting',$settings);
     }
 
+
     public function settingsProcess(Request $request)
     {
         $settings = Settings::all();
@@ -790,5 +791,11 @@ class AdminController extends Controller
         // dd(\Auth::guard('admin')->user());
         $Providers = Provider::all();
         return view('admin.map', compact('Providers'));
+    }
+
+    public function help()
+    {
+        
+        return view('admin.help');
     }
 }

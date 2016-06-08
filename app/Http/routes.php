@@ -171,6 +171,8 @@ Route::group(['prefix' => 'admin'], function(){
 
     Route::post('/settingsProcess', 'AdminController@settingsProcess')->name('adminSettingProcess');
 
+    Route::get('/help', 'AdminController@help')->name('admin.help');
+
     //Documents
 
     Route::get('/documents', 'AdminController@documents')->name('adminDocuments');

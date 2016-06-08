@@ -157,6 +157,13 @@
             </li>
 
             <li>
+                <a href="{{ route('admin.help') }}">
+                    <i class="fa fa-question-circle"></i>
+                    <span>Help</span>
+                </a>
+            </li>
+
+            <li>
                 <a href="{{ route('admin.logout') }}">
                     <i class="fa fa-sign-out"></i>
                     <span>Logout</span>
