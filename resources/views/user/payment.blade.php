@@ -61,7 +61,7 @@
                         <div class="form-group{{ $errors->has('paypal_email') ? ' has-error' : '' }}">
                             <label for="#" class="col-sm-3 control-label">Paypal Mail ID</label>   
                             <div class="col-sm-9">
-                                <input placeholder="Paypal Mail ID" type="email" name="paypal_email" class="form-control" value="{{ $PaypalID }}">
+                                <input placeholder="Paypal Mail ID" type="email" name="paypal_email" class="form-control" value="ds">
                                 @if ($errors->has('paypal_email'))
                                     <span class="help-block">
                                         <strong>{{ $errors->first('paypal_email') }}</strong>
@@ -83,43 +83,45 @@
         <div class="panel-heading">
             <h2>Add Card</h2>
         </div>
-        <div class="panel-body">
-            <div class="row">
-                <div class="col-sm-6" id="card-payment">
-                    <form action="" class="form-horizontal card">
-                        <div class="form-group">
-                            <label for="#" class="col-sm-4 control-label">Card Number</label>   
-                            <div class="col-sm-8">
-                                <input placeholder="Card number" type="text" name="number" class="form-control">
+        <div class="panel-body" id="card-payment">
+            <form action="{{ route('user.payment.card.add') }}" method="POST" id="payment-form" class="form-horizontal card">
+                <div class="row">
+                    <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="#" class="col-sm-4 control-label">Card Number</label>   
+                                <div class="col-sm-8">
+                                    <input placeholder="Card number" data-stripe="number" type="text" name="number" class="form-control">
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="#" class="col-sm-4 control-label">Full Name</label> 
-                            <div class="col-sm-8">
-                                <input placeholder="Full name" type="text" name="name" class="form-control">
+                            <div class="form-group">
+                                <label for="#" class="col-sm-4 control-label">Full Name</label> 
+                                <div class="col-sm-8">
+                                    <input placeholder="Full name" type="text" name="name" class="form-control">
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="#" class="col-sm-4 control-label">Expiry</label>    
-                            <div class="col-sm-8">
-                                <input placeholder="MM/YY" type="text" name="expiry" class="form-control">
+                            <div class="form-group">
+                                <label for="#" class="col-sm-4 control-label">Expiry</label>    
+                                <div class="col-sm-8">
+                                    <input placeholder="MM/YY" autocomplete=off id="expirydate"  name="expiry" type="text" class="form-control">
+                                    <input type="hidden" data-stripe="exp-month" id="expiry-month" name="month" class="form-control">
+                                    <input type="hidden" data-stripe="exp-year" id="expiry-year" name="year" class="form-control">
+                                </div>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="#" class="col-sm-4 control-label">CVC</label>   
-                            <div class="col-sm-8">
-                                <input placeholder="CVC" type="text" name="cvc" class="form-control">
+                            <div class="form-group">
+                                <label for="#" class="col-sm-4 control-label">CVC</label>   
+                                <div class="col-sm-8">
+                                    <input placeholder="CVC" data-stripe="cvc"  type="text" name="cvc" class="form-control">
+                                </div>
                             </div>
-                        </div>
-                    </form>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="card-wrapper"></div>
+                    </div>
                 </div>
-                <div class="col-sm-6">
-                    <div class="card-wrapper"></div>
+                <div class="panel-footer">
+                    <button type="submit" class="btn-primary btn col-sm-4 col-sm-offset-4">Submit</button>
                 </div>
-            </div>
-            <div class="panel-footer">
-                <button class="btn-primary btn col-sm-4 col-sm-offset-4">Submit</button>
-            </div>
+            </form>
         </div>
     </div>
 </div>
@@ -139,5 +141,67 @@
 <script type="text/javascript" src="{{ asset('assets/plugins/wijets/wijets.js') }}"></script>
 <script>
     $('#card-payment form').card({ container: $('.card-wrapper')})
+</script>
+
+<script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+<script type="text/javascript">
+    // This identifies your website in the createToken call below
+    Stripe.setPublishableKey('{{ Setting::get("stripe_publishable_key", "pk_test_AHFoxSxndSb5RjlwHpfceeYa")}}');
+
+    
+    var stripeResponseHandler = function (status, response) {
+        var $form = $('#payment-form');
+
+        console.log(response);
+
+        if (response.error) {
+            // Show the errors on the form
+            $form.find('.payment-errors').text(response.error.message);
+            $form.find('button').prop('disabled', false);
+            alert('error');
+
+        } else {
+            // token contains id, last4, and card type
+            var token = response.id;
+            // Insert the token into the form so it gets submitted to the server
+            $form.append($('<input type="hidden" id="stripeToken" name="stripeToken" />').val(token));
+             // alert(token);
+            // and re-submit
+
+            jQuery($form.get(0)).submit();
+
+        }
+    };
+
+
+
+    $('#payment-form').submit(function (e) {
+        
+        if ($('#stripeToken').length == 0)
+        {
+            var $form = $(this);
+            // Disable the submit button to prevent repeated clicks
+            $form.find('button').prop('disabled', true);
+            console.log($form);
+            Stripe.card.createToken($form, stripeResponseHandler);
+
+            // Prevent the form from submitting with the default action
+            return false;
+        }
+    });
+
+    // 08 / 2014
+
+    expiryInput = $('#expirydate');
+    expiryMonthInput = $('#expiry-month');
+    expiryYearInput = $('#expiry-year');
+    expiryInput.on('keyup', function(event) {
+        if(expiryInput.val().length > 2) {
+            month = expiryInput.val().slice(0,2);
+            year = expiryInput.val().slice(5,expiryInput.val().length);
+            expiryMonthInput.val(month);
+            expiryYearInput.val(year);
+        }
+    })
 </script>
 @endsection

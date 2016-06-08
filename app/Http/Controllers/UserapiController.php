@@ -43,6 +43,7 @@ use App\ProviderRating;
 use App\Cards;
 
 
+
 define('USER', 0);
 
 define('PROVIDER',1);
@@ -98,13 +99,13 @@ define('DEVICE_IOS', 'ios');
 
 
 class UserapiController extends Controller
-{
+{   
 
     public function __construct(Request $request)
 	{
         $this->middleware('UserApiVal' , array('except' => ['register' , 'login' , 'forgot_password']));
-	}
-
+        
+}
 	public function register(Request $request)
 	{
         $response_array = array();
@@ -1358,6 +1359,7 @@ class UserapiController extends Controller
 
                 } elseif($request->payment_mode == CARD) {
 
+
                     $check_card_exists = User::where('users.id' , $request->id)
                                 ->leftJoin('cards' , 'users.id','=','cards.user_id')
                                 ->where('cards.id' , $user->default_card)
@@ -1388,6 +1390,7 @@ class UserapiController extends Controller
                            $paid_status = $user_charge->paid;
 
                            $request_payment->payment_id = $payment_id;
+                           $request_payment->status = 1;
 
                            if($paid_status) {
                                 $requests->is_paid =  DEFAULT_TRUE;
@@ -1435,6 +1438,31 @@ class UserapiController extends Controller
         return response()->json($response_array , 200);
     
     }
+
+    public function getDone(Request $request)
+{
+    $id = $request->get('paymentId');
+    $token = $request->get('token');
+    $payer_id = $request->get('PayerID');
+
+    $payment = PayPal::getById($id, $this->_apiContext);
+
+    $paymentExecution = PayPal::PaymentExecution();
+
+    $paymentExecution->setPayerId($payer_id);
+    $executePayment = $payment->execute($paymentExecution, $this->_apiContext);
+
+    // Clear the shopping cart, write to database, send notifications, etc.
+
+    // Thank the user for the purchase
+    return view('checkout.done');
+}
+
+public function getCancel()
+{
+    // Curse and humiliate the user for cancelling this most sacred payment (yours)
+    return view('checkout.cancel');
+}
 
     public function rate_provider(Request $request) {
 

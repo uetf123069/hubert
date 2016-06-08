@@ -148,6 +148,7 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
 
+
         /*
          * Application Service Providers...
          */
@@ -157,6 +158,7 @@ return [
         App\Providers\RouteServiceProvider::class,
 
         anlutro\LaravelSettings\ServiceProvider::class,
+        'Netshell\Paypal\PaypalServiceProvider',
 
     ],
 
@@ -204,6 +206,7 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'Setting' => anlutro\LaravelSettings\Facade::class,
+        'Paypal' => 'Netshell\Paypal\Facades\Paypal',
     ],
 
 ];
