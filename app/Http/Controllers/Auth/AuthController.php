@@ -7,6 +7,7 @@ use Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
+use App\Helpers\Helper;
 
 class AuthController extends Controller
 {
@@ -65,7 +66,8 @@ class AuthController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'name' => 'required|max:255',
+            'first_name' => 'required|max:255',
+            'last_name' => 'required|max:255',
             'email' => 'required|email|max:255|unique:users',
             'password' => 'required|min:6|confirmed',
         ]);
@@ -79,10 +81,21 @@ class AuthController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
-            'name' => $data['name'],
+        $User = User::create([
+            'first_name' => $data['first_name'],
+            'last_name' => $data['last_name'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
+            'payment_mode' => 'cod'
         ]);
+
+        // Send welcome email to the new user:
+        $subject = Helper::tr('user_welcome_title');
+        $email_data = $User;
+        $page = "emails.user.welcome";
+        $email = $data['email'];
+        Helper::send_email($page,$subject,$email,$email_data);
+        
+        return $User;
     }
 }

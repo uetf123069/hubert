@@ -82,7 +82,7 @@
                                     data-on-color="success" 
                                     data-off-text="<i class='fa fa-times'></i>" 
                                     data-off-color="danger" 
-                                    name="provider" type="checkbox" checked>
+                                    name="provider_fav" type="checkbox" checked>
                             </div>
                         </div>
                         <div class="form-group">

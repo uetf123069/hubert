@@ -14,6 +14,8 @@ use App\Document;
 
 use App\ProviderDocument;
 
+use App\ProviderRating;
+
 use App\Admin;
 
 use App\ServiceType;
@@ -45,9 +47,9 @@ class AdminController extends Controller
      *
      * @return void
      */
-     public function __construct()
+    public function __construct()
     {
-        $this->middleware('admin');
+        $this->middleware('admin');  
     }
 
     /**
@@ -60,9 +62,22 @@ class AdminController extends Controller
         $user = Auth::guard('admin')->user()->name;
         $reg_users = User::count();
         $comp_req = Requests::where('status','5')->count();
+        $tot_req = Requests::count();
+        $can_req = Requests::where('status','6')->count();
+        $tot_pay = RequestPayment::sum('total');
+        $paypal = RequestPayment::where('payment_mode','paypal')->sum('total');
+        $card_pay = RequestPayment::where('payment_mode','card')->sum('total');
+        $cod = RequestPayment::where('payment_mode','cod')->sum('total');
+        
         return view('admin.dashboard')
                 ->with('reg_users', $reg_users)
-                ->with('comp_req', $comp_req);
+                ->with('comp_req', $comp_req)
+                ->with('tot_req', $tot_req)
+                ->with('tot_pay',$tot_pay)
+                ->with('paypal',$paypal)
+                ->with('card_pay',$card_pay)
+                ->with('cod',$cod)
+                ->with('can_req', $can_req);
     }
 
     public function profile()
@@ -178,6 +193,7 @@ class AdminController extends Controller
                         'email' => 'required|email|max:255|unique:users,email',
                         'mobile' => 'required|digits_between:6,13',
                         'address' => 'required|max:300',
+                        'picture' => 'required|mimes:jpeg,jpg,bmp,png',
                        
                     )
                 );
@@ -286,7 +302,7 @@ class AdminController extends Controller
                 ->orderBy('providers.created_at', 'DESC')
                 ->get();
 
-
+                // dd($providers);
         return view('admin.providers')->with('providers',$providers);
     }
 
@@ -327,9 +343,10 @@ class AdminController extends Controller
                     array(
                         'first_name' => 'required|max:255',
                         'last_name' => 'required|max:255',
-                        'email' => 'required|email|max:255|unique:users,email',
+                        'email' => 'required|email|max:255|unique:providers,email',
                         'mobile' => 'required|digits_between:6,13',
                         'address' => 'required|max:300',
+                        'picture' => 'required|mimes:jpeg,jpg,bmp,png',
                        
                     )
                 );
@@ -407,13 +424,16 @@ class AdminController extends Controller
         $provider_id = $request->id;
         $provider = Provider::find($provider_id);
         $documents = Document::all();
-        $provider_document = ProviderDocument::where('provider_id', $provider_id)->get();
+        $provider_document = DB::table('provider_documents')
+                            ->leftJoin('documents', 'provider_documents.document_id', '=', 'documents.id')
+                            ->select('provider_documents.*', 'documents.name as document_name')
+                            ->where('provider_id', $provider_id)->get();
 
 
         return view('admin.providerDocuments')
                         ->with('provider', $provider)
-                        ->with('documents', $documents)
-                        ->with('provider_document', $provider_document);
+                        ->with('document', $documents)
+                        ->with('documents', $provider_document);
     }
 
     public function ProviderApprove(Request $request)
@@ -466,15 +486,24 @@ class AdminController extends Controller
            
                 $temp_setting = Settings::find($setting->id);
 
-                // if($temp_setting->key == 'site_logo'){
-                //     $picture = $request->file('picture');
-
-                //     $temp_setting->value = Helper::upload_picture($picture);
-                //     $temp_setting->save();
-                // }
-
+                if($temp_setting->key == 'site_logo'){
+                    $picture = $request->file('picture');
+                    if($picture == null){
+                    $logo = $temp_setting->value;
+                    }
+                    else
+                    {
+                        $logo = Helper::upload_picture($picture);
+                    }
+                    $temp_setting->value = $logo;
+                    $temp_setting->save();
+                }
+                else
+                {
                 $temp_setting->value = $request->$key;
                 $temp_setting->save();
+            }
+
               
             }
         

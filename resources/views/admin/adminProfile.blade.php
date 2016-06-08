@@ -75,6 +75,8 @@
                     <div class="col-sm-10">
                     @if(isset($admin->picture))
                     <img style="height: 90px; margin-bottom: 15px; border-radius:2em;" src="{{$admin->picture}}">
+                    @else
+                    <img style="height: 90px; margin-bottom: 15px; border-radius:2em;"  src="{{asset('logo.png')}}">
                     @endif
                       <input name="picture" type="file">
                       <p class="help-block">Upload only .png, .jpg or .jpeg image files only</p>

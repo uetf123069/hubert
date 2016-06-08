@@ -63,7 +63,7 @@
                     <div class="form-group{{ $errors->has('payment_mode') ? ' has-error' : '' }}">
                         <label for="#" class="col-sm-3 control-label">Select Payment Method</label>   
                         <div class="col-sm-9">
-                            <select tabindex="1" name="payment_mode" id="payment_mode" class="form-control">
+                            <select tabindex="1" name="payment_mode" readonly="true" id="payment_mode" class="form-control">
                                 <option disabled>Select Payment Mode</option>
                                 @foreach($PaymentMethods->payment_modes as $Index => $PaymentMethod)
                                 <option value="{{ $PaymentMethod }}">{{ $PaymentMethod }}</option>

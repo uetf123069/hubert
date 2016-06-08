@@ -6,7 +6,7 @@
 
 @section('content')
 <div class="row ui-sortable" data-widget-group="group-demo">
-@if(!empty($Services->requests))
+    @if(!empty($Services->requests))
     @foreach($Services->requests as $Index => $Service)
     <div class="col-md-4">
         <div class="panel panel-primary">
@@ -26,8 +26,8 @@
         </div>
     </div>
     @endforeach
-     @else
-        <h4>No History Found</h4>
+    @else
+        <h4>No Service History</h4>
     @endif
 </div>
 @endsection

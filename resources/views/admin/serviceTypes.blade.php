@@ -23,7 +23,7 @@
               <tbody>
               @foreach($services as $index => $service)
               <tr>
-                  <td>{{$service->id}}</td>
+                  <td>{{$index + 1 }}</td>
                   <td>{{$service->name}}</td>
                   <td>@if($service->status == 1) Default @else NA @endif</td>
                   <td>
@@ -36,7 +36,7 @@
                               <a href="{{route('adminServiceEdit', array('id' => $service->id))}}">Edit</a>
                             </li>
                             <li>
-                              <a href="{{route('adminServiceDelete', array('id' => $service->id))}}">Delete</a>
+                              <a onclick="return confirm('Are you sure want to Delete?')" href="{{route('adminServiceDelete', array('id' => $service->id))}}">Delete</a>
                             </li>
                           </ul>
                         </div>

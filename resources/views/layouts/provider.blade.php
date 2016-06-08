@@ -37,6 +37,12 @@
     <link type="text/css" href="{{ asset('assets/plugins/form-daterangepicker/daterangepicker-bs3.css') }}" rel="stylesheet">      <!-- DateRangePicker -->
     <link type="text/css" href="{{ asset('assets/plugins/fullcalendar/fullcalendar.css') }}" rel="stylesheet">                     <!-- FullCalendar -->
     <link type="text/css" href="{{ asset('assets/plugins/charts-chartistjs/chartist.min.css') }}" rel="stylesheet">                <!-- Chartist -->
+    <style type="text/css">
+        #topnav .navbar-brand {
+            background: url("{{ Setting::get('site_logo', asset('logo.png')) }}") no-repeat 50% 50%;
+            background-size: auto 80%;
+        }
+    </style>
 
     @yield('styles')
 
@@ -67,9 +73,7 @@
         </div>
     </div>
 
-    @include('layouts.provider.info')
-
-
+    <!-- @include('layouts.provider.info') -->
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
@@ -174,6 +178,8 @@
 
                             if(return_data.data[0].user_picture != ""){
                                 $('#request_user_image').attr('src',return_data.data[0].user_picture);
+                            }else{
+                                $('#request_user_image').attr('src', "{{  asset('logo.png')}}");
                             }
 
                             $('#request_service_name').text(return_data.data[0].service_type_name);

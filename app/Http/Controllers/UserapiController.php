@@ -22,6 +22,8 @@ use App\ProviderService;
 
 use App\Requests;
 
+use App\Admin;
+
 use App\RequestsMeta;
 
 use App\ServiceType;
@@ -123,9 +125,7 @@ class UserapiController extends Controller
         if($basicValidator->fails()) {
 
             $error_messages = implode(',', $basicValidator->messages()->all());
-
             $response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101, 'error_messages'=> $error_messages);
-
             Log::info('Registration basic validation failed');
 
         } else {
@@ -262,11 +262,9 @@ class UserapiController extends Controller
                 $user->is_approved = 1;
 
                 // Settings table - COD Check is enabled 
-
                 if(Settings::where('key' , COD)->where('value' , DEFAULT_TRUE)->first()) {
 
                     // Save the default payment method
-
                     $user->payment_mode = COD;
                 }
 
@@ -275,7 +273,11 @@ class UserapiController extends Controller
                 $payment_mode_status = $user->payment_mode ? $user->payment_mode : 0;
 
                 // Send welcome email to the new user:
-                // Helper::send_user_welcome_email($user);
+                $subject = Helper::tr('user_welcome_title');
+                $email_data = $user;
+                $page = "emails.user.welcome";
+                $email = $user->email;
+                Helper::send_email($page,$subject,$email,$email_data);
 
                 // Response with registered user details:
 
@@ -431,7 +433,6 @@ class UserapiController extends Controller
                 );
 
                 $response_array = Helper::null_safe($response_array);
-
             }
         }
 
@@ -441,7 +442,7 @@ class UserapiController extends Controller
 
 	public function forgot_password(Request $request)
 	{
-		$email = $request->email;
+		$email =$request->email;
         // Validate the email field
         $validator = Validator::make(
             $request->all(),
@@ -455,27 +456,20 @@ class UserapiController extends Controller
         } 
         else 
         {
-			$user = User::find($user_data->id);
+			$user = User::where('email' , $email)->first();
 			$new_password = Helper::generate_password();
 			$user->password = Hash::make($new_password);
 			
-			$subject = "Your New Password";
-			$email_data = array();
+            $email_data = array();
+			$subject = Helper::tr('user_forgot_email_title');
 			$email_data['password']  = $new_password;
-			$email_send = Helper::send_user_forgot_email($user->email,$email_data,$subject);
+            $email_data['user']  = $user;
+            $page = "emails.user.forgot_password";
+			$email_send = Helper::send_email($page,$subject,$user->email,$email_data);
 
-			$response_array = array();
-
-            if($email_send == Helper::get_message(106)) {
-                $response_array['success'] = true;                
-                $user->save();
-                
-            } else {
-                $response_array['success'] = false;
-            }
-
-            $response_array['message'] = $email_send;
-
+			$response_array['success'] = true;
+            $response_array['message'] = Helper::get_message(106);
+            $user->save();
         }
 
         $response = response()->json($response_array, 200);
@@ -496,7 +490,6 @@ class UserapiController extends Controller
         if($validator->fails()) {
             $error_messages = implode(',',$validator->messages()->all());
             $response_array = array('success' => false, 'error' => 'Invalid Input', 'error_code' => 401, 'error_messages' => $error_messages );
-            $response_code = 200;
         } else {
             $user = User::find($request->id);
 
@@ -505,7 +498,7 @@ class UserapiController extends Controller
                 $user->password = Hash::make($new_password);
                 $user->save();
 
-                $response_array = array('success' => true , 'message' => Helper::get_message(102));
+                $response_array = Helper::null_safe(array('success' => true , 'message' => Helper::get_message(102)));
                 
             } else {
                 $response_array = array('success' => false , 'error' => Helper::get_error_message(131), 'error_code' => 131);
@@ -513,7 +506,7 @@ class UserapiController extends Controller
 
         }
 
-        $response = response()->json(Helper::null_safe($response_array),200);
+        $response = response()->json($response_array,200);
         return $response;
     
     }
@@ -574,7 +567,12 @@ class UserapiController extends Controller
             $picture = $request->file('picture');
 
             $user = User::find($user_id);
-            $user->name = $name;
+            if($request->has('first_name')) {
+                $user->first_name = $request->first_name;
+            }
+            if($request->has('last_name')) {
+                $user->last_name = $request->last_name;
+            }
             if($request->has('email')) {
                 $user->email = $email;
             }
@@ -590,8 +588,8 @@ class UserapiController extends Controller
             }
 
             // Generate new tokens
-            $user->token = Helper::generate_token();
-            $user->token_expiry = Helper::generate_token_expiry();
+            // $user->token = Helper::generate_token();
+            // $user->token_expiry = Helper::generate_token_expiry();
             
             $user->save();
 
@@ -635,19 +633,9 @@ class UserapiController extends Controller
             $user->token_expiry = Helper::generate_token_expiry();
 
             $user->save();
-
-            $response_array = Helper::null_safe(array(
-                    'success' => true,
-                    'token' => $user->token,
-            ));
-        
+            $response_array = Helper::null_safe(array('success' => true,'token' => $user->token));
         } else {
-            $response_array = array(
-                    'success' => false,
-                    'error' => Helper::get_error_message(115),
-                    'error_code' => 115
-            );
-        
+            $response_array = array('success' => false,'error' => Helper::get_error_message(115),'error_code' => 115);
         }
 
         $response = response()->json($response_array, 200);
@@ -658,18 +646,11 @@ class UserapiController extends Controller
     public function service_list(Request $request) {
     
         if($serviceList = ServiceType::all()) {
-            $response_array = array(
-                        'success' => true,
-                        'services' => $serviceList,
-                );
+            $response_array = Helper::null_safe(array('success' => true,'services' => $serviceList));
         } else {
-            $response_array = array(
-                    'success' => false,
-                    'error' => Helper::get_error_message(115),
-                    'error_code' => 115
-            );
+            $response_array = array('success' => false,'error' => Helper::get_error_message(115),'error_code' => 115);
         }
-        $response = response()->json(Helper::null_safe($response_array), 200);
+        $response = response()->json($response_array, 200);
         return $response;
 
     }
@@ -706,19 +687,10 @@ class UserapiController extends Controller
                     $provider_details_data[] = $provider_details;
                     $provider_details = array();
                 }
-                $response_array = array(
-                            'success' => true,
-                            'provider_details' => $provider_details_data,
-                    );
-                $response_array = null_safe($response_array);
-            } 
-            else 
-            {
-                $response_array = array(
-                        'success' => false,
-                        'error' => Helper::get_error_message(115),
-                        'error_code' => 115
-                );
+                $response_array = array('success' => true,'provider_details' => $provider_details_data);
+                $response_array = Helper::null_safe($response_array);
+            } else {
+                $response_array = array('success' => false,'error' => Helper::get_error_message(115),'error_code' => 115);
             }
         }
 
@@ -754,16 +726,16 @@ class UserapiController extends Controller
 
             $providers = DB::select(DB::raw($query));
 
-            $response_array = array(
+            $response_array = Helper::null_safe(array(
                 'success' => true,
                 'providers' => $providers
-            );
+            ));
         }
 
-        return response()->json(Helper::null_safe($response_array) , 200);
+        return response()->json($response_array , 200);
     }
 
-// Automated Request
+    // Automated Request
     public function send_request(Request $request) {
 
         $validator = Validator::make(
@@ -772,7 +744,7 @@ class UserapiController extends Controller
                     's_latitude' => 'required|numeric',
                     's_longitude' => 'required|numeric',
                     'service_type' => 'numeric|exists:service_types,id',
-                ));
+                ), array( 'required' => 'Location Selected was incorrect! Please try again!'));
 
         if ($validator->fails()) 
         {
@@ -890,12 +862,14 @@ class UserapiController extends Controller
                                 array_push($search_providers, $search_provider);
                             }
                         } else {
-                            // No provider found
-                            Log::info("No Provider Found");
-                            // Send push notification to User
-                            Helper::send_notifications($user->id, USER, Helper::get_push_message(601), Helper::get_push_message(602));
+                            if(!$list_fav_providers) {
+                                // No provider found
+                                Log::info("No Provider Found");
+                                // Send push notification to User
+                                Helper::send_notifications($user->id, USER, Helper::get_push_message(601), Helper::get_push_message(602));
 
-                            $response_array = array('success' => false, 'error' => Helper::get_error_message(112), 'error_code' => 112);
+                                $response_array = array('success' => false, 'error' => Helper::get_error_message(112), 'error_code' => 112);
+                            }
                         }
 
                         // Merge the favourite providers and search providers
@@ -1045,79 +1019,49 @@ class UserapiController extends Controller
                         $requests = new Requests;
                         $requests->user_id = $user->id;
 
-                        if($service_type)
-                            $requests->request_type = $service_type;
+                        if($request->service_type)
+                            $requests->request_type = $request->service_type;
 
                         $requests->status = REQUEST_NEW;
                         $requests->confirmed_provider = NONE;
-                        $requests->request_start_time = date("Y-m-d H:i:s", $request_start_time);
+                        $requests->request_start_time = date("Y-m-d H:i:s");
                         $requests->s_address = $request->s_address ? $request->s_address : "";
                             
-                        if($latitude){ $requests->s_latitude = $latitude; }
-                        if($longitude) { $requests->s_longitude = $longitude; }
+                        if($request->s_latitude){ $requests->s_latitude = $request->s_latitude; }
+                        if($request->s_longitude) { $requests->s_longitude = $request->s_longitude; }
                             
                         $requests->save();
 
                         if($requests) {
                             $requests->status = REQUEST_WAITING;
-                            //No need fo current provider state
-                            // $requests->current_provider = $first_provider_id;
-                            $requests->save();
-
+                            
                             $request_meta = new RequestsMeta;
 
                             $request_meta->status = REQUEST_META_OFFERED;  // Request status change
 
                             // Availablity status change
-                            if($current_provider = Provider::find($first_provider_id)) {
+                            if($current_provider = Provider::find($request->provider_id)) {
                                 $current_provider->waiting_to_respond = WAITING_TO_RESPOND;
                                 $current_provider->save();
                             }
 
                             // Send push notifications to the first provider
-                            $settings = Settings::where('key', 'provider_select_timeout')->first();
-                            $provider_timeout = $settings->value;
-
-                            if($service_type)
-                                $service = ServiceType::find($requests->request_type);
-
-                            $push_data = array();
-                            $push_data['request_id'] = $requests->id;
-                            $push_data['service_type'] = $requests->request_type;
-                            $push_data['request_start_time'] = $requests->request_start_time;
-                            $push_data['status'] = $requests->status;
-                            $push_data['user_name'] = $user->name;
-                            $push_data['user_picture'] = $user->picture;
-                            $push_data['s_address'] = $requests->s_address;
-                            $push_data['s_latitude'] = $requests->s_latitude;
-                            $push_data['s_longitude'] = $requests->s_longitude;
-                            $push_data['user_rating'] = ProviderRating::where('provider_id', $first_provider_id)->avg('rating') ?: 0;
-                            $push_data['time_left_to_respond'] = $provider_timeout - (time() - strtotime($requests->request_start_time));
-
-                            $title = "New Request";
-                            $message = "You got a new request from ".$user->name;
-                            $push_message = array(
-                                'success' => true,
-                                'message' => $message,
-                                'data' => array((object) Helper::null_safe($push_data))
-                            );
-
-                            // Send Push Notification to Provider
-                            //send_push_notification($first_provider_id, PROVIDER, $title, $push_message);
-                            // Log::info(print_r($push_message,true));
+                            $title = Helper::get_push_message(604);
+                            $message = "You got a new request from".$user->name;
+                            Helper::request_push_notification($request->provider_id,PROVIDER,$requests->id,$title,$message);
                             // Push End
 
                             $request_meta->request_id = $requests->id;
-                            $request_meta->provider_id = $final_provider; 
+                            $request_meta->provider_id = $request->provider_id; 
                             $request_meta->save();
 
                             $response_array = array(
                                 'success' => true,
-                                'source_address' => $requests->s_address,
-                                's_latitude' => $requests->s_latitude,
-                                's_longitude' => $requests->s_longitude,
-                                'service_id' => $requests->service_id,
                                 'request_id' => $requests->id,
+                                'current_provider' => $request->provider_id,
+                                'address' => $requests->s_address,
+                                'latitude' => $requests->s_latitude,
+                                'longitude' => $requests->s_longitude,
                             );
 
                             $response_array = Helper::null_safe($response_array); Log::info('Create request end');
@@ -1183,15 +1127,28 @@ class UserapiController extends Controller
 
                         // Send Push Notification to Provider
                         Helper::send_notifications($requests->confirmed_provider, PROVIDER, 'Service Cancelled', 'The service is cancelled by user.');
+                        // Send mail notification to the provider
+                        $email_data = array();
+                        $subject = Helper::tr('request_cancel_by_user');
+                        $email_data['provider']  = $provider;
+                        $email_data['user']  = User::find($request->id);
+                        $page = "emails.user.request_cancel";
+                        $email_send = Helper::send_email($page,$subject,$provider->email,$email_data);
                     }
 
                     // No longer need request specific rows from RequestMeta
                     RequestsMeta::where('request_id', '=', $request_id)->delete();
 
-                    $response_array = array(
-                        'success' => true,
-                        'request_id' => $request->id,
-                    );
+                    $email_data = array();
+                    $user =User::find($requests->user_id);
+                    $email_data['user'] = $user;
+                    $email_data['provider'] = Provider::find($requests->confirmed_provider);
+                    $subject = Helper::tr('request_cancel_provider');
+                    $page = "emails.user.request_cancel";
+                    Helper::send_email($page,$subject,$user->email,$email_data);
+
+                    $response_array = Helper::null_safe(array('success' => true,'request_id' => $request->id));
+
                 } else {
                     $response_array = array( 'success' => false, 'error' => Helper::get_error_message(114), 'error_code' => 114 );
                 }
@@ -1199,8 +1156,6 @@ class UserapiController extends Controller
             } else {
                 $response_array = array( 'success' => false, 'error' => Helper::get_error_message(113), 'error_code' => 113 );
             }
-
-            $response_array = Helper::null_safe($response_array);
         }
 
         $response = response()->json($response_array, 200);
@@ -1234,7 +1189,7 @@ class UserapiController extends Controller
 
         $response_array = array('success' => true);
 
-        return response()->json(Helper::null_safe($response_array) , 200);
+        return response()->json($response_array , 200);
 
     }
 
@@ -1245,8 +1200,9 @@ class UserapiController extends Controller
         $requests = Requests::where('requests.user_id', '=', $request->id)
                             ->whereNotIn('requests.status', $check_status)
                             ->leftJoin('users', 'users.id', '=', 'requests.user_id')
+                            ->leftJoin('providers', 'providers.id', '=', 'requests.confirmed_provider')
                             ->leftJoin('service_types', 'service_types.id', '=', 'requests.request_type')
-                            ->select('requests.id as request_id', 'requests.request_type as request_type', 'service_types.name as service_type_name', 'request_start_time as request_start_time', 'requests.status','requests.confirmed_provider as provider_id', 'requests.provider_status', 'requests.amount', DB::raw('CONCAT(users.first_name, " ", users.last_name) as user_name'), 'users.picture as user_picture', 'users.id as user_id','requests.s_latitude', 'requests.s_longitude')
+                            ->select('requests.id as request_id', 'requests.request_type as request_type', 'service_types.name as service_type_name', 'request_start_time as request_start_time', 'requests.status','providers.id as provider_id', DB::raw('CONCAT(providers.first_name, " ", providers.last_name) as provider_name'),'providers.picture as provider_picture','requests.provider_status', 'requests.amount', DB::raw('CONCAT(users.first_name, " ", users.last_name) as user_name'), 'users.picture as user_picture', 'users.id as user_id','requests.s_latitude', 'requests.s_longitude')
                             ->get()->toArray();
 
         $requests_data = array();
@@ -1256,7 +1212,7 @@ class UserapiController extends Controller
             foreach ($requests as  $req) {
 
                 $req['rating'] = DB::table('user_ratings')->where('provider_id', $req['provider_id'])->avg('rating') ?: 0;
-                unset($req['provider_id']);
+                // unset($req['provider_id']);
                 $requests_data[] = $req;
 
                 $allowed_status = array(REQUEST_COMPLETE_PENDING,REQUEST_COMPLETED,REQUEST_RATING);
@@ -1276,13 +1232,13 @@ class UserapiController extends Controller
             }
         }
 
-        $response_array = array(
+        $response_array = Helper::null_safe(array(
             'success' => true,
             'data' => $requests_data,
             'invoice' => $invoice
-        );
+        ));
     
-        $response = response()->json(Helper::null_safe($response_array), 200);
+        $response = response()->json($response_array, 200);
         return $response;
     } 
 
@@ -1340,9 +1296,14 @@ class UserapiController extends Controller
 
                     Helper::send_notifications($requests->confirmed_provider, PROVIDER , $title , $message );
 
-                    // Send Response
+                     // Send mail notification to the provider
+                    $subject = Helper::tr('request_completed_bill');
+                    $email = Helper::get_emails(3,$request->id,$requests->confirmed_provider);
+                    $page = "emails.user.invoice";
+                    Helper::send_invoice($requests->id,$page,$subject,$email);
 
-                    $response_array =  array('success' => true , 'message' => Helper::get_message(107));
+                    // Send Response
+                    $response_array =  Helper::null_safe(array('success' => true , 'message' => Helper::get_message(107)));
 
                 } else {
                     $response_array = array('success' => 'false' , 'error' => Helper::get_error_message(137) , 'error_code' => 137);
@@ -1353,7 +1314,7 @@ class UserapiController extends Controller
             }
         }
 
-        return response()->json(Helper::null_safe($response_array),200);
+        return response()->json($response_array,200);
 
     }
 
@@ -1446,13 +1407,12 @@ class UserapiController extends Controller
                         $response_array = array('success' => false, 'error' => Helper::get_error_message(140) , 'error_code' => 140);
                     }
 
-                }   
+                }  
 
                 $requests->save();
                 $request_payment->save();
 
                 // Send notification to the provider Start
-
                 if($user)
                     $title =  "The"." ".$user->first_name.' '.$user->last_name." done the payment";
                 else
@@ -1462,6 +1422,12 @@ class UserapiController extends Controller
                 Helper::send_notifications($requests->confirmed_provider,PROVIDER,$title,$messages);
                 // Send notification end
 
+                // Send invoice notification to the user, provider and admin
+                $subject = Helper::tr('request_completed_bill');
+                $email = Helper::get_emails(3,$request->id,$requests->confirmed_provider);
+                $page = "emails.user.invoice";
+                Helper::send_invoice($requests->id,$page,$subject,$email);
+
                 $response_array = array('success' => true);         
 
             } else {
@@ -1469,7 +1435,7 @@ class UserapiController extends Controller
             }
         }
 
-        return response()->json(Helper::null_safe($response_array) , 200);
+        return response()->json($response_array , 200);
     
     }
 
@@ -1508,7 +1474,7 @@ public function getCancel()
                 'request_id' => 'required|integer|exists:requests,id,user_id,'.$user->id.'|unique:user_ratings,request_id',
                 'rating' => 'required|integer|in:'.RATINGS,
                 'comments' => 'max:255',
-                'fav_provider' => 'exists:providers,id'
+                'is_favorite' => 'in:'.DEFAULT_TRUE.','.DEFAULT_FALSE,
             ),
             array(
                 'exists' => 'The :attribute doesn\'t belong to user:'.$user->id,
@@ -1539,13 +1505,13 @@ public function getCancel()
             $req->save();
 
             // Save favourite provider details
-            if($request->has('fav_provider')) {
-                $fav_provider = FavouriteProvider::where('provider_id',$request->fav_provider)->where('user_id' , $request->id)->first();
+            if($request->is_favorite ==  DEFAULT_TRUE) {
+                $fav_provider = FavouriteProvider::where('provider_id',$req->confirmed_provider)->where('user_id' , $request->id)->first();
                 if(!$fav_provider){
                     $favProvider = new FavouriteProvider;
-                    $favProvider->provider_id = $request->fav_provider;
+                    $favProvider->provider_id = $req->confirmed_provider;
                     $favProvider->user_id = $request->id;
-                    $favProvider->status = 1;
+                    $favProvider->status = DEFAULT_TRUE;
                     $favProvider->save();
                 }
             }
@@ -1555,13 +1521,11 @@ public function getCancel()
             $messages = "The user rated your service.";
             Helper::send_notifications($req->confirmed_provider, PROVIDER, $title, $messages);
 
-            $response_array = array(
-                'success' => true
-            );
+            $response_array = array('success' => true);
 
         }
 
-        $response = response()->json(Helper::null_safe($response_array), 200);
+        $response = response()->json($response_array, 200);
         return $response;
     } 
 
@@ -1586,16 +1550,17 @@ public function getCancel()
                 $favProvider = new FavouriteProvider;
                 $favProvider->provider_id = $request->fav_provider;
                 $favProvider->user_id = $request->id;
-                $favProvider->status = 1;
+                $favProvider->status = DEFAULT_TRUE;
                 $favProvider->save();
-                $response_array = array('success' => true);
+
+                $response_array = Helper::null_safe(array('success' => true));
 
             } else {
                 $response_array = array('success' => false , 'error' => Helper::get_error_message(143) , 'error_code' => 143);
             }
         }
 
-        $response = response()->json(Helper::null_safe($response_array), 200);
+        $response = response()->json($response_array, 200);
         return $response;
     }
 
@@ -1618,15 +1583,13 @@ public function getCancel()
                 $providers[] = $fav_provider;
             }
 
-            $response_array = array('success' => true , 'providers' => $providers);
+            $response_array = Helper::null_safe(array('success' => true , 'providers' => $providers));
 
         } else {
-
             $response_array = array('success' => false , 'error' => Helper::get_error_message(132) , 'error_code' => 132);
-
         }
 
-        return response()->json(Helper::null_safe($response_array),200);
+        return response()->json($response_array,200);
     
     }
 
@@ -1650,7 +1613,7 @@ public function getCancel()
 
                 $fav_delete = $favourite->delete();
 
-                $response_array = array('success' => true , 'message' => Helper::get_message(108));
+                $response_array = Helper::null_safe(array('success' => true , 'message' => Helper::get_message(108)));
 
             } else {
                 $response_array = array('success' => false , 'error' => Helper::get_error_message(132) ,'error_code' =>132);
@@ -1658,7 +1621,7 @@ public function getCancel()
 
         }
 
-        return response()->json(Helper::null_safe($response_array) , 200);
+        return response()->json($response_array , 200);
 
     }
 
@@ -1678,12 +1641,9 @@ public function getCancel()
                                     ->get()
                                     ->toArray();
 
-        $response_array = array(
-                'success' => true,
-                'requests' => $requests
-        );
+        $response_array = Helper::null_safe(array('success' => true,'requests' => $requests));
 
-        return response()->json(Helper::null_safe($response_array) , 200);
+        return response()->json($response_array , 200);
     }
 
     public function single_request(Request $request) {
@@ -1723,10 +1683,10 @@ public function getCancel()
                                     DB::raw('CONCAT(users.first_name, " ", users.last_name) as user_name'))
                                 ->get()->toArray();
 
-            $response_array = array('success' => true , 'data' => $requests);
+            $response_array = Helper::null_safe(array('success' => true , 'data' => $requests));
         }
 
-        return response()->json(Helper::null_safe($response_array) , 200);
+        return response()->json($response_array , 200);
     
     }
 
@@ -1740,7 +1700,7 @@ public function getCancel()
             }            
         }
 
-        $response_array = array('success' => true , 'payment_modes' => $payment_modes);
+        $response_array = Helper::null_safe(array('success' => true , 'payment_modes' => $payment_modes));
 
         return response()->json($response_array,200);
     }
@@ -1767,12 +1727,12 @@ public function getCancel()
                 } 
             }
 
-            $response_array = array('success' => true, 'payment_mode' => $user->payment_mode , 'card' => $card_data);
+            $response_array = Helper::null_safe(array('success' => true, 'payment_mode' => $user->payment_mode , 'card' => $card_data));
 
         } else {
             $response_array = array('success' => false , 'error' => Helper::get_error_message(130) , 'error_code' => 130);
         }
-        return response()->json(Helper::null_safe($response_array) , 200);
+        return response()->json($response_array , 200);
     
     }
     
@@ -1789,10 +1749,10 @@ public function getCancel()
         } else {
             $user = User::where('id', '=', $request->id)->update( array('payment_mode' => $request->payment_mode));
 
-            $response_array = array('success' => true , 'message' => Helper::get_message(109));
+            $response_array = Helper::null_safe(array('success' => true , 'message' => Helper::get_message(109)));
         }
 
-        return response()->json(Helper::null_safe($response_array) , 200);
+        return response()->json($response_array , 200);
 
     }
 
@@ -1863,7 +1823,7 @@ public function getCancel()
                         $user->save();
                     }
 
-                    $response_array = array('success' => true);
+                    $response_array = Helper::null_safe(array('success' => true));
                     $response_code = 200;
                 
                 } else {
@@ -1879,7 +1839,7 @@ public function getCancel()
             
         }
     
-        $response = response()->json(Helper::null_safe($response_array) ,200);
+        $response = response()->json($response_array,200);
         return $response; 
     }
 
@@ -1919,7 +1879,7 @@ public function getCancel()
             $response_array = array('success' => true );
         }
     
-        return response()->json(Helper::null_safe($response_array) , 200);
+        return response()->json($response_array , 200);
     }
 
     public function default_card(Request $request) {
@@ -1953,12 +1913,12 @@ public function getCancel()
                     $user->default_card = $request->card_id;
                     $user->save();
                 }
-                $response_array = array('success' => true);
+                $response_array = Helper::null_safe(array('success' => true));
             } else {
                 $response_array = array('success' => false , 'error' => 'Something went wrong');
             }
         }
-        return response()->json(Helper::null_safe($response_array) , 200);
+        return response()->json($response_array , 200);
     
     }
 }

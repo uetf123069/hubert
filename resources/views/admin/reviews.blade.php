@@ -57,7 +57,7 @@
                       @if($name == 'User')
                           <button type="button" class="btn btn-danger"><a href="{{route('adminUserReviewDelete', array('id' => $review->review_id))}}">Delete</a></button>
                           @else
-                          <button type="button" class="btn btn-danger"><a href="{{route('adminProviderReviewDelete', array('id' => $review->review_id))}}">Delete</a></button>
+                          <button type="button" class="btn btn-danger"><a onclick="return confirm('Are you sure want to Delete?')" href="{{route('adminProviderReviewDelete', array('id' => $review->review_id))}}">Delete</a></button>
                           @endif
                       </div>
                   </td>

@@ -24,8 +24,8 @@
                <tr>
                     <td>{{$provider->id}}</td>
                     <td>{{$provider->first_name." ".$provider->last_name}}</td>
-                    <td>{{$doc->name}}</td>
-                    <td><a href="{{$doc->document_url}}" target="_blank"><span class="btn btn-info btn-large">View</span></a></td>
+                    <td>{{$doc->document_name}}</td>
+                    <td><a href="{{ $doc->document_url }}" target="_blank"><span class="btn btn-info btn-large">View</span></a></td>
                 </tr>
               @endforeach
               </tbody>
