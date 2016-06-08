@@ -17,7 +17,6 @@
                   <th>ID</th>
                   <th>Name</th>
                   <th>Email</th>
-                  <!-- <th>Phone</th> -->
                   <th>Total Requests</th>
                   <th>Accepted Requests</th>
                   <th>Availability</th>
@@ -31,7 +30,6 @@
                   <td>{{$index + 1}}</td>
                   <td>{{$provider->first_name}}</td>
                   <td>{{$provider->email}}</td>
-                  <!-- <td>{{$provider->mobile}}</td> -->
                   <td>{{$provider->total_requests}}</td>
                   <td>{{$provider->accepted_requests}}</td>
                   <td>@if($provider->is_available==1) Yes @else N/A @endif</td>

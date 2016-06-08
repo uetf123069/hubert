@@ -8,10 +8,17 @@ use App\Http\Requests;
 
 use App\Helpers\Helper;
 
+use App\Settings;
+
+use App\User;
+
+use App\Cards;
+
 class UserController extends Controller
 {
 
     protected $UserAPI;
+    protected $Paypal;
     
     /**
      * Create a new controller instance.
@@ -168,17 +175,23 @@ class UserController extends Controller
             'token' => \Auth::user()->token,
             'is_paid' => 1
         ]);
+        if($request->payment_mode=='paypal')
+        {
 
+       return redirect()->route('paypal', array('id' => $request->id, 'request_id' => $request->request_id));
+        }
+        else
+        {
         $response = $this->UserAPI->paynow($request)->getData();
-
+        
         if($response->success) {
             $response->message = "Payment successful.";
         } else {
             $response->success = false;
             $response->message = $response->error;
         }
-
         return back()->with('response', $response);
+    }
     }
 
     /**
@@ -238,9 +251,64 @@ class UserController extends Controller
             'token' => \Auth::user()->token,
         ]);
 
+        $user_id = \Auth::user()->id;
+        $user = User::find($user_id);
+        $payment_token = $request->stripeToken;
+        $last_four = substr($request->number,-4);
+        $email = \Auth::user()->email;
+        $settings = Settings::where('key' , 'stripe_secret_key')->first();
+                        $stripe_secret_key = $settings->value;
+                \Stripe\Stripe::setApiKey($stripe_secret_key);
+
+        try{
+
+                // Get the key from settings table
+                
+                    $customer = \Stripe\Customer::create(array(
+                                   "card" => $payment_token,
+                                  "email" => $email)
+                                );
+                if($customer){
+
+                    $customer_id = $customer->id;
+
+                    $cards = new Cards;
+                    $cards->user_id = $request->id;
+                    $cards->customer_id = $customer_id;
+                    $cards->last_four = $last_four;
+                    $cards->card_token = $customer->sources->data[0]->id;
+
+                    // Check is any default is available
+                    $check_card = Cards::where('user_id',$request->id)->first();
+
+                    if($check_card ) 
+                        $cards->is_default = 0;
+                    else
+                        $cards->is_default = 1;
+                    
+                    $cards->save();
+
+                    if($user) {
+                        $user->payment_mode = 'card';
+                        $user->default_card = $cards->id;
+                        $user->save();
+                    }
+
+                    $response_array = array('success' => true);
+                    $response_code = 200;
+                
+                } else {
+                    $response->message('Could not create client ID');
+                }
+            
+            } catch(Exception $e) {
+                $response->message('error'. $e);
+            
+            }
+
         $PaymentMethods = $this->UserAPI->get_user_payment_modes($request)->getData();
         
-        return view('user.payment');
+        return back();
     }
 
     /**

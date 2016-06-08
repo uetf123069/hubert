@@ -9,7 +9,9 @@
         "laravel/framework": "5.2.*",
         "anlutro/l4-settings": "^0.4.8",
         "stripe/stripe-php": "^3.13",
-        "guzzlehttp/guzzle": "^6.2"
+        "guzzlehttp/guzzle": "^6.2",
+        "paypal/rest-api-sdk-php": "*",
+        "netshell/paypal": "dev-master"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
