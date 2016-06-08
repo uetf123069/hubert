@@ -89,7 +89,12 @@ class AuthController extends Controller
             'payment_mode' => 'cod'
         ]);
 
-        Helper::send_user_welcome_email($User);
+        // Send welcome email to the new user:
+        $subject = Helper::tr('user_welcome_title');
+        $email_data = $User;
+        $page = "emails.user.welcome";
+        $email = $data['email'];
+        Helper::send_email($page,$subject,$email,$email_data);
         
         return $User;
     }
