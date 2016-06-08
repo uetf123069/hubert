@@ -21,6 +21,7 @@
 			</div>
 			<div class="panel-body panel-no-padding">
 				<table id="history_data" class="table table-striped table-bordered" cellspacing="0" width="100%">
+					@if(!empty($requests))
 					<thead>
 						<tr>
 							<th>Request #ID</th>
@@ -31,6 +32,7 @@
 						</tr>
 					</thead>
 					<tbody>
+					
 					@foreach($requests as $request)
 						<tr>
 							<td># {{$request->id}}</td>
@@ -41,7 +43,11 @@
 							<td class="center">{{date('d M, Y',strtotime($request->date))}}</td>
 						</tr>
 					@endforeach
+					
 					</tbody>
+					@else
+						<p>No Request found!</p>
+					@endif
 				</table>
 				<div class="panel-footer"></div>
 			</div>

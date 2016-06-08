@@ -37,6 +37,12 @@
     <link type="text/css" href="{{ asset('assets/plugins/form-daterangepicker/daterangepicker-bs3.css') }}" rel="stylesheet">      <!-- DateRangePicker -->
     <link type="text/css" href="{{ asset('assets/plugins/fullcalendar/fullcalendar.css') }}" rel="stylesheet">                     <!-- FullCalendar -->
     <link type="text/css" href="{{ asset('assets/plugins/charts-chartistjs/chartist.min.css') }}" rel="stylesheet">                <!-- Chartist -->
+    <style type="text/css">
+        #topnav .navbar-brand {
+            background: url("{{ Setting::get('site_logo', asset('logo.png')) }}") no-repeat 50% 50%;
+            background-size: auto 80%;
+        }
+    </style>
 
     @yield('styles')
 
@@ -65,7 +71,7 @@
         </div>
     </div>
 
-    @include('layouts.user.info')
+    <!-- @include('layouts.user.info') -->
 
 
 

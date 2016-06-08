@@ -14,6 +14,8 @@ use Validator;
 
 use DB;
 
+use App\Admin;
+
 use App\User;
 
 use App\Provider;
@@ -57,7 +59,7 @@ define('REQUEST_COMPLETED',      5);
 define('REQUEST_CANCELLED',      6);
 define('REQUEST_NO_PROVIDER_AVAILABLE',7);
 
-//Only when manual request
+// Only when manual request
 define('REQUEST_REJECTED_BY_PROVIDER', 8);
 
 define('PROVIDER_NOT_AVAILABLE', 0);
@@ -92,8 +94,7 @@ class ProviderApiController extends Controller
 		$this->middleware('ProviderApiVal' , ['except' => ['register' , 'login' , 'forgot_password']]);
 	}
 
-	public function register(Request $request)
-	{
+	public function register(Request $request) {
 
 		$validator = Validator::make(
 				$request->all(),
@@ -169,7 +170,6 @@ class ProviderApiController extends Controller
 			if($provider) {
 
 				if($request->has('service_type')) {
-
 					$provider_service = new  ProviderService;
 					$provider_service->provider_id = $provider->id;
 					$provider_service->service_type_id = $request->service_type;
@@ -179,13 +179,25 @@ class ProviderApiController extends Controller
 			}
 				
 			// Send welcome email to the new provider
-			$check_mail = Helper::send_provider_welcome_email($provider);
+            $email_data = array();
+            $subject = Helper::tr('provider_welcome_title');
+            $email_data  = $provider;
+            $page = "emails.provider.welcome";
+            $email_send = Helper::send_email($page,$subject,$provider->email,$email_data);
 
-			Log::info('Provider welcome status check'." ".$check_mail);
+			// Send mail notification to the Admin
+            $email_data = array();
+            $subject = Helper::tr('new_provider_signup');
+            $admin_email = Admin::first()->email;
+            $email_data  = $provider;
+            $page = "emails.admin_new_provider_notify";
+            $email_send = Helper::send_email($page,$subject,$admin_email,$email_data);
+
+			// Log::info('Provider welcome status check'." ".$check_mail);
 			
 			Log::info("New provider registration: ".print_r($provider, true));
 
-			$response_array = array(
+			$response_array = Helper::null_safe(array(
 				'success' => true ,
 				'message' => $provider ? Helper::get_message(105) : Helper::get_error_message(126),
 				'id' 	=> $provider->id,
@@ -200,12 +212,33 @@ class ProviderApiController extends Controller
                 'login_by' => $provider->login_by,
                 'social_unique_id' => $provider->social_unique_id,
                 'service_type' => $request->service_type,
-				);
+				));
 		}
 	
-		$response = response()->json(Helper::null_safe($response_array), 200);
+		$response = response()->json($response_array, 200);
 		return $response;
 	}
+
+	// public function email_verification(Request $request) {
+
+	// 	$validator = Validator::make($request->all() ,
+	// 		array(
+	// 				'email_activation_code' => 'required|exists:providers,email_activation_code,id,'.$request->id,
+	// 			)
+	// 		);
+
+	// 	if($validator->fails()) {
+	// 		$error_messages = implode(',', $validator->messages()->all());
+	// 		$response_array = array('success' => false , 'error' => $error_messages , 'error_code' => Helper::get_error_message(101));
+	// 		return redirect()->route('/');
+	// 	} else {
+	// 		$provider = Provider::find($request->id);
+	// 		$provider->is_email_activated = DEFAULT_TRUE;
+	// 		$provider->save();
+
+	// 		return view('provider_email_verified')->with('email_data' , $provider);
+	// 	}
+	// }
 
 	public function login(Request $request)
 	{
@@ -324,30 +357,23 @@ class ProviderApiController extends Controller
 
             $new_password = Helper::generate_password();
             $provider->password = Hash::make($new_password);
-            $provider->save();
-
-            $subject = "Your New Password";
+            // Email start
             $email_data = array();
-            $email_data['password']  = $new_password;
+			$subject = Helper::tr('provider_forgot_email_title');
+			$email_data['password']  = $new_password;
+			$email_data['user']  = $provider;
+            $page = "emails.provider.forgot_password";
+			$email_send = Helper::send_email($page,$subject,$provider->email,$email_data);
 
-            $email_send = Helper::send_provider_forgot_email($provider->email,$email_data,$subject);
-
-            $response_array = array();
-
-            if($email_send == Helper::get_message(106)) {
-
-                $response_array['success'] = true;
-                $response_array['message'] = $email_send;
-                
-            } else {
-                $response_array['success'] = false;
-                $response_array['message'] = $email_send;
-            }
-
-	        $response = response()->json($response_array, 200);
-	        return $response;
+			// Email end
+            $response_array['success'] = true;
+            $response_array['message'] = Helper::get_message(106);
+            $provider->save();
 	    }
-    
+
+	    $response = response()->json($response_array, 200);
+	    return $response;
+   
     }
 
     public function changePassword(Request $request) {
@@ -406,10 +432,10 @@ class ProviderApiController extends Controller
 		$provider = Provider::find($request->id);
 
         // Generate new tokens
-        $provider->token = Helper::generate_token();
-        $provider->token_expiry = Helper::generate_token_expiry();
-        $provider->token_refresh = Helper::generate_token();
-        $provider->save();
+        // $provider->token = Helper::generate_token();
+        // $provider->token_expiry = Helper::generate_token_expiry();
+        // $provider->token_refresh = Helper::generate_token();
+        // $provider->save();
 
 		$response_array = array(
             'success' => true,
@@ -439,7 +465,7 @@ class ProviderApiController extends Controller
 					'mobile' => 'required|digits_between:6,13',
 					'picture' => 'mimes:jpeg,bmp,png',
 					'gender' => 'in:male,female,others',
-					'email' => 'email|max:255|unique:providers,email'
+					'email' => 'email|max:255|unique:providers,email,'.$request->id
 				),
 				array(
 						'unique' => 'Email ID already exists',
@@ -567,6 +593,7 @@ class ProviderApiController extends Controller
 					'error' => Helper::get_error_message(115),
 					'error_code' => 115
 			);
+			$response_array = Helper::null_safe($response_array);
 		}
 	
 		$response = response()->json($response_array, 200);
@@ -592,12 +619,12 @@ class ProviderApiController extends Controller
 			$provider->longitude = $request->longitude;
 			$provider->save();
 
-			$response_array = array(
+			$response_array = Helper::null_safe(array(
                 'success' => true,
                 'id' => $provider->id,
                 'latitude' => $provider->latitude,
                 'longitude' => $provider->longitude
-            );
+            ));
 		}
 	
 		$response = response()->json($response_array, 200);
@@ -612,11 +639,11 @@ class ProviderApiController extends Controller
         if($provider)
         	$active = $provider->is_available;
 
-        $response_array = array(
+        $response_array = Helper::null_safe(array(
             'success' => true,
             'id' => $request->id,
             'active' => $active
-        );
+        ));
 
         $response = response()->json($response_array, 200);
         return $response;
@@ -639,14 +666,10 @@ class ProviderApiController extends Controller
 	        $provider = Provider::find($request->id);
 
 	        $availableState = $provider->is_available ? DEFAULT_FALSE : DEFAULT_TRUE;
-	        $provider->is_available = $availableState;
+	        $provider->is_available = $request->status;
 	        $provider->save();
 
-	        $response_array = array(
-	                'success' => true,
-	                'id' => $provider->id,
-	                'active' => $provider->is_available
-	        );
+	        $response_array = Helper::null_safe(array('success' => true,'id' => $provider->id,'active' => $provider->is_available));
 	    }
 
 		$response = response()->json($response_array, 200);
@@ -700,12 +723,12 @@ class ProviderApiController extends Controller
                     $provider->waiting_to_respond = WAITING_TO_RESPOND_NORMAL;
 					$provider->save();
 
-                    $response_array = array(
+                    $response_array = Helper::null_safe(array(
                     	'success' => true,
                     	'id' => $request->id,
                     	'request_id' => $request->request_id,
                     	'message' => Helper::get_message(118),
-                    	);
+                    	));
 
                     // Check for manual request status
                     $manual_request = Settings::where('key','manual_request')->first();
@@ -755,7 +778,7 @@ class ProviderApiController extends Controller
 		
 		}
 		
-		$response = response()->json(Helper::null_safe($response_array) , 200);
+		$response = response()->json($response_array , 200);
 		return $response;
 	}
 	
@@ -822,17 +845,17 @@ class ProviderApiController extends Controller
                         'user_id' => $requests->user_id,
                         'request_type' => $requests->request_type,
                     );
-                    $response_array = array(
+                    $response_array = Helper::null_safe(array(
                         'success' => true,
                         'data' => $requestData,
                         'message' => Helper::get_message(111)
-                        );
+                        ));
                 }
             }
 		}
 		// Send Notification to User
 		
-		$response = response()->json(Helper::null_safe($response_array) , 200);
+		$response = response()->json($response_array , 200);
 		return $response;
 	}
 
@@ -864,10 +887,11 @@ class ProviderApiController extends Controller
 
 			$requests = Requests::where('id', '=', $request_id)
 								->where('confirmed_provider', '=', $provider->id)
+								->where('provider_status' , PROVIDER_ACCEPTED)
 								->first();
 
 			// Current state being validated in order to prevent accidental change of state
-			if ($requests && intval($requests->provider_status) != $current_state ) 
+			if ($requests && intval($requests->provider_status) != $current_state) 
 			{
 	            $requests->status = REQUEST_INPROGRESS;
 	            $requests->provider_status = PROVIDER_STARTED;
@@ -881,19 +905,19 @@ class ProviderApiController extends Controller
 
                 Helper::send_notifications($requests->user_id, USER, $title, $messages);
            
-				$response_array = array(
+				$response_array = Helper::null_safe(array(
 						'success' => true,
 						'status' => $new_state,
 						'message' => Helper::get_message(112)
-				);
+				));
 			} else {
 
 				$response_array = array('success' => false, 'error' => Helper::get_error_message(145), 'error_code' => 145);
-                Log::info('Provider status Error:: Old state='.$requests->provider_status.' and current state='.$current_state);
+                // Log::info('Provider status Error:: Old state='.$requests->provider_status.' and current state='.$current_state);
 			}
 		}
 
-		$response = response()->json(Helper::null_safe($response_array) , 200);
+		$response = response()->json($response_array , 200);
 		return $response;
 	}
 
@@ -923,10 +947,11 @@ class ProviderApiController extends Controller
 
 			$requests = Requests::where('id', '=', $request_id)
 								->where('confirmed_provider', '=', $provider->id)
+								->where('provider_status' , PROVIDER_STARTED)
 								->first();
 
 			// Current state being validated in order to prevent accidental change of state
-			if ($requests && intval($requests->provider_status) != $current_state ) 
+			if ($requests && intval($requests->provider_status) != $current_state) 
 			{
 	            $requests->status = REQUEST_INPROGRESS;
 	            $requests->provider_status = PROVIDER_ARRIVED;
@@ -938,18 +963,18 @@ class ProviderApiController extends Controller
 
                 Helper::send_notifications($requests->user_id, USER, $title, $messages);
            
-				$response_array = array(
+				$response_array = Helper::null_safe(array(
 						'success' => true,
 						'status' => REQUEST_INPROGRESS,
 						'message' => Helper::get_message(113)
-				);
+				));
 			} else {
 				$response_array = array('success' => false, 'error' => Helper::get_error_message(146), 'error_code' => 146);
-                Log::info('Provider status Error:: Old state='.$requests->provider_status.' and current state='.$current_state);
+                // Log::info('Provider status Error:: Old state='.$requests->provider_status.' and current state='.$current_state);
 			}
 		}
 
-		$response = response()->json(Helper::null_safe($response_array) , 200);
+		$response = response()->json($response_array , 200);
 		return $response;
 	}
 
@@ -979,10 +1004,11 @@ class ProviderApiController extends Controller
 
 			$requests = Requests::where('id', '=', $request_id)
 								->where('confirmed_provider', '=', $provider->id)
+								->where('provider_status' , PROVIDER_ARRIVED)
 								->first();
 
 			// Current state being validated in order to prevent accidental change of state
-			if ($requests && intval($requests->provider_status) != $current_state ) 
+			if ($requests && intval($requests->provider_status) != $current_state) 
 			{
 				if($request->hasFile('before_image'))
 				{
@@ -1000,19 +1026,19 @@ class ProviderApiController extends Controller
 
                 Helper::send_notifications($requests->user_id, USER, $title, $messages);
            
-				$response_array = array(
+				$response_array = Helper::null_safe(array(
 						'success' => true,
 						'request_id' => $request->request_id,
 						'status' => REQUEST_INPROGRESS,
 						'message' => Helper::get_message(114)
-				);
+				));
 			} else {
 				$response_array = array('success' => false, 'error' => Helper::get_error_message(147), 'error_code' => 147);
-                Log::info('Provider status Error:: Old state='.$requests->provider_status.' and current state='.$current_state);
+                Log::info(Helper::get_error_message(147));
 			}
 		}
 
-		$response = response()->json(Helper::null_safe($response_array) , 200);
+		$response = response()->json($response_array , 200);
 		return $response;
 	}
 
@@ -1033,19 +1059,18 @@ class ProviderApiController extends Controller
 		{
 			$error_messages = implode(',', $validator->messages()->all());
             $response_array = array('success' => false, 'error' => $error_messages, 'error_messages' => Helper::get_error_message(101) ,'error_code' => 101);
-		} 
-		else 
-		{
+		}  else {
 
 			$request_id = $request->request_id;
 			$current_state = PROVIDER_SERVICE_COMPLETED;
 
 			$requests = Requests::where('id', '=', $request_id)
 								->where('confirmed_provider', '=', $provider->id)
+								->where('provider_status' , PROVIDER_SERVICE_STARTED)
 								->first();
 
 			// Current state being validated in order to prevent accidental change of state
-			if ($requests && intval($requests->provider_status) != $current_state ) 
+			if ($requests && intval($requests->provider_status) != $current_state) 
 			{
 				if($request->hasFile('after_image'))
 				{
@@ -1118,43 +1143,62 @@ class ProviderApiController extends Controller
 	    			$request_payment->save();
 	    		}
 
+	    		$request_save = Requests::find($requests->id);
+	    		$request_save->amount = $total;
+	    		$request_save->save();
+
     			$invoice_data = array();
+
+    			$user = User::find($requests->user_id);
+    			$provider = Provider::find($requests->confirmed_provider);
 
     			$invoice_data['request_id'] = $requests->id;
     			$invoice_data['user_id'] = $requests->user_id;
     			$invoice_data['provider_id'] = $requests->confirmed_provider;
+    			$invoice_data['provider_name'] = $provider->first_name." ".$provider->last_name;
+    			$invoice_data['provider_address'] = $provider->address;
+    			$invoice_data['user_name'] = $user->first_name." ".$user->last_name;
+    			$invoice_data['user_address'] = $requests->s_address;
     			$invoice_data['base_price'] = $base_price;
+    			$invoice_data['other_price'] = 0;
     			$invoice_data['total_time_price'] = $total_time_price;
+    			$invoice_data['sub_total'] = $total_time_price + $base_price;
     			$invoice_data['tax_price'] = $tax_price;
     			$invoice_data['total'] = $total;
     			$invoice_data['payment_mode'] = $user_payment_mode;
     			$invoice_data['payment_mode_status'] = $user_payment_mode ? 1 : 0;
+    			$invoice_data['bill_no'] = "Not paid";
     			$invoice_data['card_token'] = $card_token;
     			$invoice_data['customer_id'] = $customer_id;
     			$invoice_data['last_four'] = $last_four;
 
-	            /*Send Push Notification to User*/
-
+	            // Send Push Notification to User
 	            $title = "Your Request is completed.Please check the invoice details";
 	            $message = $invoice_data;
 
 	            Helper::send_notifications($requests->user_id,USER,$title,$message);
 
+	            // Send invoice notification to the user and provider
+                $subject = Helper::tr('request_completed_invoice');
+                $email = Helper::get_emails(3,$requests->user_id,$requests->confirmed_provider);
+                $page = "emails.provider.invoice";
+                $email_send = Helper::send_email($page,$subject,$user->email,$invoice_data);
+
 	            //Invoice details to Provider as well
-				$response_array = array(
+				$response_array = Helper::null_safe(array(
 						'success' => true,
 						'request_id' => $request->request_id,
 						'status' => REQUEST_COMPLETE_PENDING,
 						'invoice' => $invoice_data,
 						'message' => Helper::get_message(115)
-				);
+				));
 			} else {
 				$response_array = array('success' => false, 'error' => Helper::get_error_message(148), 'error_code' => 148);
-                Log::info('Provider status Error:: Old state='.$requests->provider_status.' and current state='.$current_state);
+                Log::info(Helper::get_error_message(148));
 			}
 		}
 
-		$response = response()->json(Helper::null_safe($response_array) , 200);
+		$response = response()->json($response_array , 200);
 		return $response;
 	}
 
@@ -1183,32 +1227,31 @@ class ProviderApiController extends Controller
             $comments = $request->comments;
 
             $req = Requests::find($request_id);
-            //Save Rating
-            $rev_user = new ProviderRating();
-            $rev_user->provider_id = $req->confirmed_provider;
-            $rev_user->user_id = $req->user_id;
-            $rev_user->request_id = $req->id;
-            $rev_user->rating = $request->rating;
-            $rev_user->comment = $comments ?: '';
-            $rev_user->save();
+            // if ($req && intval($req->provider_status) == REQUEST_COMPLETE_PENDING) { 
+	            //Save Rating
+	            $rev_user = new ProviderRating();
+	            $rev_user->provider_id = $req->confirmed_provider;
+	            $rev_user->user_id = $req->user_id;
+	            $rev_user->request_id = $req->id;
+	            $rev_user->rating = $request->rating;
+	            $rev_user->comment = $comments ?: '';
+	            $rev_user->save();
 
-            $req->provider_status = PROVIDER_RATED;
-            $req->save();
+	            $req->provider_status = PROVIDER_RATED;
+	            $req->save();
 
-            // Send Push Notification to User
-            $title = "Provider Rated";
-            $messages = "The provider rated your service.";
+	            // Send Push Notification to User
+	            $title = "Provider Rated";
+	            $messages = "The provider rated your service.";
 
-            Helper::send_notifications($req->user_id, USER, $title, $messages);          
+	            Helper::send_notifications($req->user_id, USER, $title, $messages);          
 
-            $response_array = array(
-                'success' => true,
-                'status' => REQUEST_COMPLETE_PENDING,
-                'message' => Helper::get_message(116),
-            );
-
+	            $response_array = Helper::null_safe(array('success' => true,'status' => REQUEST_COMPLETE_PENDING,'message' => Helper::get_message(116)));
+	        // } else {
+	        // 	$response_array = array('success' => false , 'error' => Helper::get_error_message(150) , 'error_code' => 150);
+	        // }
 		}
-		return response()->json(Helper::null_safe($response_array) , 200);
+		return response()->json($response_array , 200);
 	}
 
 	public function cancelrequest(Request $request)
@@ -1252,6 +1295,8 @@ class ProviderApiController extends Controller
 
                     Helper::send_notifications($requests->user_id, USER, $title, $messages);
 
+                    // Send email notification to the user
+
                     /*If request has confirmed provider then release him to available status*/
                     if($requests->confirmed_provider != DEFAULT_FALSE){
                         $provider = Provider::find( $requests->confirmed_provider );
@@ -1262,25 +1307,30 @@ class ProviderApiController extends Controller
                     // No longer need request specific rows from RequestMeta
                     RequestsMeta::where('request_id', '=', $request_id)->delete();
 
-                    $response_array = array(
+                   	// Send mail notification
+
+                   	$email_data = array();
+                   	$user =User::find($requests->user_id);
+                   	$email_data['user'] = $user;
+                   	$email_data['provider'] = Provider::find($requests->confirmed_provider);
+                   	$title = 
+                   	$subject = Helper::tr('request_cancel_provider');
+                   	$page = "emails.provider.request_cancel";
+
+                   	Helper::send_email($page,$subject,$user->email,$email_data);
+
+                    $response_array = Helper::null_safe(array(
                         'success' => true,
                         'request_id' => $request->id,
                         'status' => REQUEST_CANCELLED,
                         'message' => Helper::get_message(117),
-                    );
-                }
-                else
-                {
+                    ));
+                } else {
                     $response_array = array( 'success' => false, 'error' => Helper::get_error_message(114), 'error_code' => 114 );
                 }
-
-            }
-            else
-            {
+            } else {
                 $response_array = array( 'success' => false, 'error' => Helper::get_error_message(113), 'error_code' => 113 );
             }
-
-            $response_array = Helper::null_safe($response_array);
         }
 
         $response = response()->json($response_array, 200);
@@ -1303,10 +1353,10 @@ class ProviderApiController extends Controller
 									->get()
 									->toArray();
 
-		$response_array = array(
+		$response_array = Helper::null_safe(array(
 				'success' => true,
 				'requests' => $requests
-		);
+		));
 			
 		$response = response()->json($response_array, 200);
 		return $response;
@@ -1349,10 +1399,10 @@ class ProviderApiController extends Controller
                                     DB::raw('CONCAT(users.first_name, " ", users.last_name) as user_name'))
                                 ->get()->toArray();
 
-            $response_array = array('success' => true , 'data' => $requests);
+            $response_array = Helper::null_safe(array('success' => true , 'data' => $requests));
         }
 
-        return response()->json(Helper::null_safe($response_array) , 200);
+        return response()->json($response_array , 200);
     
     }
 
@@ -1384,12 +1434,12 @@ class ProviderApiController extends Controller
             $request_meta_data[] = $each_request_meta;
         }
 
-		$response_array = array(
+		$response_array = Helper::null_safe(array(
 				'success' => true,
 				'data' => $request_meta_data
-		);
+		));
 	
-		$response = response()->json(Helper::null_safe($response_array), 200);
+		$response = response()->json($response_array, 200);
 		return $response;
 	}
 
@@ -1397,7 +1447,7 @@ class ProviderApiController extends Controller
 	{
 		$provider = Provider::find($request->id);
 
-		 $check_status = array(REQUEST_COMPLETED,REQUEST_CANCELLED,REQUEST_NO_PROVIDER_AVAILABLE);
+		$check_status = array(REQUEST_COMPLETED,REQUEST_CANCELLED,REQUEST_NO_PROVIDER_AVAILABLE);
 
 		$requests = Requests::where('requests.confirmed_provider', '=', $provider->id)
 							->whereNotIn('requests.status', $check_status)
@@ -1435,13 +1485,13 @@ class ProviderApiController extends Controller
             }
 		}
 
-        $response_array = array(
+        $response_array = Helper::null_safe(array(
             'success' => true,
             'data' => $requests_data,
             'invoice' => $invoice
-        );
+        ));
 	
-		$response = response()->json(Helper::null_safe($response_array), 200);
+		$response = response()->json($response_array, 200);
 		return $response;
 	}
 }

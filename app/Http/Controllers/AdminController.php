@@ -14,6 +14,8 @@ use App\Document;
 
 use App\ProviderDocument;
 
+use App\ProviderRating;
+
 use App\Admin;
 
 use App\ServiceType;
@@ -45,10 +47,9 @@ class AdminController extends Controller
      *
      * @return void
      */
-     public function __construct()
+    public function __construct()
     {
-        $this->middleware('admin');
-       
+        $this->middleware('admin');  
     }
 
     /**
@@ -61,11 +62,22 @@ class AdminController extends Controller
         $user = Auth::guard('admin')->user()->name;
         $reg_users = User::count();
         $comp_req = Requests::where('status','5')->count();
-        $acc_req = Requests::where('provider_status','2')->count();
+        $tot_req = Requests::count();
+        $can_req = Requests::where('status','6')->count();
+        $tot_pay = RequestPayment::sum('total');
+        $paypal = RequestPayment::where('payment_mode','paypal')->sum('total');
+        $card_pay = RequestPayment::where('payment_mode','card')->sum('total');
+        $cod = RequestPayment::where('payment_mode','cod')->sum('total');
+        
         return view('admin.dashboard')
                 ->with('reg_users', $reg_users)
                 ->with('comp_req', $comp_req)
-                ->with('acc_req', $acc_req);
+                ->with('tot_req', $tot_req)
+                ->with('tot_pay',$tot_pay)
+                ->with('paypal',$paypal)
+                ->with('card_pay',$card_pay)
+                ->with('cod',$cod)
+                ->with('can_req', $can_req);
     }
 
     public function profile()
@@ -281,16 +293,16 @@ class AdminController extends Controller
     {
         $subQuery = DB::table('requests')
                 ->select(DB::raw('count(*)'))
-                ->whereRaw('provider_id = providers.id and status != 0');
+                ->whereRaw('confirmed_provider = providers.id and status != 0');
         $subQuery1 = DB::table('requests')
                 ->select(DB::raw('count(*)'))
-                ->whereRaw('provider_id = providers.id and status=1');
+                ->whereRaw('confirmed_provider = providers.id and status=1');
         $providers = DB::table('providers')
                 ->select('providers.*', DB::raw("(" . $subQuery->toSql() . ") as 'total_requests'"), DB::raw("(" . $subQuery1->toSql() . ") as 'accepted_requests'"))
                 ->orderBy('providers.created_at', 'DESC')
                 ->get();
 
-
+                // dd($providers);
         return view('admin.providers')->with('providers',$providers);
     }
 
@@ -412,13 +424,16 @@ class AdminController extends Controller
         $provider_id = $request->id;
         $provider = Provider::find($provider_id);
         $documents = Document::all();
-        $provider_document = ProviderDocument::where('provider_id', $provider_id)->get();
+        $provider_document = DB::table('provider_documents')
+                            ->leftJoin('documents', 'provider_documents.document_id', '=', 'documents.id')
+                            ->select('provider_documents.*', 'documents.name as document_name')
+                            ->where('provider_id', $provider_id)->get();
 
 
         return view('admin.providerDocuments')
                         ->with('provider', $provider)
-                        ->with('documents', $documents)
-                        ->with('provider_document', $provider_document);
+                        ->with('document', $documents)
+                        ->with('documents', $provider_document);
     }
 
     public function ProviderApprove(Request $request)
@@ -736,9 +751,8 @@ class AdminController extends Controller
                 ->leftJoin('users', 'requests.user_id', '=', 'users.id')
                 ->leftJoin('request_payments', 'requests.id', '=', 'request_payments.request_id')
                 ->select('users.first_name as user_first_name', 'users.last_name as user_last_name', 'providers.first_name as provider_first_name', 'providers.last_name as provider_last_name', 'users.id as user_id', 'providers.id as provider_id', 'requests.is_paid',  'requests.id as id', 'requests.created_at as date', 'requests.confirmed_provider', 'requests.status', 'requests.provider_status', 'requests.amount', 'request_payments.payment_mode as payment_mode', 'request_payments.status as payment_status', 'request_payments.total_time as total_time','request_payments.base_price as base_price', 'request_payments.time_price as time_price', 'request_payments.tax_price as tax', 'request_payments.total as total_amount', 'requests.s_latitude as latitude', 'requests.s_longitude as longitude')
-                ->orderBy('requests.created_at', 'DESC')
-                ->get();    
-        return view('admin.requestView')->with('requests', $requests);
+                ->first();    
+        return view('admin.requestView')->with('request', $requests);
     }
 
     public function mapview()

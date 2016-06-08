@@ -1,114 +1,167 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+<?php
+    use app\Helpers\Helper;
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Welcome To {{Setting::get('sitename')}}</title>
-    <style type="text/css" media="screen">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1" />
+    <title>Welcome</title>
+    <style type="text/css">
+.ReadMsgBody { width: 100%; background-color: #ffffff; }
+.ExternalClass { width: 100%; background-color: #ffffff; }
+.ExternalClass, .ExternalClass p, .ExternalClass span, .ExternalClass font, .ExternalClass td, .ExternalClass div { line-height: 100%; }
+html { width: 100%; }
+body { -webkit-text-size-adjust: none; -ms-text-size-adjust: none; margin: 0; padding: 0; }
+table { border-spacing: 0; border-collapse: collapse; table-layout: fixed; margin: 0 auto; }
+table table table { table-layout: auto; }
+img { display: block !important; }
+table td { border-collapse: collapse; }
+.yshortcuts a { border-bottom: none !important; }
+a { color: #21b6ae; text-decoration: none; }
 
-        .ExternalClass * {line-height: 100%}
-
-        /* Début style responsive (via media queries) */
-
-        @media only screen and (max-width: 480px) {
-            *[id=email-penrose-conteneur] {width: 100% !important;}
-            table[class=resp-full-table] {width: 100%!important; clear: both;}
-            td[class=resp-full-td] {width: 100%!important; clear: both;}
-            img[class="email-penrose-img-header"] {width:100% !important; max-width: 340px !important;}
-        }
-
-        /* Fin style responsive */
-
-    </style>
+ @media only screen and (max-width: 640px) {
+body { width: auto !important; }
+table[class="table600"] { width: 450px !important; }
+table[class="table-inner"] { width: 90% !important; }
+table[class="table3-3"] { width: 100% !important; text-align: center !important; }
+}
+ @media only screen and (max-width: 479px) {
+body { width: auto !important; }
+table[class="table600"] { width: 290px !important; }
+table[class="table-inner"] { width: 82% !important; }
+table[class="table3-3"] { width: 100% !important; text-align: center !important; }
+}
+</style>
 
 </head>
-<body style="background-color:#ecf0f1">
-<div align="center" style="background-color:#ecf0f1;">
 
-    <!-- Début en-tête -->
+<body>
 
-    <table id="email-penrose-conteneur" width="660" align="center" style="padding:20px 0px;" border="0" cellspacing="0" cellpadding="0">
+    <!-- Layout -->
+    <table data-thumb="noti-2.jpg" data-module="Layout-2" data-bgcolor="Background Color" width="100%" border="0" align="center" cellpadding="0" cellspacing="0" bgcolor="#3cb2d0">
         <tr>
-            <td>
-                <table width="660" class="resp-full-table" align="center" border="0" cellspacing="0" cellpadding="0">
+            <td data-bg="Background" align="center" background="{{asset('email/bg-2.jpg')}}" style="background-size:cover; background-position:top;">
+                <table class="table600" width="600" border="0" align="center" cellpadding="0" cellspacing="0">
                     <tr>
-                        <td width="50%" style="text-align:left;">
-                            <a href="#" style="text-decoration:none;"><h3 style="font-size: 25px;font-family: 'Helvetica Neue', helvetica, arial, sans-serif;font-weight: bold;color: #6B6B6B;margin: 0;">{{Setting::get('sitename')}}</h3></a>
-                        </td>
-                        <td width="50%" style="text-align:right;">
-                            <table align="right" border="0" cellspacing="0" cellpadding="0">
+                        <td height="60"></td>
+                    </tr>
+                    <tr>
+                        <td align="center">
+                            <table align="center" bgcolor="#FFFFFF" style="border-radius:4px; box-shadow: 0px 3px 0px #d4d2d2;" width="100%" border="0" cellspacing="0" cellpadding="0">
                                 <tr>
-                                    <h5 style="font-size: 20px;font-family: 'Helvetica Neue', helvetica, arial, sans-serif;font-weight: bold;color: #6B6B6B;margin: 0;"><?php
-                                        $datetime = date("M-d-Y");
-                                        $timestamp = strtotime($datetime) - 7*60*60;
-                                        $time = date("M-d-Y", $timestamp);
-                                        echo $time;?></h5>
+                                    <td height="30"></td>
                                 </tr>
+                                <!-- logo -->
+                                <tr>
+                                    <td align="center" style="line-height: 0px;">
+                                        <img data-crop="false" mc:edit="logo" style="display:block; line-height:0px; font-size:0px; border:0px;max-height:70px;" src="{{Helper::settings('site_logo')}}" alt="logo" />
+                                    </td>
+                                </tr>
+                                <!-- end logo -->
+                                
+                                <!-- slogan -->
+                                <!-- <tr>
+                                    <td data-link-style="text-decoration:none; color:#3cb2d0;" data-link-color="Slogan Link" data-color="Slogan" data-size="Slogan" mc:edit="slogan" align="center" style="font-family: 'Open Sans', Arial, sans-serif; font-size:12px; color:#3b3b3b; line-height:26px; text-transform:uppercase; letter-spacing:2px; font-weight: normal;">Powered by a Community of Millions.</td>
+                                </tr> -->
+                                <!-- end slogan -->
+                                <tr>
+                                    <td height="30"></td>
+                                </tr>
+                                <tr>
+                                    <td data-bgcolor="Content BG" align="center" bgcolor="#f3f3f3">
+                                        <table align="center" class="table-inner" width="500" border="0" cellspacing="0" cellpadding="0">
+                                            <tr>
+                                                <td height="50"></td>
+                                            </tr>
+                                            <!-- title -->
+                                            <tr>
+                                                <td data-link-style="text-decoration:none; color:#3cb2d0;" data-link-color="Content Link" data-color="Headline" data-size="Headline" mc:edit="title" align="center" style="font-family: 'Open Sans', Arial, sans-serif; font-size:36px; color:#3b3b3b; font-weight: bold; letter-spacing:4px;">Welcome to {{Helper::settings('site_name')}}</td>
+                                            </tr>
+                                            <!-- end title -->
+
+                                            <tr>
+                                                <td align="center">
+                                                    <table width="25" border="0" cellspacing="0" cellpadding="0">
+                                                        <tr>
+                                                            <td height="15" style="border-bottom:2px solid #3cb2d0;"></td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td height="20"></td>
+                                            </tr>
+
+                                            <!-- content -->
+                                            <tr>
+                                                <td data-link-style="text-decoration:none; color:#3cb2d0;" data-link-color="Content Link" data-color="Main Text" data-size="Main Text" mc:edit="content" align="center" style="font-family: 'Open Sans', Arial, sans-serif; font-size:13px; color:#7f8c8d; line-height:30px;">
+                                                    Hi, {{$email_data->first_name}} {{$email_data->last_name}} . Welcome to {{Helper::settings('site_name')}}. You've just joined a community of millions who have discovered how quick and easy it is to use.
+                                                    <br>
+                                                    <b>Your username is : {{$email_data->first_name}} {{$email_data->last_name}}</b>
+                                                    <br>
+                                                    Thank you!
+                                                </td>
+                                            </tr>
+                                            <!-- end content -->
+                                            <tr>
+                                                <td height="40"></td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td height="30"></td>
+                                </tr>
+
+                                <!-- button -->
+                                <tr>
+                                    <td align="center">
+                                        <table data-bgcolor="Main Color" align="center" bgcolor="#3cb2d0" border="0" cellspacing="0" cellpadding="0" style=" border-radius:4px; box-shadow: 0px 2px 0px #dedfdf;">
+                                            <tr>
+                                                <td mc:edit="button" height="55" align="center" style="font-family: 'Open Sans', Arial, sans-serif; font-size:16px; color:#7f8c8d; line-height:30px; font-weight: bold;padding-left: 25px;padding-right: 25px;">
+                                                    <a href="{{URL::to('/')}}" target="_blank" style="color:#ffffff;text-decoration:none;" data-color="Button Link">Login Here</a>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <!-- end button -->
+
+                                
+                                <tr>
+                                    <td height="30"></td>
+                                </tr>
+
                             </table>
                         </td>
                     </tr>
-                </table>
-            </td>
-        </tr>
-    
-    </table>
 
-    <!-- Fin en-tête -->
-
-    <table id="email-penrose-conteneur" width="660" align="center" style="border-right:1px solid #e2e8ea; border-bottom:1px solid #e2e8ea; border-left:1px solid #e2e8ea; background-color:#ffffff;" border="0" cellspacing="0" cellpadding="0">
-
-        <!-- Début bloc "mise en avant" -->
-
-        <tr>
-            <td style="background-color:#2ecc71">
-                <table width="660" class="resp-full-table" align="center" border="0" cellspacing="0" cellpadding="0">
                     <tr>
-                        <td class="resp-full-td" valign="top" style="padding:20px; text-align:center;">
-                            <span style="font-size:25px; font-family:'Helvetica Neue', helvetica, arial, sans-serif; font-weight:100; color:#ffffff"><a href="#" style="color:#ffffff; outline:none; text-decoration:none;">Welocme To {{ Setting::get('sitename')}}</a> </span>
-                        </td>
+                        <td height="30"></td>
                     </tr>
 
-                </table>
-            </td>
-        </tr>
-
-
-        <!-- Début article 1 -->
-
-        <tr>
-            <td style="border-bottom: 1px solid #e2e8ea">
-                <table width="660" class="resp-full-table" align="center" border="0" cellspacing="0" cellpadding="0" style="padding:20px;">
+                    <!-- copyright -->
                     <tr>
-                        <td width="100%">
-
-                            <table width="100%" align="right" class="resp-full-table" style="border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;" border="0" cellspacing="0" cellpadding="0">
-                                <tr>
-                                </tr>
-                            </table>
-
-                            <h3>Hello {{$email_data['name']}}</h3>
-
-                            <p style="font-size: 16px; line-height: 24px;">Your Username is: <a href="#">{{$email_data['email']}}</a> and your password is <b>{{$email_data['password']}}</b>. Please remember to change your password the first time you login by going to the Profile tab > Change Password.</p>
-
-                            <!--  -->
-
-
-                            <p style="font-size: 16px;line-height: 26px;">Thank you!</p>
-                            <p style="font-size: 16px;line-height: 5px;">{{Setting::get('sitename')}}</p>
+                        <td data-link-style="text-decoration:none; color:#3cb2d0;" data-link-color="Copyright Link" data-color="Copyright" data-size="Copyright" mc:edit="copyright" align="center" style="font-family: 'Open Sans', Arial, sans-serif; font-size:13px; color:#ffffff; line-height:30px;">
+                            © 2016
+                            <span style="color:#3cb2d0; font-weight: bold;">{{Helper::settings('site_name')}}</span>
+                            . All Rights Reserved.
                         </td>
+                    </tr>
+                    <!-- end copyright -->
+
+                    
+                    
+                    <tr>
+                        <td height="30"></td>
                     </tr>
                 </table>
             </td>
         </tr>
-
-        <!-- Fin article 1 -->
-
     </table>
+    <!-- end Layout -->
 
-    <!-- Début footer -->
-
-
-    <!-- Fin footer -->
-
-</div>
 </body>
 </html>

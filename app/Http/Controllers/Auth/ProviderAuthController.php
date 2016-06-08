@@ -9,6 +9,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
 use Illuminate\Http\Request;
+use App\Helpers\Helper;
+use App\Admin;
 
 class ProviderAuthController extends Controller
 {
@@ -30,9 +32,7 @@ class ProviderAuthController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/provider';
-
-    protected $loginPath = '/provider/login';
+    protected $redirectTo = 'provider';
 
     protected $redirectAfterLogout = '/provider/login';
 
@@ -68,7 +68,7 @@ class ProviderAuthController extends Controller
      */
     public function __construct()
     {
-        // $this->middleware($this->guestMiddleware(), ['except' => 'logout']);
+        $this->middleware('guestprovider', ['except' => 'logout']);
     }
 
     /**
@@ -99,7 +99,8 @@ class ProviderAuthController extends Controller
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
-            'is_available' => 1
+            'is_available' => 1,
+            'is_activated' => 1
         ]);
 
         ProviderService::create([
@@ -107,6 +108,17 @@ class ProviderAuthController extends Controller
             'is_available' => 1,
             'service_type_id' => $data['service_type']
             ]);
+
+        // Send welcome email to the new provider
+        $subject = Helper::tr('provider_welcome_title');
+        $page = "emails.provider.welcome";
+        Helper::send_email($page,$subject,$data['email'],$provider);
+
+        // Send mail notification to the Admin
+        $subject = Helper::tr('new_provider_signup');
+        $admin_email = Admin::first()->email;
+        $page = "emails.admin_new_provider_notify";
+        $email_send = Helper::send_email($page,$subject,$admin_email,$provider);
 
         return $provider;
     }

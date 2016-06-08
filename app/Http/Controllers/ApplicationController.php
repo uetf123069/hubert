@@ -23,15 +23,11 @@ use DB;
 use Log;
 
 define('USER', 0);
-
 define('PROVIDER',1);
-
 
 define('NONE', 0);
 
-
 define('DEFAULT_FALSE', 0);
-
 define('DEFAULT_TRUE', 1);
 
 // Request table status
@@ -44,8 +40,6 @@ define('REQUEST_RATING',      4);
 define('REQUEST_COMPLETED',      5);
 define('REQUEST_CANCELLED',      6);
 define('REQUEST_NO_PROVIDER_AVAILABLE',7);
-define('REQUEST_CANCEL_USER',8);
-define('REQUEST_CANCEL_PROVIDER',9);
 
 define('PROVIDER_NOT_AVAILABLE', 0);
 define('PROVIDER_AVAILABLE', 1);
@@ -87,7 +81,7 @@ class ApplicationController extends Controller
         //Log::info('assign_next_provider_cron ran at: '.$time);
 
         //Get all the new waiting requests which are not confirmed and not cancelled.
-        $query = "SELECT id, user_id,request_type,current_provider, TIMESTAMPDIFF(SECOND,request_start_time, '$time') AS time_since_request_assigned
+        $query = "SELECT id, user_id,request_type,provider_id, TIMESTAMPDIFF(SECOND,request_start_time, '$time') AS time_since_request_assigned
                   FROM requests
                   WHERE status = ".REQUEST_WAITING;
         $requests = DB::select(DB::raw($query));
@@ -101,14 +95,15 @@ class ApplicationController extends Controller
                                 ->first();
 
                 // Change waiting to respond state
-                $get_offered_provider = Provider::where('id',$current_offered_provider->provider_id)->first();
-                $get_offered_provider->waiting_to_respond = WAITING_TO_RESPOND_NORMAL;
-                $get_offered_provider->save();
+                if($current_offered_provider) {
+                    $get_offered_provider = Provider::where('id',$current_offered_provider->provider_id)->first();
+                    $get_offered_provider->waiting_to_respond = WAITING_TO_RESPOND_NORMAL;
+                    $get_offered_provider->save();
 
-                // TimeOut the current assigned provider
-                // RequestsMeta::where('request_id', $request->id)->where('status', REQUEST_META_OFFERED)->update(array('status' => REQUEST_META_TIMEDOUT));
-                $current_offered_provider->status = REQUEST_META_TIMEDOUT;
-                $current_offered_provider->save();
+                    // TimeOut the current assigned provider
+                    $current_offered_provider->status = REQUEST_META_TIMEDOUT;
+                    $current_offered_provider->save();
+                }
 
                 //Select the new provider who is in the next position.
                 $next_request_meta = RequestsMeta::where('request_id', '=', $request->id)->where('status', REQUEST_META_NONE)
@@ -143,7 +138,6 @@ class ApplicationController extends Controller
                     $user = User::find($request->user_id);
                     $request_data = Requests::find($request->id);
 
-
                     // Push notification has to add
                     $push_data = array();
                     $title = "New Service";
@@ -167,7 +161,7 @@ class ApplicationController extends Controller
                     RequestsMeta::where('request_id', '=', $request->id)->delete();
                     Log::info('assign_next_provider_cron ended the request_id:'.$request->id.' at '.$time);
 
-                    //Notify the admin
+                    // Send email notifications to the admin
                     // send_no_provider_found_notification_to_admin($request->id);
 
                     // Send Push Notification to User

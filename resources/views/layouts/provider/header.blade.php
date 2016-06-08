@@ -4,22 +4,13 @@
         <a data-toggle="tooltips" data-placement="right" title="Toggle Sidebar"><span class="icon-bg"><i class="fa fa-fw fa-bars"></i></span></a>
     </span>
 
-    <a class="navbar-brand" href="">Provider Dashboard</a>
+    <a class="navbar-brand" href="{{ route('provider.dashboard') }}">{{ Setting::get('site_name', 'Xuber') }}</a>    
 
     <span id="trigger-infobar" class="toolbar-trigger toolbar-icon-bg">
-        <a data-toggle="tooltips" data-placement="left" title="Toggle Infobar"><span class="icon-bg"><i class="fa fa-fw fa-bars"></i></span></a>
+        <a title="Toggle Infobar"></a>
     </span>
     
-
     <ul class="nav navbar-nav toolbar pull-right">
-        <li class="dropdown toolbar-icon-bg">
-            <a href="#" id="navbar-links-toggle" data-toggle="collapse" data-target="header>.navbar-collapse">
-                <span class="icon-bg">
-                    <i class="fa fa-fw fa-ellipsis-h"></i>
-                </span>
-            </a>
-        </li>
-
 
         <li class="toolbar-icon-bg hidden-xs" id="trigger-fullscreen">
             <a href="#" class="toggle-fullscreen"><span class="icon-bg"><i class="fa fa-fw fa-arrows-alt"></i></span></i></a>

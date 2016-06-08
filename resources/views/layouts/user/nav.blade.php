@@ -15,7 +15,7 @@
 						</div>
 						<div class="tabular-cell welcome-options">
 							<span class="welcome-text">Welcome,</span>
-							<a href="#" class="name">{{ Auth::user()->name }}</a>
+							<a href="#" class="name">{{ Auth::user()->first_name }} {{ Auth::user()->last_name }}</a>
 						</div>
 					</div>
 				</div>
@@ -23,12 +23,14 @@
 			<div class="widget stay-on-collapse" id="widget-sidebar">
 				<nav role="navigation" class="widget-body">
 					<ul class="acc-menu">
+<!-- 						
 						<li>
 							<a href="{{ route('user.dashboard') }}">
 								<i class="fa fa-home"></i><span>Dashboard</span>
 							</a>
 						</li>
-						<li class="nav-separator">Services</li>
+-->
+ 						<li class="nav-separator">Services</li>
 						<li>
 							<a href="{{ route('user.services.list') }}">
 								<i class="fa fa-flask"></i><span>Service History</span>
@@ -42,15 +44,17 @@
 						<li class="nav-separator">Payment</li>
 						<li>
 							<a href="{{ route('user.payment.form') }}">
-								<i class="fa fa-user"></i><span>Payment Methods</span>
+								<i class="fa fa-credit-card"></i><span>Payment Methods</span>
 							</a>
 						</li>
+<!-- 						
 						<li>
 							<a href="{{ route('user.payment.form') }}">
 								<i class="fa fa-user"></i><span>Payment History</span>
 							</a>
 						</li>
-						<li class="nav-separator">Account</li>
+ -->
+ 						<li class="nav-separator">Account</li>
 						<li>
 							<a href="{{ route('user.profile.form') }}">
 								<i class="fa fa-user"></i><span>Profile</span>
