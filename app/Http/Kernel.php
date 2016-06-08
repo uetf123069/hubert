@@ -45,11 +45,13 @@ class Kernel extends HttpKernel
      */
     protected $routeMiddleware = [
         'auth' => \App\Http\Middleware\Authenticate::class,
+        'admin' => \App\Http\Middleware\AuthenticateAdmin::class,
+        'provider' => \App\Http\Middleware\AuthenticateProvider::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'can' => \Illuminate\Foundation\Http\Middleware\Authorize::class,
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
-        'admin' => \App\Http\Middleware\RedirectIfNotAdmin::class,
-        'provider' => \App\Http\Middleware\RedirectIfNotProvider::class,
+        'guestadmin' => \App\Http\Middleware\RedirectIfAuthenticatedAdmin::class,
+        'guestprovider' => \App\Http\Middleware\RedirectIfAuthenticatedProvider::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'UserApiVal' => \App\Http\Middleware\UserApiValidation::class,
         'ProviderApiVal' => \App\Http\Middleware\ProviderApiValidation::class,

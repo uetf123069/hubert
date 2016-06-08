@@ -17,22 +17,9 @@ class RedirectIfAuthenticated
      */
     public function handle($request, Closure $next, $guard = null)
     {
-        // dd($request);
-        // dd($guard);
         if (Auth::guard($guard)->check()) {
-            // dd(Auth::guard($guard)->user());
-            if($guard == 'admin') {
-                // dd('admin', $guard);
-                return redirect('/admin');
-            } else if($guard == "provider") {
-                // dd('provider', $guard);
-                return redirect('/provider');
-            } else {
-                // dd('sid', $guard);
-                return redirect('/');
-            }
+            return redirect('/');
         }
-        // dd('Check Failed');
 
         return $next($request);
     }
