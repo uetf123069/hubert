@@ -37,7 +37,6 @@
         <br><br><br>
         <div class="row">
             <div class="col-xs-12">
-        @foreach($requests as $request)
         <strong>Booked by :</strong> {{$request->user_first_name}} <br>
         <strong>Provider Name :</strong> {{$request->provider_first_name}} <br>
         <strong>Total time :</strong> {{$request->total_time}} <br>
@@ -45,7 +44,7 @@
         <strong>Time Price :</strong> {{$request->time_price}} <br>
         <strong>Tax :</strong> {{$request->tax}} <br>
         <strong>Total Amount :</strong> {{$request->total_amount}}
-        @endforeach
+        
         </div>
         </div>
     </div>
@@ -103,16 +102,19 @@
 @section('scripts')
 <script>
     var map;
-    var markers = [
-        @foreach($requests as $request)
-        { name: "{{ $request->provider_first_name }}", lat: {{ $request->latitude }}, lng: {{ $request->longitude }} }, 
-        @endforeach
-    ];
-    var mapMarkers = [];
+    var serviceLocation = {lat: {{ $request->latitude }}, lng: {{ $request->longitude }}};
+    
     function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
-            center: {lat: -34.397, lng: 150.644},
-            zoom: 2
+            center: serviceLocation,
+            zoom: 15
+        });
+
+        var marker = new google.maps.Marker({
+            map: map,
+            position: serviceLocation,
+            visible: true,
+            animation: google.maps.Animation.DROP,
         });
 
         /*
@@ -126,17 +128,6 @@
         var infowindow = new google.maps.InfoWindow();
         */
 
-        markers.forEach( function(element, index) {
-
-            marker = new google.maps.Marker({
-                position: {lat: element.lat, lng: element.lng},
-                map: map,
-                title: element.name
-            });
-
-            mapMarkers.push(marker);
-
-        });
 
         /*
 

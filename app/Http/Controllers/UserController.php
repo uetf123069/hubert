@@ -18,6 +18,7 @@ class UserController extends Controller
 {
 
     protected $UserAPI;
+    protected $Paypal;
     
     /**
      * Create a new controller instance.
@@ -173,17 +174,23 @@ class UserController extends Controller
             'token' => \Auth::user()->token,
             'is_paid' => 1
         ]);
+        if($request->payment_mode=='paypal')
+        {
 
+       return redirect()->route('paypal', array('id' => $request->id, 'request_id' => $request->request_id));
+        }
+        else
+        {
         $response = $this->UserAPI->paynow($request)->getData();
-
+        
         if($response->success) {
             $response->message = "Payment successful.";
         } else {
             $response->success = false;
             $response->message = $response->error;
         }
-
         return back()->with('response', $response);
+    }
     }
 
     /**

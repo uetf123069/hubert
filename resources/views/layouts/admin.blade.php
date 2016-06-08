@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="{{ asset('admin_assets/styles/climacons-font.css') }}">
     <link rel="stylesheet" href="{{ asset('vendor/rickshaw/rickshaw.min.css') }}">
     <link rel="stylesheet" href="{{ asset('vendor/datatables/media/css/jquery.dataTables.css') }}">
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="{{ asset('vendor/datatables/media/css/jquery.dataTables.min.css') }}">
     <!-- /page level plugin styles -->
 
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->

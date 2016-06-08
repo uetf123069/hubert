@@ -277,10 +277,10 @@ class AdminController extends Controller
     {
         $subQuery = DB::table('requests')
                 ->select(DB::raw('count(*)'))
-                ->whereRaw('provider_id = providers.id and status != 0');
+                ->whereRaw('confirmed_provider = providers.id and status != 0');
         $subQuery1 = DB::table('requests')
                 ->select(DB::raw('count(*)'))
-                ->whereRaw('provider_id = providers.id and status=1');
+                ->whereRaw('confirmed_provider = providers.id and status=1');
         $providers = DB::table('providers')
                 ->select('providers.*', DB::raw("(" . $subQuery->toSql() . ") as 'total_requests'"), DB::raw("(" . $subQuery1->toSql() . ") as 'accepted_requests'"))
                 ->orderBy('providers.created_at', 'DESC')
@@ -722,9 +722,8 @@ class AdminController extends Controller
                 ->leftJoin('users', 'requests.user_id', '=', 'users.id')
                 ->leftJoin('request_payments', 'requests.id', '=', 'request_payments.request_id')
                 ->select('users.first_name as user_first_name', 'users.last_name as user_last_name', 'providers.first_name as provider_first_name', 'providers.last_name as provider_last_name', 'users.id as user_id', 'providers.id as provider_id', 'requests.is_paid',  'requests.id as id', 'requests.created_at as date', 'requests.confirmed_provider', 'requests.status', 'requests.provider_status', 'requests.amount', 'request_payments.payment_mode as payment_mode', 'request_payments.status as payment_status', 'request_payments.total_time as total_time','request_payments.base_price as base_price', 'request_payments.time_price as time_price', 'request_payments.tax_price as tax', 'request_payments.total as total_amount', 'requests.s_latitude as latitude', 'requests.s_longitude as longitude')
-                ->orderBy('requests.created_at', 'DESC')
-                ->get();    
-        return view('admin.requestView')->with('requests', $requests);
+                ->first();    
+        return view('admin.requestView')->with('request', $requests);
     }
 
     public function mapview()
