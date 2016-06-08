@@ -106,7 +106,7 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h2 class="modal-title" style="text-align:center">New Request Arrived</h2>
+                                <h2 class="modal-title" style="text-align:center" id="request_time_left"></h2>
                             </div>
                             <div class="modal-body row">
                                             <h4 style="text-align:center">User details</h4>
@@ -173,29 +173,46 @@
                         console.log('true');
 
                         if(return_data.data != "" && globalOnPopup == 0){
-                            $('#request_user_name').text(return_data.data[0].user_name);
-                            $('#request_current_id').text(return_data.data[0].request_id);
+                            if(return_data.data[0].time_left_to_respond > 0){
+                                $('#request_user_name').text(return_data.data[0].user_name);
+                                $('#request_current_id').text(return_data.data[0].request_id);
 
-                            if(return_data.data[0].user_picture != ""){
-                                $('#request_user_image').attr('src',return_data.data[0].user_picture);
-                            }else{
-                                $('#request_user_image').attr('src', "{{  asset('logo.png')}}");
+                                if(return_data.data[0].user_picture != ""){
+                                    $('#request_user_image').attr('src',return_data.data[0].user_picture);
+                                }else{
+                                    $('#request_user_image').attr('src', "{{  asset('logo.png')}}");
+                                }
+                                
+
+                                $('#request_service_name').text(return_data.data[0].service_type_name);
+                                $('#request_time_left').text(return_data.data[0].time_left_to_respond + ' Seconds Left');
+                                $('#request_user_rating').text(return_data.data[0].user_rating);
+                                $('#request_latitude').text(return_data.data[0].latitude);
+                                $('#request_longitude').text(return_data.data[0].longitude);
+                                $('#request_accept_url').attr('href',"{{route('provider.request.accept')}}?request_id="+return_data.data[0].request_id);
+                                $('#request_decline_url').attr('href',"{{route('provider.request.decline')}}?request_id="+return_data.data[0].request_id);
+
+                                $('#myModal').modal({
+                                    backdrop: 'static',
+                                    keyboard: false
+                                });
+
+                                globalOnPopup = 1;
+                                console.log('show '+globalOnPopup);
                             }
+                        }
 
-                            $('#request_service_name').text(return_data.data[0].service_type_name);
-                            $('#request_user_rating').text(return_data.data[0].user_rating);
-                            $('#request_latitude').text(return_data.data[0].latitude);
-                            $('#request_longitude').text(return_data.data[0].longitude);
-                            $('#request_accept_url').attr('href',"{{route('provider.request.accept')}}?request_id="+return_data.data[0].request_id);
-                            $('#request_decline_url').attr('href',"{{route('provider.request.decline')}}?request_id="+return_data.data[0].request_id);
+                        if(return_data.data != ""){
+                            $('#request_time_left').text(return_data.data[0].time_left_to_respond + ' Seconds Left');
+                        }
 
-                            $('#myModal').modal({
-                                backdrop: 'static',
-                                keyboard: false
-                            });
 
-                            globalOnPopup = 1;
-                            console.log('show '+globalOnPopup);
+                        if(globalOnPopup == 1 && return_data.data != ""){
+                            if(return_data.data[0].time_left_to_respond < 0){
+                                $('#myModal').modal('hide');
+                                globalOnPopup = 0; 
+                                console.log('hide '+globalOnPopup);
+                            }
                         }
 
                         if(globalOnPopup == 1 && return_data.data == ""){

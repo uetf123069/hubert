@@ -318,6 +318,7 @@ Route::group(['prefix' => 'provider'], function(){
     Route::get('/request/decline', 'ProviderController@decline_request')->name('provider.request.decline');
     Route::post('/switch/state', 'ProviderController@switch_state')->name('provider.switch.state');
     Route::post('/submit/review', 'ProviderController@submit_review')->name('provider.submit.review');
+    Route::post('/cancel/service', 'ProviderController@cancel_service')->name('provider.cancel.service');
 
 
 });
