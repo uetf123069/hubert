@@ -244,6 +244,7 @@ Route::group(['prefix' => 'admin'], function(){
 
 });
 
+Route::get('/', 'UserController@index')->name('user.dashboard');
 
 Route::group([], function(){
 
@@ -260,9 +261,10 @@ Route::group([], function(){
     Route::post('password/email', 'Auth\PasswordController@sendResetLinkEmail');
     Route::post('password/reset', 'Auth\PasswordController@reset');
 
-    Route::get('/', 'UserController@index')->name('user.dashboard');
-
     Route::get('/services', 'UserController@services')->name('user.services.list');
+
+    Route::get('favorite', 'UserController@favorite_provider_list')->name('user.favorite.provider.list');
+    Route::delete('favorite', 'UserController@favorite_provider_delete')->name('user.favorite.provider.del');
 
     Route::get('/request', 'UserController@request_form')->name('user.services.request');
     Route::post('/request', 'UserController@request_submit')->name('user.services.request.submit');

@@ -71,7 +71,7 @@
 				<h3 style="text-align:center" class="mt0">Request Details</h3>
 
 				<div style="padding:30px">
-                 <img style="margin:0 auto" src="{{$request_data[0]->user_picture ? $request_data[0]->user_picture : 'http://localhost:8000/logo.png'}}" class="img-responsive img-circle">
+                 <img style="margin:0 auto" src="{{ $request_data[0]->user_picture ? $request_data[0]->user_picture : asset('logo.png') }}" class="img-responsive img-circle">
 					
 				</div>
 				  <table class="table table-striped">

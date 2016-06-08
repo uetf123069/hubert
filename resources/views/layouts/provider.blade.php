@@ -40,7 +40,7 @@
     <style type="text/css">
         #topnav .navbar-brand {
             background: url("{{ Setting::get('site_logo', asset('logo.png')) }}") no-repeat 50% 50%;
-            background-size: auto 80%;
+            background-size: auto 70%;
         }
     </style>
 
