@@ -138,7 +138,7 @@ table[class="table3-3"] { width: 100% !important; text-align: center !important;
                                             <!-- content -->
                                             <tr>
                                                 <td data-link-style="text-decoration:none; color:#91c444;" data-link-color="Content Link" mc:edit="content" data-color="Main Text" data-size="Main Text" align="center" style="font-family: 'Open Sans', Arial, sans-serif; font-size:13px; color:#7f8c8d; line-height:30px;">
-                                                    Hi, {{$email_data['user']->first_name}} {{$email_data['user']->last_name}}. Your request is cancelled by {{$email_data['provider']->first_name}} {{$email_data['provider']->last_name}}. please try again later or search new people around you.
+                                                    Hi, {{$email_data['username']}}. Your request is cancelled by {{$email_data['provider_name']}}. please try again later or search new people around you.
                                                     <br>
                                                    <!--  <b>Request Time : 05:25AM</b>
                                                     <br>

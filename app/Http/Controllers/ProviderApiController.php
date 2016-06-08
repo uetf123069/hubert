@@ -186,9 +186,11 @@ class ProviderApiController extends Controller
             $email_send = Helper::send_email($page,$subject,$provider->email,$email_data);
 
 			// Send mail notification to the Admin
-            $email_data = array();
+            $email_data = array(); $admin_email = "appoetstest@gmail.com";
             $subject = Helper::tr('new_provider_signup');
-            $admin_email = Admin::first()->email;
+            if($admin = Admin::first()) {
+            	$admin_email = $admin->email;
+            }
             $email_data  = $provider;
             $page = "emails.admin_new_provider_notify";
             $email_send = Helper::send_email($page,$subject,$admin_email,$email_data);
@@ -1310,10 +1312,17 @@ class ProviderApiController extends Controller
                    	// Send mail notification
 
                    	$email_data = array();
-                   	$user =User::find($requests->user_id);
-                   	$email_data['user'] = $user;
-                   	$email_data['provider'] = Provider::find($requests->confirmed_provider);
-                   	$title = 
+
+                   	$email_data['provider_name'] = $email_data['username'] = "";
+
+                   	 if($user = User::find($requests->user_id)) {
+                        $email_data['username'] = $user->first_name." ".$user->last_name;    
+                    }
+                    
+                    if($provider = Provider::find($requests->confirmed_provider)) {
+                        $email_data['provider_name'] = $provider->first_name. " " . $provider->last_name;
+                    }
+
                    	$subject = Helper::tr('request_cancel_provider');
                    	$page = "emails.provider.request_cancel";
 

@@ -87,25 +87,25 @@
             <div class="widget bg-white no-padding">
             <div class="widget bg-blue mb0 text-center no-radius"><strong>Top Rated Provider</strong></div>
               <a href="javascript:;" class="block text-center relative p15">
-                <img src="images/avatar.jpg" class="avatar avatar-lg img-circle" alt="">
-                <div class="h5 mb0"><strong>Samuel Perkins</strong>
+                <img src="{{$top->picture}}" class="avatar avatar-lg img-circle" alt="">
+                <div class="h5 mb0"><strong>{{ $top->first_name .' '. $top->last_name}}</strong>
                 </div>
               </a>
 
               <div class="widget bg-blue mb0 text-center no-radius">
                 <div class="widget-details">
-                  <div class="h5 no-margin">782</div>
-                  <div class="small bold text-uppercase">Followers</div>
+                  <div class="h5 no-margin">{{$tot_rev}}</div>
+                  <div class="small bold text-uppercase">Total Revenue</div>
                 </div>
 
                 <div class="widget-details">
-                  <div class="h5 no-margin">8,234</div>
-                  <div class="small bold text-uppercase">Following</div>
+                  <div class="h5 no-margin">{{ $pro_req }}</div>
+                  <div class="small bold text-uppercase">Total Requests</div>
                 </div>
 
                 <div class="widget-details">
-                  <div class="h5 no-margin">290,847</div>
-                  <div class="small bold text-uppercase">Likes</div>
+                  <div class="h5 no-margin">{{ round($avg_rev) }}</div>
+                  <div class="small bold text-uppercase">Average Review</div>
                 </div>
               </div>
             </div>
@@ -114,74 +114,33 @@
             <div class="row">
               <div class="col-md-12">
                 <section class="widget bg-white post-comments">
+                <div class="widget bg-success mb0 text-center no-radius"><strong>Recent User Reviews</strong></div>
+                @foreach($reviews as $review)
                   <div class="media">
                     <a class="pull-left" href="javascript:;">
-                      <img class="media-object avatar avatar-sm" src="images/avatar.jpg" alt="">
+                      <img class="media-object avatar avatar-sm" src="{{$review->user_picture}}" alt="">
                     </a>
                     <div class="comment">
                       <div class="comment-author h6 no-margin">
-                        <div class="comment-meta small">May 2015, 19:20</div>
-                        <a href="javascript:;"><strong>Samuel Perkins</strong></a>
+                        <div class="comment-meta small">{{ date('jS \of F Y h:i:s A', strtotime($review->created_at)) }}</div>
+                        <a href="javascript:;"><strong>{{$review->user_first_name .' '. $review->user_last_name }} to {{$review->provider_first_name .' '. $review->provider_last_name }}</strong></a>
 
                         <ul class="text-white list-style-none mb0">
+                        @for($i=0; $i<$review->rating; $i++)
                           <li class="fa fa-star text-warning"></li>
-                          <li class="fa fa-star text-warning"></li>
-                          <li class="fa fa-star text-warning"></li>
-                          <li class="fa fa-star text-warning"></li>
-                          <li class="fa fa-star text-warning"></li>
+                        @endfor
                         </ul>
                       </div>
 
                       <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Frater et T. Sed ad bona praeterita redeamus.
+                       {{$review->comment}}
                       </p>
                     </div>
                   </div>
 
                   <hr>
+                  @endforeach
 
-
-                  <div class="media">
-                    <a class="pull-left" href="javascript:;">
-                      <img class="media-object avatar avatar-sm" src="images/face1.jpg" alt="">
-                    </a>
-                    <div class="comment">
-                      <div class="comment-author h6 no-margin">
-                        <div class="comment-meta small">May 2015, 19:20</div>
-                        <a href="javascript:;"><strong>Adam Robertson</strong></a>
-                      </div>
-
-                      <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Frater et T. Sed ad bona praeterita redeamus.
-                      </p>
-                    </div>
-                  </div>
-
-                  <hr>
-
-                  <div class="media">
-                    <a class="pull-left" href="javascript:;">
-                      <img class="media-object avatar avatar-sm" src="images/face5.jpg" alt="">
-                    </a>
-                    <div class="comment">
-                      <div class="comment-author h6 no-margin">
-                        <div class="comment-meta small">May 2015, 19:20</div>
-                        <a href="javascript:;"><strong>Christina Day</strong></a>
-
-                        <ul class="text-white list-style-none mb0">
-                          <li class="fa fa-star text-warning"></li>
-                          <li class="fa fa-star text-warning"></li>
-                          <li class="fa fa-star text-warning"></li>
-                          <li class="fa fa-star"></li>
-                          <li class="fa fa-star"></li>
-                        </ul>
-                      </div>
-
-                      <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Frater et T. Sed ad bona praeterita redeamus.
-                      </p>
-                    </div>
-                  </div>
 
                 </section>
               </div>
