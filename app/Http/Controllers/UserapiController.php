@@ -1102,7 +1102,6 @@ class UserapiController extends Controller
             $requestStatus = $requests->status;
             $providerStatus = $requests->provider_status;
             $allowedCancellationStatuses = array(
-                PROVIDER_NONE,
                 PROVIDER_ACCEPTED,
                 PROVIDER_STARTED,
             );
@@ -1127,25 +1126,29 @@ class UserapiController extends Controller
 
                         // Send Push Notification to Provider
                         Helper::send_notifications($requests->confirmed_provider, PROVIDER, 'Service Cancelled', 'The service is cancelled by user.');
+
+                        Log::info("Cancelled request by user");
                         // Send mail notification to the provider
                         $email_data = array();
-                        $subject = Helper::tr('request_cancel_by_user');
-                        $email_data['provider']  = $provider;
-                        $email_data['user']  = User::find($request->id);
+
+                        $subject = Helper::tr('request_cancel_user');
+
+                        $email_data['provider_name'] = $email_data['username'] = "";
+
+                        if($user = User::find($requests->user_id)) {
+                            $email_data['username'] = $user->first_name." ".$user->last_name;    
+                        }
+                        
+                        if($provider = Provider::find($requests->confirmed_provider)) {
+                            $email_data['provider_name'] = $provider->first_name. " " . $provider->last_name;
+                        }
+
                         $page = "emails.user.request_cancel";
                         $email_send = Helper::send_email($page,$subject,$provider->email,$email_data);
                     }
 
                     // No longer need request specific rows from RequestMeta
                     RequestsMeta::where('request_id', '=', $request_id)->delete();
-
-                    $email_data = array();
-                    $user =User::find($requests->user_id);
-                    $email_data['user'] = $user;
-                    $email_data['provider'] = Provider::find($requests->confirmed_provider);
-                    $subject = Helper::tr('request_cancel_provider');
-                    $page = "emails.user.request_cancel";
-                    Helper::send_email($page,$subject,$user->email,$email_data);
 
                     $response_array = Helper::null_safe(array('success' => true,'request_id' => $request->id));
 
