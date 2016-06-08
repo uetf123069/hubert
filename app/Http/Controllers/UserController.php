@@ -191,13 +191,10 @@ class UserController extends Controller
         $request->request->add([ 
             'id' => \Auth::user()->id,
             'token' => \Auth::user()->token,
+            'is_favorite' => $request->has('provider_fav') ? 1 : 0,
         ]);
 
-        // dd($request->all());
-
         $response = $this->UserAPI->rate_provider($request)->getData();
-
-        // dd($response);
 
         if($response->success) {
             $response->message = "Thank you for reviewing the provider.";

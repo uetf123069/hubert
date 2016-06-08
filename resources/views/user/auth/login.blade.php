@@ -49,12 +49,6 @@
                         <div class="form-group">
                             <div class="col-xs-12">
                                 <a href="{{ url('/password/reset') }}" class="pull-left">Forgot password?</a>
-                                <div class="checkbox-inline icheck pull-right pt0">
-                                    <label>
-                                        <input type="checkbox" name="remember">
-                                        Remember me
-                                    </label>
-                                </div>
                             </div>
                         </div>
 
@@ -64,10 +58,8 @@
                                 <button type="submit" class="btn btn-primary pull-right">
                                     <i class="fa fa-btn fa-sign-in"></i> Login
                                 </button>
-
                             </div>
                         </div>
-
                     </form>
                 </div>
             </div>

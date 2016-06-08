@@ -74,6 +74,19 @@
 		                                @endif
 		                            </div>
 		                        </div>
+									
+								<div class="form-group">
+									<label class="col-sm-2 control-label">Gender</label>
+									<div class="col-sm-8">
+										<label class="radio-inline icheck">
+											<input type="radio" value="male" name="gender" @if(Auth::user()->gender == 'male')checked="true"@endif>
+											Male
+										</label>
+										<label class="radio-inline icheck">
+											<input type="radio" value="female" name="gender" @if(Auth::user()->gender == 'female')checked="true"@endif> Female
+										</label>
+									</div>
+								</div>
 
 								<div class="form-group">
 									<label class="col-sm-2 control-label">Profile Picture</label>
