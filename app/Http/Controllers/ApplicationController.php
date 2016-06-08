@@ -169,7 +169,6 @@ class ApplicationController extends Controller
                     $messages = "No provider available to take the service.";
 
                     Helper::send_notifications($request->user_id, USER, $title, $messages);
-
                 }
             } else {
                 Log::info("Provider Waiting State");

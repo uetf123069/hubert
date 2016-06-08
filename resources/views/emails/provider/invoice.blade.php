@@ -117,7 +117,7 @@ a { color: #ff646a; text-decoration: none; }
                                 <!-- address -->
                                 <tr>
                                     <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Address Link 2" mc:edit="address" data-color="Cusomer Address" align="right" style="font-family: 'Open Sans', Arial, sans-serif; font-size:13px; color:#7f8c8d; line-height:26px;">
-                                        PO Box 16122 Collins Street
+                                        <!--PO Box 16122 Collins Street
                                         <br />
                                         West Victoria 8007 Australia
                                         <br />-->
