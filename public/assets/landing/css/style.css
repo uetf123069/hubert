@@ -1,0 +1,37 @@
+.download{
+	margin-right: 10px;
+}
+
+#header .logo img{
+	margin-top: 10px;
+}
+
+/*.about i{
+	font-size: 50px;
+}*/
+
+.iphone-left img, .iphone-right img{
+	max-width: 100%;
+}
+
+#extra-feature-1 .content, #extra-feature-2 .content{
+	margin: 0;
+}
+
+.dwn .download{
+	float: none;
+	display: inline-block;
+	margin: 10px;
+}
+
+.dwn{
+	padding-top: 20px;
+}
+
+.log-btn a{
+	display: inline-block;
+	margin: 0;
+	margin: 10px;
+	    padding: 10px;
+    font-size: 18px;
+}

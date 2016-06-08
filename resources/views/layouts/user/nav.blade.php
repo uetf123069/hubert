@@ -23,13 +23,6 @@
 			<div class="widget stay-on-collapse" id="widget-sidebar">
 				<nav role="navigation" class="widget-body">
 					<ul class="acc-menu">
-<!-- 						
-						<li>
-							<a href="{{ route('user.dashboard') }}">
-								<i class="fa fa-home"></i><span>Dashboard</span>
-							</a>
-						</li>
--->
  						<li class="nav-separator">Services</li>
 						<li>
 							<a href="{{ route('user.services.list') }}">
@@ -39,6 +32,11 @@
 						<li>
 							<a href="{{ route('user.services.request') }}">
 								<i class="fa fa-columns"></i><span>Request Services</span>
+							</a>
+						</li>
+						<li>
+							<a href="{{ route('user.favorite.provider.list') }}">
+								<i class="fa fa-star"></i><span>Favorite Providers</span>
 							</a>
 						</li>
 						<li class="nav-separator">Payment</li>

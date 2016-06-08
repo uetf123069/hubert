@@ -29,7 +29,9 @@ class AuthController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/';
+    protected $redirectTo = 'services';
+
+    protected $redirectAfterLogout = '/login';
 
     /**
      * The Login form view that should be used.
