@@ -133,70 +133,70 @@
             return time() + 24*3600*30;  // 30 days
         }
 
-        public static function send_user_forgot_email($email,$email_data,$subject)
-        {
-            if(env('MAIL_USERNAME') && env('MAIL_PASSWORD')) {
-               try
-                {
-                    Mail::send('emails.user.forgot_password', array('email_data' => $email_data), function ($message) use ($email, $subject) {
-                            $message->to($email)->subject($subject);
-                    });
+        // public static function send_user_forgot_email($email,$email_data,$subject)
+        // {
+        //     if(env('MAIL_USERNAME') && env('MAIL_PASSWORD')) {
+        //        try
+        //         {
+        //             Mail::send('emails.user.forgot_password', array('email_data' => $email_data), function ($message) use ($email, $subject) {
+        //                     $message->to($email)->subject($subject);
+        //             });
 
-                } catch(Exception $e) {
+        //         } catch(Exception $e) {
 
-                    return Helper::get_error_message(123);
+        //             return Helper::get_error_message(123);
 
-                }
+        //         }
 
-                return Helper::get_message(105);
+        //         return Helper::get_message(105);
 
-            } else {
-                return Helper::get_error_message(123);
-            }
+        //     } else {
+        //         return Helper::get_error_message(123);
+        //     }
            
-        }
-        public static function send_provider_forgot_email($email,$email_data,$subject) {            
+        // }
+        // public static function send_provider_forgot_email($email,$email_data,$subject) {            
 
-            if(env('MAIL_USERNAME') && env('MAIL_PASSWORD')) {
-                try
-                {
-                    Mail::send('emails.provider.forgot_password', array('email_data' => $email_data), function ($message) use ($email, $subject) {
-                            $message->to($email)->subject($subject);
-                    });
+        //     if(env('MAIL_USERNAME') && env('MAIL_PASSWORD')) {
+        //         try
+        //         {
+        //             Mail::send('emails.provider.forgot_password', array('email_data' => $email_data), function ($message) use ($email, $subject) {
+        //                     $message->to($email)->subject($subject);
+        //             });
 
-                } catch(Exception $e) {
-                    return Helper::get_error_message(123);
-                }
+        //         } catch(Exception $e) {
+        //             return Helper::get_error_message(123);
+        //         }
 
-                return Helper::get_message(105);
+        //         return Helper::get_message(105);
 
-            } else {
-                return Helper::get_error_message(123);
-            }
-        }
+        //     } else {
+        //         return Helper::get_error_message(123);
+        //     }
+        // }
 
-        public static function send_provider_welcome_email($provider)
-        {
-            $email = $provider->email;
+        // public static function send_provider_welcome_email($provider)
+        // {
+        //     $email = $provider->email;
 
-            $subject = "Welcome to XUBER";
+        //     $subject = "Welcome to XUBER";
 
-            $email_data = $provider;
+        //     $email_data = $provider;
 
-            if(env('MAIL_USERNAME') && env('MAIL_PASSWORD')) {
-                try
-                {
-                    Mail::send('emails.provider.welcome', array('email_data' => $email_data), function ($message) use ($email, $subject) {
-                            $message->to($email)->subject($subject);
-                    });
-                } catch(Exception $e) {
-                    return Helper::get_error_message(123);
-                }
-                return Helper::get_message(105);
-            } else {
-                return Helper::get_error_message(123);
-            }
-        }
+        //     if(env('MAIL_USERNAME') && env('MAIL_PASSWORD')) {
+        //         try
+        //         {
+        //             Mail::send('emails.provider.welcome', array('email_data' => $email_data), function ($message) use ($email, $subject) {
+        //                     $message->to($email)->subject($subject);
+        //             });
+        //         } catch(Exception $e) {
+        //             return Helper::get_error_message(123);
+        //         }
+        //         return Helper::get_message(105);
+        //     } else {
+        //         return Helper::get_error_message(123);
+        //     }
+        // }
 
         public static function send_email($page,$subject,$email,$email_data)
         {       
@@ -598,7 +598,7 @@
 
         public static function send_ios_push($user_id, $title, $message, $type)
         {
-            require_once app_path().'ios/apns.php';
+            require_once app_path().'/ios/apns.php';
 
             $msg = array("alert" => "" . $title,
                 "status" => "success",

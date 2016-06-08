@@ -1132,7 +1132,7 @@ class UserapiController extends Controller
                         $email_data['provider']  = $provider;
                         $email_data['user']  = User::find($request->id);
                         $page = "emails.user.request_cancel";
-                        $email_send = Helper::send_email($page,$provider->email,$email_data,$subject);
+                        $email_send = Helper::send_email($page,$subject,$provider->email,$email_data);
                     }
 
                     // No longer need request specific rows from RequestMeta
