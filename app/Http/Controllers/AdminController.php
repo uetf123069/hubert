@@ -14,6 +14,8 @@ use App\Document;
 
 use App\ProviderDocument;
 
+use App\ProviderRating;
+
 use App\Admin;
 
 use App\ServiceType;
@@ -61,11 +63,22 @@ class AdminController extends Controller
         $user = Auth::guard('admin')->user()->name;
         $reg_users = User::count();
         $comp_req = Requests::where('status','5')->count();
-        $acc_req = Requests::where('provider_status','2')->count();
+        $tot_req = Requests::count();
+        $can_req = Requests::where('status','6')->count();
+        $tot_pay = RequestPayment::sum('total');
+        $paypal = RequestPayment::where('payment_mode','paypal')->sum('total');
+        $card_pay = RequestPayment::where('payment_mode','card')->sum('total');
+        $cod = RequestPayment::where('payment_mode','cod')->sum('total');
+        
         return view('admin.dashboard')
                 ->with('reg_users', $reg_users)
                 ->with('comp_req', $comp_req)
-                ->with('acc_req', $acc_req);
+                ->with('tot_req', $tot_req)
+                ->with('tot_pay',$tot_pay)
+                ->with('paypal',$paypal)
+                ->with('card_pay',$card_pay)
+                ->with('cod',$cod)
+                ->with('can_req', $can_req);
     }
 
     public function profile()
