@@ -148,7 +148,10 @@ class ApplicationController extends Controller
                         'data' => array((object) $push_data)
                     );
                     // Send Push Notification to Provider 
-                    Helper::send_notifications($next_request_meta->provider_id, PROVIDER, $title, $messages);
+                    // Helper::send_notifications($next_request_meta->provider_id, PROVIDER, $title, $messages);
+
+                    Helper::request_push_notification($next_request_meta->provider_id,PROVIDER,$request->id,$title,$messages);
+
 
                     Log::info(print_r($messages,true));
 
@@ -168,8 +171,11 @@ class ApplicationController extends Controller
                     $title = "No Provider Available";
                     $messages = "No provider available to take the service.";
 
-                    Helper::send_notifications($request->user_id, USER, $title, $messages);
+                    // Helper::send_notifications($request->user_id, USER, $title, $messages);
+
+                    Helper::request_push_notification($request->user_id,USER,$request->id,$title,$messages);
                 }
+
             } else {
                 Log::info("Provider Waiting State");
             }
