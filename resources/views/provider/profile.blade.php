@@ -61,6 +61,18 @@
 									</div>
 
 									<div class="form-group">
+										<label class="col-sm-2 control-label">Service Type</label>
+										<div class="col-sm-8">
+											<select class="form-control" name="service_type">
+				                                <option value="">Select Service Type</option>
+				                                @foreach(get_all_service_types() as $type)
+				                                <option @if( get_provider_service_type(Auth::guard('provider')->user()->id) == $type->id ) selected @endif value="{{$type->id}}">{{$type->name}}</option>
+				                                @endforeach
+				                            </select>
+										</div>
+									</div>
+
+									<div class="form-group">
 										<label class="col-sm-2 control-label">Gender</label>
 										<div class="col-sm-8">
 											<label class="radio-inline icheck">

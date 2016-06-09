@@ -39,8 +39,8 @@
     <link type="text/css" href="{{ asset('assets/plugins/charts-chartistjs/chartist.min.css') }}" rel="stylesheet">                <!-- Chartist -->
     <style type="text/css">
         #topnav .navbar-brand {
-            background: url("{{ Setting::get('site_logo', asset('logo.png')) }}") no-repeat 50% 50%;
-            background-size: auto 80%;
+            background: url("{{ Setting::get('site_logo', asset('xuber.png')) }}") no-repeat 50% 50%;
+            background-size: auto 70%;
         }
     </style>
 

@@ -28,7 +28,7 @@ class UserController extends Controller
     public function __construct(UserapiController $API)
     {
         $this->UserAPI = $API;
-        $this->middleware('auth');
+        $this->middleware('auth', ['except' => 'index']);
     }
 
     /**
@@ -38,7 +38,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        // return view('user.dashboard');
+        return view('index');
         return redirect(route('user.services.list'));
     }
 
@@ -133,7 +133,17 @@ class UserController extends Controller
             'token' => \Auth::user()->token,
         ]);
 
-        $response = $this->UserAPI->cancel_request($request)->getData();
+        $CurrentRequest = $this->UserAPI->request_status_check($request)->getData();
+
+        // define('PROVIDER_NONE', 0); -> waiting_request_cancel
+        // define('PROVIDER_ACCEPTED', 1); -> cancel_requesty
+
+        if($CurrentRequest->data[0]->provider_status) {
+            $response = $this->UserAPI->cancel_request($request)->getData();
+        } else {
+            $response = $this->UserAPI->waiting_request_cancel($request)->getData();
+        }
+
 
         if($response->success) {
             $response->message = "Your request has been cancelled.";
@@ -253,58 +263,57 @@ class UserController extends Controller
 
         $user_id = \Auth::user()->id;
         $user = User::find($user_id);
+        // $user = \Auth::user();
         $payment_token = $request->stripeToken;
         $last_four = substr($request->number,-4);
-        $email = \Auth::user()->email;
+        $email = $user->email;
         $settings = Settings::where('key' , 'stripe_secret_key')->first();
-                        $stripe_secret_key = $settings->value;
-                \Stripe\Stripe::setApiKey($stripe_secret_key);
+        $stripe_secret_key = $settings->value;
+        \Stripe\Stripe::setApiKey($stripe_secret_key);
 
         try{
 
-                // Get the key from settings table
+            // Get the key from settings table
+            
+            $customer = \Stripe\Customer::create(array(
+                    "card" => $payment_token,
+                    "email" => $email)
+                );
+
+            if($customer){
+
+                $customer_id = $customer->id;
+
+                $cards = new Cards;
+                $cards->user_id = $request->id;
+                $cards->customer_id = $customer_id;
+                $cards->last_four = $last_four;
+                $cards->card_token = $customer->sources->data[0]->id;
+
+                // Check is any default is available
+                $check_card = Cards::where('user_id',$request->id)->first();
+
+                if($check_card)
+                    $cards->is_default = 0;
+                else
+                    $cards->is_default = 1;
                 
-                    $customer = \Stripe\Customer::create(array(
-                                   "card" => $payment_token,
-                                  "email" => $email)
-                                );
-                if($customer){
+                $cards->save();
 
-                    $customer_id = $customer->id;
-
-                    $cards = new Cards;
-                    $cards->user_id = $request->id;
-                    $cards->customer_id = $customer_id;
-                    $cards->last_four = $last_four;
-                    $cards->card_token = $customer->sources->data[0]->id;
-
-                    // Check is any default is available
-                    $check_card = Cards::where('user_id',$request->id)->first();
-
-                    if($check_card ) 
-                        $cards->is_default = 0;
-                    else
-                        $cards->is_default = 1;
-                    
-                    $cards->save();
-
-                    if($user) {
-                        $user->payment_mode = 'card';
-                        $user->default_card = $cards->id;
-                        $user->save();
-                    }
-
-                    $response_array = array('success' => true);
-                    $response_code = 200;
-                
-                } else {
-                    $response->message('Could not create client ID');
+                if($user) {
+                    $user->payment_mode = 'card';
+                    $user->default_card = $cards->id;
+                    $user->save();
                 }
-            
-            } catch(Exception $e) {
-                $response->message('error'. $e);
-            
+
+                $response_array = array('success' => true);
+                $response_code = 200;
+            } else {
+                $response->message('Could not create client ID');
             }
+        } catch(Exception $e) {
+            $response->message('error'. $e);
+        }
 
         $PaymentMethods = $this->UserAPI->get_user_payment_modes($request)->getData();
         
@@ -374,6 +383,46 @@ class UserController extends Controller
         $response = response()->json([]);
         $response->success = true;
         $response->message = 'Paypal Account has been successfully updated.';
+
+        return back()->with('response', $response);
+    }
+
+    /**
+     * Show the profile list.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function favorite_provider_list(Request $request)
+    {
+        $request->request->add([ 
+            'id' => \Auth::user()->id,
+            'token' => \Auth::user()->token,
+        ]);
+
+        $FavProviders = $this->UserAPI->fav_providers($request)->getData();
+
+        return view('user.favorite_providers', compact('FavProviders'));
+    }
+
+    /**
+     * Show the profile list.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function favorite_provider_delete(Request $request)
+    {
+        $request->request->add([ 
+            'id' => \Auth::user()->id,
+            'token' => \Auth::user()->token,
+        ]);
+        
+        $response = $this->UserAPI->delete_fav_provider($request)->getData();
+
+        if($response->success) {
+            $response->message = "Removed Provider from Favorites";
+        } else {
+            $response->message = "Something went wrong! please try again later";
+        }
 
         return back()->with('response', $response);
     }

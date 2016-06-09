@@ -7,7 +7,7 @@
     {{ csrf_field() }}
 
     <div class="text-center mb15">
-        <img src="{{ Setting::get('site_logo', asset('logo.png')) }}" />
+        <img src="{{ asset('logo.png') }}" />
     </div>
 
     <p class="text-center mb30">Welcome to Xuber. Please sign in to your account</p>

@@ -12,6 +12,8 @@ use App\Requests;
 
 use Carbon\Carbon;
 
+use App\ProviderService;
+
 
 function get_service_name($id)
 {
@@ -107,4 +109,9 @@ function get_provider_completed_request($provider_id)
 function get_all_service_types()
 {
 	return ServiceType::all();
+}
+
+function get_provider_service_type($provider_id)
+{
+	return ProviderService::where('provider_id',$provider_id)->first()->service_type_id;
 }

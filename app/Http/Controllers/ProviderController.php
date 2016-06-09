@@ -378,4 +378,21 @@ class ProviderController extends Controller
         }
 
     }
+
+    public function cancel_service(Request $request)
+    {
+        $request->request->add([ 
+            'id' => \Auth::guard('provider')->user()->id,
+            'token' => \Auth::guard('provider')->user()->token,
+            'device_token' => \Auth::guard('provider')->user()->device_token,
+        ]);
+
+        $ApiResponse = $this->ProviderApiController->cancelrequest($request)->getData();
+
+        if($ApiResponse->success == true){
+            return redirect(route('provider.ongoing'))->with('success', 'Service Cancelled');
+        }elseif($ApiResponse->success == false){
+            return back()->with('error', 'Something Went Wrong');
+        }
+    }
 }

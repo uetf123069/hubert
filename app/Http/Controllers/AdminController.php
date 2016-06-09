@@ -68,6 +68,22 @@ class AdminController extends Controller
         $paypal = RequestPayment::where('payment_mode','paypal')->sum('total');
         $card_pay = RequestPayment::where('payment_mode','card')->sum('total');
         $cod = RequestPayment::where('payment_mode','cod')->sum('total');
+        $top = DB::table('provider_ratings')
+                    ->leftJoin('providers', 'provider_ratings.provider_id', '=', 'providers.id')
+                    ->select('providers.*')
+                    ->groupBy('provider_ratings.provider_id')
+                    ->orderBy('provider_id','desc')
+                    ->limit(1)->first();
+        $tot_rev = Requests::where('confirmed_provider',$top->id)->sum('amount');
+        $pro_req = Requests::where('confirmed_provider',$top->id)->count();
+        $avg_rev = ProviderRating::where('provider_id',$top->id)->avg('rating');
+        $provider_reviews = DB::table('provider_ratings')
+                ->leftJoin('providers', 'provider_ratings.provider_id', '=', 'providers.id')
+                ->leftJoin('users', 'provider_ratings.user_id', '=', 'users.id')
+                ->select('provider_ratings.id as review_id', 'provider_ratings.rating', 'provider_ratings.comment', 'users.first_name as user_first_name', 'users.last_name as user_last_name', 'providers.first_name as provider_first_name', 'providers.last_name as provider_last_name', 'users.id as user_id', 'users.picture as user_picture', 'providers.id as provider_id', 'provider_ratings.created_at')
+                ->orderBy('provider_ratings.id', 'DESC')
+                ->limit(3)
+                ->get();
         
         return view('admin.dashboard')
                 ->with('reg_users', $reg_users)
@@ -77,6 +93,11 @@ class AdminController extends Controller
                 ->with('paypal',$paypal)
                 ->with('card_pay',$card_pay)
                 ->with('cod',$cod)
+                ->with('top',$top)
+                ->with('tot_rev',$tot_rev)
+                ->with('pro_req',$pro_req)
+                ->with('avg_rev',$avg_rev)
+                ->with('reviews', $provider_reviews)
                 ->with('can_req', $can_req);
     }
 
@@ -240,11 +261,15 @@ class AdminController extends Controller
                    
                     
                     if($request->id == ''){
-                    $email_data['name'] = $user->first_name;
+                    $email_data['first_name'] = $user->first_name;
+                    $email_data['last_name'] = $user->last_name;
                     $email_data['password'] = $new_password;
                     $email_data['email'] = $user->email;
 
-                    // $check_mail = Helper::send_users_welcome_email($email_data);
+                    $subject = Helper::tr('user_welcome_title');
+                    $page = "emails.admin.welcome";
+                    $email = $user->email;
+                    Helper::send_email($page,$subject,$email,$email_data);
                     }
 
                     $user->save();
@@ -391,16 +416,21 @@ class AdminController extends Controller
                     $provider->paypal_email = $request->paypal_email;
                     $provider->address = $address;
                     
-                    
+                     
                     if($request->id == ''){
-                    $email_data['name'] = $provider->first_name;
+                    
+                
+                $subject = Helper::tr('provider_welcome_title');
+                $page = "emails.admin.welcome";
+                $email_data['first_name'] = $provider->first_name;
+                    $email_data['last_name'] = $provider->last_name;
                     $email_data['password'] = $new_password;
                     $email_data['email'] = $provider->email;
-
-                    // $check_mail = Helper::send_provider_welcome_email($email_data);
+                $email = $provider->email;
+                Helper::send_email($page,$subject,$email,$email_data);
                     }
 
-                    $provider->save();
+                   $provider->save();
 
                     if($provider)
                     {
@@ -477,6 +507,7 @@ class AdminController extends Controller
         $settings = Settings::all();
         return view('admin.settings')->with('setting',$settings);
     }
+
 
     public function settingsProcess(Request $request)
     {
@@ -721,7 +752,7 @@ class AdminController extends Controller
     public function ProviderHistory(Request $request)
     {
         $requests = DB::table('requests')
-                ->Where('provider_id',$request->id)
+                ->Where('confirmed_provider',$request->id)
                 ->leftJoin('providers', 'requests.confirmed_provider', '=', 'providers.id')
                 ->leftJoin('users', 'requests.user_id', '=', 'users.id')
                 ->leftJoin('request_payments', 'requests.id', '=', 'request_payments.request_id')
@@ -750,7 +781,7 @@ class AdminController extends Controller
                 ->leftJoin('providers', 'requests.confirmed_provider', '=', 'providers.id')
                 ->leftJoin('users', 'requests.user_id', '=', 'users.id')
                 ->leftJoin('request_payments', 'requests.id', '=', 'request_payments.request_id')
-                ->select('users.first_name as user_first_name', 'users.last_name as user_last_name', 'providers.first_name as provider_first_name', 'providers.last_name as provider_last_name', 'users.id as user_id', 'providers.id as provider_id', 'requests.is_paid',  'requests.id as id', 'requests.created_at as date', 'requests.confirmed_provider', 'requests.status', 'requests.provider_status', 'requests.amount', 'request_payments.payment_mode as payment_mode', 'request_payments.status as payment_status', 'request_payments.total_time as total_time','request_payments.base_price as base_price', 'request_payments.time_price as time_price', 'request_payments.tax_price as tax', 'request_payments.total as total_amount', 'requests.s_latitude as latitude', 'requests.s_longitude as longitude')
+                ->select('users.first_name as user_first_name', 'users.last_name as user_last_name', 'providers.first_name as provider_first_name', 'providers.last_name as provider_last_name', 'users.id as user_id', 'providers.id as provider_id', 'requests.is_paid',  'requests.id as id', 'requests.created_at as date', 'requests.confirmed_provider', 'requests.status', 'requests.provider_status', 'requests.amount', 'request_payments.payment_mode as payment_mode', 'request_payments.status as payment_status', 'request_payments.total_time as total_time','request_payments.base_price as base_price', 'request_payments.time_price as time_price', 'request_payments.tax_price as tax', 'request_payments.total as total_amount', 'requests.s_latitude as latitude', 'requests.s_longitude as longitude','requests.start_time','requests.end_time','requests.before_image', 'requests.after_image')
                 ->first();    
         return view('admin.requestView')->with('request', $requests);
     }
@@ -760,5 +791,11 @@ class AdminController extends Controller
         // dd(\Auth::guard('admin')->user());
         $Providers = Provider::all();
         return view('admin.map', compact('Providers'));
+    }
+
+    public function help()
+    {
+        
+        return view('admin.help');
     }
 }

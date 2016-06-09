@@ -30,22 +30,51 @@
             </div>
         </div> -->
         <div class="row">
+            <h3 class="text-center">Service Details</h3>
+        </div>
+         <div class="col-md-12">
+            <div class="row">
+              <div class="col-md-12">
+                <strong>Booked by :</strong> {{$request->user_first_name}} <br>
+                <strong>Provider Name :</strong> {{$request->provider_first_name}} <br>
+                <strong>Total time :</strong> {{$request->total_time}} <br>
+                <strong>Request started :</strong> {{ date('jS \of F Y h:i:s A', strtotime($request->start_time)) }} <br>
+                <strong>Request ended :</strong> {{ date('jS \of F Y h:i:s A', strtotime($request->end_time)) }} <br>
+                <strong>Base Price :</strong> {{$request->base_price}} <br>
+                <strong>Time Price :</strong> {{$request->time_price}} <br>
+                <strong>Tax :</strong> {{$request->tax}} <br>
+                <strong>Total Amount :</strong> {{$request->total_amount}}
+              </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="row">
+              <div class="col-md-12">
+                <section class="widget bg-white post-comments">
+                    <div class="widget bg-success mb0 text-center no-radius"><strong>Before Service</strong></div>
+                        <div class="media">
+                            <img style="width:100%;" src="{{$request->before_image}}" alt="">
+                        </div>
+                </section>
+              </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="row">
+              <div class="col-md-12">
+                <section class="widget bg-white post-comments">
+                    <div class="widget bg-success mb0 text-center no-radius"><strong>After Service</strong></div>
+                        <div class="media">
+                            <img style="width:100%;" src="{{$request->before_image}}" alt="">
+                        </div>
+                </section>
+              </div>
+            </div>
+        </div>
+        <div class="row">
             <div class="col-xs-12">
                 <div id="map"></div>
             </div>
-        </div>
-        <br><br><br>
-        <div class="row">
-            <div class="col-xs-12">
-        <strong>Booked by :</strong> {{$request->user_first_name}} <br>
-        <strong>Provider Name :</strong> {{$request->provider_first_name}} <br>
-        <strong>Total time :</strong> {{$request->total_time}} <br>
-        <strong>Base Price :</strong> {{$request->base_price}} <br>
-        <strong>Time Price :</strong> {{$request->time_price}} <br>
-        <strong>Tax :</strong> {{$request->tax}} <br>
-        <strong>Total Amount :</strong> {{$request->total_amount}}
-        
-        </div>
         </div>
     </div>
 </div>

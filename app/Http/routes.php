@@ -171,6 +171,8 @@ Route::group(['prefix' => 'admin'], function(){
 
     Route::post('/settingsProcess', 'AdminController@settingsProcess')->name('adminSettingProcess');
 
+    Route::get('/help', 'AdminController@help')->name('admin.help');
+
     //Documents
 
     Route::get('/documents', 'AdminController@documents')->name('adminDocuments');
@@ -242,6 +244,7 @@ Route::group(['prefix' => 'admin'], function(){
 
 });
 
+Route::get('/', 'UserController@index')->name('user.dashboard');
 
 Route::group([], function(){
 
@@ -258,9 +261,10 @@ Route::group([], function(){
     Route::post('password/email', 'Auth\PasswordController@sendResetLinkEmail');
     Route::post('password/reset', 'Auth\PasswordController@reset');
 
-    Route::get('/', 'UserController@index')->name('user.dashboard');
-
     Route::get('/services', 'UserController@services')->name('user.services.list');
+
+    Route::get('favorite', 'UserController@favorite_provider_list')->name('user.favorite.provider.list');
+    Route::delete('favorite', 'UserController@favorite_provider_delete')->name('user.favorite.provider.del');
 
     Route::get('/request', 'UserController@request_form')->name('user.services.request');
     Route::post('/request', 'UserController@request_submit')->name('user.services.request.submit');
@@ -321,6 +325,7 @@ Route::group(['prefix' => 'provider'], function(){
     Route::get('/request/decline', 'ProviderController@decline_request')->name('provider.request.decline');
     Route::post('/switch/state', 'ProviderController@switch_state')->name('provider.switch.state');
     Route::post('/submit/review', 'ProviderController@submit_review')->name('provider.submit.review');
+    Route::post('/cancel/service', 'ProviderController@cancel_service')->name('provider.cancel.service');
 
 
 });
