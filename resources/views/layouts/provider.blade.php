@@ -39,7 +39,7 @@
     <link type="text/css" href="{{ asset('assets/plugins/charts-chartistjs/chartist.min.css') }}" rel="stylesheet">                <!-- Chartist -->
     <style type="text/css">
         #topnav .navbar-brand {
-            background: url("{{ Setting::get('site_logo', asset('logo.png')) }}") no-repeat 50% 50%;
+            background: url("{{ Setting::get('site_logo', asset('xuber.png')) }}") no-repeat 50% 50%;
             background-size: auto 70%;
         }
     </style>
@@ -92,83 +92,89 @@
     <script type="text/javascript" src="{{ asset('assets/plugins/nanoScroller/js/jquery.nanoscroller.min.js') }}"></script> <!-- nano scroller -->
     <script type="text/javascript" src="{{ asset('assets/plugins/jquery-mousewheel/jquery.mousewheel.min.js') }}"></script> <!-- Mousewheel for jScrollPane -->
 
-
-
-
-    <!-- End loading site level scripts -->
-
-    <!-- provider popup request call -->
-
-    <!-- provider model popup -->
-
-                    <!-- Modal -->
-                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h2 class="modal-title" style="text-align:center" id="request_time_left"></h2>
-                            </div>
-                            <div class="modal-body row">
-                                            <h4 style="text-align:center">User details</h4>
-                                            <div class="col-md-4">
-                                                <img style="float:right" src="http://localhost:8000/logo.png" id="request_user_image" class="img-responsive img-circle">
-
-                                            </div>
-                                            <div  class="col-md-8">
-                                                <table class="table table-striped">
-                                                    <tbody>
-                                                        <tr>
-                                                            <th>Request #</th>
-                                                            <td data-title="request" align="left" id="request_current_id"></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>User Name</th>
-                                                            <td data-title="username" align="left" id="request_user_name"></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>Service Type</th>
-                                                            <td data-title="Service" id="request_service_name"></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>Rating</th>
-                                                            <td data-title="rating" id="request_user_rating"></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>Latitude</th>
-                                                            <td data-title="latitude" id="request_latitude"></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th>Longitude</th>
-                                                            <td data-title="Longitude" id="request_longitude"></td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>    
-                                            </div>
-                                <hr>
-
-                            </div>
-                            <div class="modal-footer">
-                                <div class="row">
-                                    <div class="col-md-5">
-                                        <a href="" id="request_accept_url" style="width:150px;" class="btn btn-success">Accept Sevice</a>
-                                    </div>
-                                    <div class="col-md-5">
-                                        <a href="" id="request_decline_url" style="width:150px;" class="btn btn-danger">Decline Service</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div><!-- /.modal-content -->
-                    </div><!-- /.modal-dialog -->
-                </div><!-- /.modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header text-center">
+                    <h2 class="modal-title" id="request_time_left"></h2>
+                </div>
+                <div class="modal-body row">
+                    <div class="col-md-6">
+                        <div id="map" style="height:400px;"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <table class="table table-striped">
+                            <tbody>
+                                <tr>
+                                    <td colspan="2">
+                                        <img src="{{ asset('logo.png') }}" id="request_user_image" class="img-responsive img-circle col-xs-8 col-xs-offset-2">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Request #</th>
+                                    <td data-title="request" align="left" id="request_current_id"></td>
+                                </tr>
+                                <tr>
+                                    <th>User Name</th>
+                                    <td data-title="username" align="left" id="request_user_name"></td>
+                                </tr>
+                                <tr>
+                                    <th>Service Type</th>
+                                    <td data-title="Service" id="request_service_name"></td>
+                                </tr>
+                                <tr>
+                                    <th>Rating</th>
+                                    <td data-title="rating" id="request_user_rating"></td>
+                                </tr>
+                            </tbody>
+                        </table>    
+                    </div>
+                    <hr>
+                </div>
+                <div class="modal-footer">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <a href="" id="request_accept_url" style="width:150px;" class="btn btn-success">Accept Sevice</a>
+                        </div>
+                        <div class="col-md-5">
+                            <a href="" id="request_decline_url" style="width:150px;" class="btn btn-danger">Decline Service</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script type="text/javascript">
-    var globalOnPopup = 0;
+        var globalOnPopup = 0;
+
+        var map;
+        function initMap(serviceLocation) {
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: serviceLocation,
+                zoom: 15
+            });
+
+            var marker = new google.maps.Marker({
+                map: map,
+                position: serviceLocation,
+                visible: true,
+                animation: google.maps.Animation.DROP,
+            });
+
+            var infowindow = new google.maps.InfoWindow({
+                content: "Service Location",
+            });
+
+            infowindow.open(map, marker);
+        }
+
         window.setInterval(function(){
-              $.ajax({
-                    'url' : '{{route("provider.incoming.request")}}',
-                    'type' : 'GET',
-                    'success' : function(return_data) {
-                      if (return_data.success == true) {
+            $.ajax({
+                'url' : '{{route("provider.incoming.request")}}',
+                'type' : 'GET',
+                'success' : function(return_data) {
+                    if (return_data.success == true) {
 
                         console.log('true');
 
@@ -179,19 +185,17 @@
 
                                 if(return_data.data[0].user_picture != ""){
                                     $('#request_user_image').attr('src',return_data.data[0].user_picture);
-                                }else{
+                                } else {
                                     $('#request_user_image').attr('src', "{{  asset('logo.png')}}");
                                 }
-                                
 
                                 $('#request_service_name').text(return_data.data[0].service_type_name);
                                 $('#request_time_left').text(return_data.data[0].time_left_to_respond + ' Seconds Left');
                                 $('#request_user_rating').text(return_data.data[0].user_rating);
-                                $('#request_latitude').text(return_data.data[0].latitude);
-                                $('#request_longitude').text(return_data.data[0].longitude);
                                 $('#request_accept_url').attr('href',"{{route('provider.request.accept')}}?request_id="+return_data.data[0].request_id);
                                 $('#request_decline_url').attr('href',"{{route('provider.request.decline')}}?request_id="+return_data.data[0].request_id);
 
+                                initMap({lat: return_data.data[0].latitude, lng: return_data.data[0].longitude})
                                 $('#myModal').modal({
                                     backdrop: 'static',
                                     keyboard: false
@@ -203,9 +207,8 @@
                         }
 
                         if(return_data.data != ""){
-                            $('#request_time_left').text(return_data.data[0].time_left_to_respond + ' Seconds Left');
+                            $('#request_time_left').text("Incoming Request | " + return_data.data[0].time_left_to_respond + ' Seconds Left');
                         }
-
 
                         if(globalOnPopup == 1 && return_data.data != ""){
                             if(return_data.data[0].time_left_to_respond < 0){
@@ -220,12 +223,12 @@
                             globalOnPopup = 0; 
                             console.log('hide '+globalOnPopup);
                         }
-
-                      }
                     }
-                  });
+                }
+            });
         }, 5000);
     </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyALHyNTDk1K_lmcFoeDRsrCgeMGJW6mGsY&libraries=places" async defer></script>
 
     @yield('scripts')
 </body>
