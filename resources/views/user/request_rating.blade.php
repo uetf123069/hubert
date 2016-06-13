@@ -50,20 +50,6 @@
                             <th>Amount</th>
                             <td data-title="Amount">{{ $Service->amount }}</td>
                         </tr>
-                        <tr>
-                            <th>Request Status</th>
-                            <td data-title="Request Status">{{ get_user_request_status($Service->status) }}</td>
-                        </tr>
-                        <tr>
-                            <th>Provider Status</th>
-                            <td data-title="Provider Status">{{ get_provider_request_status($Service->provider_status) }}</td>
-                        </tr>
-                        @if($Service->provider_status)
-                        <tr>
-                            <th>Provider Rating</th>
-                            <td data-title="Provider Rating">{{ $Service->rating }}</td>
-                        </tr>
-                        @endif
                     </tbody>
                     <!-- <caption>List of countries by distribution wealth</caption> -->
                 </table>
@@ -74,6 +60,14 @@
                     <input name="provider_id" value="{{ $Service->request_id }}" type="hidden">
                     <div class="col-md-12">
                         <h2 class="mt0 text-center">Rate This Provider</h2>
+                        @if(!empty($Service->provider_picture))
+                        <div class="form-group">
+                            <img src="{{ $Service->provider_picture }}" class="col-xs-8 col-xs-offset-2">
+                        </div>
+                        @endif
+                        <div class="form-group">
+                            <div><strong>Provider Name</strong> : {{ $Service->provider_name }}</div>
+                        </div>
                         <div class="form-group">
                             <div class="col-xs-12">
                                 <div id="range_rating"></div>
