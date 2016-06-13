@@ -16,7 +16,7 @@
               <thead>
                 <tr>
                   <th>ID</th>
-                  <th>Name</th>
+                  <th>Full Name</th>
                   <th>Email</th>
                   <th>Phone</th>
                   <th>Gender</th>
@@ -28,7 +28,7 @@
               @foreach($users as $index => $user)
               <tr>
                   <td>{{$index +1}}</td>
-                  <td>{{$user->first_name}}</td>
+                  <td>{{$user->first_name}}  {{$user->last_name}}</td>
                   <td>{{$user->email}}</td>
                   <td>{{$user->mobile}}</td>
                   <td>{{ucfirst($user->gender)}}</td>

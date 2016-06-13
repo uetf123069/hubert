@@ -866,11 +866,12 @@ class UserapiController extends Controller
                             }
                         } else {
                             if(!$list_fav_providers) {
-                                // No provider found
                                 Log::info("No Provider Found");
                                 // Send push notification to User
-                                Helper::send_notifications($user->id, USER, Helper::get_push_message(601), Helper::get_push_message(602));
 
+                                $title = Helper::get_push_message(601);
+                                $messages = Helper::get_push_message(602);
+                                $this->dispatch( new NormalPushNotification($user->id, USER,$title, $messages));     
                                 $response_array = array('success' => false, 'error' => Helper::get_error_message(112), 'error_code' => 112);
                             }
                         }
@@ -937,7 +938,9 @@ class UserapiController extends Controller
                                         // Send push notifications to the first provider
                                         $title = Helper::get_push_message(604);
                                         $message = "You got a new request from".$user->name;
-                                        Helper::request_push_notification($first_provider_id,PROVIDER,$requests->id,$title,$message);
+
+                                        $this->dispatch(new sendPushNotification($first_provider_id,PROVIDER,$requests->id,$title,$message));
+
                                         // Push End
                                     }
 
@@ -1137,7 +1140,10 @@ class UserapiController extends Controller
                         $provider->save();
 
                         // Send Push Notification to Provider
-                        Helper::send_notifications($requests->confirmed_provider, PROVIDER, 'Service Cancelled', 'The service is cancelled by user.');
+                        $title = Helper::tr('cancel_by_user_title');
+                        $message = Helper::tr('cancel_by_user_message');
+                        
+                        $this->dispatch(new sendPushNotification($requests->confirmed_provider,PROVIDER,$requests->id,$title,$message));
 
                         Log::info("Cancelled request by user");
                         // Send mail notification to the provider
@@ -1196,9 +1202,12 @@ class UserapiController extends Controller
                 $delete_request_meta = RequestsMeta::where('request_id' , $requests->id)->delete();
 
                 //Send notification to the provider
-                $title = "Request Cancel";
-                $message = "Request cancelled by user";
-                Helper::request_push_notification($current_provider,PROVIDER,$requests->id,$title,$message);
+                $title = Helper::tr('waiting_cancel_by_user_title');
+                $message =  Helper::tr('waiting_cancel_by_user_message');
+
+                Log::info("waiting cancelled - current provider".$current_provider);
+
+                $this->dispatch(new sendPushNotification($current_provider,PROVIDER,$requests->id,$title,$message));
             }
         }
 
@@ -1297,6 +1306,7 @@ class UserapiController extends Controller
 
                         $request_payment->payment_id = $request->payment_id;
                         $request_payment->payment_mode = $request->payment_mode;
+                        $request_payment->status = DEFAULT_TRUE;
                         $request_payment->save();
                     }
 
@@ -1305,11 +1315,10 @@ class UserapiController extends Controller
                     if($user)
                         $title =  "The"." ".$user->first_name.' '.$user->last_name." done the payment";
                     else
-                        $title = "Payment done";
+                        $title = Helper::tr('request_completed_user_title');
 
-                    $message = Helper::get_push_message(603);
-
-                    Helper::send_notifications($requests->confirmed_provider, PROVIDER , $title , $message );
+                    $message = Helper::tr('request_completed_user_message');                    
+                    $this->dispatch(new sendPushNotification($requests->confirmed_provider,PROVIDER,$requests->id,$title,$message));
 
                      // Send mail notification to the provider
                     $subject = Helper::tr('request_completed_bill');
@@ -1371,6 +1380,7 @@ class UserapiController extends Controller
                     $requests->is_paid = DEFAULT_TRUE;
 
                     $request_payment->payment_id = uniqid();
+                    $request_payment->status = DEFAULT_TRUE;
 
                 } elseif($request->payment_mode == CARD) {
 
@@ -1431,10 +1441,10 @@ class UserapiController extends Controller
                 if($user)
                     $title =  "The"." ".$user->first_name.' '.$user->last_name." done the payment";
                 else
-                    $title = "User paid the amount";
+                    $title = Helper::tr('request_completed_user_title');
 
-                $messages = Helper::get_push_message(603);
-                Helper::send_notifications($requests->confirmed_provider,PROVIDER,$title,$messages);
+                $message = Helper::get_push_message(603);
+                $this->dispatch(new sendPushNotification($requests->confirmed_provider,PROVIDER,$requests->id,$title,$message));
                 // Send notification end
 
                 // Send invoice notification to the user, provider and admin
@@ -1507,10 +1517,9 @@ class UserapiController extends Controller
             }
 
             // Send Push Notification to Provider
-            $title = "User Rated";
-            $messages = "The user rated your service.";
-            Helper::send_notifications($req->confirmed_provider, PROVIDER, $title, $messages);
-
+            $title = Helper::tr('provider_rated_by_user_title');
+            $messages = Helper::tr('provider_rated_by_user_message');
+            $this->dispatch( new sendPushNotification($req->confirmed_provider, PROVIDER,$req->id,$title, $messages));     
             $response_array = array('success' => true);
 
         }

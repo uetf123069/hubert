@@ -88,6 +88,8 @@ class sendPushNotification extends Job implements ShouldQueue
 
                     require_once app_path().'/ios/apns.php';
 
+                    Log::info($user->device_token);
+
                     $msg = array("alert" => "" . $this->title,
                         "status" => "success",
                         "title" => $this->title,
@@ -101,7 +103,7 @@ class sendPushNotification extends Job implements ShouldQueue
                         $deviceTokens = $user->device_token;
                     }
 
-                    $apns = new Apns();
+                    $apns = new \Apns();
                     $apns->send_notification($deviceTokens, $msg);
 
                     Log::info("iOS push end");

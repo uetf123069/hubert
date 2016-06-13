@@ -18,6 +18,10 @@ use App\User;
 
 use App\Provider;
 
+use App\Jobs\NormalPushNotification;
+
+use App\Jobs\sendPushNotification;
+
 use DB;
 
 use Log;
@@ -142,16 +146,13 @@ class ApplicationController extends Controller
                     $push_data = array();
                     $title = "New Service";
                     $push_msg = "You got a new service from ".$user->first_name.''.$user->last_name;
-                    $messages = array(
+                    $message = array(
                         'success' => true,
                         'msg' => $push_msg,
                         'data' => array((object) $push_data)
                     );
                     // Send Push Notification to Provider 
-                    // Helper::send_notifications($next_request_meta->provider_id, PROVIDER, $title, $messages);
-
-                    Helper::request_push_notification($next_request_meta->provider_id,PROVIDER,$request->id,$title,$messages);
-
+                    $this->dispatch(new sendPushNotification($next_request_meta->provider_id,PROVIDER,$request->id,$title,$message));
 
                     Log::info(print_r($messages,true));
 
@@ -164,16 +165,11 @@ class ApplicationController extends Controller
                     RequestsMeta::where('request_id', '=', $request->id)->delete();
                     Log::info('assign_next_provider_cron ended the request_id:'.$request->id.' at '.$time);
 
-                    // Send email notifications to the admin
-                    // send_no_provider_found_notification_to_admin($request->id);
-
                     // Send Push Notification to User
                     $title = "No Provider Available";
-                    $messages = "No provider available to take the service.";
+                    $message = "No provider available to take the service.";
 
-                    // Helper::send_notifications($request->user_id, USER, $title, $messages);
-
-                    Helper::request_push_notification($request->user_id,USER,$request->id,$title,$messages);
+                    $this->dispatch(new NormalPushNotification($request->user_id,USER,$title,$message));
                 }
 
             } else {

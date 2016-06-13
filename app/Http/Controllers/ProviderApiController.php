@@ -36,6 +36,10 @@ use App\ProviderRating;
 
 use App\Cards;
 
+use App\Jobs\sendPushNotification;
+
+use App\Jobs\NormalPushNotification;
+
 
 define('USER', 0);
 define('PROVIDER',1);
@@ -834,10 +838,10 @@ class ProviderApiController extends Controller
                     $provider->save();
 
                     // Send Push Notification to User
-                    $title = "Service Accepted";
-                    $messages = "The Service is accepted by provider.";
+                    $title = Helper::tr('request_accepted_title');
+                    $message = Helper::tr('request_accepted_message');
 
-                    Helper::send_notifications($requests->user_id, USER, $title, $messages);
+                    $this->dispatch( new sendPushNotification($requests->user_id, USER,$requests->id,$title, $message));     
 
                     // No longer need request specific rows from RequestMeta
                     RequestsMeta::where('request_id', '=', $request_id)->delete();
@@ -902,10 +906,10 @@ class ProviderApiController extends Controller
     			$new_state = $requests->status;
 
 	            // Send Push Notification to User
-	            $title = "Provider Started";
-                $messages = "Provider started from location.";
+	            $title = Helper::tr('provider_started_title');
+                $message = Helper::tr('provider_started_message');
 
-                Helper::send_notifications($requests->user_id, USER, $title, $messages);
+                $this->dispatch( new sendPushNotification($requests->user_id, USER,$requests->id,$title, $message));     
            
 				$response_array = Helper::null_safe(array(
 						'success' => true,
@@ -959,10 +963,9 @@ class ProviderApiController extends Controller
     			$requests->save();
 
 	            // Send Push Notification to User
-	            $title = "Provider Arrived";
-                $messages = "Provider arrived to your location.";
-
-                Helper::send_notifications($requests->user_id, USER, $title, $messages);
+	            $title = Helper::tr('provider_arrived_title');
+                $message = Helper::tr('provider_arrived_message');
+                $this->dispatch( new sendPushNotification($requests->user_id, USER,$requests->id,$title, $message));
            
 				$response_array = Helper::null_safe(array(
 						'success' => true,
@@ -1022,10 +1025,9 @@ class ProviderApiController extends Controller
     			$requests->save();
 
 	            // Send Push Notification to User
-	            $title = "Provider Service Started";
-                $messages = "Provider Started Service.";
-
-                Helper::send_notifications($requests->user_id, USER, $title, $messages);
+	            $title = Helper::tr('request_started_title');
+                $message = Helper::tr('request_started_message');
+				$this->dispatch( new sendPushNotification($requests->user_id, USER,$requests->id,$title, $message));
            
 				$response_array = Helper::null_safe(array(
 						'success' => true,
@@ -1174,10 +1176,10 @@ class ProviderApiController extends Controller
     			$invoice_data['last_four'] = $last_four;
 
 	            // Send Push Notification to User
-	            $title = "Your Request is completed.Please check the invoice details";
+	            $title = Helper::tr('request_complete_payment_title');
 	            $message = $invoice_data;
 
-	            Helper::send_notifications($requests->user_id,USER,$title,$message);
+	            $this->dispatch( new sendPushNotification($requests->user_id, USER,$requests->id,$title, $message));
 
 	            // Send invoice notification to the user and provider
                 $subject = Helper::tr('request_completed_invoice');
@@ -1242,10 +1244,10 @@ class ProviderApiController extends Controller
 	            $req->save();
 
 	            // Send Push Notification to User
-	            $title = "Provider Rated";
-	            $messages = "The provider rated your service.";
+	            $title = Helper::tr('user_rated_by_provider_title');
+	            $message = Helper::tr('user_rated_by_provider_title');
 
-	            Helper::send_notifications($req->user_id, USER, $title, $messages);          
+	            $this->dispatch( new sendPushNotification($req->user_id, USER,$req->id,$title, $message));     
 
 	            $response_array = Helper::null_safe(array('success' => true,'status' => REQUEST_COMPLETE_PENDING,'message' => Helper::get_message(116)));
 	        // } else {
@@ -1291,11 +1293,11 @@ class ProviderApiController extends Controller
                     $requests->save();
 
                     // Send Push Notification to User
-                    $title = "Service Cancelled";
-                    $messages = "The service is cancelled.";
+                    $title = Helper::tr('cancel_by_provider_title');
+                    $message = Helper::tr('cancel_by_provider_message');
 					
 					// Send notifications 
-                    // $this->dispatch(new sendPushNotification($request->user_id,USER,$requests->id,$title,$message));
+                    $this->dispatch(new sendPushNotification($requests->user_id,USER,$requests->id,$title,$message));
 
                     // Send email notification to the user
 

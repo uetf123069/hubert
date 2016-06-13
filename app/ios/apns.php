@@ -2,23 +2,11 @@
 
 session_start();
 
-//require_once  'database.php';
-//error_reporting(false);
-
-
 define("DefA", 2);
 
-// Log::info('certi_usr_a'.print_r($certi_user_a,true));
-
-define("Certi_Path", 'cert_OnDemand.pem');
-
-// Log::info('certi_path'.print_r($certi_user_a,true));
-
-// $pass_user_a = Certificates::where('client','apple')->where('user_type',0)->where('type',$cert_def)->where('file_type','passphrase')->first();
+define("Certi_Path", 'base.pem');
 
 define("PassPH", '');
-
-/**/
 
 class Apns {
 
@@ -34,7 +22,7 @@ class Apns {
     private $message = "ManagerMaster";
 
     private function getCertificatePath() {
-        Log::info('path user = '.print_r(app_path().'/ios_push/iph_cert/'.$this->certificateP,true));
+        Log::info('path user = '.print_r(app_path().'/ios/iph_cert/'.$this->certificateP,true));
         return app_path().'/ios/iph_cert/'.$this->certificateP;
     }
 

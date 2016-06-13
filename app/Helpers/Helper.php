@@ -133,71 +133,6 @@
             return time() + 24*3600*30;  // 30 days
         }
 
-        // public static function send_user_forgot_email($email,$email_data,$subject)
-        // {
-        //     if(env('MAIL_USERNAME') && env('MAIL_PASSWORD')) {
-        //        try
-        //         {
-        //             Mail::send('emails.user.forgot_password', array('email_data' => $email_data), function ($message) use ($email, $subject) {
-        //                     $message->to($email)->subject($subject);
-        //             });
-
-        //         } catch(Exception $e) {
-
-        //             return Helper::get_error_message(123);
-
-        //         }
-
-        //         return Helper::get_message(105);
-
-        //     } else {
-        //         return Helper::get_error_message(123);
-        //     }
-           
-        // }
-        // public static function send_provider_forgot_email($email,$email_data,$subject) {            
-
-        //     if(env('MAIL_USERNAME') && env('MAIL_PASSWORD')) {
-        //         try
-        //         {
-        //             Mail::send('emails.provider.forgot_password', array('email_data' => $email_data), function ($message) use ($email, $subject) {
-        //                     $message->to($email)->subject($subject);
-        //             });
-
-        //         } catch(Exception $e) {
-        //             return Helper::get_error_message(123);
-        //         }
-
-        //         return Helper::get_message(105);
-
-        //     } else {
-        //         return Helper::get_error_message(123);
-        //     }
-        // }
-
-        // public static function send_provider_welcome_email($provider)
-        // {
-        //     $email = $provider->email;
-
-        //     $subject = "Welcome to XUBER";
-
-        //     $email_data = $provider;
-
-        //     if(env('MAIL_USERNAME') && env('MAIL_PASSWORD')) {
-        //         try
-        //         {
-        //             Mail::send('emails.provider.welcome', array('email_data' => $email_data), function ($message) use ($email, $subject) {
-        //                     $message->to($email)->subject($subject);
-        //             });
-        //         } catch(Exception $e) {
-        //             return Helper::get_error_message(123);
-        //         }
-        //         return Helper::get_message(105);
-        //     } else {
-        //         return Helper::get_error_message(123);
-        //     }
-        // }
-
         public static function send_email($page,$subject,$email,$email_data)
         {       
             if(env('MAIL_USERNAME') && env('MAIL_PASSWORD')) {
@@ -616,11 +551,11 @@
                 $deviceTokens = $user_id;
             }
 
-            $apns = new Apns();
+            $apns = new \Apns();
             $apns->send_notification($deviceTokens, $msg);
 
             Log::info($deviceTokens);
-        }
+        }   
 
         public static function send_android_push($user_id, $title ,$message)
         {

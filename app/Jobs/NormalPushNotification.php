@@ -19,10 +19,8 @@ class NormalPushNotification extends Job implements ShouldQueue
 {
     use InteractsWithQueue, SerializesModels;
 
-    protected $user;
     protected $id;
     protected $user_type;
-    protected $request_id;
     protected $title;
     protected $message;
 
@@ -31,11 +29,10 @@ class NormalPushNotification extends Job implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($id,$user_type,$request_id,$title,$message)
+    public function __construct($id,$user_type,$title,$message)
     {
         $this->id = $id;
         $this->user_type = $user_type;
-        $this->request_id = $request_id;
         $this->title = $title;
         $this->message = $message;
     }
@@ -83,7 +80,7 @@ class NormalPushNotification extends Job implements ShouldQueue
                     $deviceTokens = $user->device_token;
                 }
 
-                $apns = new Apns();
+                $apns = new \Apns();
                 $apns->send_notification($deviceTokens, $msg);
 
                 Log::info("iOS push end");
