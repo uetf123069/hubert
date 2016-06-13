@@ -1289,9 +1289,7 @@ class UserapiController extends Controller
             $response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101, 'error_messages' => $error_messages);
 
         } else {
-
-            $requests = Requests::find($request->request_id);
-
+            $requests = Requests::where('id',$request->request_id)->where('status' , REQUEST_COMPLETE_PENDING)->first();
             // Check the status is completed
             if( $requests && $requests->status != REQUEST_RATING) {
 
@@ -1335,7 +1333,7 @@ class UserapiController extends Controller
                 }
             
             } else {
-                $response_array = array('success' => 'false' , 'error' => Helper::get_error_message(136) , 'error_code' => 136);
+                $response_array = array('success' => 'false' , 'error' => Helper::get_error_message(138) , 'error_code' => 138);
             }
         }
 
@@ -1361,7 +1359,7 @@ class UserapiController extends Controller
             $response_array = array('success' => false , 'error' => $error_messages , 'error_messages' => Helper::get_error_message(101));
         } else {
 
-            $requests = Requests::find($request->request_id);
+            $requests = Requests::where('id',$request->request_id)->where('status' , REQUEST_COMPLETE_PENDING)->first();
             $user = User::find($request->id);
 
             //Check current status of the request
@@ -1492,37 +1490,44 @@ class UserapiController extends Controller
             $request_id = $request->request_id;
             $comment = $request->comment;
 
-            $req = Requests::find($request_id);
-            //Save Rating
-            $rev_user = new UserRating();
-            $rev_user->provider_id = $req->confirmed_provider;
-            $rev_user->user_id = $req->user_id;
-            $rev_user->request_id = $req->id;
-            $rev_user->rating = $request->rating;
-            $rev_user->comment = $comment ? $comment: '';
-            $rev_user->save();
+            $req = Requests::where('id' ,$request_id)
+                    ->where('status' ,REQUEST_RATING)
+                    ->first();
 
-            $req->status = REQUEST_COMPLETED;
-            $req->save();
+            if ($req && intval($req->status) != REQUEST_COMPLETED) {
+                //Save Rating
+                $rev_user = new UserRating();
+                $rev_user->provider_id = $req->confirmed_provider;
+                $rev_user->user_id = $req->user_id;
+                $rev_user->request_id = $req->id;
+                $rev_user->rating = $request->rating;
+                $rev_user->comment = $comment ? $comment: '';
+                $rev_user->save();
 
-            // Save favourite provider details
-            if($request->is_favorite ==  DEFAULT_TRUE) {
-                $fav_provider = FavouriteProvider::where('provider_id',$req->confirmed_provider)->where('user_id' , $request->id)->first();
-                if(!$fav_provider){
-                    $favProvider = new FavouriteProvider;
-                    $favProvider->provider_id = $req->confirmed_provider;
-                    $favProvider->user_id = $request->id;
-                    $favProvider->status = DEFAULT_TRUE;
-                    $favProvider->save();
+                $req->status = REQUEST_COMPLETED;
+                $req->save();
+
+                // Save favourite provider details
+                if($request->is_favorite ==  DEFAULT_TRUE) {
+                    $fav_provider = FavouriteProvider::where('provider_id',$req->confirmed_provider)->where('user_id' , $request->id)->first();
+                    if(!$fav_provider){
+                        $favProvider = new FavouriteProvider;
+                        $favProvider->provider_id = $req->confirmed_provider;
+                        $favProvider->user_id = $request->id;
+                        $favProvider->status = DEFAULT_TRUE;
+                        $favProvider->save();
+                    }
                 }
+
+                // Send Push Notification to Provider
+                $title = Helper::tr('provider_rated_by_user_title');
+                $messages = Helper::tr('provider_rated_by_user_message');
+                $this->dispatch( new sendPushNotification($req->confirmed_provider, PROVIDER,$req->id,$title, $messages));     
+                $response_array = array('success' => true);
+
+            } else {
+                $response_array = array('success' => false,'error' => Helper::get_error_message(150),'error_code' => 150);
             }
-
-            // Send Push Notification to Provider
-            $title = Helper::tr('provider_rated_by_user_title');
-            $messages = Helper::tr('provider_rated_by_user_message');
-            $this->dispatch( new sendPushNotification($req->confirmed_provider, PROVIDER,$req->id,$title, $messages));     
-            $response_array = array('success' => true);
-
         }
 
         $response = response()->json($response_array, 200);
