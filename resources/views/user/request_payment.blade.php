@@ -59,6 +59,7 @@
                             <th>Provider Rating</th>
                             <td data-title="Provider Rating">{{ $Service->rating }}</td>
                         </tr>
+                        @if($CurrentRequest->invoice != "")
                         <tr>
                             <td colspan="2">
                                 <h4 class="text-center">Payment Details</h4>
@@ -80,7 +81,12 @@
                             <th>Total Amount</th>
                             <td data-title="Total Amount">{{ $CurrentRequest->invoice[$Index]->total }}</td>
                         </tr>
-
+                        @else
+                        <tr>
+                            <th>Amount</th>
+                            <td data-title="Amount">{{ $Service->amount }}</td>
+                        </tr>
+                        @endif
                     </tbody>
                 </table>
             </div>
