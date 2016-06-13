@@ -42,6 +42,9 @@ use App\ProviderRating;
 
 use App\Cards;
 
+use App\Jobs\NormalPushNotification;
+
+use App\Jobs\sendPushNotification;
 
 
 define('USER', 0);
@@ -105,7 +108,7 @@ class UserapiController extends Controller
 	{
         $this->middleware('UserApiVal' , array('except' => ['register' , 'login' , 'forgot_password']));
         
-}
+    }
 	public function register(Request $request)
 	{
         $response_array = array();
@@ -863,11 +866,12 @@ class UserapiController extends Controller
                             }
                         } else {
                             if(!$list_fav_providers) {
-                                // No provider found
                                 Log::info("No Provider Found");
                                 // Send push notification to User
-                                Helper::send_notifications($user->id, USER, Helper::get_push_message(601), Helper::get_push_message(602));
 
+                                $title = Helper::get_push_message(601);
+                                $messages = Helper::get_push_message(602);
+                                $this->dispatch( new NormalPushNotification($user->id, USER,$title, $messages));     
                                 $response_array = array('success' => false, 'error' => Helper::get_error_message(112), 'error_code' => 112);
                             }
                         }
@@ -934,7 +938,9 @@ class UserapiController extends Controller
                                         // Send push notifications to the first provider
                                         $title = Helper::get_push_message(604);
                                         $message = "You got a new request from".$user->name;
-                                        Helper::request_push_notification($first_provider_id,PROVIDER,$requests->id,$title,$message);
+
+                                        $this->dispatch(new sendPushNotification($first_provider_id,PROVIDER,$requests->id,$title,$message));
+
                                         // Push End
                                     }
 
@@ -972,6 +978,7 @@ class UserapiController extends Controller
 
     // Manual request
     public function manual_create_request(Request $request) {
+        
         $validator = Validator::make(
                 $request->all(),
                 array(
@@ -990,7 +997,7 @@ class UserapiController extends Controller
             // Check the user filled the payment details
             $user = User::find($request->id);
             if(!$user->payment_mode) {
-                // Log::info('Payment Mode is not available');
+                Log::info('Payment Mode is not available');
                 $response_array = array('success' => false , 'error' => Helper::get_error_message(134) , 'error_code' => 134);
             } else {
 
@@ -1006,72 +1013,80 @@ class UserapiController extends Controller
 
                 if($allow == DEFAULT_TRUE) {
 
-                    // Check already request exists 
-                    $check_status = array(REQUEST_NO_PROVIDER_AVAILABLE,REQUEST_CANCELLED,REQUEST_COMPLETED);
+                    // Check the provider is available
+                    if($provider = Provider::where('id' , $request->provider_id)->where('is_available' , DEFAULT_TRUE)->where('is_activated' , DEFAULT_TRUE)->where('is_approved' , DEFAULT_TRUE)->where('waiting_to_respond' ,DEFAULT_FALSE)->first()) {
 
-                    $check_requests = Requests::where('user_id' , $request->id)->whereNotIn('status' , $check_status)->count();
+                        // Check already request exists 
+                        $check_status = array(REQUEST_NO_PROVIDER_AVAILABLE,REQUEST_CANCELLED,REQUEST_COMPLETED);
 
-                    if($check_requests == 0) {
+                        $check_requests = Requests::where('user_id' , $request->id)->whereNotIn('status' , $check_status)->count();
 
-                        Log::info('Previous requests check is done');
-                       
-                        // Create Requests
-                        $requests = new Requests;
-                        $requests->user_id = $user->id;
+                        if($check_requests == 0) {
 
-                        if($request->service_type)
-                            $requests->request_type = $request->service_type;
+                            Log::info('Previous requests check is done');
+                           
+                            // Create Requests
+                            $requests = new Requests;
+                            $requests->user_id = $user->id;
 
-                        $requests->status = REQUEST_NEW;
-                        $requests->confirmed_provider = NONE;
-                        $requests->request_start_time = date("Y-m-d H:i:s");
-                        $requests->s_address = $request->s_address ? $request->s_address : "";
+                            if($request->service_type)
+                                $requests->request_type = $request->service_type;
+
+                            $requests->status = REQUEST_NEW;
+                            $requests->confirmed_provider = NONE;
+                            $requests->request_start_time = date("Y-m-d H:i:s");
+                            $requests->s_address = $request->s_address ? $request->s_address : "";
+                                
+                            if($request->s_latitude){ $requests->s_latitude = $request->s_latitude; }
+                            if($request->s_longitude) { $requests->s_longitude = $request->s_longitude; }
+                                
+                            $requests->save();
+
+                            if($requests) {
+                                $requests->status = REQUEST_WAITING;
+                                
+                                $request_meta = new RequestsMeta;
+
+                                $request_meta->status = REQUEST_META_OFFERED;  // Request status change
+
+                                // Availablity status change
+                                    $provider->waiting_to_respond = WAITING_TO_RESPOND;
+                                    $provider->save();
                             
-                        if($request->s_latitude){ $requests->s_latitude = $request->s_latitude; }
-                        if($request->s_longitude) { $requests->s_longitude = $request->s_longitude; }
-                            
-                        $requests->save();
 
-                        if($requests) {
-                            $requests->status = REQUEST_WAITING;
-                            
-                            $request_meta = new RequestsMeta;
+                                // Send push notifications to the first provider
+                                $title = Helper::get_push_message(604);
+                                $message = "You got a new request from".$user->name;
 
-                            $request_meta->status = REQUEST_META_OFFERED;  // Request status change
+                                $this->dispatch(new sendPushNotification($request->provider_id,PROVIDER,$requests->id,$title,$message));
 
-                            // Availablity status change
-                            if($current_provider = Provider::find($request->provider_id)) {
-                                $current_provider->waiting_to_respond = WAITING_TO_RESPOND;
-                                $current_provider->save();
-                            }
+                                // Push End
 
-                            // Send push notifications to the first provider
-                            $title = Helper::get_push_message(604);
-                            $message = "You got a new request from".$user->name;
-                            Helper::request_push_notification($request->provider_id,PROVIDER,$requests->id,$title,$message);
-                            // Push End
+                                $request_meta->request_id = $requests->id;
+                                $request_meta->provider_id = $request->provider_id; 
+                                $request_meta->save();
 
-                            $request_meta->request_id = $requests->id;
-                            $request_meta->provider_id = $request->provider_id; 
-                            $request_meta->save();
+                                $response_array = array(
+                                    'success' => true,
+                                    'request_id' => $requests->id,
+                                    'current_provider' => $request->provider_id,
+                                    'address' => $requests->s_address,
+                                    'latitude' => $requests->s_latitude,
+                                    'longitude' => $requests->s_longitude,
+                                );
 
-                            $response_array = array(
-                                'success' => true,
-                                'request_id' => $requests->id,
-                                'current_provider' => $request->provider_id,
-                                'address' => $requests->s_address,
-                                'latitude' => $requests->s_latitude,
-                                'longitude' => $requests->s_longitude,
-                            );
-
-                            $response_array = Helper::null_safe($response_array); Log::info('Create request end');
+                                $response_array = Helper::null_safe($response_array); Log::info('Create request end');
+                            } else {
+                                $response_array = array('success' => false , 'error' => Helper::get_error_message(126) , 'error_code' => 126 );
+                            }     
+                        
                         } else {
-                            $response_array = array('success' => false , 'error' => Helper::get_error_message(126) , 'error_code' => 126 );
-                        }     
-                    } else {
-                        $response_array = array('success' => false , 'error' => Helper::get_error_message(127) , 'error_code' => 127);
-                    }
+                            $response_array = array('success' => false , 'error' => Helper::get_error_message(127) , 'error_code' => 127);
+                        }
 
+                    } else {
+                        $response_array = array('success' => false , 'error' => Helper::get_error_message(153) ,'error_code' => 153);
+                    }
                 } else {
                     $response_array = array('success' => false , 'error' => Helper::get_error_message(142) ,'error_code' => 142);
                 }
@@ -1125,7 +1140,10 @@ class UserapiController extends Controller
                         $provider->save();
 
                         // Send Push Notification to Provider
-                        Helper::send_notifications($requests->confirmed_provider, PROVIDER, 'Service Cancelled', 'The service is cancelled by user.');
+                        $title = Helper::tr('cancel_by_user_title');
+                        $message = Helper::tr('cancel_by_user_message');
+                        
+                        $this->dispatch(new sendPushNotification($requests->confirmed_provider,PROVIDER,$requests->id,$title,$message));
 
                         Log::info("Cancelled request by user");
                         // Send mail notification to the provider
@@ -1184,9 +1202,12 @@ class UserapiController extends Controller
                 $delete_request_meta = RequestsMeta::where('request_id' , $requests->id)->delete();
 
                 //Send notification to the provider
-                $title = "Request Cancel";
-                $message = "Request cancelled by user";
-                Helper::request_push_notification($current_provider,PROVIDER,$requests->id,$title,$message);
+                $title = Helper::tr('waiting_cancel_by_user_title');
+                $message =  Helper::tr('waiting_cancel_by_user_message');
+
+                Log::info("waiting cancelled - current provider".$current_provider);
+
+                $this->dispatch(new sendPushNotification($current_provider,PROVIDER,$requests->id,$title,$message));
             }
         }
 
@@ -1286,6 +1307,7 @@ class UserapiController extends Controller
 
                         $request_payment->payment_id = $request->payment_id;
                         $request_payment->payment_mode = $request->payment_mode;
+                        $request_payment->status = DEFAULT_TRUE;
                         $request_payment->save();
                     }
 
@@ -1294,11 +1316,10 @@ class UserapiController extends Controller
                     if($user)
                         $title =  "The"." ".$user->first_name.' '.$user->last_name." done the payment";
                     else
-                        $title = "Payment done";
+                        $title = Helper::tr('request_completed_user_title');
 
-                    $message = Helper::get_push_message(603);
-
-                    Helper::send_notifications($requests->confirmed_provider, PROVIDER , $title , $message );
+                    $message = Helper::tr('request_completed_user_message');                    
+                    $this->dispatch(new sendPushNotification($requests->confirmed_provider,PROVIDER,$requests->id,$title,$message));
 
                      // Send mail notification to the provider
                     $subject = Helper::tr('request_completed_bill');
@@ -1360,6 +1381,7 @@ class UserapiController extends Controller
                     $requests->is_paid = DEFAULT_TRUE;
 
                     $request_payment->payment_id = uniqid();
+                    $request_payment->status = DEFAULT_TRUE;
 
                 } elseif($request->payment_mode == CARD) {
 
@@ -1420,10 +1442,10 @@ class UserapiController extends Controller
                 if($user)
                     $title =  "The"." ".$user->first_name.' '.$user->last_name." done the payment";
                 else
-                    $title = "User paid the amount";
+                    $title = Helper::tr('request_completed_user_title');
 
-                $messages = Helper::get_push_message(603);
-                Helper::send_notifications($requests->confirmed_provider,PROVIDER,$title,$messages);
+                $message = Helper::get_push_message(603);
+                $this->dispatch(new sendPushNotification($requests->confirmed_provider,PROVIDER,$requests->id,$title,$message));
                 // Send notification end
 
                 // Send invoice notification to the user, provider and admin
@@ -1496,10 +1518,9 @@ class UserapiController extends Controller
             }
 
             // Send Push Notification to Provider
-            $title = "User Rated";
-            $messages = "The user rated your service.";
-            Helper::send_notifications($req->confirmed_provider, PROVIDER, $title, $messages);
-
+            $title = Helper::tr('provider_rated_by_user_title');
+            $messages = Helper::tr('provider_rated_by_user_message');
+            $this->dispatch( new sendPushNotification($req->confirmed_provider, PROVIDER,$req->id,$title, $messages));     
             $response_array = array('success' => true);
 
         }

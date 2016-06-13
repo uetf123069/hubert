@@ -98,7 +98,7 @@ table[class="table3-3"] { width: 100% !important; text-align: center !important;
                                                 <td data-link-style="text-decoration:none; color:#3cb2d0;" data-link-color="Content Link" data-color="Main Text" data-size="Main Text" mc:edit="content" align="center" style="font-family: 'Open Sans', Arial, sans-serif; font-size:13px; color:#7f8c8d; line-height:30px;">
                                                     Hi, {{$email_data->first_name}} {{$email_data->last_name}} . Welcome to {{Helper::settings('site_name')}}. You've just joined a community of millions who have discovered how quick and easy it is to use.
                                                     <br>
-                                                    <b>Your username is : {{$email_data->first_name}} {{$email_data->last_name}}</b>
+                                                    <b>Your fullname is : {{$email_data->first_name}} {{$email_data->last_name}}</b>
                                                     <br>
                                                     Thank you!
                                                 </td>

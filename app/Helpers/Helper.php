@@ -3,9 +3,7 @@
    namespace App\Helpers;
 
    use Hash;
-
    use App\Admin;
-
    use App\User;
 
    use App\Provider;
@@ -23,6 +21,8 @@
    use App\ProviderRating;
 
    use App\Jobs\sendPushNotification;
+
+   use App\Jobs\NormalPushNotification;
 
    use Mail;
 
@@ -132,71 +132,6 @@
         {
             return time() + 24*3600*30;  // 30 days
         }
-
-        // public static function send_user_forgot_email($email,$email_data,$subject)
-        // {
-        //     if(env('MAIL_USERNAME') && env('MAIL_PASSWORD')) {
-        //        try
-        //         {
-        //             Mail::send('emails.user.forgot_password', array('email_data' => $email_data), function ($message) use ($email, $subject) {
-        //                     $message->to($email)->subject($subject);
-        //             });
-
-        //         } catch(Exception $e) {
-
-        //             return Helper::get_error_message(123);
-
-        //         }
-
-        //         return Helper::get_message(105);
-
-        //     } else {
-        //         return Helper::get_error_message(123);
-        //     }
-           
-        // }
-        // public static function send_provider_forgot_email($email,$email_data,$subject) {            
-
-        //     if(env('MAIL_USERNAME') && env('MAIL_PASSWORD')) {
-        //         try
-        //         {
-        //             Mail::send('emails.provider.forgot_password', array('email_data' => $email_data), function ($message) use ($email, $subject) {
-        //                     $message->to($email)->subject($subject);
-        //             });
-
-        //         } catch(Exception $e) {
-        //             return Helper::get_error_message(123);
-        //         }
-
-        //         return Helper::get_message(105);
-
-        //     } else {
-        //         return Helper::get_error_message(123);
-        //     }
-        // }
-
-        // public static function send_provider_welcome_email($provider)
-        // {
-        //     $email = $provider->email;
-
-        //     $subject = "Welcome to XUBER";
-
-        //     $email_data = $provider;
-
-        //     if(env('MAIL_USERNAME') && env('MAIL_PASSWORD')) {
-        //         try
-        //         {
-        //             Mail::send('emails.provider.welcome', array('email_data' => $email_data), function ($message) use ($email, $subject) {
-        //                     $message->to($email)->subject($subject);
-        //             });
-        //         } catch(Exception $e) {
-        //             return Helper::get_error_message(123);
-        //         }
-        //         return Helper::get_message(105);
-        //     } else {
-        //         return Helper::get_error_message(123);
-        //     }
-        // }
 
         public static function send_email($page,$subject,$email,$email_data)
         {       
@@ -467,6 +402,9 @@
                 case 150:
                     $string = "user rating already done or previous status is mismatched";
                     break;
+                case 153:
+                    $string = "Provider is not available at this time.";
+                    break;
                 default:
                     $string = "Unknown error occurred.";
             }
@@ -613,11 +551,11 @@
                 $deviceTokens = $user_id;
             }
 
-            $apns = new Apns();
+            $apns = new \Apns();
             $apns->send_notification($deviceTokens, $msg);
 
             Log::info($deviceTokens);
-        }
+        }   
 
         public static function send_android_push($user_id, $title ,$message)
         {
@@ -721,6 +659,8 @@
         }
 
         public static function request_push_notification($id,$user_type,$request_id,$title,$message) {
+
+            Log::info("Request Push notifictaion started");
             // Trigger the job
             new sendPushNotification($id,$user_type,$request_id,$title,$message);
         }

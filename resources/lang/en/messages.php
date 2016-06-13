@@ -54,6 +54,41 @@ return array(
 	'total' => 'Total',
 	'currency' => "$",
 
+	// Push notifications title and messages
+	'cancel_by_user_title' => 'Service Cancelled',
+	'cancel_by_user_message' => 'The service is cancelled by user.',
+	'waiting_cancel_by_user_title' => 'Service Cancelled',
+	'waiting_cancel_by_user_message' => 'The service is cancelled by user.',
+	'request_completed_user_title' => "User done the Payment",
+	'request_completed_user_message' => "Request Completed successfully.",
+	'provider_rated_by_user_title' => 'User Rated',
+	'provider_rated_by_user_message' => 'The user rated your service.',
+
+	// Provider
+
+	'cancel_by_provider_title' => 'Service Cancelled',
+	'cancel_by_provider_message' => 'The service is cancelled by provider.',
+
+	'request_accepted_title' => "Service Accepted",
+	'request_accepted_message' => "The Service is accepted by provider.",
+
+	'provider_started_title' => "Provider Started",
+	'provider_started_message' => "Provider started from location.",
+
+	'provider_arrived_title' => "Provider Arrived",
+	'provider_arrived_message' => "Provider arrived to your location.",
+
+	'request_started_title' => "Provider Service Started",
+	'request_started_message' => "The Service is started.",
+
+	'user_rated_by_provider_title' => 'Provider Rated',
+	'user_rated_by_provider_message' => 'The provider rated your service.',
+
+	// User
+	'request_complete_payment_title' => "Your Request is completed.Please check the invoice details",
+
+
+
 
 
 );
