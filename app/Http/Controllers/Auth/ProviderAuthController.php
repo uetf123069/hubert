@@ -80,7 +80,8 @@ class ProviderAuthController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'name' => 'required|max:255',
+            'first_name' => 'required|max:255',
+            'last_name' => 'required|max:255',
             'email' => 'required|email|max:255|unique:providers',
             'password' => 'required|min:6|confirmed',
             'service_type' => 'required'
@@ -96,7 +97,8 @@ class ProviderAuthController extends Controller
     protected function create(array $data)
     {
         $provider = Provider::create([
-            'name' => $data['name'],
+            'first_name' => $data['first_name'],
+            'last_name' => $data['last_name'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
             'is_available' => 1,
@@ -104,9 +106,9 @@ class ProviderAuthController extends Controller
         ]);
 
         ProviderService::create([
-            'provider_id' => $provider['attributes']['id'],
-            'is_available' => 1,
-            'service_type_id' => $data['service_type']
+                'provider_id' => $provider['attributes']['id'],
+                'is_available' => 1,
+                'service_type_id' => $data['service_type']
             ]);
 
         // Send welcome email to the new provider

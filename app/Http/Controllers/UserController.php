@@ -136,20 +136,26 @@ class UserController extends Controller
         $CurrentRequest = $this->UserAPI->request_status_check($request)->getData();
 
         // define('PROVIDER_NONE', 0); -> waiting_request_cancel
-        // define('PROVIDER_ACCEPTED', 1); -> cancel_requesty
+        // define('PROVIDER_ACCEPTED', 1); -> cancel_request
 
-        if($CurrentRequest->data[0]->provider_status) {
-            $response = $this->UserAPI->cancel_request($request)->getData();
+        if(!empty($CurrentRequest->data)) {
+            if($CurrentRequest->data[0]->provider_status) {
+                $response = $this->UserAPI->cancel_request($request)->getData();
+            } else {
+                $response = $this->UserAPI->waiting_request_cancel($request)->getData();
+            }
+
+            if($response->success) {
+                $response->message = "Your request has been cancelled.";
+            } else {
+                $response->success = false;
+                $response->message = $response->error." ".$response->error_messages;
+            }
         } else {
-            $response = $this->UserAPI->waiting_request_cancel($request)->getData();
-        }
-
-
-        if($response->success) {
-            $response->message = "Your request has been cancelled.";
-        } else {
-            $response->success = false;
-            $response->message = $response->error." ".$response->error_messages;
+            $response = response()->json([
+                    "success" => true,
+                    "message" => "Request was cancelled",
+                ], 200);
         }
 
         return back()->with('response', $response);
