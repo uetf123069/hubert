@@ -8,6 +8,8 @@
 
    use App\Provider;
 
+   use App\Cards;
+
    use App\FavouriteProvider;
 
    use App\ProviderService;

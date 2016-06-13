@@ -87,7 +87,7 @@
             <div class="widget bg-white no-padding">
             <div class="widget bg-blue mb0 text-center no-radius"><strong>Top Rated Provider</strong></div>
               <a href="javascript:;" class="block text-center relative p15">
-                <img src="{{$top->picture}}" class="avatar avatar-lg img-circle" alt="">
+                <img src="@if($top->picture !='') {{ $top->picture }} @else {{ asset('user_default.png') }} @endif" class="avatar avatar-lg img-circle" alt="">
                 <div class="h5 mb0"><strong>{{ $top->first_name .' '. $top->last_name}}</strong>
                 </div>
               </a>
@@ -118,7 +118,7 @@
                 @foreach($reviews as $review)
                   <div class="media">
                     <a class="pull-left" href="javascript:;">
-                      <img class="media-object avatar avatar-sm" src="{{$review->user_picture}}" alt="">
+                      <img class="media-object avatar avatar-sm" src="@if($review->user_picture !='') {{ $review->user_picture }} @else {{ asset('user_default.png') }} @endif" alt="">
                     </a>
                     <div class="comment">
                       <div class="comment-author h6 no-margin">

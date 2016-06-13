@@ -9,7 +9,7 @@
 								@if(Auth::user()->picture != "")
 									<img src="{{ Auth::user()->picture }}" class="avatar"></img>
 								@else								
-									<img src="{{ asset('logo.png') }}" class="avatar">
+									<img src="{{ asset('user_default.png') }}" class="avatar">
 								@endif
 							</a>
 						</div>

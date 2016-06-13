@@ -9,7 +9,7 @@
 								@if(Auth::guard('provider')->user()->picture != "")
 									<img src="{{ Auth::guard('provider')->user()->picture }}" class="avatar"></img>
 								@else								
-									<img src="{{ asset('logo.png') }}" class="avatar">
+									<img src="{{ asset('user_default.png') }}" class="avatar">
 								@endif
 							</a>
 						</div>
