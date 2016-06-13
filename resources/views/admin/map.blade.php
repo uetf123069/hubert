@@ -29,6 +29,7 @@
         <div class="row">
             <div class="col-xs-12">
                 <div id="map"></div>
+                <div id="legend"><h3>Provider</h3></div>
             </div>
         </div>
     </div>
@@ -80,6 +81,20 @@
         width: 100%;
     }
 
+    #legend {
+        font-family: Arial, sans-serif;
+        background: #fff;
+        padding: 10px;
+        margin: 10px;
+        border: 3px solid #000;
+    }
+    #legend h3 {
+        margin-top: 0;
+    }
+    #legend img {
+        vertical-align: middle;
+        margin-bottom: 5px;
+    }
 </style>
 @endsection
 
@@ -88,8 +103,12 @@
     var map;
     var markers = [
         @foreach($Providers as $Provider)
-        { name: "{{ $Provider->name }}", lat: {{ $Provider->latitude }}, lng: {{ $Provider->longitude }} }, 
+        { name: "{{ $Provider->name }}", lat: {{ $Provider->latitude }}, lng: {{ $Provider->longitude }}, available: {{ $Provider->is_available }} },
         @endforeach
+    ];
+    var mapIcons = [
+        'http://maps.google.com/mapfiles/ms/icons/red-dot.png',
+        'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
     ];
     var mapMarkers = [];
     function initMap() {
@@ -114,13 +133,22 @@
             marker = new google.maps.Marker({
                 position: {lat: element.lat, lng: element.lng},
                 map: map,
-                title: element.name
+                title: element.name,
+                icon: mapIcons[element.available],
             });
 
             mapMarkers.push(marker);
 
         });
 
+        var legend = document.getElementById('legend');
+        var div = document.createElement('div');
+        div.innerHTML = '<img src="' + mapIcons[0] + '"> ' + 'Unavailable';
+        legend.appendChild(div);
+        var div = document.createElement('div');
+        div.innerHTML = '<img src="' + mapIcons[1] + '"> ' + 'Available';
+        legend.appendChild(div);
+        map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(legend);
         /*
 
         function search() {
