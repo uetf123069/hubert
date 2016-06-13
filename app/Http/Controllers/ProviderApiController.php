@@ -913,7 +913,6 @@ class ProviderApiController extends Controller
 						'message' => Helper::get_message(112)
 				));
 			} else {
-
 				$response_array = array('success' => false, 'error' => Helper::get_error_message(145), 'error_code' => 145);
                 // Log::info('Provider status Error:: Old state='.$requests->provider_status.' and current state='.$current_state);
 			}
@@ -1294,8 +1293,9 @@ class ProviderApiController extends Controller
                     // Send Push Notification to User
                     $title = "Service Cancelled";
                     $messages = "The service is cancelled.";
-
-                    Helper::send_notifications($requests->user_id, USER, $title, $messages);
+					
+					// Send notifications 
+                    // $this->dispatch(new sendPushNotification($request->user_id,USER,$requests->id,$title,$message));
 
                     // Send email notification to the user
 

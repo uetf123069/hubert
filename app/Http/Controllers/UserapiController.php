@@ -42,6 +42,9 @@ use App\ProviderRating;
 
 use App\Cards;
 
+use App\Jobs\NormalPushNotification;
+
+use App\Jobs\sendPushNotification;
 
 
 define('USER', 0);
@@ -105,7 +108,7 @@ class UserapiController extends Controller
 	{
         $this->middleware('UserApiVal' , array('except' => ['register' , 'login' , 'forgot_password']));
         
-}
+    }
 	public function register(Request $request)
 	{
         $response_array = array();
@@ -972,6 +975,7 @@ class UserapiController extends Controller
 
     // Manual request
     public function manual_create_request(Request $request) {
+        
         $validator = Validator::make(
                 $request->all(),
                 array(
@@ -990,7 +994,7 @@ class UserapiController extends Controller
             // Check the user filled the payment details
             $user = User::find($request->id);
             if(!$user->payment_mode) {
-                // Log::info('Payment Mode is not available');
+                Log::info('Payment Mode is not available');
                 $response_array = array('success' => false , 'error' => Helper::get_error_message(134) , 'error_code' => 134);
             } else {
 
@@ -1006,72 +1010,80 @@ class UserapiController extends Controller
 
                 if($allow == DEFAULT_TRUE) {
 
-                    // Check already request exists 
-                    $check_status = array(REQUEST_NO_PROVIDER_AVAILABLE,REQUEST_CANCELLED,REQUEST_COMPLETED);
+                    // Check the provider is available
+                    if($provider = Provider::where('id' , $request->provider_id)->where('is_available' , DEFAULT_TRUE)->where('is_activated' , DEFAULT_TRUE)->where('is_approved' , DEFAULT_TRUE)->where('waiting_to_respond' ,DEFAULT_FALSE)->first()) {
 
-                    $check_requests = Requests::where('user_id' , $request->id)->whereNotIn('status' , $check_status)->count();
+                        // Check already request exists 
+                        $check_status = array(REQUEST_NO_PROVIDER_AVAILABLE,REQUEST_CANCELLED,REQUEST_COMPLETED);
 
-                    if($check_requests == 0) {
+                        $check_requests = Requests::where('user_id' , $request->id)->whereNotIn('status' , $check_status)->count();
 
-                        Log::info('Previous requests check is done');
-                       
-                        // Create Requests
-                        $requests = new Requests;
-                        $requests->user_id = $user->id;
+                        if($check_requests == 0) {
 
-                        if($request->service_type)
-                            $requests->request_type = $request->service_type;
+                            Log::info('Previous requests check is done');
+                           
+                            // Create Requests
+                            $requests = new Requests;
+                            $requests->user_id = $user->id;
 
-                        $requests->status = REQUEST_NEW;
-                        $requests->confirmed_provider = NONE;
-                        $requests->request_start_time = date("Y-m-d H:i:s");
-                        $requests->s_address = $request->s_address ? $request->s_address : "";
+                            if($request->service_type)
+                                $requests->request_type = $request->service_type;
+
+                            $requests->status = REQUEST_NEW;
+                            $requests->confirmed_provider = NONE;
+                            $requests->request_start_time = date("Y-m-d H:i:s");
+                            $requests->s_address = $request->s_address ? $request->s_address : "";
+                                
+                            if($request->s_latitude){ $requests->s_latitude = $request->s_latitude; }
+                            if($request->s_longitude) { $requests->s_longitude = $request->s_longitude; }
+                                
+                            $requests->save();
+
+                            if($requests) {
+                                $requests->status = REQUEST_WAITING;
+                                
+                                $request_meta = new RequestsMeta;
+
+                                $request_meta->status = REQUEST_META_OFFERED;  // Request status change
+
+                                // Availablity status change
+                                    $provider->waiting_to_respond = WAITING_TO_RESPOND;
+                                    $provider->save();
                             
-                        if($request->s_latitude){ $requests->s_latitude = $request->s_latitude; }
-                        if($request->s_longitude) { $requests->s_longitude = $request->s_longitude; }
-                            
-                        $requests->save();
 
-                        if($requests) {
-                            $requests->status = REQUEST_WAITING;
-                            
-                            $request_meta = new RequestsMeta;
+                                // Send push notifications to the first provider
+                                $title = Helper::get_push_message(604);
+                                $message = "You got a new request from".$user->name;
 
-                            $request_meta->status = REQUEST_META_OFFERED;  // Request status change
+                                $this->dispatch(new sendPushNotification($request->provider_id,PROVIDER,$requests->id,$title,$message));
 
-                            // Availablity status change
-                            if($current_provider = Provider::find($request->provider_id)) {
-                                $current_provider->waiting_to_respond = WAITING_TO_RESPOND;
-                                $current_provider->save();
-                            }
+                                // Push End
 
-                            // Send push notifications to the first provider
-                            $title = Helper::get_push_message(604);
-                            $message = "You got a new request from".$user->name;
-                            Helper::request_push_notification($request->provider_id,PROVIDER,$requests->id,$title,$message);
-                            // Push End
+                                $request_meta->request_id = $requests->id;
+                                $request_meta->provider_id = $request->provider_id; 
+                                $request_meta->save();
 
-                            $request_meta->request_id = $requests->id;
-                            $request_meta->provider_id = $request->provider_id; 
-                            $request_meta->save();
+                                $response_array = array(
+                                    'success' => true,
+                                    'request_id' => $requests->id,
+                                    'current_provider' => $request->provider_id,
+                                    'address' => $requests->s_address,
+                                    'latitude' => $requests->s_latitude,
+                                    'longitude' => $requests->s_longitude,
+                                );
 
-                            $response_array = array(
-                                'success' => true,
-                                'request_id' => $requests->id,
-                                'current_provider' => $request->provider_id,
-                                'address' => $requests->s_address,
-                                'latitude' => $requests->s_latitude,
-                                'longitude' => $requests->s_longitude,
-                            );
-
-                            $response_array = Helper::null_safe($response_array); Log::info('Create request end');
+                                $response_array = Helper::null_safe($response_array); Log::info('Create request end');
+                            } else {
+                                $response_array = array('success' => false , 'error' => Helper::get_error_message(126) , 'error_code' => 126 );
+                            }     
+                        
                         } else {
-                            $response_array = array('success' => false , 'error' => Helper::get_error_message(126) , 'error_code' => 126 );
-                        }     
-                    } else {
-                        $response_array = array('success' => false , 'error' => Helper::get_error_message(127) , 'error_code' => 127);
-                    }
+                            $response_array = array('success' => false , 'error' => Helper::get_error_message(127) , 'error_code' => 127);
+                        }
 
+                    } else {
+                        $response_array = array('success' => false , 'error' => Helper::get_error_message(153) ,'error_code' => 153);
+                    }
                 } else {
                     $response_array = array('success' => false , 'error' => Helper::get_error_message(142) ,'error_code' => 142);
                 }

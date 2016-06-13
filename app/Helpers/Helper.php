@@ -3,9 +3,7 @@
    namespace App\Helpers;
 
    use Hash;
-
    use App\Admin;
-
    use App\User;
 
    use App\Provider;
@@ -23,6 +21,8 @@
    use App\ProviderRating;
 
    use App\Jobs\sendPushNotification;
+
+   use App\Jobs\NormalPushNotification;
 
    use Mail;
 
@@ -467,6 +467,9 @@
                 case 150:
                     $string = "user rating already done or previous status is mismatched";
                     break;
+                case 153:
+                    $string = "Provider is not available at this time.";
+                    break;
                 default:
                     $string = "Unknown error occurred.";
             }
@@ -721,6 +724,8 @@
         }
 
         public static function request_push_notification($id,$user_type,$request_id,$title,$message) {
+
+            Log::info("Request Push notifictaion started");
             // Trigger the job
             new sendPushNotification($id,$user_type,$request_id,$title,$message);
         }
