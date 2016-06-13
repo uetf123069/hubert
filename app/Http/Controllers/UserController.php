@@ -149,7 +149,7 @@ class UserController extends Controller
                 $response->message = "Your request has been cancelled.";
             } else {
                 $response->success = false;
-                $response->message = $response->error." ".$response->error_messages;
+                $response->message = $response->error;
             }
         } else {
             $response = response()->json([

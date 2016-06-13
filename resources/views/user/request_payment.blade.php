@@ -6,7 +6,7 @@
 
 @section('content')
 
-@foreach($CurrentRequest->data as $Service)
+@foreach($CurrentRequest->data as $Index => $Service)
 <div class="panel panel-default">
     <div class="panel-heading">
         <ul class="stepy-header" id="service-state">
@@ -20,6 +20,17 @@
     <div class="panel-body">
         <div class="row">
             <div class="col-md-6">
+                @if(!empty($Service->before_image))
+                <h2 class="text-center">Before</h2>                
+                <img class="col-xs-12" src="{{ $Service->before_image ? $Service->before_image : asset('logo.png') }}">
+                @endif
+                @if(!empty($Service->after_image))
+                <h2 class="text-center">After</h2>                
+                <img class="col-xs-12" src="{{ $Service->after_image ? $Service->after_image : asset('logo.png') }}">
+                @endif
+            </div>
+            <div class="col-md-6">
+                <h2 class="text-center">Request Details</h2>
                 <table class="table table-striped">
                     <tbody>
                         <tr>
@@ -35,25 +46,40 @@
                             <td data-title="Requested Time">{{ $Service->request_start_time }}</td>
                         </tr>
                         <tr>
-                            <th>Amount</th>
-                            <td data-title="Amount">{{ $Service->amount }}</td>
+                            <th>Finish Time</th>
+                            <td data-title="Requested Time">{{ $Service->end_time }}</td>
                         </tr>
                         <tr>
-                            <th>Request Status</th>
-                            <td data-title="Request Status">{{ get_user_request_status($Service->status) }}</td>
+                            <th>Provider Name</th>
+                            <td data-title="Provider Name">{{ $Service->provider_name }}</td>
                         </tr>
-                        <tr>
-                            <th>Provider Status</th>
-                            <td data-title="Provider Status">{{ get_provider_request_status($Service->provider_status) }}</td>
-                        </tr>
-                        @if($Service->provider_status)
                         <tr>
                             <th>Provider Rating</th>
                             <td data-title="Provider Rating">{{ $Service->rating }}</td>
                         </tr>
-                        @endif
+                        <tr>
+                            <td colspan="2">
+                                <h4 class="text-center">Payment Details</h4>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Base Price</th>
+                            <td data-title="Base Price">{{ $CurrentRequest->invoice[$Index]->base_price }}</td>
+                        </tr>
+                        <tr>
+                            <th>Time Price</th>
+                            <td data-title="Time Price">{{ $CurrentRequest->invoice[$Index]->time_price }}</td>
+                        </tr>
+                        <tr>
+                            <th>Tax</th>
+                            <td data-title="Tax">{{ $CurrentRequest->invoice[$Index]->tax_price }}</td>
+                        </tr>
+                        <tr>
+                            <th>Total Amount</th>
+                            <td data-title="Total Amount">{{ $CurrentRequest->invoice[$Index]->total }}</td>
+                        </tr>
+
                     </tbody>
-                    <!-- <caption>List of countries by distribution wealth</caption> -->
                 </table>
             </div>
             <div class="col-md-6 row-border">
@@ -88,33 +114,6 @@
 
 @section('scripts')
 <script type="text/javascript" src="{{ asset('assets/user/js/application.js') }}"></script>
-<script type="text/javascript">
-    var providerStatus = {{ $CurrentRequest->data[0]->provider_status }};
-    var serviceStatus = {{ $CurrentRequest->data[0]->status }};
-
-    window.setInterval(function(){
-        $.ajax({
-            'url' : '{{route("user.services.updates")}}',
-            'type' : 'GET',
-            'success' : function(response) {
-                if (response.success == true) {
-                    console.log('true');
-                    if(response.data != "") {
-                        if(response.data[0].provider_status == providerStatus && response.data[0].status == serviceStatus) {
-                        } else {
-                            if(response.data[0].provider_status > providerStatus && response.data[0].provider_status == 4) {
-                                document.getElementById('cancel-request').style.display = 'none';
-                            } else {
-                                location.reload(); 
-                            }
-
-                        } 
-                    }
-                }
-            }
-        });
-    }, 5000);
-</script>
 @endsection
 
 @section('styles')

@@ -22,6 +22,22 @@
             <div class="col-md-6">
                 <table class="table table-striped">
                     <tbody>
+                        @if($Service->provider_status)
+                        <tr>
+                            <td data-title="Provider" colspan="2">
+                                <h2 class="text-center">Provider</h2>
+                                <img src="{{ $Service->provider_picture }}" class="col-md-12">
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Provider Name</th>
+                            <td data-title="Provider Name">{{ $Service->provider_name }}</td>
+                        </tr>
+                        <tr>
+                            <th>Provider Rating</th>
+                            <td data-title="Provider Rating">{{ $Service->rating }}</td>
+                        </tr>
+                        @endif
                         <tr>
                             <th>Request #</th>
                             <td data-title="Service" align="left">{{ $Service->request_id }}</td>
@@ -46,13 +62,7 @@
                             <th>Provider Status</th>
                             <td data-title="Provider Status">{{ get_provider_request_status($Service->provider_status) }}</td>
                         </tr>
-                        @if($Service->provider_status)
-                        <tr>
-                            <th>Provider Rating</th>
-                            <td data-title="Provider Rating">{{ $Service->rating }}</td>
-                        </tr>
-                        @endif
-                        @if($Service->provider_status <= 3)
+                        @if($Service->provider_status < 3)
                         <tr>
                             <td colspan="2">
                                 <form id="cancel-request" action="{{ route('user.services.request.cancel') }}" method="POST">
@@ -69,7 +79,22 @@
                 </table>
             </div>
             <div class="col-md-6">
+                <h2 class="text-center">Map</h2>                
                 <div id="map"></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                @if(!empty($Service->before_image))
+                <h2 class="text-center">Before</h2>                
+                <img class="col-xs-8 col-xs-offset-2" src="{{ $Service->before_image }}">
+                @endif
+            <div class="col-md-6">
+            </div>
+                @if(!empty($Service->after_image))
+                <h2 class="col-xs-8 col-xs-offset-2">After</h2>                
+                <img class="col-xs-8 col-xs-offset-2" src="{{ $Service->after_image }}">
+                @endif
             </div>
         </div>
     </div>
@@ -110,21 +135,24 @@
 
     window.setInterval(function(){
         $.ajax({
-            'url' : '{{route("user.services.updates")}}',
+            'url' : '{{ route("user.services.updates") }}',
             'type' : 'GET',
             'success' : function(response) {
                 if (response.success == true) {
                     console.log('true');
                     if(response.data != "") {
+                        console.log(response.data);
                         if(response.data[0].provider_status == providerStatus && response.data[0].status == serviceStatus) {
                         } else {
-                            location.reload(); 
+                            location.reload();
                         } 
+                    } else {
+                        location.reload(); 
                     }
                 }
             }
         });
-    }, 5000);
+    }, 3000);
 </script>
 @endsection
 

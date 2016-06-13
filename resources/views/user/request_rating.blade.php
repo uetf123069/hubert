@@ -20,6 +20,18 @@
     <div class="panel-body">
         <div class="row">
             <div class="col-md-6">
+                @if(!empty($Service->before_image))
+                <h2 class="text-center">Before</h2>                
+                <img class="col-xs-12" src="{{ $Service->before_image ? $Service->before_image : asset('logo.png') }}">
+                @endif
+                @if(!empty($Service->after_image))
+                <h2 class="text-center">After</h2>                
+                <img class="col-xs-12" src="{{ $Service->after_image ? $Service->after_image : asset('logo.png') }}">
+                @endif
+            </div>
+
+            <div class="col-md-6">
+                <h2 class="text-center">Request Details</h2>
                 <table class="table table-striped">
                     <tbody>
                         <tr>
@@ -61,7 +73,7 @@
                     <input name="request_id" value="{{ $Service->request_id }}" type="hidden">
                     <input name="provider_id" value="{{ $Service->request_id }}" type="hidden">
                     <div class="col-md-12">
-                        <h3 style="text-align:center" class="mt0">Rate This Provider</h3>
+                        <h2 class="mt0 text-center">Rate This Provider</h2>
                         <div class="form-group">
                             <div class="col-xs-12">
                                 <div id="range_rating"></div>
