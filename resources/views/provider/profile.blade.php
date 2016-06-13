@@ -76,10 +76,10 @@
 										<label class="col-sm-2 control-label">Gender</label>
 										<div class="col-sm-8">
 											<label class="radio-inline icheck">
-												<div class="iradio_minimal-blue checked" style="position: relative;"><input type="radio" id="inlineradio1" value="male" name="gender" checked="true" style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; border: 0px; opacity: 0; background: rgb(255, 255, 255);"></ins></div> Male
+												<div class="iradio_minimal-blue checked" style="position: relative;"><input type="radio" id="inlineradio1" value="male" name="gender" @if(Auth::guard('provider')->user()->gender == 'male') checked="true" @endif style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; border: 0px; opacity: 0; background: rgb(255, 255, 255);"></ins></div> Male
 											</label>
 											<label class="radio-inline icheck">
-												<div class="iradio_minimal-blue" style="position: relative;"><input type="radio" id="inlineradio2" value="female" name="gender" style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; border: 0px; opacity: 0; background: rgb(255, 255, 255);"></ins></div> Female
+												<div class="iradio_minimal-blue" style="position: relative;"><input type="radio" id="inlineradio2" @if(Auth::guard('provider')->user()->gender == 'female') checked="true" @endif value="female" name="gender" style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; border: 0px; opacity: 0; background: rgb(255, 255, 255);"></ins></div> Female
 											</label>
 										</div>
 									</div>
@@ -211,7 +211,7 @@
 									</div>
 								</div>
 
-			                        <div id="map" style="width:100%;height:400px;"></div>
+			                        <div id="update_location_map" style="width:100%;height:400px;"></div>
 
 
 
@@ -278,9 +278,9 @@ function change_availability(){
 
 </script>
 
-<script type="text/javascript"
+<!-- <script type="text/javascript"
   src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyALHyNTDk1K_lmcFoeDRsrCgeMGJW6mGsY&libraries=places">
-  </script>
+  </script> -->
 
 <script>
     	    var map;
@@ -300,9 +300,9 @@ function change_availability(){
 		    @endif
 
 
-    function initMap() {
+    function start_map() {
 
-        map = new google.maps.Map(document.getElementById('map'), {
+        map = new google.maps.Map(document.getElementById('update_location_map'), {
             center: center_point,
             zoom: 16
         });
@@ -388,7 +388,7 @@ function change_availability(){
 
     }
 
-setTimeout(function() { initMap() },2000);
+setTimeout(function() { start_map() },2000);
 
 
 </script>

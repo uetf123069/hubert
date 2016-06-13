@@ -195,7 +195,10 @@
                                 $('#request_accept_url').attr('href',"{{route('provider.request.accept')}}?request_id="+return_data.data[0].request_id);
                                 $('#request_decline_url').attr('href',"{{route('provider.request.decline')}}?request_id="+return_data.data[0].request_id);
 
-                                initMap({lat: return_data.data[0].latitude, lng: return_data.data[0].longitude})
+                                setTimeout(function() {
+                                    initMap({lat: return_data.data[0].latitude, lng: return_data.data[0].longitude})
+                                     },1000);
+
                                 $('#myModal').modal({
                                     backdrop: 'static',
                                     keyboard: false
@@ -228,7 +231,10 @@
             });
         }, 5000);
     </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyALHyNTDk1K_lmcFoeDRsrCgeMGJW6mGsY&libraries=places" async defer></script>
+
+    <script type="text/javascript"
+  src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyALHyNTDk1K_lmcFoeDRsrCgeMGJW6mGsY&libraries=places">
+  </script>
 
     @yield('scripts')
 </body>
