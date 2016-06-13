@@ -26,7 +26,7 @@
                         <tr>
                             <td data-title="Provider" colspan="2">
                                 <h2 class="text-center">Provider</h2>
-                                <img src="{{ $Service->provider_picture }}" class="col-md-12">
+                                <img src="{{ $Service->provider_picture }}" class="col-md-8 col-xs-offset-2 img-responsive img-circle">
                             </td>
                         </tr>
                         <tr>
