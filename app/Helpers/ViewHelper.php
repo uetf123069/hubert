@@ -14,6 +14,8 @@ use Carbon\Carbon;
 
 use App\ProviderService;
 
+use App\RequestPayment;
+
 
 function get_service_name($id)
 {
@@ -114,4 +116,14 @@ function get_all_service_types()
 function get_provider_service_type($provider_id)
 {
 	return ProviderService::where('provider_id',$provider_id)->first()->service_type_id;
+}
+
+function get_request_details($request_id)
+{
+	return Requests::find($request_id);
+}
+
+function get_payment_details($request_id)
+{
+	return RequestPayment::where('request_id',$request_id)->first();
 }
