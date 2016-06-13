@@ -1296,11 +1296,10 @@ class ProviderApiController extends Controller
                     $title = Helper::tr('cancel_by_provider_title');
                     $message = Helper::tr('cancel_by_provider_message');
 					
-					// Send notifications 
+					// Send notifications to the user
                     $this->dispatch(new sendPushNotification($requests->user_id,USER,$requests->id,$title,$message));
 
                     // Send email notification to the user
-
                     /*If request has confirmed provider then release him to available status*/
                     if($requests->confirmed_provider != DEFAULT_FALSE){
                         $provider = Provider::find( $requests->confirmed_provider );
