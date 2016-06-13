@@ -891,9 +891,12 @@ class ProviderApiController extends Controller
 			$request_id = $request->request_id;
 			$current_state = PROVIDER_STARTED;
 
+			$check_status = array(REQUEST_CANCELLED,REQUEST_NO_PROVIDER_AVAILABLE,);
+
 			$requests = Requests::where('id', '=', $request_id)
 								->where('confirmed_provider', '=', $provider->id)
 								->where('provider_status' , PROVIDER_ACCEPTED)
+								->where('status', REQUEST_INPROGRESS)
 								->first();
 
 			// Current state being validated in order to prevent accidental change of state
@@ -953,6 +956,7 @@ class ProviderApiController extends Controller
 			$requests = Requests::where('id', '=', $request_id)
 								->where('confirmed_provider', '=', $provider->id)
 								->where('provider_status' , PROVIDER_STARTED)
+								->where('status', REQUEST_INPROGRESS)
 								->first();
 
 			// Current state being validated in order to prevent accidental change of state
@@ -1009,6 +1013,7 @@ class ProviderApiController extends Controller
 			$requests = Requests::where('id', '=', $request_id)
 								->where('confirmed_provider', '=', $provider->id)
 								->where('provider_status' , PROVIDER_ARRIVED)
+								->where('status', REQUEST_INPROGRESS)
 								->first();
 
 			// Current state being validated in order to prevent accidental change of state
@@ -1070,6 +1075,7 @@ class ProviderApiController extends Controller
 			$requests = Requests::where('id', '=', $request_id)
 								->where('confirmed_provider', '=', $provider->id)
 								->where('provider_status' , PROVIDER_SERVICE_STARTED)
+								->where('status', REQUEST_INPROGRESS)
 								->first();
 
 			// Current state being validated in order to prevent accidental change of state
@@ -1229,8 +1235,12 @@ class ProviderApiController extends Controller
             $request_id = $request->request_id;
             $comments = $request->comments;
 
-            $req = Requests::find($request_id);
-            // if ($req && intval($req->provider_status) == REQUEST_COMPLETE_PENDING) { 
+            $req = Requests::where('id' ,$request_id)
+            		->whereIn('status' , array(REQUEST_COMPLETE_PENDING,REQUEST_RATING,REQUEST_COMPLETED))
+            		->where('provider_status' , PROVIDER_SERVICE_COMPLETED)
+            		->first();
+
+            if ($req && intval($req->provider_status) != PROVIDER_RATED) { 
 	            //Save Rating
 	            $rev_user = new ProviderRating();
 	            $rev_user->provider_id = $req->confirmed_provider;
@@ -1250,9 +1260,9 @@ class ProviderApiController extends Controller
 	            $this->dispatch( new sendPushNotification($req->user_id, USER,$req->id,$title, $message));     
 
 	            $response_array = Helper::null_safe(array('success' => true,'status' => REQUEST_COMPLETE_PENDING,'message' => Helper::get_message(116)));
-	        // } else {
-	        // 	$response_array = array('success' => false , 'error' => Helper::get_error_message(150) , 'error_code' => 150);
-	        // }
+	        } else {
+	        	$response_array = array('success' => false , 'error' => Helper::get_error_message(150) , 'error_code' => 150);
+	        }
 		}
 		return response()->json($response_array , 200);
 	}
@@ -1296,11 +1306,10 @@ class ProviderApiController extends Controller
                     $title = Helper::tr('cancel_by_provider_title');
                     $message = Helper::tr('cancel_by_provider_message');
 					
-					// Send notifications 
+					// Send notifications to the user
                     $this->dispatch(new sendPushNotification($requests->user_id,USER,$requests->id,$title,$message));
 
                     // Send email notification to the user
-
                     /*If request has confirmed provider then release him to available status*/
                     if($requests->confirmed_provider != DEFAULT_FALSE){
                         $provider = Provider::find( $requests->confirmed_provider );

@@ -364,7 +364,7 @@
                     $string = "The service payment is not allowed at this point.";
                     break;
                 case 138:
-                    $string = "The service already paid.";
+                    $string = "The service already paid or previous status mismatched.";
                     break;
                 case 139:
                     $string = "The selected payment is disabled by admin";
@@ -404,6 +404,9 @@
                     break;
                 case 153:
                     $string = "Provider is not available at this time.";
+                    break;
+                case 154:
+                    $string = "provider rating already done or previous status is mismatched";
                     break;
                 default:
                     $string = "Unknown error occurred.";
