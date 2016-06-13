@@ -1227,7 +1227,7 @@ class UserapiController extends Controller
                             ->leftJoin('providers', 'providers.id', '=', 'requests.confirmed_provider')
                             ->leftJoin('service_types', 'service_types.id', '=', 'requests.request_type')
                             ->select('requests.id as request_id', 'requests.request_type as request_type', 'service_types.name as service_type_name',                                        'requests.after_image as after_image',
-                                        'requests.before_image as before_image', 'request_start_time as request_start_time', 'requests.status','providers.id as provider_id', DB::raw('CONCAT(providers.first_name, " ", providers.last_name) as provider_name'),'providers.picture as provider_picture','requests.provider_status', 'requests.amount', DB::raw('CONCAT(users.first_name, " ", users.last_name) as user_name'), 'users.picture as user_picture', 'users.id as user_id','requests.s_latitude', 'requests.s_longitude')
+                                        'requests.before_image as before_image','requests.end_time as end_time', 'request_start_time as request_start_time', 'requests.status','providers.id as provider_id', DB::raw('CONCAT(providers.first_name, " ", providers.last_name) as provider_name'),'providers.picture as provider_picture','requests.provider_status', 'requests.amount', DB::raw('CONCAT(users.first_name, " ", users.last_name) as user_name'), 'users.picture as user_picture', 'users.id as user_id','requests.s_latitude', 'requests.s_longitude')
                             ->get()->toArray();
 
         $requests_data = array();

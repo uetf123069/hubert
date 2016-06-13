@@ -10,7 +10,6 @@
 @endsection
 
 @section('content')
-
 <div class="row">
 	<div class="col-md-12">
 		<div class="panel panel-info">
@@ -26,9 +25,13 @@
 						<tr>
 							<th>Request #ID</th>
 							<th>Username</th>
+							<th>Base Price</th>
+							<th>Tax Price</th>
 							<th>Total</th>
+							<th>Address</th>
 							<th>Service Type</th>
-							<th>Dated On</th>
+							<th>Service Started On</th>
+							<th>Service Ended On</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -36,11 +39,16 @@
 					@foreach($requests as $request)
 						<tr>
 							<td># {{$request->id}}</td>
-
 							<td>{{ $request->user_name }}</td>
-							<td>{{$request->total ? $request->total : 0 }}</td>
+							<?php $payment = get_payment_details($request->id); ?>
+							<td>{{$payment->base_price}}</td>
+							<td>{{$payment->tax_price}}</td>
+							<td>{{$payment->total ? $payment->total : 0 }}</td>
+							<?php $request_details = get_request_details($request->id); ?>
+							<td>{{$request_details->s_address}}</td>
 							<td>{{get_service_name($request->request_type)}}</td>
-							<td class="center">{{date('d M, Y',strtotime($request->date))}}</td>
+							<td class="center">{{date('H:i - d M, Y',strtotime($request_details->start_time))}}</td>
+							<td class="center">{{date('H:i - d M, Y',strtotime($request_details->end_time))}}</td>
 						</tr>
 					@endforeach
 					
@@ -72,7 +80,8 @@ $(document).ready(function() {
     $('#history_data').dataTable({
     	"language": {
     		"lengthMenu": "_MENU_"
-    	}
+    	},
+    	"order": [[ 3, "desc" ]]
     });
     $('.dataTables_filter input').attr('placeholder','Search...');
 

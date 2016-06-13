@@ -15,9 +15,16 @@
             </div>
             <div class="panel-body">
                 <div class="col-xs-8">
+                <?php $payment = get_payment_details($Service->request_id);
+                $request_details = get_request_details($Service->request_id);
+                ?>
                     <p>Provider : <strong>{{ $Service->provider_name }}</strong></p>
-                    <p>Date : {{ $Service->date }}</p>
-                    <p>Amount : {{ $Service->total }}</p>
+                    <p>Address : {{$request_details->s_address}}</p>
+                    <p>Base Price : {{ $payment['base_price'] }}</p>
+                    <p>Tax Price : {{ $payment['tax_price'] }}</p>
+                    <p>Total : {{ $payment['total'] }}</p>
+                    <p>Started On : {{date('H:i - d M, Y',strtotime($request_details->start_time))}}</p>
+
                 </div>
                 <div class="col-xs-4">
                     <img src="{{ $Service->picture }}" width="100%">
