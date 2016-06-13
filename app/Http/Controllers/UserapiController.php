@@ -1227,6 +1227,8 @@ class UserapiController extends Controller
                                     ->leftJoin('cards' , 'users.default_card' , '=' , 'cards.id')
                                     ->where('cards.is_default' , DEFAULT_TRUE)
                                     ->select('requests.confirmed_provider as provider_id' , 'request_payments.total_time',
+                                        'requests.after_image as after_image',
+                                        'requests.before_image as before_image',
                                         'request_payments.payment_mode as payment_mode' , 'request_payments.base_price',
                                         'request_payments.time_price' , 'request_payments.tax_price' , 'request_payments.total',
                                         'cards.card_token','cards.customer_id','cards.last_four')
