@@ -87,6 +87,163 @@ return array(
 	// User
 	'request_complete_payment_title' => "Your Request is completed.Please check the invoice details",
 
+//Admin General
+	'dashboard'	=> 	'Dashboard',
+	'users' 	=>	'Users',
+	'view_users'	=>	'View Users',
+	'add_users'	=>	'Add Users',
+	'providers'	=>	'Providers',
+	'view_providers'	=>	'View Providers',
+	'add_providers'	=>	'Add Providers',
+	'service_types'	=>	'Service Types',
+	'view_service'	=>	'View Service Types',
+	'add_service'	=>	'Add Service Types',
+	'requests'	=>	'Requests',
+	'map_view'	=>	'Map View',
+	'documents'	=>	'Documents',
+	'view_documents'	=>	'View Document Type',
+	'add_documents'	=>	'Add Document Type',
+	'rating_review'	=>	'Rating & Reviews',
+	'user_review'	=>	'User Reviews',
+	'provider_review'	=>	'Provider Reviews',
+	'payment_history'	=>	'Payment History',
+	'logout'	=>	'Logout',
+	'settings'	=>	'Settings',
+	'profile'	=>	'Profile',
+	'help'	=>	'Help',
+	'id'	=>	'ID',
+	'full_name'	=>	'Full Name',
+	'email'	=>	'Email',
+	'phone'	=>	'Phone',
+	'gender'	=>	'Gender',
+	'picture'	=>	'Picture',
+	'action'	=>	'Action',
+	'delete'	=>	'Delete',
+	'view_history'	=>	'View History',
+	'edit'	=> 	'Edit',
+	'delete_confimation'	=> 'Are you sure want to Delete?',
+	'first_name'	=>	'First Name',
+	'last_name'	=>	'Last Name',
+	'male'	=>	'Male',
+	'female'	=>	'Female',
+	'others'	=>	'Others',
+	'contact_num'	=>	'Contact Number',
+	'address'	=>	'Address',
+	'profile_pic'	=>	'Profile Picture',
+	'upload_message'	=>	'Upload only .png, .jpg or .jpeg image files only',
+	'status'	=>	'Status',
+	'yes'	=>	'Yes',
+	'copyright'	=>	'Copyright',
+	'copyright_message' => 'All rights reserved',
+	'paypal_email'	=>	'Paypal Email',
+	'home'	=>	'Home',
+	'name'	=>	'Name',
+	'default'	=>	'Default',
+	''	=>	'',
+	''	=>	'',
+	''	=>	'',
+	''	=>	'',
+	''	=>	'',
+	''	=>	'',
+	''	=>	'',
+
+
+	//Admin Login
+	'welcome'	=>	'Welcome to Xuber. Please sign in to your account',
+	'email_add'	=>	'E-mail Address',
+	'password'	=>	'Password',
+	'login'	=>	'Login',
+	'forgot'	=>	'Forgot Your Password?',
+	'remember'	=>	'Remember Me',
+	
+	//Admin Dashboard
+
+	'total_request'	=>	'Total Requests',
+	'comp_request'	=>	'Completed Requests',
+	'cancel_request'	=>	'Cancelled Requests',
+	'total_payment'	=>	'Total Payment',
+	'card_payment'	=>	'Card Payment',
+	'cash_payment'	=>	'Cash Payment',
+	'paypal_payment'	=>	'Paypal Payment',
+	'top_provider'	=>	'Top Rated Provider',
+	'tot_revenue'	=>	'Total Revenue',
+	'avg_review'	=>	'Average Reviews',
+	'recent_reviews'	=>	'Recent User Reviews',
+
+	//Admin Button
+	'submit'	=>	'Submit',
+	
+
+	//Admin Users
+	'view_photo'	=>	'View Photo',
+	'user_list'	=>	'Users List',
+	'create_user'	=>	'Create New User',
+	'edit_user'	=>	'Edit User',
+
+	//Admin Providers
+	'accepted_requests'	=>	'Accepted Requests',
+	'availability'	=>	'Availability',
+	'approve'	=>	'Approve',
+	'decline'	=>	'Decline',
+	'view_docs'	=>	'View Documents',
+	'approved'	=>	'Approved',
+	'unapproved'	=>	'Unapproved',
+	'provider_list'	=>	'Providers List',
+	'create_provider'	=>	'Create Provider',
+	'edit_provider'	=>	'Edit Provider',
+
+	//Admin Service Types
+	'service_list'	=>	'Service Types List',
+	'service_name'	=>	'Service Type Name',
+	'set_default'	=>	'Set as Default',
+	'create_service'	=>	'Create Service Type',
+	'edit_service'	=>	'Edit Service Type',
+
+	//Admin Documents
+	'document_list'	=>	'Documents List',
+	'edit_document'	=>	'Edit Document Type',
+	'create_document'	=>	'Create New Document Type',
+	'document_name'	=>	'Document Name',
+	''	=>	'',
+
+	//Admin Reviews
+	'user_name'	=>	'User Name',
+	'provider_name'	=>	'Provider Name',
+	'rating'	=>	'Rating',
+	'date_time'	=>	'Date & Time',
+	'comments'	=>	'Comments',
+
+	//Admin Payment
+	'base_price'	=>	'Base Price',
+	'time_price'	=>	'Time Price',
+	'total_time'	=>	'Total Time',
+	'tax_price'	=>	'Tax Price',
+	'total_amount'	=>	'Total Amount',
+	'payment_mode'	=>	'Payment Mode',
+	'payment_status'	=>	'Payment Status',
+	'payment'	=>	'Payment',
+	'request_id'	=>	'Request Id',
+	'transaction_id'	=>	'Transaction Id',
+	'paid'	=>	'Paid',
+	'not_paid'	=>	'Not Paid',
+
+	//Admin Settings
+
+	'site_name'	=>	'Site Name',
+	'site_logo'	=>	'Site Logo',
+	'price_per_min'	=>	'Price Per Minute',
+	'provider_time'	=>	'Provider Timout',
+	'search_radius'	=>	'Search Radius',
+	'stripe_secret'	=>	'Stripe Secret key',
+	'stripe_publish'	=>	'Stripe Publishable Key',
+	'card'	=>	'Card',
+	'cod'	=>	'Cash on Delivery',
+	'paypal'	=>	'Paypal',
+	'manual_request'	=>	'Manual Request',
+
+
+
+
 
 
 

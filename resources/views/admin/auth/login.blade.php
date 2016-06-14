@@ -10,11 +10,11 @@
         <img src="{{ asset('logo.png') }}" />
     </div>
 
-    <p class="text-center mb30">Welcome to Xuber. Please sign in to your account</p>
+    <p class="text-center mb30">{{ tr('welcome') }}</p>
 
     <div class="form-inputs">
         <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
-            <input type="email" class="form-control input-lg" name="email" value="{{ old('email') }}" placeholder="E-Mail Address">
+            <input type="email" class="form-control input-lg" name="email" value="{{ old('email') }}" placeholder="{{ tr('email_add') }}">
 
             @if ($errors->has('email'))
                 <span class="help-block">
@@ -26,7 +26,7 @@
 
         <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
 
-            <input type="password" class="form-control input-lg" name="password" placeholder="Password">
+            <input type="password" class="form-control input-lg" name="password" placeholder="{{ tr('password') }}">
 
             @if ($errors->has('password'))
                 <span class="help-block">
@@ -41,18 +41,18 @@
 
     <div class="col-md-6 col-md-offset-3">
         <button class="btn btn-success btn-block mb15" type="submit">
-            <h5><span><i class="fa fa-btn fa-sign-in"></i> Login</span></h5>
+            <h5><span><i class="fa fa-btn fa-sign-in"></i> {{ tr('login')}}</span></h5>
         </button>
     </div>
 
     <div class="form-group">
         <div class="col-md-6">
-            <a class="btn btn-link" href="{{ url('/admin/password/reset') }}">Forgot Your Password?</a>
+            <a class="btn btn-link" href="{{ url('/admin/password/reset') }}">{{ tr('forgot')}}</a>
         </div>
         <div class="col-md-6 text-right">
             <div class="checkbox">
                 <label>
-                    <input type="checkbox" name="remember"> Remember Me
+                    <input type="checkbox" name="remember"> {{ tr('remember')}}
                 </label>
             </div>
         </div>

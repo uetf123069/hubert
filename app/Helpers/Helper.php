@@ -8,6 +8,8 @@
 
    use App\Provider;
 
+   use App\Cards;
+
    use App\FavouriteProvider;
 
    use App\ProviderService;
@@ -32,7 +34,6 @@
 
     class Helper
     {
-
         public static function tr($key) {
 
             if (!\Session::has('locale'))

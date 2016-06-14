@@ -10,10 +10,10 @@
     <div class="panel-heading border">
         <ol class="breadcrumb mb0 no-padding">
             <li>
-                <a href="#">Home</a>
+                <a href="#">{{ tr('home')}}</a>
             </li>
             <li>
-                <a href="#">Map View</a>
+                <a href="#">{{ tr('map_view') }}</a>
             </li>
         </ol>
     </div>
@@ -29,7 +29,7 @@
         <div class="row">
             <div class="col-xs-12">
                 <div id="map"></div>
-                <div id="legend"><h3>Provider</h3></div>
+                <div id="legend"><h3>{{ tr('providers')}}</h3></div>
             </div>
         </div>
     </div>

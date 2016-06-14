@@ -14,8 +14,19 @@ use Carbon\Carbon;
 
 use App\ProviderService;
 
+use App\ProviderRating;
+
+use App\UserRating;
+
 use App\RequestPayment;
 
+function tr($key) {
+
+            if (!\Session::has('locale'))
+                \Session::put('locale', \Config::get('app.locale'));
+            return \Lang::choice('messages.'.$key, 0, Array(), \Session::get('locale'));
+
+        }
 
 function get_service_name($id)
 {
@@ -120,7 +131,10 @@ function get_provider_service_type($provider_id)
 
 function get_request_details($request_id)
 {
-	return Requests::find($request_id);
+	$Request = Requests::find($request_id);
+	$Request->ProviderRating = ProviderRating::where('request_id',$request_id)->first();
+	$Request->UserRating = UserRating::where('request_id',$request_id)->first();
+	return $Request;
 }
 
 function get_payment_details($request_id)

@@ -8,10 +8,10 @@
     <div class="panel-heading border">
         <ol class="breadcrumb mb0 no-padding">
             <li>
-                <a href="#">Home</a>
+                <a href="#">{{ tr('home') }}</a>
             </li>
             <li>
-                <a href="#">Help</a>
+                <a href="#">{{ tr('help') }}</a>
             </li>
         </ol>
     </div>

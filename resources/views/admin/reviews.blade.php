@@ -13,12 +13,12 @@
           <div class="panel-heading border">
             <ol class="breadcrumb mb0 no-padding">
               <li>
-                <a href="javascript:;">Home</a>
+                <a href="javascript:;">{{ tr('home') }}</a>
               </li>
               <li>
-                <a href="javascript:;">Reviews</a>
+                <a href="javascript:;">{{ tr('rating_review') }}</a>
               </li>
-              <li class="active">@if($name == 'Provider') Provider Review @else User Reviews @endif</li>
+              <li class="active">@if($name == 'Provider') {{ tr('provider_review') }} @else {{ tr('user_review') }} @endif</li>
             </ol>
           </div>
           <div class="panel-body">
@@ -26,16 +26,16 @@
               <thead>
                 <tr>
                 @if($name == 'Provider')
-                  <th>User Name</th>
-                  <th>Provider Name</th>
+                  <th>{{ tr('user_name') }}</th>
+                  <th>{{ tr('provider_name') }}</th>
                 @else                
-                  <th>Provider Name</th>
-                  <th>User Name</th>
+                  <th>{{ tr('provider_name') }}</th>
+                  <th>{{ tr('user_name') }}</th>
                 @endif
-                  <th>Rating</th>
-                  <th>Date & Time</th>
-                  <th>Comment</th>
-                  <th>Action</th>
+                  <th>{{ tr('rating') }}</th>
+                  <th>{{ tr('date_time') }}</th>
+                  <th>{{ tr('comments') }}</th>
+                  <th>{{ tr('action') }}</th>
                   </tr>
               </thead>
               <tbody>
@@ -55,9 +55,9 @@
                   <td>
                       <div class="input-group-btn">
                       @if($name == 'User')
-                          <button type="button" class="btn btn-danger"><a href="{{route('adminUserReviewDelete', array('id' => $review->review_id))}}">Delete</a></button>
+                          <button type="button" class="btn btn-danger"><a onclick="return confirm('{{ tr('delete_confirmation') }}')" href="{{route('adminUserReviewDelete', array('id' => $review->review_id))}}">{{ tr('delete') }}</a></button>
                           @else
-                          <button type="button" class="btn btn-danger"><a onclick="return confirm('Are you sure want to Delete?')" href="{{route('adminProviderReviewDelete', array('id' => $review->review_id))}}">Delete</a></button>
+                          <button type="button" class="btn btn-danger"><a onclick="return confirm('{{ tr('delete_confirmation') }}')" href="{{route('adminProviderReviewDelete', array('id' => $review->review_id))}}">{{ tr('delete') }}</a></button>
                           @endif
                       </div>
                   </td>

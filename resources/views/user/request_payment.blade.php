@@ -19,6 +19,7 @@
     </div>
     <div class="panel-body">
         <div class="row">
+            @if(!empty($Service->before_image)||!empty($Service->before_image))
             <div class="col-md-6">
                 @if(!empty($Service->before_image))
                 <h2 class="text-center">Before</h2>                
@@ -29,6 +30,7 @@
                 <img class="col-xs-12" src="{{ $Service->after_image ? $Service->after_image : asset('logo.png') }}">
                 @endif
             </div>
+            @endif
             <div class="col-md-6">
                 <h2 class="text-center">Request Details</h2>
                 <table class="table table-striped">
@@ -58,6 +60,11 @@
                             <td data-title="Provider Rating">{{ $Service->rating }}</td>
                         </tr>
                         <tr>
+                            <th>Provider Mobile</th>
+                            <td data-title="Provider Rating">{{ $Service->provider_mobile }}</td>
+                        </tr>
+                        @if($CurrentRequest->invoice != "")
+                        <tr>
                             <td colspan="2">
                                 <h4 class="text-center">Payment Details</h4>
                             </td>
@@ -78,12 +85,17 @@
                             <th>Total Amount</th>
                             <td data-title="Total Amount">{{ $CurrentRequest->invoice[$Index]->total }}</td>
                         </tr>
-
+                        @else
+                        <tr>
+                            <th>Amount</th>
+                            <td data-title="Amount">{{ $Service->amount }}</td>
+                        </tr>
+                        @endif
                     </tbody>
                 </table>
             </div>
             <div class="col-md-6 row-border">
-                <h3 class="mt0 text-center">Select Payment Option</h3>
+                <h2 class="text-center">Select Payment Option</h2>
                 <form action="{{ route('user.services.request.payment') }}" class="form-horizontal" method="POST">
                     <input type="hidden" name="request_id" value="{{ $Service->request_id }}">
                     <div class="form-group{{ $errors->has('payment_mode') ? ' has-error' : '' }}">

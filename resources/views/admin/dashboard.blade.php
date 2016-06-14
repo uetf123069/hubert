@@ -10,7 +10,7 @@
               </div>
               <div class="overflow-hidden">
                 <span class="widget-title">{{ $tot_req }}</span>
-                <span class="widget-subtitle">Total Requests</span>
+                <span class="widget-subtitle">{{ tr('total_request') }}</span>
               </div>
             </div>
           </div>
@@ -20,7 +20,7 @@
               </div>
               <div class="overflow-hidden">
                 <span class="widget-title ">{{ $comp_req }}</span>
-                <span class="widget-subtitle">Completed Request</span>
+                <span class="widget-subtitle">{{ tr('comp_request') }}</span>
               </div>
             </div>
           </div>
@@ -30,7 +30,7 @@
               </div>
               <div class="overflow-hidden">
                 <span class="widget-title">{{ $can_req }}</span>
-                <span class="widget-subtitle">Cancelled Request</span>
+                <span class="widget-subtitle">{{ tr('cancel_request') }}</span>
               </div>
             </div>
           </div>
@@ -44,7 +44,7 @@
               </div>
               <div class="widget-details">
                 <span class="block h4 mt0 mb5">${{ round($tot_pay) }}</span>
-                <span>Total Payment</span>
+                <span>{{ tr('total_payment') }}</span>
               </div>
             </div>
           </div>
@@ -55,7 +55,7 @@
               </div>
               <div class="widget-details">
                 <span class="block h4 mt0 mb5">${{ round($card_pay) }}</span>
-                <span>Card Payment</span>
+                <span>{{ tr('card_payment') }}</span>
               </div>
             </div>
           </div>
@@ -66,7 +66,7 @@
               </div>
               <div class="widget-details">
                 <span class="block h4 mt0 mb5">${{ round($cod) }}</span>
-                <span>Payment From Cash</span>
+                <span>{{ tr('cash_payment') }}</span>
               </div>
             </div>
           </div>
@@ -77,7 +77,7 @@
               </div>
               <div class="widget-details">
                 <span class="block h4 mt0 mb5">${{ round($paypal) }}</span>
-                <span>Payment From Paypal</span>
+                <span>{{ tr('paypal_payment') }}</span>
               </div>
             </div>
           </div>
@@ -85,9 +85,9 @@
         <div class="row">
         <div class="col-md-4">
             <div class="widget bg-white no-padding">
-            <div class="widget bg-blue mb0 text-center no-radius"><strong>Top Rated Provider</strong></div>
+            <div class="widget bg-blue mb0 text-center no-radius"><strong>{{ tr('top_provider') }}</strong></div>
               <a href="javascript:;" class="block text-center relative p15">
-                <img src="{{$top->picture}}" class="avatar avatar-lg img-circle" alt="">
+                <img src="@if($top->picture !='') {{ $top->picture }} @else {{ asset('user_default.png') }} @endif" class="avatar avatar-lg img-circle" alt="">
                 <div class="h5 mb0"><strong>{{ $top->first_name .' '. $top->last_name}}</strong>
                 </div>
               </a>
@@ -95,17 +95,17 @@
               <div class="widget bg-blue mb0 text-center no-radius">
                 <div class="widget-details">
                   <div class="h5 no-margin">{{$tot_rev}}</div>
-                  <div class="small bold text-uppercase">Total Revenue</div>
+                  <div class="small bold text-uppercase">{{ tr('tot_revenue') }}</div>
                 </div>
 
                 <div class="widget-details">
                   <div class="h5 no-margin">{{ $pro_req }}</div>
-                  <div class="small bold text-uppercase">Total Requests</div>
+                  <div class="small bold text-uppercase">{{ tr('total_request')}}</div>
                 </div>
 
                 <div class="widget-details">
                   <div class="h5 no-margin">{{ round($avg_rev) }}</div>
-                  <div class="small bold text-uppercase">Average Review</div>
+                  <div class="small bold text-uppercase">{{ tr('avg_review') }}</div>
                 </div>
               </div>
             </div>
@@ -114,11 +114,11 @@
             <div class="row">
               <div class="col-md-12">
                 <section class="widget bg-white post-comments">
-                <div class="widget bg-success mb0 text-center no-radius"><strong>Recent User Reviews</strong></div>
+                <div class="widget bg-success mb0 text-center no-radius"><strong>{{ tr('recent_reviews') }}</strong></div>
                 @foreach($reviews as $review)
                   <div class="media">
                     <a class="pull-left" href="javascript:;">
-                      <img class="media-object avatar avatar-sm" src="{{$review->user_picture}}" alt="">
+                      <img class="media-object avatar avatar-sm" src="@if($review->user_picture !='') {{ $review->user_picture }} @else {{ asset('user_default.png') }} @endif" alt="">
                     </a>
                     <div class="comment">
                       <div class="comment-author h6 no-margin">

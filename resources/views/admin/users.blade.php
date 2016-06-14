@@ -7,21 +7,21 @@
 @include('notification.notify')
         <div class="panel">
           <div class="panel-heading border">
-            Users List
-            <a style="float: right; display: inline-block; " href="{{ route('admin.adduser') }}"><button type="button" class="btn btn-primary btn-outline">Add User</button></a>
+            {{ tr('user_list') }}
+            <a style="float: right; display: inline-block; " href="{{ route('admin.adduser') }}"><button type="button" class="btn btn-primary btn-outline">{{  tr('add_users')}}</button></a>
           </div>
 
           <div class="panel-body">
             <table id="users" class="table table-bordered bordered table-striped table-condensed datatable">
               <thead>
                 <tr>
-                  <th>ID</th>
-                  <th>Full Name</th>
-                  <th>Email</th>
-                  <th>Phone</th>
-                  <th>Gender</th>
-                  <th>Picture</th>
-                  <th>Action</th>
+                  <th>{{ tr('id') }}</th>
+                  <th>{{ tr('full_name') }}</th>
+                  <th>{{ tr('email') }}</th>
+                  <th>{{ tr('phone') }}</th>
+                  <th>{{ tr('gender') }}</th>
+                  <th>{{ tr('picture') }}</th>
+                  <th>{{ tr('action') }}</th>
                   </tr>
               </thead>
               <tbody>
@@ -32,7 +32,7 @@
                   <td>{{$user->email}}</td>
                   <td>{{$user->mobile}}</td>
                   <td>{{ucfirst($user->gender)}}</td>
-                  <td>@if($user->picture!='')<a href='{{$user->picture}}' target="_blank" >View Photo</a>@else NA @endif</td>
+                  <td>@if($user->picture!='')<a href='{{$user->picture}}' target="_blank" >{{ tr('view_photo') }}</a>@else NA @endif</td>
                   <td>
                       <div class="input-group-btn">
                           <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">Action
@@ -40,13 +40,13 @@
                           </button>
                           <ul class="dropdown-menu">
                             <li>
-                              <a href="{{route('adminUserEdit', array('id' => $user->id))}}">Edit</a>
+                              <a href="{{route('adminUserEdit', array('id' => $user->id))}}">{{ tr('edit') }}</a>
                             </li>
                             <li>
-                              <a onclick="return confirm('Are you sure want to Delete?')" href="{{route('adminUserDelete', array('id' => $user->id))}}">Delete</a>
+                              <a onclick="return confirm('{{ tr ('delete_confimation')}}')" href="{{route('adminUserDelete', array('id' => $user->id))}}">{{ tr('delete') }}</a>
                             </li>
                             <li>
-                              <a href="{{route('adminUserHistory', array('id' => $user->id))}}">View History</a>
+                              <a href="{{route('adminUserHistory', array('id' => $user->id))}}">{{ tr('view_history') }}</a>
                             </li>
                             
                           </ul>

@@ -18,8 +18,13 @@
                 <?php 
                     $payment = get_payment_details($Service->request_id);
                     $request_details = get_request_details($Service->request_id);
+                    // dd($request_details);
                 ?>
                     <p><h5>Provider</h5> {{ $Service->provider_name }}</p>
+                    @if($request_details->ProviderRating != null)
+                    <p><h5>Rating</h5> {{ $request_details->ProviderRating->rating }}</p>
+                    <p><h5>Review</h5> {{ $request_details->ProviderRating->comment }}</p>
+                    @endif
                     <p><h5>Address</h5> {{$request_details->s_address}}</p>
                     <p><h5>Base Price</h5> {{ $payment['base_price'] }}</p>
                     <p><h5>Tax Price</h5> {{ $payment['tax_price'] }}</p>
@@ -42,22 +47,20 @@
 
 @section('scripts')
 <script type="text/javascript" src="{{ asset('assets/user/js/application.js') }}"></script>
-<script type="text/javascript" src="{{ asset('assets/user/js/demo.js') }}"></script>
-<script type="text/javascript" src="{{ asset('assets/user/js/demo-switcher.js') }}"></script>
-<script type="text/javascript" src="{{ asset('assets/user/js/demo-index.js') }}"></script>
 @endsection
 
-@section('unusedscripts')
-
-<!-- Load page level scripts-->
-
-<script type="text/javascript" src="{{ asset('assets/plugins/fullcalendar/fullcalendar.min.js') }}"></script>                  <!-- FullCalendar -->
-<script type="text/javascript" src="{{ asset('assets/plugins/wijets/wijets.js') }}"></script>                                  <!-- Wijet -->
-<script type="text/javascript" src="{{ asset('assets/plugins/charts-chartistjs/chartist.min.js') }}"></script>                 <!-- Chartist -->
-<script type="text/javascript" src="{{ asset('assets/plugins/charts-chartistjs/chartist-plugin-tooltip.js') }}"></script>      <!-- Chartist -->
-<script type="text/javascript" src="{{ asset('assets/plugins/form-daterangepicker/moment.min.js') }}"></script>                <!-- Moment.js for Date Range -->
-<script type="text/javascript" src="{{ asset('assets/plugins/form-daterangepicker/daterangepicker.js') }}"></script>           <!-- Date Range Picker -->
-
-<!-- End loading page level scripts-->
-
+@section('styles')
+<style type="text/css">
+    .row {
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display:         flex;
+        flex-wrap: wrap;
+    }
+    .row > [class*='col-'] {
+        display: flex;
+        flex-direction: column;
+    }
+</style>
 @endsection
