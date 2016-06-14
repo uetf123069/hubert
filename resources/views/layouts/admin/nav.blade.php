@@ -27,24 +27,24 @@
             <li>
                 <a href="{{ route('admin.dashboard') }}">
                     <i class="fa fa-dashboard"></i>
-                    <span>Dashboard</span>
+                    <span>{{tr('dashboard')}}</span>
                 </a>
             </li>
 
             <li >
                 <a href="javascript:;">
                     <i class="fa fa-user"></i>
-                    <span>Users</span>
+                    <span>{{tr('users')}}</span>
                 </a>
                     <ul class="sub-menu">
                         <li>
                         <a href="{{ route('admin.user') }}">
-                            <span>View Users</span>
+                            <span>{{tr('view_users')}}</span>
                         </a>
                         </li>
                         <li>
                         <a href="{{ route('admin.adduser') }}">
-                          <span>Add User</span>
+                          <span>{{tr('add_users')}}</span>
                         </a>
                       </li>
                     </ul>
@@ -53,17 +53,17 @@
             <li >
                 <a href="javascript:;">
                     <i class="fa fa-user-secret"></i>
-                    <span>Providers</span>
+                    <span>{{tr('providers')}}</span>
                 </a>
                     <ul class="sub-menu">
                         <li>
                         <a href="{{ route('admin.provider') }}">
-                            <span>View Providers</span>
+                            <span>{{tr('view_providers')}}</span>
                         </a>
                         </li>
                         <li>
                         <a href="{{ route('admin.addprovider') }}">
-                          <span>Add Provider</span>
+                          <span>{{tr('add_providers')}}</span>
                         </a>
                       </li>
                     </ul>
@@ -72,31 +72,31 @@
             <li>
                 <a href="{{ route('admin.mapmapview') }}">
                     <i class="fa fa-map-marker"></i>
-                    <span>Map View</span>
+                    <span>{{tr('map_view')}}</span>
                 </a>
             </li>
 
             <li>
                 <a href="{{ route('adminRequests') }}">
                     <i class="fa fa-paper-plane"></i>
-                    <span>Requests</span>
+                    <span>{{tr('requests')}}</span>
                 </a>
             </li>
 
             <li>
                 <a href="javascript:;">
                     <i class="fa fa-folder"></i>
-                    <span>Service Types</span>
+                    <span>{{tr('service_types')}}</span>
                 </a>
                     <ul class="sub-menu">
                         <li>
                         <a href="{{ route('adminServices') }}">
-                            <span>View Service Type</span>
+                            <span>{{tr('view_service')}}</span>
                         </a>
                         </li>
                         <li>
                         <a href="{{ route('adminAddServices') }}">
-                          <span>Add Service Types</span>
+                          <span>{{tr('add_service')}}</span>
                         </a>
                       </li>
                     </ul>
@@ -106,17 +106,17 @@
             <li>
                 <a href="javascript:;">
                     <i class="fa fa-folder"></i>
-                    <span>Documents</span>
+                    <span>{{tr('documents')}}</span>
                 </a>
                     <ul class="sub-menu">
                         <li>
                         <a href="{{ route('adminDocuments') }}">
-                            <span>View Documents Type</span>
+                            <span>{{tr('view_documents')}}</span>
                         </a>
                         </li>
                         <li>
                         <a href="{{ route('adminAddDocument') }}">
-                          <span>Add Documents</span>
+                          <span>{{tr('add_documents')}}</span>
                         </a>
                       </li>
                     </ul>
@@ -126,17 +126,17 @@
             <li>
                 <a href="#" target="_blank">
                     <i class="fa fa-sliders"></i>
-                    <span>Rating & Reviews</span>
+                    <span>{{tr('rating_review')}}</span>
                 </a>
                 <ul class="sub-menu">
                         <li>
                         <a href="{{ route('adminUserReviews') }}">
-                            <span>User Reviews</span>
+                            <span>{{tr('user_review')}}</span>
                         </a>
                         </li>
                         <li>
                         <a href="{{ route('adminProviderReviews') }}">
-                          <span>Provider Reviews</span>
+                          <span>{{tr('provider_review')}}</span>
                         </a>
                       </li>
                     </ul>
@@ -145,28 +145,28 @@
             <li>
                 <a href="{{ route('adminPayment') }}">
                     <i class="fa fa-money"></i>
-                    <span>Payment History</span>
+                    <span>{{tr('payment_history')}}</span>
                 </a>
             </li>
 
             <li>
                 <a href="{{ route('admin.settings') }}">
                     <i class="fa fa-gears"></i>
-                    <span>Settings</span>
+                    <span>{{tr('settings')}}</span>
                 </a>
             </li>
 
             <li>
                 <a href="{{ route('admin.help') }}">
                     <i class="fa fa-question-circle"></i>
-                    <span>Help</span>
+                    <span>{{tr('help')}}</span>
                 </a>
             </li>
 
             <li>
                 <a href="{{ route('admin.logout') }}">
                     <i class="fa fa-sign-out"></i>
-                    <span>Logout</span>
+                    <span>{{tr('logout')}}</span>
                 </a>
             </li>
 

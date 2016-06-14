@@ -46,10 +46,10 @@
             </a>
             <ul class="dropdown-menu">
                 <li>
-                    <a href="{{ route('adminProfile')}}">Profile</a>
+                    <a href="{{ route('adminProfile')}}">{{ tr('profile') }}</a>
                 </li>
                 <li>
-                    <a href="{{ route('admin.logout') }}">Logout</a>
+                    <a href="{{ route('admin.logout') }}">{{ tr('logout')}}</a>
                 </li>
             </ul>
 

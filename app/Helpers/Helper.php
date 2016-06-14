@@ -34,7 +34,6 @@
 
     class Helper
     {
-
         public static function tr($key) {
 
             if (!\Session::has('locale'))

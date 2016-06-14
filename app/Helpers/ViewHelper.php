@@ -16,6 +16,13 @@ use App\ProviderService;
 
 use App\RequestPayment;
 
+function tr($key) {
+
+            if (!\Session::has('locale'))
+                \Session::put('locale', \Config::get('app.locale'));
+            return \Lang::choice('messages.'.$key, 0, Array(), \Session::get('locale'));
+
+        }
 
 function get_service_name($id)
 {
