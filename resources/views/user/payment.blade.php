@@ -54,7 +54,7 @@
         <div class="col-md-6">
             <div class="panel panel-default" data-widget='{"draggable": "false"}'>
                 <div class="panel-heading">
-                    <h2>Default Payment Method</h2>
+                    <h2>{{ tr('default_payment') }}</h2>
                 </div>
                 <div class="panel-body">
                     @if(!empty($PaymentModes->payment_modes))
@@ -81,7 +81,7 @@
                         </div>
                     </form>
                     @else
-                    <h4>No default Payment Methods enabled</h4>
+                    <h4>{{ tr('no_default_payment') }}</h4>
                     @endif
                 </div>
             </div>

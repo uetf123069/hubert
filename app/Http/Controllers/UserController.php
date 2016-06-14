@@ -108,7 +108,7 @@ class UserController extends Controller
         $response = $this->UserAPI->send_request($request)->getData();
 
         if($response->success) {
-            $response->message = "Your request has been posted. Waiting for provider to respond";
+            $response->message = tr('request_submit');
         } else {
             $response->success = false;
             if(isset($response->error_messages)) {
@@ -146,7 +146,7 @@ class UserController extends Controller
             }
 
             if($response->success) {
-                $response->message = "Your request has been cancelled.";
+                $response->message = tr('request_cancel');
             } else {
                 $response->success = false;
                 $response->message = $response->error;
@@ -154,7 +154,7 @@ class UserController extends Controller
         } else {
             $response = response()->json([
                     "success" => true,
-                    "message" => "Request was cancelled",
+                    "message" => tr('request_w_cancel'),
                 ], 200);
         }
 
@@ -201,7 +201,7 @@ class UserController extends Controller
         $response = $this->UserAPI->paynow($request)->getData();
         
         if($response->success) {
-            $response->message = "Payment successful.";
+            $response->message = tr('payment_successful');
         } else {
             $response->success = false;
             $response->message = $response->error;
@@ -226,7 +226,7 @@ class UserController extends Controller
         $response = $this->UserAPI->rate_provider($request)->getData();
 
         if($response->success) {
-            $response->message = "Thank you for reviewing the provider.";
+            $response->message = tr('review_thanks');
         } else {
             $response->success = false;
             $response->message = $response->error;
@@ -341,9 +341,9 @@ class UserController extends Controller
         $response = $this->UserAPI->default_card($request)->getData();
         
         if($response->success) {
-            $response->message = "Successfully made card as default";
+            $response->message = tr('card_default_success');
         } else {
-            $response->message = "Unknown error please try again later";
+            $response->message = tr('unkown_error');
         }
 
         return back()->with('response', $response);
@@ -364,9 +364,9 @@ class UserController extends Controller
         $response = $this->UserAPI->delete_card($request)->getData();
         
         if($response->success) {
-            $response->message = "Successfully made card as default";
+            $response->message = tr('card_default_success');
         } else {
-            $response->message = "Unknown error please try again later";
+            $response->message = tr('unkown_error');
         }
 
         return back()->with('response', $response);
@@ -391,9 +391,9 @@ class UserController extends Controller
         $response = $this->UserAPI->payment_mode_update($request)->getData();
 
         if($response->success) {
-            $response->message = "Successfully changed default payment method";
+            $response->message = tr('card_default_success');
         } else {
-            $response->message = "Unknown error please try again later";
+            $response->message = tr('unkown_error');
         }
 
         return back()->with('response', $response);
@@ -431,9 +431,9 @@ class UserController extends Controller
         $response = $this->UserAPI->delete_fav_provider($request)->getData();
 
         if($response->success) {
-            $response->message = "Removed Provider from Favorites";
+            $response->message = tr('fav_remove');
         } else {
-            $response->message = "Something went wrong! please try again later";
+            $response->message = tr('something_error');
         }
 
         return back()->with('response', $response);
@@ -465,7 +465,7 @@ class UserController extends Controller
         $response = $this->UserAPI->update_profile($request)->getData();
 
         if($response->success) {
-            $response->message = "Profile has been updated";
+            $response->message = tr('profile_updated');
         } else {
             $response->success = false;
             $response->message = $response->error." ".$response->error_messages;
@@ -490,7 +490,7 @@ class UserController extends Controller
         $response = $this->UserAPI->change_password($request)->getData();
 
         if($response->success) {
-            $response->message = "Password has been updated. You can log in with the new password from next time.";
+            $response->message = tr('password_success');
         } else {
             $response->success = false;
             $response->message = $response->error." ".$response->error_messages;
