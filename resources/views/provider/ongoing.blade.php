@@ -172,7 +172,9 @@
 						</div>
 					</form>
 
-				@else
+				@elseif(get_payment_type($request_data[0]->user_id) == 'cod')
+
+                @else
 				<h3 style="text-align:center" class="mt0">Location Details</h3>
             	<div style="height:100%;min-height:400px" id="user_location_map"></div>	
             	@endif					
