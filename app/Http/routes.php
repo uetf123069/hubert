@@ -84,7 +84,6 @@ Route::group(['prefix' => 'userApi'], function(){
 
 	Route::post('/deleteCard', 'UserapiController@delete_card');
 
-
 });
 
 
@@ -135,7 +134,6 @@ Route::group(['prefix' => 'providerApi'], function(){
 
 	Route::post('/requestStatusCheck', 'ProviderApiController@request_status_check');
 
-
 });
 
 Route::get('/assign_next_provider_cron' , 'ApplicationController@assign_next_provider_cron');
@@ -160,6 +158,8 @@ Route::group(['prefix' => 'admin'], function(){
     Route::get('/', 'AdminController@index')->name('admin.dashboard');
 
     Route::get('/mapview', 'AdminController@mapview')->name('admin.mapmapview');
+
+    Route::get('/providerDetails/{id}', 'AdminController@providerDetails')->name('admin.providerDetails');
 
     Route::get('/profile', 'AdminController@profile')->name('adminProfile');
 

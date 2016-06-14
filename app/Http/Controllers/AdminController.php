@@ -24,6 +24,8 @@ use App\Requests;
 
 use App\RequestPayment;
 
+use App\ProviderService;
+
 use App\Settings;
 
 use Validator;
@@ -797,7 +799,24 @@ class AdminController extends Controller
 
     public function help()
     {
-        
         return view('admin.help');
+    }
+
+    public function providerDetails(Request $request) 
+    {
+        $provider = Provider::find($request->id);
+
+        if($provider) {
+            $service = "";
+            $service_type = ProviderService::where('provider_id' ,$provider->id)
+                                ->leftJoin('service_types' ,'provider_services.service_type_id','=' , 'service_types.id')
+                                ->first();
+            if($service_type) {
+                $service = $service_type->name;
+            }
+            return view('admin.providerDetails')->with('provider' , $provider)->withService($service);
+        } else {
+            return back()->with('error' , "Provider details not found");
+        }
     }
 }
