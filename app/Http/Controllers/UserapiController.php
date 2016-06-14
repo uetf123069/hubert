@@ -105,12 +105,12 @@ class UserapiController extends Controller
 {   
 
     public function __construct(Request $request)
-	{
+    {
         $this->middleware('UserApiVal' , array('except' => ['register' , 'login' , 'forgot_password']));
         
     }
-	public function register(Request $request)
-	{
+    public function register(Request $request)
+    {
         $response_array = array();
         $operation = false;
 
@@ -310,10 +310,10 @@ class UserapiController extends Controller
 
         $response = response()->json($response_array, 200);
         return $response;
-	}
+    }
 
-	public function login(Request $request)
-	{
+    public function login(Request $request)
+    {
         $response_array = array();
         $operation = false;
 
@@ -441,11 +441,11 @@ class UserapiController extends Controller
 
         $response = response()->json($response_array, 200);
         return $response;
-	}
+    }
 
-	public function forgot_password(Request $request)
-	{
-		$email =$request->email;
+    public function forgot_password(Request $request)
+    {
+        $email =$request->email;
         // Validate the email field
         $validator = Validator::make(
             $request->all(),
@@ -459,25 +459,25 @@ class UserapiController extends Controller
         } 
         else 
         {
-			$user = User::where('email' , $email)->first();
-			$new_password = Helper::generate_password();
-			$user->password = Hash::make($new_password);
-			
+            $user = User::where('email' , $email)->first();
+            $new_password = Helper::generate_password();
+            $user->password = Hash::make($new_password);
+            
             $email_data = array();
-			$subject = Helper::tr('user_forgot_email_title');
-			$email_data['password']  = $new_password;
+            $subject = Helper::tr('user_forgot_email_title');
+            $email_data['password']  = $new_password;
             $email_data['user']  = $user;
             $page = "emails.user.forgot_password";
-			$email_send = Helper::send_email($page,$subject,$user->email,$email_data);
+            $email_send = Helper::send_email($page,$subject,$user->email,$email_data);
 
-			$response_array['success'] = true;
+            $response_array['success'] = true;
             $response_array['message'] = Helper::get_message(106);
             $user->save();
         }
 
         $response = response()->json($response_array, 200);
         return $response;
-	}
+    }
 
     public function change_password(Request $request) {
 
@@ -1735,19 +1735,17 @@ class UserapiController extends Controller
 
             $payment_data = $data = $card_data = array();
 
-            if($user->payment_mode == CARD) {
-                if($user_cards = Cards::where('user_id' , $request->id)->get()) {
-                    foreach ($user_cards as $c => $card) {
-                        $data['id'] = $card->id;
-                        $data['customer_id'] = $card->customer_id;
-                        $data['card_id'] = $card->card_token;
-                        $data['last_four'] = $card->last_four;
-                        $data['is_default']= $card->is_default;
+            if($user_cards = Cards::where('user_id' , $request->id)->get()) {
+                foreach ($user_cards as $c => $card) {
+                    $data['id'] = $card->id;
+                    $data['customer_id'] = $card->customer_id;
+                    $data['card_id'] = $card->card_token;
+                    $data['last_four'] = $card->last_four;
+                    $data['is_default']= $card->is_default;
 
-                        array_push($card_data, $data);
-                    }
-                } 
-            }
+                    array_push($card_data, $data);
+                }
+            } 
 
             $response_array = Helper::null_safe(array('success' => true, 'payment_mode' => $user->payment_mode , 'card' => $card_data));
 

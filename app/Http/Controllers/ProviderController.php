@@ -71,7 +71,7 @@ class ProviderController extends Controller
         $ApiResponse = $this->ProviderApiController->update_profile($request)->getData();
         
         if($ApiResponse->success == true){
-            return back()->with('success', 'Profile has been saved');
+            return back()->with('success', tr('profile_save'));
         }elseif($ApiResponse->success == false){
             return back()->with('error', $ApiResponse->error_messages);
         }
@@ -94,7 +94,7 @@ class ProviderController extends Controller
         $ApiResponse = $this->ProviderApiController->changePassword($request)->getData();
 
         if($ApiResponse->success == true){
-            return back()->with('success', 'Password Updated');
+            return back()->with('success', tr('profile_save'));
         }elseif($ApiResponse->success == false){
             return back()->with('error', $ApiResponse->error);
         }
@@ -136,7 +136,7 @@ class ProviderController extends Controller
         $ApiResponse = $this->ProviderApiController->location_update($request)->getData();
 
         if($ApiResponse->success == true){
-            return back()->with('success', 'Location Updated');
+            return back()->with('success', tr('location_updated'));
         }elseif($ApiResponse->success == false){
             return back()->with('error', $ApiResponse->error);
         }
@@ -160,7 +160,7 @@ class ProviderController extends Controller
         if($ApiResponse->success == true){
             return view('provider.ongoing')->with('request_data',$ApiResponse->data);
         }elseif($ApiResponse->success == false){
-            return view('provider.ongoing')->with('error', 'Something Went Wrong');
+            return view('provider.ongoing')->with('error', tr('something_error'));
         }
     }
 
@@ -174,7 +174,7 @@ class ProviderController extends Controller
         $get_documents = Document::all();
 
         if(Auth::guard('provider')->user()->is_approved == 0){
-            return view('provider.documents')->withDocuments($get_documents)->with('error','Please upload your document to get approve from admin');
+            return view('provider.documents')->withDocuments($get_documents)->with('error',tr('document_upload_error'));
         }else{
 
             return view('provider.documents')->withDocuments($get_documents);
@@ -205,7 +205,7 @@ class ProviderController extends Controller
             }
         }
 
-        return back()->with('success', 'Your Documents Updated');
+        return back()->with('success', tr('document_updated'));
     }
 
 
@@ -221,9 +221,9 @@ class ProviderController extends Controller
             $provider->is_approved = 0;
             $provider->save();
 
-            return back()->with('success','your document Deleted! and please upload your new document');
+            return back()->with('success',tr('document_delete'));
         }else{
-            return back()->with('error','something went wrong');
+            return back()->with('error',tr('something_error'));
         }
 
     }
@@ -262,7 +262,7 @@ class ProviderController extends Controller
         $ApiResponse = $this->ProviderApiController->service_accept($request)->getData();
 
         if($ApiResponse->success == true){
-            return redirect(route('provider.ongoing'))->with('success', 'New Request Accepted');
+            return redirect(route('provider.ongoing'))->with('success', tr('request_accept'));
         }elseif($ApiResponse->success == false){
             return back()->with('error', 'Something Went Wrong');
         }
@@ -285,9 +285,9 @@ class ProviderController extends Controller
         $ApiResponse = $this->ProviderApiController->service_reject($request)->getData();
 
         if($ApiResponse->success == true){
-            return redirect(route('provider.ongoing'))->with('success', 'Request Declined!');
+            return redirect(route('provider.ongoing'))->with('success', tr('request_decline'));
         }elseif($ApiResponse->success == false){
-            return back()->with('error', 'Something Went Wrong');
+            return back()->with('error', tr('something_error'));
         }
 
     }
@@ -321,13 +321,13 @@ class ProviderController extends Controller
                 $ApiResponse = $this->ProviderApiController->servicecompleted($request)->getData();
                 break;
             default:
-                return back()->with('error','something went wrong');
+                return back()->with('error',tr('something_error'));
         }
 
         if($ApiResponse->success == true){
-            return redirect(route('provider.ongoing'))->with('success', 'YOU ARE '.$request->type);
+            return redirect(route('provider.ongoing'))->with('success', tr('you_are').$request->type);
         }elseif($ApiResponse->success == false){
-            return back()->with('error', 'Something Went Wrong');
+            return back()->with('error', tr('something_error'));
         }
     }
 
@@ -348,9 +348,9 @@ class ProviderController extends Controller
         $ApiResponse = $this->ProviderApiController->rate_user($request)->getData();
 
         if($ApiResponse->success == true){
-            return redirect(route('provider.ongoing'))->with('success', 'Service Completed!');
+            return redirect(route('provider.ongoing'))->with('success', tr('service_comp'));
         }elseif($ApiResponse->success == false){
-            return back()->with('error', 'Something Went Wrong');
+            return back()->with('error', tr('something_error'));
         }
 
     }
@@ -374,7 +374,7 @@ class ProviderController extends Controller
         if($ApiResponse->success == true){
             return view('provider.services')->with('requests',$ApiResponse->requests);
         }elseif($ApiResponse->success == false){
-            return back()->with('error', 'Something Went Wrong');
+            return back()->with('error', tr('something_error'));
         }
 
     }
@@ -390,9 +390,9 @@ class ProviderController extends Controller
         $ApiResponse = $this->ProviderApiController->cancelrequest($request)->getData();
 
         if($ApiResponse->success == true){
-            return redirect(route('provider.ongoing'))->with('success', 'Service Cancelled');
+            return redirect(route('provider.ongoing'))->with('success', tr('service_cancel'));
         }elseif($ApiResponse->success == false){
-            return back()->with('error', 'Something Went Wrong');
+            return back()->with('error', tr('something_error'));
         }
     }
 

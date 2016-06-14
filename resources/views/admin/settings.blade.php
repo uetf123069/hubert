@@ -99,6 +99,17 @@
                       </div>
                   </div>
                   <div class="form-group">
+                   <label class="col-sm-2 control-label">{{ tr('default_lang') }}</label>
+                    <div class="col-sm-10">
+                      <div class="checkbox">
+                            <select name="default_lang" class="form-control">
+                            <option value="en">en</option>
+                            </select>
+                        </div>
+                        
+                      </div>
+                  </div>
+                  <div class="form-group">
                     <label class="col-sm-2 control-label">{{ tr('manual_request') }}</label>
                     <div class="col-sm-10">
                       <div class="checkbox">

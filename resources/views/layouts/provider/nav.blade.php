@@ -17,9 +17,9 @@
 							<span class="welcome-text">Welcome,</span>
 							<a href="#" class="name">{{Auth::guard('provider')->user()->name}}</a>
 							@if(Auth::guard('provider')->user()->is_approved == 1)
-								<span class="label label-info">Approved</span>
+								<span class="label label-info">{{ tr('approved') }}</span>
 							@else
-								<span class="label label-danger">Waiting for approval</span>
+								<span class="label label-danger">{{ tr('approval_waiting') }}</span>
 							@endif
 
 						</div>
@@ -31,35 +31,35 @@
 					<ul class="acc-menu">
 						<li>
 							<a href="{{ route('provider.dashboard') }}">
-								<i class="fa fa-home"></i><span>Dashboard</span>
+								<i class="fa fa-home"></i><span>{{ tr('dashboard') }}</span>
 							</a>
 						</li>
-						<li class="nav-separator">Services</li>
+						<li class="nav-separator">{{ tr('services') }}</li>
 						<li>
 							<a href="{{ route('provider.history') }}">
-								<i class="fa fa-flask"></i><span>Service History</span>
+								<i class="fa fa-flask"></i><span>{{ tr('service_history') }}</span>
 							</a>
 						</li>
 						<li>
 							<a href="{{ route('provider.ongoing') }}">
-								<i class="fa fa-cog fa-spin"></i><span>OnGoing Service</span>
+								<i class="fa fa-cog fa-spin"></i><span>{{ tr('ongoing') }}</span>
 							</a>
 						</li>
 
-						<li class="nav-separator">Account</li>
+						<li class="nav-separator">{{ tr('account') }}</li>
 						<li>
 							<a href="{{ route('provider.profile') }}">
-								<i class="fa fa-user"></i><span>Profile</span>
+								<i class="fa fa-user"></i><span>{{ tr('profile') }}</span>
 							</a>
 						</li>
 						<li>
 							<a href="{{ route('provider.documents') }}">
-								<i class="fa fa-flask"></i><span>Documents</span>
+								<i class="fa fa-flask"></i><span>{{ tr('documents') }}</span>
 							</a>
 						</li>
 						<li>
 							<a href="{{ route('provider.logout') }}">
-								<i class="fa fa-sign-out"></i><span>Logout</span>
+								<i class="fa fa-sign-out"></i><span>{{ tr('logout') }}</span>
 							</a>
 						</li>
 					</ul>

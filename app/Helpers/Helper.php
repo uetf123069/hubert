@@ -177,7 +177,7 @@
                     $invoice_data['provider_name'] = $provider->first_name." ".$provider->last_name;
                     $invoice_data['provider_address'] = $provider->address;
                     $invoice_data['user_name'] = $user->first_name." ".$user->last_name;
-                    $invoice_data['user_address'] = $user->address;
+                    $invoice_data['user_address'] = $requests->s_address;
                     $invoice_data['base_price'] = $request_payment->base_price;
                     $invoice_data['other_price'] = 0;
                     $invoice_data['tax_price'] = $request_payment->tax_price;;

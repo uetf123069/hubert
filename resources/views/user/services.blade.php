@@ -20,16 +20,17 @@
                     $request_details = get_request_details($Service->request_id);
                     // dd($request_details);
                 ?>
-                    <p><h5>Provider</h5> {{ $Service->provider_name }}</p>
+                    <p><h5>{{ tr('provider') }}</h5> {{ $Service->provider_name }}</p>
                     @if($request_details->ProviderRating != null)
-                    <p><h5>Rating</h5> {{ $request_details->ProviderRating->rating }}</p>
-                    <p><h5>Review</h5> {{ $request_details->ProviderRating->comment }}</p>
+                    <p><h5>{{ tr('rating') }}</h5> {{ $request_details->ProviderRating->rating }}</p>
+                    <p><h5>{{ tr('review') }}</h5> {{ $request_details->ProviderRating->comment }}</p>
                     @endif
-                    <p><h5>Address</h5> {{$request_details->s_address}}</p>
-                    <p><h5>Base Price</h5> {{ $payment['base_price'] }}</p>
-                    <p><h5>Tax Price</h5> {{ $payment['tax_price'] }}</p>
-                    <p><h5>Total</h5> {{ $payment['total'] }}</p>
-                    <p><h5>Date</h5> {{date('H:i - d M, Y',strtotime($request_details->start_time))}}</p>
+                    <p><h5>{{ tr('address') }}</h5> {{$request_details->s_address}}</p>
+                    <p><h5>{{ tr('base_price') }}</h5> {{ $payment['base_price'] }}</p>
+                    <p><h5>{{ tr('tax_price') }}</h5> {{ $payment['tax_price'] }}</p>
+                    <p><h5>{{ tr('total') }}</h5> {{ $payment['total'] }}</p>
+                    <p><h5>{{ tr('date_time') }}</h5> {{date('H:i - d M, Y',strtotime($request_details->start_time))}}</p>
+
 
                 </div>
                 <div class="col-xs-4">
@@ -40,7 +41,7 @@
     </div>
     @endforeach
     @else
-        <h4>No Service History</h4>
+        <h4>{{ tr('no_service') }}</h4>
     @endif
 </div>
 @endsection

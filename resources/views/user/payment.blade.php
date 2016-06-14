@@ -10,7 +10,7 @@
         <div class="col-md-6">
             <div class="panel panel-default" data-widget='{"draggable": "false"}'>
                 <div class="panel-heading">
-                    <h2>Saved Cards</h2>
+                    <h2>{{ tr('saved_card') }}</h2>
                 </div>
                 <div class="panel-body">
                     @if(!empty($PaymentMethods->card))
@@ -46,7 +46,7 @@
                         </div>
                     @endforeach
                     @else
-                        <h4>No Cards Added</h4>
+                        <h4>{{ tr('no_cards') }}</h4>
                     @endif
                 </div>
             </div>
@@ -54,20 +54,25 @@
         <div class="col-md-6">
             <div class="panel panel-default" data-widget='{"draggable": "false"}'>
                 <div class="panel-heading">
-                    <h2>Paypal</h2>
+                    <h2>{{ tr('default_payment') }}</h2>
                 </div>
                 <div class="panel-body">
-                    <form action="{{ route('user.payment.paypal') }}" class="form-horizontal card" method="POST">
-                        <div class="form-group{{ $errors->has('paypal_email') ? ' has-error' : '' }}">
-                            <label for="#" class="col-sm-3 control-label">Paypal Mail ID</label>   
-                            <div class="col-sm-9">
-                                <input placeholder="Paypal Mail ID" type="email" name="paypal_email" class="form-control" value="ds">
-                                @if ($errors->has('paypal_email'))
-                                    <span class="help-block">
-                                        <strong>{{ $errors->first('paypal_email') }}</strong>
-                                    </span>
-                                @endif
+                    @if(!empty($PaymentModes->payment_modes))
+                    <form action="{{ route('user.payment.default') }}" class="form-horizontal card" method="POST">
+                        <div class="form-group{{ $errors->has('payment_mode') ? ' has-error' : '' }}">
+                            <div class="icheck-square">
+                                @foreach($PaymentModes->payment_modes as $Index => $Value)
+                                <div class="radio aero icheck">
+                                    <label class="">{{ $Value }}</label>
+                                    <input name="payment_mode" value="{{ $Index }}" @if(\Auth::user()->payment_mode == $Index) checked="" @endif type="radio">
+                                </div>
+                                @endforeach
                             </div>
+                            @if ($errors->has('payment_mode'))
+                            <span class="help-block">
+                                <strong>{{ $errors->first('payment_mode') }}</strong>
+                            </span>
+                            @endif
                         </div>
                         <div class="panel-footer">
                             <div class="row">
@@ -75,32 +80,35 @@
                             </div>
                         </div>
                     </form>
+                    @else
+                    <h4>{{ tr('no_default_payment') }}</h4>
+                    @endif
                 </div>
             </div>
         </div>
     </div>
     <div class="panel panel-default" data-widget='{"draggable": "false"}'>
         <div class="panel-heading">
-            <h2>Add Card</h2>
+            <h2>{{ tr('add_card') }}</h2>
         </div>
         <div class="panel-body" id="card-payment">
             <form action="{{ route('user.payment.card.add') }}" method="POST" id="payment-form" class="form-horizontal card">
                 <div class="row">
                     <div class="col-sm-6">
                             <div class="form-group">
-                                <label for="#" class="col-sm-4 control-label">Card Number</label>   
+                                <label for="#" class="col-sm-4 control-label">{{ tr('card_num') }}</label>   
                                 <div class="col-sm-8">
                                     <input placeholder="Card number" data-stripe="number" type="text" name="number" class="form-control">
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="#" class="col-sm-4 control-label">Full Name</label> 
+                                <label for="#" class="col-sm-4 control-label">{{ tr('full_name') }}</label> 
                                 <div class="col-sm-8">
                                     <input placeholder="Full name" type="text" name="name" class="form-control">
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="#" class="col-sm-4 control-label">Expiry</label>    
+                                <label for="#" class="col-sm-4 control-label">{{ tr('expiry') }}</label>    
                                 <div class="col-sm-8">
                                     <input placeholder="MM/YY" autocomplete=off id="expirydate"  name="expiry" type="text" class="form-control">
                                     <input type="hidden" data-stripe="exp-month" id="expiry-month" name="month" class="form-control">
@@ -119,7 +127,7 @@
                     </div>
                 </div>
                 <div class="panel-footer">
-                    <button type="submit" class="btn-primary btn col-sm-4 col-sm-offset-4">Submit</button>
+                    <button type="submit" class="btn-primary btn col-sm-4 col-sm-offset-4">{{ tr('submit') }}</button>
                 </div>
             </form>
         </div>

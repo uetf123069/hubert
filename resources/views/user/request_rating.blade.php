@@ -9,12 +9,12 @@
 @foreach($CurrentRequest->data as $Service)
 <div class="panel panel-default">
     <div class="panel-heading">
-        <ul class="stepy-header" id="service-state">
-            <li class="" id="wizard-head-0"><div>Step 1</div><span>Request</span></li>
-            <li class="" id="wizard-head-1"><div>Step 2</div><span>Waiting</span></li>
-            <li class="" id="wizard-head-2"><div>Step 3</div><span>Servicing</span></li>
-            <li class="" id="wizard-head-3"><div>Step 4</div><span>Payment</span></li>
-            <li class="stepy-active" id="wizard-head-4"><div>Step 5</div><span>Review</span></li>
+         <ul class="stepy-header" id="service-state">
+            <li class="" id="wizard-head-0"><div>Step 1</div><span>{{ tr('request') }}</span></li>
+            <li class="" id="wizard-head-1"><div>Step 2</div><span>{{ tr('waiting') }}</span></li>
+            <li class="" id="wizard-head-2"><div>Step 3</div><span>{{ tr('servicing') }}</span></li>
+            <li class="" id="wizard-head-3"><div>Step 4</div><span>{{ tr('payment') }}</span></li>
+            <li class="stepy-active" id="wizard-head-4"><div>Step 5</div><span>{{ tr('review') }}</span></li>
         </ul>
     </div>
     <div class="panel-body">
@@ -22,34 +22,34 @@
             @if(!empty($Service->before_image)||!empty($Service->before_image))
             <div class="col-md-6">
                 @if(!empty($Service->before_image))
-                <h2 class="text-center">Before</h2>                
+                <h2 class="text-center">{{ tr('before') }}</h2>                
                 <img class="col-xs-8 col-xs-offset-2" src="{{ $Service->before_image}}">
                 @endif
                 @if(!empty($Service->after_image))
-                <h2 class="text-center">After</h2>                
+                <h2 class="text-center">{{ tr('after') }}</h2>                
                 <img class="col-xs-8 col-xs-offset-2" src="{{ $Service->after_image }}">
                 @endif
             </div>
             @endif
 
             <div class="col-md-6">
-                <h2 class="text-center">Request Details</h2>
+                <h2 class="text-center">{{ tr('req_details') }}</h2>
                 <table class="table table-striped">
                     <tbody>
                         <tr>
-                            <th>Request #</th>
+                            <th>{{ tr('request') }} #</th>
                             <td data-title="Service" align="left">{{ $Service->request_id }}</td>
                         </tr>
                         <tr>
-                            <th>Service</th>
+                            <th>{{ tr('service_type') }}</th>
                             <td data-title="Service" align="left">{{ $Service->service_type_name }}</td>
                         </tr>
                         <tr>
-                            <th>Requested Time</th>
+                            <th>{{ tr('requested_time') }}</th>
                             <td data-title="Requested Time">{{ $Service->request_start_time }}</td>
                         </tr>
                         <tr>
-                            <th>Amount</th>
+                            <th>{{ tr('amount') }}</th>
                             <td data-title="Amount">{{ $Service->amount }}</td>
                         </tr>
                     </tbody>
@@ -60,14 +60,14 @@
                     <input name="request_id" value="{{ $Service->request_id }}" type="hidden">
                     <input name="provider_id" value="{{ $Service->request_id }}" type="hidden">
                     <div class="col-md-12">
-                        <h2 class="text-center">Rate your Provider</h2>
+                        <h2 class="text-center">{{ tr('rate_provider') }}</h2>
                         @if(!empty($Service->provider_picture))
                         <div class="form-group">
                             <img src="{{ $Service->provider_picture }}" class="col-xs-8 col-xs-offset-2 img-responsive img-circle">
                         </div>
                         @endif
                         <div class="form-group">
-                            <div><strong>Provider Name</strong> : {{ $Service->provider_name }}</div>
+                            <div><strong>{{ tr('provider_name') }}</strong> : {{ $Service->provider_name }}</div>
                         </div>
                         <div class="form-group">
                             <div class="col-xs-12">
@@ -76,13 +76,13 @@
                             <input value="3" name="rating" id="rating_value" type="hidden">
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Comment</label>
+                            <label class="col-sm-2 control-label">{{ tr('comments') }}</label>
                             <div class="col-sm-12">
                                 <textarea name="comments" class="form-control"></textarea>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-6 control-label">Add Provider to Favorite</label>
+                            <label class="col-sm-6 control-label">{{ tr('add_provider_to_fav') }}</label>
                             <div class="col-sm-4">
                                 <input class="bootstrap-switch" 
                                     data-on-text="<i class='fa fa-check'></i>" 
@@ -93,7 +93,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <button class="btn-primary btn col-xs-12" type="submit">Submit Review</button>
+                            <button class="btn-primary btn col-xs-12" type="submit">{{ tr('submit_review') }}</button>
                         </div>
                     </div>
                 </form>
