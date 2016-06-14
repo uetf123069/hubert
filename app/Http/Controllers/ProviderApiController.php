@@ -1487,7 +1487,8 @@ class ProviderApiController extends Controller
 								'users.mobile as user_mobile',
 								'users.id as user_id',
 								'requests.s_latitude',
-								'requests.s_longitude'
+								'requests.s_longitude',
+								'requests.is_paid'
 							)->get()->toArray();
 
         $requests_data = array();
@@ -1497,7 +1498,7 @@ class ProviderApiController extends Controller
 		{
             foreach($requests as $each_request){
                 $each_request['user_rating'] = DB::table('user_ratings')->where('user_id', $each_request['user_id'])->avg('rating') ?: 0;
-                unset($each_request['user_id']);
+                // unset($each_request['user_id']);
                 $requests_data[] = $each_request;
 
                 $allowed_status = array(REQUEST_COMPLETE_PENDING,REQUEST_COMPLETED,REQUEST_RATING);

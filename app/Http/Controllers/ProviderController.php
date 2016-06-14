@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-use App\Http\Requests;
+use App\Requests;
 
 use App\Http\Controllers\ProviderApiController;
 
@@ -392,6 +392,19 @@ class ProviderController extends Controller
         if($ApiResponse->success == true){
             return redirect(route('provider.ongoing'))->with('success', 'Service Cancelled');
         }elseif($ApiResponse->success == false){
+            return back()->with('error', 'Something Went Wrong');
+        }
+    }
+
+    public function paid_status(Request $request)
+    {
+        $request_state = Requests::find($request->request_id);
+        $request_state->is_paid = 1;
+        $request_state->save();
+
+        if($request_state){
+            return redirect(route('provider.ongoing'))->with('success', 'User Paid');
+        }else{
             return back()->with('error', 'Something Went Wrong');
         }
     }

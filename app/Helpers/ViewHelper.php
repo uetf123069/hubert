@@ -18,6 +18,8 @@ use App\ProviderRating;
 
 use App\UserRating;
 
+use App\User;
+
 use App\RequestPayment;
 
 function tr($key) {
@@ -140,4 +142,9 @@ function get_request_details($request_id)
 function get_payment_details($request_id)
 {
 	return RequestPayment::where('request_id',$request_id)->first();
+}
+
+function get_payment_type($user_id)
+{
+	return User::find($user_id)->payment_mode;
 }

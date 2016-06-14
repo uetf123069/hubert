@@ -23,6 +23,7 @@
 		</div>
 	</div>
 	@elseif( $request_data[0]->provider_status != 6)
+
 	<div class="col-md-12">
 		<div class="panel panel-default">
 			<div class="panel-body">
@@ -155,7 +156,18 @@
 		<div class="panel panel-default">
 			<div class="panel-heading"></div>
 			<div class="panel-body">
-				@if($request_data[0]->provider_status == 5)
+
+            @if(get_payment_type($request_data[0]->user_id) == 'cod' && $request_data[0]->provider_status == 5 && $request_data[0]->is_paid == 0)
+                <h3 style="text-align:center" class="mt0">{{ $request_data[0]->amount }}</h3>
+                <h6 style="text-align:center">Amount Need to Pay</h6>
+
+                <form method="POST" action="{{ route('provider.paid.status') }}" class="form-horizontal row-border">
+                    <input type="hidden" name="request_id" value="{{$request_data[0]->request_id}}">
+                            <div class="form-group">
+                                <button class="btn-primary btn col-xs-12" type="submit">Paid</button>
+                            </div>
+                    </form>
+                @elseif($request_data[0]->provider_status == 5)
 					<form method="POST" action="{{ route('provider.submit.review') }}" class="form-horizontal row-border">
 						<div class="col-md-12">
 							<h3 style="text-align:center" class="mt0">Rate This User</h3>
@@ -176,9 +188,7 @@
 						</div>
 					</form>
 
-				@elseif(get_payment_type($request_data[0]->user_id) == 'cod')
-
-                @else
+				@else
 				<h3 style="text-align:center" class="mt0">Location Details</h3>
             	<div style="height:100%;min-height:400px" id="user_location_map"></div>	
             	@endif					
