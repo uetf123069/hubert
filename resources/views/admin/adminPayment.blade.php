@@ -9,27 +9,27 @@
           <div class="panel-heading border">
             <ol class="breadcrumb mb0 no-padding">
               <li>
-                <a href="javascript:;">Home</a>
+                <a href="javascript:;">{{ tr('home') }}</a>
               </li>
               <li>
-                <a href="javascript:;">Payment</a>
+                <a href="javascript:;">{{ tr('payment') }}</a>
               </li>
-              <li class="active">Payment History</li>
+              <li class="active">{{ tr('payment_history') }}</li>
             </ol>
           </div>
           <div class="panel-body">
             <table id="payment" class="table table-bordered bordered table-striped table-condensed datatable">
               <thead>
                 <tr>
-                  <th>Request ID</th>
-                  <th>Transaction ID</th>
-                  <th>Base Price</th>
-                  <th>Total Time</th>
-                  <th>Time Price</th>
-                  <th>Tax Price</th>
-                  <th>Total Amount</th>
-                  <th>Payment Mode</th>
-                  <th>Payment Status</th>
+                  <th>{{ tr('request_id') }}</th>
+                  <th>{{ tr('transaction_id') }}</th>
+                  <th>{{ tr('base_price') }}</th>
+                  <th>{{ tr('total_time') }}</th>
+                  <th>{{ tr('time_price') }}</th>
+                  <th>{{ tr('tax_price') }}</th>
+                  <th>{{ tr('total_amount') }}</th>
+                  <th>{{ tr('payment_mode') }}</th>
+                  <th>{{ tr('payment_status') }}</th>
                   </tr>
               </thead>
               <tbody>
@@ -43,7 +43,7 @@
                   <td>{{$payment->tax_price}}</td>
                   <td>{{$payment->total}}</td>
                   <td>{{$payment->payment_mode}}</td>
-                  <td>@if($payment->status==0) Not Paid @else Paid @endif</td>
+                  <td>@if($payment->status==0) {{ tr('not_paid') }} @else {{ tr('paid') }} @endif</td>
                  
               </tr>
               @endforeach

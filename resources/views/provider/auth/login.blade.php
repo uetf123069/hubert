@@ -8,7 +8,7 @@
     <div class="row">
         <div class="col-md-4 col-md-offset-4">
             <div class="panel panel-default">
-                <div class="panel-heading"><h2>Login Form</h2></div>
+                <div class="panel-heading"><h2>{{ tr('login_form') }}</h2></div>
                 <div class="panel-body">
                     <form class="form-horizontal" id="validate-form" role="form" method="POST" action="{{ url('provider/login') }}">
                         {!! csrf_field() !!}
@@ -19,7 +19,7 @@
                                     <span class="input-group-addon">
                                         <i class="fa fa-user"></i>
                                     </span>
-                                    <input type="email" name="email" class="form-control" placeholder="Email Username" data-parsley-minlength="6" placeholder="At least 6 characters" value="{{ old('email') }}" required>
+                                    <input type="email" name="email" class="form-control" placeholder="Email Username" data-parsley-minlength="6" placeholder="{{ tr('password_ph') }}" value="{{ old('email') }}" required>
                                 </div>
                                 @if ($errors->has('email'))
                                     <span class="help-block">
@@ -35,7 +35,7 @@
                                     <span class="input-group-addon">
                                         <i class="fa fa-key"></i>
                                     </span>
-                                    <input type="password" class="form-control" name="password" placeholder="Password">
+                                    <input type="password" class="form-control" name="password" placeholder="{{ tr('password') }}">
                                 </div>
                                 @if ($errors->has('password'))
                                     <span class="help-block">
@@ -47,16 +47,16 @@
 
                         <div class="form-group">
                             <div class="col-xs-12">
-                                <a href="{{ url('provider/password/reset') }}" class="pull-left">Forgot password?</a>
+                                <a href="{{ url('provider/password/reset') }}" class="pull-left">{{ tr('forgot_password') }}</a>
 
                             </div>
                         </div>
 
                         <div class="panel-footer">
                             <div class="clearfix">
-                                <a href="{{ url('provider/register') }}" class="btn btn-default pull-left">Register</a>
+                                <a href="{{ url('provider/register') }}" class="btn btn-default pull-left">{{ tr('register') }}</a>
                                 <button type="submit" class="btn btn-primary pull-right">
-                                    <i class="fa fa-btn fa-sign-in"></i> Login
+                                    <i class="fa fa-btn fa-sign-in"></i> {{ tr('login') }}
                                 </button>
 
                             </div>

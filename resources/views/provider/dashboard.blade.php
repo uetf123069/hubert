@@ -9,7 +9,7 @@
 			<div class="col-md-3">
 				<div class="amazo-tile tile-white">
 					<div class="tile-heading">
-						<div class="title">Overall Request Count</div>
+						<div class="title">{{ tr('overall_request') }}</div>
 					</div>
 					<div class="tile-body">
 						<div class="content">{{get_provider_requests(Auth::guard('provider')->user()->id)}}  <i style="float:right" class="fa fa-smile-o"></i>  </div>
@@ -21,7 +21,7 @@
 			<div class="col-md-3">
 				<div class="amazo-tile tile-info" href="#"> 
 					<div class="tile-heading">
-				        <div class="title">Request Count on this month</div>
+				        <div class="title">{{ tr('month_request') }}</div>
 				    </div>
 				    <div class="tile-body">
 
@@ -35,7 +35,7 @@
 			<div class="col-md-3">
 				<div class="amazo-tile tile-white">
 					<div class="tile-heading">
-						<div class="title">Completed Request</div>
+						<div class="title">{{ tr('comp_request')}}</div>
 					</div>
 					<div class="tile-body">
 						<span class="content">{{get_provider_completed_request(Auth::guard('provider')->user()->id)}}  <i style="float:right" class="fa fa-certificate"></i> </span>
@@ -50,7 +50,7 @@
 			<div class="col-md-3">
 				<div class="amazo-tile tile-success">
 					<div class="tile-heading">
-						<span class="title">Provider Since</span>
+						<span class="title">{{ tr('provider_since') }}</span>
 					</div>
 					<div class="tile-body">
 						<span class="content">{{date('d M, Y',strtotime(Auth::guard('provider')->user()->created_at))}} <i style="float:right" class="fa fa-calendar"></i></span>

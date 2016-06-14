@@ -15,9 +15,9 @@
 	@if(empty($request_data))
 	<div class="col-md-12">
 		<div class="alert alert-dismissable alert-info">
-			<h3>There is no Ongoing Requests Right Now!</h3> 
+			<h3>{{ tr('no_ongoing') }}</h3> 
 
-			<p>Please Wait for your turn!</p>
+			<p>{{ tr('your_turn') }}</p>
 			<br>
 
 		</div>
@@ -28,7 +28,7 @@
 			<div class="panel-body">
 				<div class="contextual-progress">
                     <div class="clearfix">
-                        <div class="progress-title">Service Completion Status</div>
+                        <div class="progress-title">{{ tr('service_completion') }}</div>
                         @if($request_data[0]->provider_status == 1)
                         <div class="progress-percentage">15%</div>
 	                    </div>
@@ -68,7 +68,7 @@
 	<div class="col-md-6">
 		<div class="panel panel-default">
 			<div class="panel-body">
-				<h3 style="text-align:center" class="mt0">Request Details</h3>
+				<h3 style="text-align:center" class="mt0">{{ tr('req_details') }}</h3>
 
 				<div style="padding:30px">
                  <img style="margin:0 auto" src="{{ $request_data[0]->user_picture ? $request_data[0]->user_picture : asset('logo.png') }}" class="img-responsive img-circle">
@@ -77,31 +77,35 @@
 				  <table class="table table-striped">
                     <tbody>
                         <tr>
-                            <th>Request #</th>
+                            <th>{{ tr('request') }} #</th>
                             <td data-title="Request" align="left">{{ $request_data[0]->request_id }}</td>
                         </tr>
                         <tr>
-                            <th>User Name</th>
+                            <th>{{ tr('user_name') }}</th>
                             <td data-title="name" align="left">{{ $request_data[0]->user_name }}</td>
                         </tr>
                         <tr>
-                            <th>Rating</th>
+                            <th>{{ tr('user_mobile') }}</th>
+                            <td data-title="name" align="left">{{ $request_data[0]->user_mobile }}</td>
+                        </tr>
+                        <tr>
+                           <th>{{ tr('rating') }}</th>
                             <td data-title="rating" align="left">{{ $request_data[0]->user_rating }}</td>
                         </tr>
                         <tr>
-                            <th>Service</th>
+                            <th>{{ tr('services') }}</th>
                             <td data-title="Service" align="left">{{ $request_data[0]->service_type_name }}</td>
                         </tr>
                         <tr>
-                            <th>Requested Time</th>
+                            <th>{{ tr('requested_time') }}</th>
                             <td data-title="Requested Time">{{ $request_data[0]->request_start_time }}</td>
                         </tr>
                         <tr>
-                            <th>Amount</th>
+                            <th>{{ tr('amount') }}</th>
                             <td data-title="Amount">{{ $request_data[0]->amount }}</td>
                         </tr>
                         <tr>
-                            <th>Request Status</th>
+                            <th>{{ tr('req_status') }}</th>
                             <td data-title="Request Status">{{ get_user_request_status($request_data[0]->status) }}</td>
                         </tr>
 
@@ -112,20 +116,20 @@
                                     <input type="hidden" name="request_id" value="{{$request_data[0]->request_id}}">
                                     @if($request_data[0]->provider_status == 1)
                                     <input type="hidden" name="type" value="STARTED">
-                                    <button class="btn-primary  btn col-xs-12" type="submit">Started</button>
+                                    <button class="btn-primary  btn col-xs-12" type="submit">{{ tr('started') }}</button>
                                     @elseif($request_data[0]->provider_status == 2)
                                     <input type="hidden" name="type" value="ARRIVED">
-                                    <button class="btn-primary btn col-xs-12" type="submit">Arrived</button>
+                                    <button class="btn-primary btn col-xs-12" type="submit">{{ tr('arrived') }}</button>
                                     @elseif($request_data[0]->provider_status == 3)
                                     <input type="hidden" name="type" value="SERVICE_STARTED">
-                                    <strong>Before Image</strong> : <br> <input class="form-control" type="file" name="before_image" accept=".png,.jpg,.jpeg">
+                                    <strong>{{ tr('before_image') }}</strong> : <br> <input class="form-control" type="file" name="before_image" accept=".png,.jpg,.jpeg">
                                     <br>
-                                    <button class="btn-primary btn col-xs-12" type="submit">Service Started</button>
+                                    <button class="btn-primary btn col-xs-12" type="submit">{{ tr('service_started') }}</button>
                                     @elseif($request_data[0]->provider_status == 4)
                                     <input type="hidden" name="type" value="SERVICE_COMPLETED">
-                                    <strong>After Image</strong> :  <br><input class="form-control" type="file" name="after_image" accept=".png,.jpg,.jpeg">
+                                    <strong>{{ tr('after_image') }}</strong> :  <br><input class="form-control" type="file" name="after_image" accept=".png,.jpg,.jpeg">
                                     <br>
-                                    <button class="btn-primary btn col-xs-12" type="submit">Service Completed</button>
+                                    <button class="btn-primary btn col-xs-12" type="submit">{{ tr('service_completed') }}</button>
                                     @endif
                                 </form>
                             </td>
@@ -136,7 +140,7 @@
                         		 <form action="{{ route('provider.cancel.service') }}" method="POST">
                                     {!! csrf_field() !!}
                                     <input type="hidden" name="request_id" value="{{$request_data[0]->request_id}}">
-                                    <button class="btn-danger btn col-xs-12" type="submit">Cancel Request</button>
+                                    <button class="btn-danger btn col-xs-12" type="submit">{{ tr('cancel_requests') }}</button>
                                 </form>
                         	</td>
                         </tr>
@@ -154,26 +158,26 @@
 				@if($request_data[0]->provider_status == 5)
 					<form method="POST" action="{{ route('provider.submit.review') }}" class="form-horizontal row-border">
 						<div class="col-md-12">
-							<h3 style="text-align:center" class="mt0">Rate This User</h3>
+							<h3 style="text-align:center" class="mt0">{{ tr('rate_this_user') }}</h3>
 							<div class="form-group">
 								<div class="col-xs-12"><div name="samep" id="range-month"></div></div>
 								<input type="hidden" name="rating" id="rating_value">
 							</div>
 							<div class="form-group">
-								<label class="col-sm-2 control-label">Comment</label>
+								<label class="col-sm-2 control-label">{{ tr('comments') }}</label>
 								<div class="col-sm-12">
 									<textarea name="comments" class="form-control"></textarea>
                                     <input type="hidden" name="request_id" value="{{$request_data[0]->request_id}}">
 								</div>
 							</div>
 							<div class="form-group">
-								<button class="btn-primary btn col-xs-12" type="submit">Submit Review</button>
+								<button class="btn-primary btn col-xs-12" type="submit">{{ tr('submit') }} Review</button>
 							</div>
 						</div>
 					</form>
 
 				@else
-				<h3 style="text-align:center" class="mt0">Location Details</h3>
+				<h3 style="text-align:center" class="mt0">{{ tr('location_details') }}</h3>
             	<div style="height:100%;min-height:400px" id="user_location_map"></div>	
             	@endif					
 			</div>

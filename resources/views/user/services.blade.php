@@ -11,19 +11,26 @@
     <div class="col-md-4">
         <div class="panel panel-primary">
             <div class="panel-heading">
-                <h2>{{ get_service_name($Service->request_type) }}</h2>
+                <h4>{{ get_service_name($Service->request_type) }}</h4>
             </div>
             <div class="panel-body">
                 <div class="col-xs-8">
-                <?php $payment = get_payment_details($Service->request_id);
-                $request_details = get_request_details($Service->request_id);
+                <?php 
+                    $payment = get_payment_details($Service->request_id);
+                    $request_details = get_request_details($Service->request_id);
+                    // dd($request_details);
                 ?>
-                    <p>Provider : <strong>{{ $Service->provider_name }}</strong></p>
-                    <p>Address : {{$request_details->s_address}}</p>
-                    <p>Base Price : {{ $payment['base_price'] }}</p>
-                    <p>Tax Price : {{ $payment['tax_price'] }}</p>
-                    <p>Total : {{ $payment['total'] }}</p>
-                    <p>Started On : {{date('H:i - d M, Y',strtotime($request_details->start_time))}}</p>
+                    <p><h5>{{ tr('provider') }}</h5> {{ $Service->provider_name }}</p>
+                    @if($request_details->ProviderRating != null)
+                    <p><h5>{{ tr('rating') }}</h5> {{ $request_details->ProviderRating->rating }}</p>
+                    <p><h5>{{ tr('review') }}</h5> {{ $request_details->ProviderRating->comment }}</p>
+                    @endif
+                    <p><h5>{{ tr('address') }}</h5> {{$request_details->s_address}}</p>
+                    <p><h5>{{ tr('base_price') }}</h5> {{ $payment['base_price'] }}</p>
+                    <p><h5>{{ tr('tax_price') }}</h5> {{ $payment['tax_price'] }}</p>
+                    <p><h5>{{ tr('total') }}</h5> {{ $payment['total'] }}</p>
+                    <p><h5>{{ tr('date_time') }}</h5> {{date('H:i - d M, Y',strtotime($request_details->start_time))}}</p>
+
 
                 </div>
                 <div class="col-xs-4">
@@ -34,29 +41,27 @@
     </div>
     @endforeach
     @else
-        <h4>No Service History</h4>
+        <h4>{{ tr('no_service') }}</h4>
     @endif
 </div>
 @endsection
 
 @section('scripts')
 <script type="text/javascript" src="{{ asset('assets/user/js/application.js') }}"></script>
-<script type="text/javascript" src="{{ asset('assets/user/js/demo.js') }}"></script>
-<script type="text/javascript" src="{{ asset('assets/user/js/demo-switcher.js') }}"></script>
-<script type="text/javascript" src="{{ asset('assets/user/js/demo-index.js') }}"></script>
 @endsection
 
-@section('unusedscripts')
-
-<!-- Load page level scripts-->
-
-<script type="text/javascript" src="{{ asset('assets/plugins/fullcalendar/fullcalendar.min.js') }}"></script>                  <!-- FullCalendar -->
-<script type="text/javascript" src="{{ asset('assets/plugins/wijets/wijets.js') }}"></script>                                  <!-- Wijet -->
-<script type="text/javascript" src="{{ asset('assets/plugins/charts-chartistjs/chartist.min.js') }}"></script>                 <!-- Chartist -->
-<script type="text/javascript" src="{{ asset('assets/plugins/charts-chartistjs/chartist-plugin-tooltip.js') }}"></script>      <!-- Chartist -->
-<script type="text/javascript" src="{{ asset('assets/plugins/form-daterangepicker/moment.min.js') }}"></script>                <!-- Moment.js for Date Range -->
-<script type="text/javascript" src="{{ asset('assets/plugins/form-daterangepicker/daterangepicker.js') }}"></script>           <!-- Date Range Picker -->
-
-<!-- End loading page level scripts-->
-
+@section('styles')
+<style type="text/css">
+    .row {
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display:         flex;
+        flex-wrap: wrap;
+    }
+    .row > [class*='col-'] {
+        display: flex;
+        flex-direction: column;
+    }
+</style>
 @endsection

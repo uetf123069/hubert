@@ -1226,9 +1226,26 @@ class UserapiController extends Controller
                             ->leftJoin('users', 'users.id', '=', 'requests.user_id')
                             ->leftJoin('providers', 'providers.id', '=', 'requests.confirmed_provider')
                             ->leftJoin('service_types', 'service_types.id', '=', 'requests.request_type')
-                            ->select('requests.id as request_id', 'requests.request_type as request_type', 'service_types.name as service_type_name',                                        'requests.after_image as after_image',
-                                        'requests.before_image as before_image','requests.end_time as end_time', 'request_start_time as request_start_time', 'requests.status','providers.id as provider_id', DB::raw('CONCAT(providers.first_name, " ", providers.last_name) as provider_name'),'providers.picture as provider_picture','requests.provider_status', 'requests.amount', DB::raw('CONCAT(users.first_name, " ", users.last_name) as user_name'), 'users.picture as user_picture', 'users.id as user_id','requests.s_latitude', 'requests.s_longitude')
-                            ->get()->toArray();
+                            ->select(
+                                'requests.id as request_id',
+                                'requests.request_type as request_type',
+                                'service_types.name as service_type_name',
+                                'requests.after_image as after_image',
+                                'requests.before_image as before_image',
+                                'requests.end_time as end_time',
+                                'request_start_time as request_start_time',
+                                'requests.status','providers.id as provider_id',
+                                DB::raw('CONCAT(providers.first_name, " ", providers.last_name) as provider_name'),
+                                'providers.picture as provider_picture',
+                                'providers.mobile as provider_mobile',
+                                'requests.provider_status',
+                                'requests.amount',
+                                DB::raw('CONCAT(users.first_name, " ", users.last_name) as user_name'),
+                                'users.picture as user_picture',
+                                'users.id as user_id',
+                                'requests.s_latitude',
+                                'requests.s_longitude'
+                            )->get()->toArray();
 
         $requests_data = array();
         $invoice = array();
@@ -1718,19 +1735,17 @@ class UserapiController extends Controller
 
             $payment_data = $data = $card_data = array();
 
-            if($user->payment_mode == CARD) {
-                if($user_cards = Cards::where('user_id' , $request->id)->get()) {
-                    foreach ($user_cards as $c => $card) {
-                        $data['id'] = $card->id;
-                        $data['customer_id'] = $card->customer_id;
-                        $data['card_id'] = $card->card_token;
-                        $data['last_four'] = $card->last_four;
-                        $data['is_default']= $card->is_default;
+            if($user_cards = Cards::where('user_id' , $request->id)->get()) {
+                foreach ($user_cards as $c => $card) {
+                    $data['id'] = $card->id;
+                    $data['customer_id'] = $card->customer_id;
+                    $data['card_id'] = $card->card_token;
+                    $data['last_four'] = $card->last_four;
+                    $data['is_default']= $card->is_default;
 
-                        array_push($card_data, $data);
-                    }
-                } 
-            }
+                    array_push($card_data, $data);
+                }
+            } 
 
             $response_array = Helper::null_safe(array('success' => true, 'payment_mode' => $user->payment_mode , 'card' => $card_data));
 

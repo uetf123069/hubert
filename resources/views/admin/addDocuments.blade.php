@@ -12,9 +12,9 @@
         <div class="panel mb25">
           <div class="panel-heading border">
           @if(isset($name))
-          Edit Document Type
+          {{ tr('edit_document') }}
           @else
-            Create New Document Type
+            {{ tr('create_document') }}
           @endif
           </div>
           <div class="panel-body">
@@ -22,7 +22,7 @@
               <div class="col-lg-12">
                 <form class="form-horizontal bordered-group" action="{{route('adminAddDocumentProcess')}}" method="POST" enctype="multipart/form-data" role="form">
                   <div class="form-group">
-                    <label class="col-sm-2 control-label">Document Name</label>
+                    <label class="col-sm-2 control-label">{{ tr('document_name') }}</label>
                     <div class="col-sm-10">
                       <input type="text" name="document_name" value="{{ isset($document->name) ? $document->name : '' }}" required class="form-control">
                     </div>
@@ -32,7 +32,7 @@
                 <div class="form-group">
                   <label></label>
                   <div>
-                    <button class="btn btn-primary mr10">Submit</button>
+                    <button class="btn btn-primary mr10">{{ tr('submit') }}</button>
                   </div>
                 </div>
 

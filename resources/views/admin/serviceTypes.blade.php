@@ -7,17 +7,17 @@
 @include('notification.notify')
         <div class="panel">
           <div class="panel-heading border">
-           Service Type Lists
-            <a style="float: right; display: inline-block; " href="{{ route('adminAddServices') }}"><button type="button" class="btn btn-primary btn-outline">Add Service Types</button></a>
+           {{ tr('service_list') }}
+            <a style="float: right; display: inline-block; " href="{{ route('adminAddServices') }}"><button type="button" class="btn btn-primary btn-outline">{{ tr('add_service') }}</button></a>
           </div>
           <div class="panel-body">
             <table id="serviceType" class="table table-bordered bordered table-striped table-condensed datatable">
               <thead>
                 <tr>
-                  <th>ID</th>
-                  <th>Name</th>
-                  <th>Status</th>
-                  <th>Action</th>
+                  <th>{{ tr('id') }}</th>
+                  <th>{{ tr('name') }}</th>
+                  <th>{{ tr('status') }}</th>
+                  <th>{{ tr('action') }}</th>
                   </tr>
               </thead>
               <tbody>
@@ -25,18 +25,18 @@
               <tr>
                   <td>{{$index + 1 }}</td>
                   <td>{{$service->name}}</td>
-                  <td>@if($service->status == 1) Default @else NA @endif</td>
+                  <td>@if($service->status == 1) {{ tr('default') }} @else NA @endif</td>
                   <td>
                       <div class="input-group-btn">
-                          <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">Action
+                          <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">{{ tr('action') }}
                             <span class="caret"></span>
                           </button>
                           <ul class="dropdown-menu">
                             <li>
-                              <a href="{{route('adminServiceEdit', array('id' => $service->id))}}">Edit</a>
+                              <a href="{{route('adminServiceEdit', array('id' => $service->id))}}">{{ tr('edit') }}</a>
                             </li>
                             <li>
-                              <a onclick="return confirm('Are you sure want to Delete?')" href="{{route('adminServiceDelete', array('id' => $service->id))}}">Delete</a>
+                              <a onclick="return confirm('{{ tr('delete_confirmation') }}')" href="{{route('adminServiceDelete', array('id' => $service->id))}}">{{ tr('delete') }}</a>
                             </li>
                           </ul>
                         </div>

@@ -8,11 +8,11 @@
 <div class="panel panel-default">
     <div class="panel-heading">
         <ul class="stepy-header" id="service-state">
-            <li class="stepy-active" id="wizard-head-0"><div>Step 1</div><span>Request</span></li>
-            <li class="" id="wizard-head-1"><div>Step 2</div><span>Waiting</span></li>
-            <li class="" id="wizard-head-2"><div>Step 3</div><span>Servicing</span></li>
-            <li class="" id="wizard-head-3"><div>Step 4</div><span>Payment</span></li>
-            <li class="" id="wizard-head-4"><div>Step 5</div><span>Review</span></li>
+            <li class="stepy-active" id="wizard-head-0"><div>Step 1</div><span>{{ tr('request') }}</span></li>
+            <li class="" id="wizard-head-1"><div>Step 2</div><span>{{ tr('waiting') }}</span></li>
+            <li class="" id="wizard-head-2"><div>Step 3</div><span>{{ tr('servicing') }}</span></li>
+            <li class="" id="wizard-head-3"><div>Step 4</div><span>{{ tr('payment') }}</span></li>
+            <li class="" id="wizard-head-4"><div>Step 5</div><span>{{ tr('review') }}</span></li>
         </ul>
     </div>
     <div class="panel-body">
@@ -22,16 +22,16 @@
 
             <div class="row">
                 <div class="col-md-6">
-                    <label for="service_type" class="control-label"><h5 style="margin-bottom: 0;">Select Service Type</h5></label>
+                    <label for="service_type" class="control-label"><h5 style="margin-bottom: 0;">{{ tr('select_service') }}</h5></label>
                     <select tabindex="1" name="service_type" id="service_type" class="form-control">
-                        <option disabled>Select Service Type</option>
+                        <option disabled>{{ tr('select_service') }}</option>
                         @foreach($ServiceTypes->services as $ServiceType)
                         <option value="{{ $ServiceType->id }}">{{ $ServiceType->name }}</option>
                         @endforeach
                     </select>
                 </div>
                 <div class="col-md-6">
-                    <label for="pac-input" class="control-label"><h5 style="margin-bottom: 0;">Search Location</h5></label>
+                    <label for="pac-input" class="control-label"><h5 style="margin-bottom: 0;">{{ tr('search_loc') }}</h5></label>
                     <input tabindex="2" id="pac-input" class="controls" type="text" placeholder="Enter a location" name="s_address">
                 </div>
             </div>
@@ -45,7 +45,7 @@
             <div class="row">
                 <div class="col-xs-12">
                     <div class="panel-footer">
-                        <a class="btn-primary btn col-xs-4 col-xs-offset-4" tabindex="3" id="submit_request">Submit Request</a>
+                        <a class="btn-primary btn col-xs-4 col-xs-offset-4" tabindex="3" id="submit_request">{{ tr('submit_req') }}</a>
                     </div>
                 </div>
             </div>

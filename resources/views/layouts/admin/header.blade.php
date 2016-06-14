@@ -41,15 +41,15 @@
 
         <li>
             <a href="javascript:;" data-toggle="dropdown">
-                <img src="{{Auth::guard('admin')->user()->picture? Auth::guard('admin')->user()->picture : asset('logo.png')}}" class="header-avatar img-circle ml10" alt="user" title="user">
+                <img src="{{Auth::guard('admin')->user()->picture? Auth::guard('admin')->user()->picture : asset('user_default.png')}}" class="header-avatar img-circle ml10" alt="user" title="user">
                 <span class="pull-left">{{Auth::guard('admin')->user()->name}}</span>
             </a>
             <ul class="dropdown-menu">
                 <li>
-                    <a href="{{ route('adminProfile')}}">Profile</a>
+                    <a href="{{ route('adminProfile')}}">{{ tr('profile') }}</a>
                 </li>
                 <li>
-                    <a href="{{ route('admin.logout') }}">Logout</a>
+                    <a href="{{ route('admin.logout') }}">{{ tr('logout')}}</a>
                 </li>
             </ul>
 

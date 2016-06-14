@@ -6,65 +6,103 @@
 
 @section('content')
 
-@foreach($CurrentRequest->data as $Service)
+@foreach($CurrentRequest->data as $Index => $Service)
 <div class="panel panel-default">
     <div class="panel-heading">
         <ul class="stepy-header" id="service-state">
-            <li class="" id="wizard-head-0"><div>Step 1</div><span>Request</span></li>
-            <li class="" id="wizard-head-1"><div>Step 2</div><span>Waiting</span></li>
-            <li class="" id="wizard-head-2"><div>Step 3</div><span>Servicing</span></li>
-            <li class="stepy-active" id="wizard-head-3"><div>Step 4</div><span>Payment</span></li>
-            <li class="" id="wizard-head-4"><div>Step 5</div><span>Review</span></li>
+            <li class="stepy-active" id="wizard-head-0"><div>Step 1</div><span>{{ tr('request') }}</span></li>
+            <li class="" id="wizard-head-1"><div>Step 2</div><span>{{ tr('waiting') }}</span></li>
+            <li class="" id="wizard-head-2"><div>Step 3</div><span>{{ tr('servicing') }}</span></li>
+            <li class="stepy-active" id="wizard-head-3"><div>Step 4</div><span>{{ tr('payment') }}</span></li>
+            <li class="" id="wizard-head-4"><div>Step 5</div><span>{{ tr('review') }}</span></li>
         </ul>
     </div>
     <div class="panel-body">
         <div class="row">
+            @if(!empty($Service->before_image)||!empty($Service->before_image))
             <div class="col-md-6">
+                @if(!empty($Service->before_image))
+                <h2 class="text-center">Before</h2>                
+                <img class="col-xs-12" src="{{ $Service->before_image ? $Service->before_image : asset('logo.png') }}">
+                @endif
+                @if(!empty($Service->after_image))
+                <h2 class="text-center">After</h2>                
+                <img class="col-xs-12" src="{{ $Service->after_image ? $Service->after_image : asset('logo.png') }}">
+                @endif
+            </div>
+            @endif
+            <div class="col-md-6">
+                <h2 class="text-center">{{ tr('req_details') }}</h2>
                 <table class="table table-striped">
                     <tbody>
                         <tr>
-                            <th>Request #</th>
+                            <th>{{ tr('request') }} #</th>
                             <td data-title="Service" align="left">{{ $Service->request_id }}</td>
                         </tr>
                         <tr>
-                            <th>Service</th>
+                            <th>{{ tr('service_type') }}</th>
                             <td data-title="Service" align="left">{{ $Service->service_type_name }}</td>
                         </tr>
                         <tr>
-                            <th>Requested Time</th>
+                            <th>{{ tr('requested_time') }}</th>
                             <td data-title="Requested Time">{{ $Service->request_start_time }}</td>
                         </tr>
                         <tr>
-                            <th>Amount</th>
-                            <td data-title="Amount">{{ $Service->amount }}</td>
+                            <th>{{ tr('finish_time') }}</th>
+                            <td data-title="Requested Time">{{ $Service->end_time }}</td>
                         </tr>
                         <tr>
-                            <th>Request Status</th>
-                            <td data-title="Request Status">{{ get_user_request_status($Service->status) }}</td>
+                            <th>{{ tr('provider_name') }}</th>
+                            <td data-title="Provider Name">{{ $Service->provider_name }}</td>
                         </tr>
                         <tr>
-                            <th>Provider Status</th>
-                            <td data-title="Provider Status">{{ get_provider_request_status($Service->provider_status) }}</td>
-                        </tr>
-                        @if($Service->provider_status)
-                        <tr>
-                            <th>Provider Rating</th>
+                            <th>{{ tr('provider_rating') }}</th>
                             <td data-title="Provider Rating">{{ $Service->rating }}</td>
+                        </tr>
+                        <tr>
+                            <th>Provider Mobile</th>
+                            <td data-title="Provider Rating">{{ $Service->provider_mobile }}</td>
+                        </tr>
+                        @if($CurrentRequest->invoice != "")
+                        <tr>
+                            <td colspan="2">
+                                <h4 class="text-center">{{ tr('payment_details') }}</h4>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>{{ tr('base_price') }}</th>
+                            <td data-title="Base Price">{{ $CurrentRequest->invoice[$Index]->base_price }}</td>
+                        </tr>
+                        <tr>
+                            <th>{{ tr('time_price') }}</th>
+                            <td data-title="Time Price">{{ $CurrentRequest->invoice[$Index]->time_price }}</td>
+                        </tr>
+                        <tr>
+                            <th>{{ tr('tax_price') }}</th>
+                            <td data-title="Tax">{{ $CurrentRequest->invoice[$Index]->tax_price }}</td>
+                        </tr>
+                        <tr>
+                            <th>{{ tr('total_amount') }}</th>
+                            <td data-title="Total Amount">{{ $CurrentRequest->invoice[$Index]->total }}</td>
+                        </tr>
+                        @else
+                        <tr>
+                            <th>{{ tr('amount') }}</th>
+                            <td data-title="Amount">{{ $Service->amount }}</td>
                         </tr>
                         @endif
                     </tbody>
-                    <!-- <caption>List of countries by distribution wealth</caption> -->
                 </table>
             </div>
             <div class="col-md-6 row-border">
-                <h3 class="mt0 text-center">Select Payment Option</h3>
+                <h2 class="text-center">{{ tr('select_payment') }}</h2>
                 <form action="{{ route('user.services.request.payment') }}" class="form-horizontal" method="POST">
                     <input type="hidden" name="request_id" value="{{ $Service->request_id }}">
                     <div class="form-group{{ $errors->has('payment_mode') ? ' has-error' : '' }}">
-                        <label for="#" class="col-sm-3 control-label">Select Payment Method</label>   
+                        <label for="#" class="col-sm-3 control-label">{{ tr('select_payment_method') }}</label>   
                         <div class="col-sm-9">
                             <select tabindex="1" name="payment_mode" id="payment_mode" class="form-control">
-                                <option disabled>Select Payment Mode</option>
+                                <option disabled>{{ tr('select_payment_mode') }}</option>
                                 @foreach($PaymentMethods->payment_modes as $Index => $PaymentMethod)
                                 <option value="{{ $PaymentMethod }}">{{ $PaymentMethod }}</option>
                                 @endforeach
@@ -76,7 +114,7 @@
                             @endif
                         </div>
                     </div>
-                    <button class="btn-primary btn col-sm-4 col-sm-offset-4">Submit</button>
+                    <button class="btn-primary btn col-sm-4 col-sm-offset-4">{{ tr('submit') }}</button>
                 </form>
             </div>
         </div>
@@ -88,33 +126,6 @@
 
 @section('scripts')
 <script type="text/javascript" src="{{ asset('assets/user/js/application.js') }}"></script>
-<script type="text/javascript">
-    var providerStatus = {{ $CurrentRequest->data[0]->provider_status }};
-    var serviceStatus = {{ $CurrentRequest->data[0]->status }};
-
-    window.setInterval(function(){
-        $.ajax({
-            'url' : '{{route("user.services.updates")}}',
-            'type' : 'GET',
-            'success' : function(response) {
-                if (response.success == true) {
-                    console.log('true');
-                    if(response.data != "") {
-                        if(response.data[0].provider_status == providerStatus && response.data[0].status == serviceStatus) {
-                        } else {
-                            if(response.data[0].provider_status > providerStatus && response.data[0].provider_status == 4) {
-                                document.getElementById('cancel-request').style.display = 'none';
-                            } else {
-                                location.reload(); 
-                            }
-
-                        } 
-                    }
-                }
-            }
-        });
-    }, 5000);
-</script>
 @endsection
 
 @section('styles')

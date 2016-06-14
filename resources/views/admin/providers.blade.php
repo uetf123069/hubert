@@ -8,21 +8,21 @@
         <div class="panel">
           <div class="panel-heading border">
             Providers Lists
-            <a style="float: right; display: inline-block; " href="{{ route('admin.addprovider') }}"><button type="button" class="btn btn-primary btn-outline">Add Providers</button></a>
+            <a style="float: right; display: inline-block; " href="{{ route('admin.addprovider') }}"><button type="button" class="btn btn-primary btn-outline">{{ tr('add_providers') }}</button></a>
           </div>
           <div class="panel-body">
             <table id="providers" class="table table-bordered bordered table-striped table-condensed datatable">
               <thead>
                 <tr>
-                  <th>ID</th>
-                  <th>Full Name</th>
-                  <th>Email</th>
-                  <th>Total Requests</th>
-                  <th>Accepted Requests</th>
-                  <th>Cancelled Requests</th>
-                  <th>Availability</th>
-                  <th>Status</th>
-                  <th>Action</th>
+                  <th>{{ tr('id') }}</th>
+                  <th>{{ tr('full_name') }}</th>
+                  <th>{{ tr('email') }}</th>
+                  <th>{{ tr('total_request') }}</th>
+                  <th>{{ tr('accepted_requests') }}</th>
+                  <th>{{ tr('cancel_request') }}</th>
+                  <th>{{ tr('availability') }}</th>
+                  <th>{{ tr('status') }}</th>
+                  <th>{{ tr('action') }}</th>
                   </tr>
               </thead>
               <tbody>
@@ -34,33 +34,33 @@
                   <td>{{$provider->total_requests}}</td>
                   <td>{{$provider->accepted_requests}}</td>
                   <td>{{$provider->total_requests -$provider->accepted_requests }}</td>
-                  <td>@if($provider->is_available==1) Yes @else N/A @endif</td>
-                  <td>@if($provider->is_approved==1) Approved @else Unapproved @endif</td>
+                  <td>@if($provider->is_available==1) {{ tr('yes')}} @else N/A @endif</td>
+                  <td>@if($provider->is_approved==1) {{ tr('approved') }} @else {{ tr('unapproved') }} @endif</td>
                   
                   <td>
                       <div class="input-group-btn">
-                          <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">Action
+                          <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">{{ tr('action') }}
                             <span class="caret"></span>
                           </button>
                           <ul class="dropdown-menu">
                             <li>
-                              <a href="{{route('adminProviderEdit', array('id' => $provider->id))}}">Edit</a>
+                              <a href="{{route('adminProviderEdit', array('id' => $provider->id))}}">{{ tr('edit') }}</a>
                             </li>
                             <li>
                             @if($provider->is_approved==0)
-                              <a href="{{route('adminProviderApprove', array('id' => $provider->id, 'status'=>1))}}">Approve</a>
+                              <a href="{{route('adminProviderApprove', array('id' => $provider->id, 'status'=>1))}}">{{ tr('approve') }}</a>
                             @else
-                              <a href="{{route('adminProviderApprove', array('id' => $provider->id, 'status' => 0))}}">Decline</a>
+                              <a href="{{route('adminProviderApprove', array('id' => $provider->id, 'status' => 0))}}">{{ tr('decline') }}</a>
                             @endif
                             </li>
                             <li>
-                              <a onclick="return confirm('Are you sure want to Delete?')" href="{{route('adminProviderDelete', array('id' => $provider->id))}}">Delete</a>
+                              <a onclick="return confirm('{{ tr('delete_confirmation') }}')" href="{{route('adminProviderDelete', array('id' => $provider->id))}}">{{ tr('delete') }}</a>
                             </li>
                             <li>
-                              <a href="{{route('adminProviderHistory', array('id' => $provider->id))}}">View History</a>
+                              <a href="{{route('adminProviderHistory', array('id' => $provider->id))}}">{{ tr('view_history') }}</a>
                             </li>
                             <li>
-                              <a href="{{route('adminProviderDocument', array('id' => $provider->id))}}">View Documents</a>
+                              <a href="{{route('adminProviderDocument', array('id' => $provider->id))}}">{{ tr('view_docs') }}</a>
                             </li>
                             
                           </ul>
