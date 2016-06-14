@@ -19,10 +19,10 @@
         <li class="dropdown toolbar-icon-bg">
             <a href="#" class="dropdown-toggle" data-toggle='dropdown'><span class="icon-bg"><i class="fa fa-fw fa-user"></i></span></a>
             <ul class="dropdown-menu userinfo arrow">
-                <li><a href="{{ route('provider.profile') }}"><span class="pull-left">Profile</span> <span class="badge badge-info">80%</span></a></li>
-                <li><a href="{{ route('provider.documents') }}"><span class="pull-left">Documents</span> <i class="pull-right fa fa-user"></i></a></li>
+                <li><a href="{{ route('provider.profile') }}"><span class="pull-left">{{ tr('profile') }}</span> <span class="badge badge-info">80%</span></a></li>
+                <li><a href="{{ route('provider.documents') }}"><span class="pull-left">{{ tr('documents') }}</span> <i class="pull-right fa fa-user"></i></a></li>
                 <li class="divider"></li>
-                <li><a href="{{ route('provider.logout') }}"><span class="pull-left">Sign Out</span> <i class="pull-right fa fa-sign-out"></i></a></li>
+                <li><a href="{{ route('provider.logout') }}"><span class="pull-left">{{ tr('logout')}}</span> <i class="pull-right fa fa-sign-out"></i></a></li>
             </ul>
         </li>
 

@@ -8,8 +8,8 @@
 @section('page_tabs')
 <div class="page-tabs">
     <ul class="nav nav-tabs">
-		<li class="active"><a data-toggle="tab" href="#tab1">Account Details</a></li>
-		<li><a data-toggle="tab" href="#tab2">Password</a></li>
+		<li class="active"><a data-toggle="tab" href="#tab1">{{ tr('account_details') }}</a></li>
+		<li><a data-toggle="tab" href="#tab2">{{ tr('password') }}</a></li>
     </ul>
 </div>
 @endsection
@@ -22,7 +22,7 @@
 				<div class="col-md-12">
 					<div class="panel panel-default" data-widget='{"draggable": "false"}'>
 						<div class="panel-heading">
-							<h2>Update Profile</h2>
+							<h2>{{ tr('update_profile') }}</h2>
 							<div class="panel-ctrls"
 								data-actions-container="" 
 								data-action-collapse='{"target": ".panel-body"}'
@@ -34,7 +34,7 @@
 							<form action="{{ route('user.profile.save') }}" method="POST" class="form-horizontal row-border" enctype="multipart/form-data">
 
 		                        <div class="form-group{{ $errors->has('first_name') ? ' has-error' : '' }}">
-		                            <label class="col-md-2 control-label">First Name</label>
+		                            <label class="col-md-2 control-label">{{ tr('first_name') }}</label>
 
 		                            <div class="col-md-8">
 		                                <input type="text" class="form-control" name="first_name" value="{{ Auth::user()->first_name }}">
@@ -48,7 +48,7 @@
 		                        </div>
 
 		                        <div class="form-group{{ $errors->has('last_name') ? ' has-error' : '' }}">
-		                            <label class="col-md-2 control-label">Last Name</label>
+		                            <label class="col-md-2 control-label">{{ tr('last_name') }}</label>
 
 		                            <div class="col-md-8">
 		                                <input type="text" class="form-control" name="last_name" value="{{ Auth::user()->last_name }}">
@@ -62,7 +62,7 @@
 		                        </div>
 
 		                        <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
-		                            <label class="col-md-2 control-label">e-Mail</label>
+		                            <label class="col-md-2 control-label">{{ tr('email') }}</label>
 
 		                            <div class="col-md-8">
 		                                <input type="email" class="form-control" name="email" value="{{ Auth::user()->email }}" readonly="true">
@@ -76,7 +76,7 @@
 		                        </div>
 									
 								<div class="form-group">
-									<label class="col-sm-2 control-label">Gender</label>
+									<label class="col-sm-2 control-label">{{ tr('gender') }}</label>
 									<div class="col-sm-8">
 										<label class="radio-inline icheck">
 											<input type="radio" value="male" name="gender" @if(Auth::user()->gender == 'male')checked="true"@endif>
@@ -89,7 +89,7 @@
 								</div>
 
 								<div class="form-group">
-									<label class="col-sm-2 control-label">Profile Picture</label>
+									<label class="col-sm-2 control-label">{{ tr('profile_pic') }}</label>
 									<div class="col-sm-5">
 										<div class="fileinput fileinput-new" style="width: 100%;" data-provides="fileinput">
 											<div class="fileinput-preview thumbnail mb20" data-trigger="fileinput" style="width: 100%; height: 150px;">
@@ -98,10 +98,10 @@
 												@endif
 											</div>
 											<div>
-												<a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
+												<a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput">{{ tr('remove') }}</a>
 												<span class="btn btn-default btn-file">
-													<span class="fileinput-new">Select image</span>
-													<span class="fileinput-exists">Change</span>
+													<span class="fileinput-new">{{ tr('select_image') }}</span>
+													<span class="fileinput-exists">{{ tr('change') }}</span>
 													<input type="file" name="picture">
 												</span>
 												
@@ -109,12 +109,12 @@
 										</div>
 									</div>
 									<div class="col-sm-4">
-										<div class="alert alert-info">Image preview only works in IE10+, FF3.6+, Safari6.0+, Chrome6.0+ and Opera11.1+.</div>
+										<div class="alert alert-info">{{ tr('img_upload') }}</div>
 									</div>
 								</div>
 
 		                        <div class="form-group{{ $errors->has('mobile') ? ' has-error' : '' }}">
-		                            <label class="col-md-2 control-label">Phone Number</label>
+		                            <label class="col-md-2 control-label">{{ tr('phone') }}</label>
 
 		                            <div class="col-md-8">
 		                                <input type="text" class="form-control" name="mobile" value="{{ Auth::user()->mobile }}">
@@ -130,7 +130,7 @@
 								<div class="panel-footer">
 									<div class="row">
 										<div class="col-sm-6 col-sm-offset-4">
-											<button class="btn-primary btn">Submit</button>
+											<button class="btn-primary btn">{{ tr('submit')}}</button>
 										</div>
 									</div>
 								</div>
@@ -145,7 +145,7 @@
 				<div class="col-md-12">
 					<div class="panel panel-default" data-widget='{"draggable": "false"}'>
 						<div class="panel-heading">
-							<h2>Change Password</h2>
+							<h2>{{ tr('change_password') }}</h2>
 							<div class="panel-ctrls"
 								data-actions-container="" 
 								data-action-collapse='{"target": ".panel-body"}'
@@ -157,7 +157,7 @@
 							<form action="{{ route('user.profile.password') }}" method="POST" class="form-horizontal row-border">
 
 		                        <div class="form-group{{ $errors->has('old_password') ? ' has-error' : '' }}">
-		                            <label class="col-md-2 control-label">Old Password</label>
+		                            <label class="col-md-2 control-label">{{ tr('old_password') }}</label>
 
 		                            <div class="col-md-8">
 		                                <input type="password" class="form-control tooltips" name="old_password" data-trigger="hover" data-original-title="Enter your current password here.">
@@ -171,7 +171,7 @@
 		                        </div>
 
 		                        <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
-		                            <label class="col-md-2 control-label">Password</label>
+		                            <label class="col-md-2 control-label">{{ tr('password') }}</label>
 
 		                            <div class="col-md-8">
 		                                <input type="password" class="form-control tooltips" name="password" data-trigger="hover" data-original-title="Enter new password here">
@@ -185,7 +185,7 @@
 		                        </div>
 
 		                        <div class="form-group{{ $errors->has('password_confirmation') ? ' has-error' : '' }}">
-		                            <label class="col-md-2 control-label">Confirm Password</label>
+		                            <label class="col-md-2 control-label">{{ tr('confirm_password') }}</label>
 		                            <div class="col-md-8">
 		                                <input type="password" class="form-control tooltips" name="password_confirmation" data-trigger="hover" data-original-title="Confirm new password">
 
@@ -200,8 +200,8 @@
 								<div class="panel-footer">
 									<div class="row">
 										<div class="col-sm-8 col-sm-offset-2">
-											<button class="btn-primary btn">Submit</button>
-											<button class="btn-default btn">Cancel</button>
+											<button class="btn-primary btn">{{ tr('submit') }}</button>
+											<button class="btn-default btn">{{ tr('cancel') }}</button>
 										</div>
 									</div>
 								</div>

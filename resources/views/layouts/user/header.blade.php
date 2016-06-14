@@ -26,13 +26,13 @@
         <li class="dropdown toolbar-icon-bg">
             <a href="#" class="dropdown-toggle" data-toggle='dropdown'><span class="icon-bg"><i class="fa fa-fw fa-user"></i></span></a>
             <ul class="dropdown-menu userinfo arrow">
-                <li><a href="{{ route('user.services.request') }}"><span class="pull-left">Request Service</span> <i class="pull-right fa fa-flask"></i></a></li>
-                <li><a href="{{ route('user.services.list') }}"><span class="pull-left">Service History</span> <i class="pull-right fa fa-columns"></i></a></li>
+                <li><a href="{{ route('user.services.request') }}"><span class="pull-left">{{ tr('request_services') }}</span> <i class="pull-right fa fa-flask"></i></a></li>
+                <li><a href="{{ route('user.services.list') }}"><span class="pull-left">{{ tr('service_history') }}</span> <i class="pull-right fa fa-columns"></i></a></li>
                 <li class="divider"></li>
-                <li><a href="{{ route('user.profile.form') }}"><span class="pull-left">Profile</span> <i class="pull-right fa fa-user"></i></a></li>
-                <li><a href="{{ route('user.payment.form') }}"><span class="pull-left">Payment</span> <i class="pull-right fa fa-cog"></i></a></li>
+                <li><a href="{{ route('user.profile.form') }}"><span class="pull-left">{{ tr('profile') }}</span> <i class="pull-right fa fa-user"></i></a></li>
+                <li><a href="{{ route('user.payment.form') }}"><span class="pull-left">{{ tr('payment') }}</span> <i class="pull-right fa fa-cog"></i></a></li>
                 <li class="divider"></li>
-                <li><a href="{{ route('user.logout') }}"><span class="pull-left">Logout</span> <i class="pull-right fa fa-sign-out"></i></a></li>
+                <li><a href="{{ route('user.logout') }}"><span class="pull-left">{{ tr('logout') }}</span> <i class="pull-right fa fa-sign-out"></i></a></li>
             </ul>
         </li>
 

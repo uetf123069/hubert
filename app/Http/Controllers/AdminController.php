@@ -151,11 +151,11 @@ class AdminController extends Controller
 
                 if($admin)
                 {
-                    return back()->with('flash_success', 'Admin Details updated Successfully');
+                    return back()->with('flash_success', tr('admin_not_profile'));
                 }
                 else
                 {
-                    return back()->with('flash_error', 'Something Went Wrong, Try Again!');
+                    return back()->with('flash_error', tr('admin_not_error'));
                 }
         }
     }
@@ -277,11 +277,11 @@ class AdminController extends Controller
 
                 if($user)
                 {
-                    return back()->with('flash_success', 'User updated Successfully');
+                    return back()->with('flash_success', tr('admin_not_user'));
                 }
                 else
                 {
-                    return back()->with('flash_error', 'Something Went Wrong, Try Again!');
+                    return back()->with('flash_error', tr('admin_not_error'));
                 }
 
             }
@@ -304,11 +304,11 @@ class AdminController extends Controller
 
         if($user)
         {
-            return back()->with('flash_success',"User deleted successfully");
+            return back()->with('flash_success',tr('admin_not_user_del'));
         }
         else
         {
-            return back()->with('flash_error',"Something went Wrong");
+            return back()->with('flash_error',tr('admin_not_error'));
         }
     }
 
@@ -436,11 +436,11 @@ class AdminController extends Controller
 
                     if($provider)
                     {
-                        return back()->with('flash_success', 'Provider updated Successfully');
+                        return back()->with('flash_success', tr('admin_not_provider'));
                     }
                     else
                     {
-                        return back()->with('flash_error', 'Something Went Wrong, Try Again!');
+                        return back()->with('flash_error', tr('admin_not_error'));
                     }
 
             }
@@ -476,11 +476,11 @@ class AdminController extends Controller
         $provider->save();
         if($request->status ==1)
         {
-            $message = 'Provider Approved Successfully';
+            $message = tr('admin_not_provider_approve');
         }
         else
         {
-            $message = 'Provider Unapproved Successfully';
+            $message = tr('admin_not_provider_decline');
         }
         return back()->with('flash_success', $message)->with('providers',$providers);
     }
@@ -496,11 +496,11 @@ class AdminController extends Controller
 
         if($provider)
         {
-            return back()->with('flash_success',"Provider deleted successfully");
+            return back()->with('flash_success',tr('admin_not_provider_del'));
         }
         else
         {
-            return back()->with('flash_error',"Something went Wrong");
+            return back()->with('flash_error',tr('admin_not_error'));
         }
     }
 
@@ -582,12 +582,12 @@ class AdminController extends Controller
             if($request->id != '')
             {
                 $document = Document::find($request->id);
-                $message = "Document Updated successfully";
+                $message = tr('admin_not_doc_updated');
             }
             else
             {
                 $document = new Document;
-                $message = "Document Created successfully";
+                $message = tr('admin_not_doc');
             }
                 $document->name = $request->document_name;
                 $document->save();
@@ -598,7 +598,7 @@ class AdminController extends Controller
         }
         else
         {
-            return back()->with('flash_error',"Something went Wrong");
+            return back()->with('flash_error',tr('admin_not_error'));
         }
         }
     }
@@ -610,11 +610,11 @@ class AdminController extends Controller
        
         if($document)
         {
-            return back()->with('flash_success',"Document deleted successfully");
+            return back()->with('flash_success',tr('admin_not_doc_del'));
         }
         else
         {
-            return back()->with('flash_error',"Something went Wrong");
+            return back()->with('flash_error',tr('admin_not_error'));
         }
     }
 
@@ -657,12 +657,12 @@ class AdminController extends Controller
             if($request->id != '')
             {
                 $service = ServiceType::find($request->id);
-                $message = "Service Type Updated successfully";
+                $message = tr('admin_not_st_updated');
             }
             else
             {
                 $service = new ServiceType;
-                $message = "Service Type Created successfully";
+                $message = tr('admin_not_st');
 
             }
                 if ($request->is_default == 1) {
@@ -682,7 +682,7 @@ class AdminController extends Controller
         }
         else
         {
-            return back()->with('flash_error',"Something went Wrong");
+            return back()->with('flash_error',tr('admin_not_error'));
         }
         }
     }
@@ -694,7 +694,7 @@ class AdminController extends Controller
        
         if($service)
         {
-            return back()->with('flash_success',"Service deleted successfully");
+            return back()->with('flash_success',tr('admin_not_st_del'));
         }
         else
         {
@@ -730,12 +730,12 @@ class AdminController extends Controller
 
     public function deleteUserReview(Request $request) {
         $user = UserRating::find('id', $request->id)->delete();
-        return back()->with('flash_success', 'User Review Deleted Successfully');
+        return back()->with('flash_success', tr('admin_not_ur_del'));
     }
 
     public function deleteProviderReview(Request $request) {
         $provider = ProviderRating::find('id', $request->id)->delete();
-        return back()->with('flash_success', 'Provider Review Deleted Successfully');
+        return back()->with('flash_success', tr('admin_not_pr_del'));
     }
 
     public function UserHistory(Request $request)

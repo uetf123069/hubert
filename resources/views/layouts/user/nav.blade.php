@@ -14,7 +14,7 @@
 							</a>
 						</div>
 						<div class="tabular-cell welcome-options">
-							<span class="welcome-text">Welcome,</span>
+							<span class="welcome-text">{{ tr('welcome_user') }},</span>
 							<a href="#" class="name">{{ Auth::user()->first_name }} {{ Auth::user()->last_name }}</a>
 						</div>
 					</div>
@@ -23,26 +23,26 @@
 			<div class="widget stay-on-collapse" id="widget-sidebar">
 				<nav role="navigation" class="widget-body">
 					<ul class="acc-menu">
- 						<li class="nav-separator">Services</li>
+ 						<li class="nav-separator">{{ tr('user_services') }}</li>
 						<li>
 							<a href="{{ route('user.services.list') }}">
-								<i class="fa fa-flask"></i><span>Service History</span>
+								<i class="fa fa-flask"></i><span>{{ tr('service_history') }}</span>
 							</a>
 						</li>
 						<li>
 							<a href="{{ route('user.services.request') }}">
-								<i class="fa fa-columns"></i><span>Request Services</span>
+								<i class="fa fa-columns"></i><span>{{ tr('request_services') }}</span>
 							</a>
 						</li>
 						<li>
 							<a href="{{ route('user.favorite.provider.list') }}">
-								<i class="fa fa-star"></i><span>Favorite Providers</span>
+								<i class="fa fa-star"></i><span>{{ tr('fav_providers') }}</span>
 							</a>
 						</li>
-						<li class="nav-separator">Payment</li>
+						<li class="nav-separator">{{ tr('payment') }}</li>
 						<li>
 							<a href="{{ route('user.payment.form') }}">
-								<i class="fa fa-credit-card"></i><span>Payment Methods</span>
+								<i class="fa fa-credit-card"></i><span>{{ tr('payment_method') }}</span>
 							</a>
 						</li>
 <!-- 						
@@ -52,15 +52,15 @@
 							</a>
 						</li>
  -->
- 						<li class="nav-separator">Account</li>
+ 						<li class="nav-separator">{{ tr('account') }}</li>
 						<li>
 							<a href="{{ route('user.profile.form') }}">
-								<i class="fa fa-user"></i><span>Profile</span>
+								<i class="fa fa-user"></i><span>{{ tr('profile') }}</span>
 							</a>
 						</li>
 						<li>
 							<a href="{{ route('user.logout') }}">
-								<i class="fa fa-sign-out"></i><span>Logout</span>
+								<i class="fa fa-sign-out"></i><span>{{ tr('logout') }}</span>
 							</a>
 						</li>
 					</ul>

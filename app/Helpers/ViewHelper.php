@@ -69,14 +69,14 @@ function delete_document($document) {
 function get_user_request_status($id)
 {
 	$status = array(
-		'New Request', // What is this ?
-		'Request Waiting',
-		'Request In Progress', // This is active till Provider has reached the location
-		'Request Complete is Pending', // And this ?
-		'Request Rating', // And this ?
-		'Request Completed',
-		'Request Cancelled',
-		'No Providers are Found', // Isnt this kinda request filtered ?
+		tr('new_request'), // What is this ?
+		tr('request_waiting'),
+		tr('request_progress'), // This is active till Provider has reached the location
+		tr('request_complete_pending'), // And this ?
+		tr('request_rating'), // And this ?
+		tr('request_completed'),
+		tr('request_cancelled'),
+		tr('no_providers_found'), // Isnt this kinda request filtered ?
 	);
 
 	return $status[$id];
@@ -85,13 +85,13 @@ function get_user_request_status($id)
 function get_provider_request_status($id)
 {
 	$status = [
-		'Provider None',
-		'Provider Accepted', // Provider has accepted your request and will soon start towards the service location
-		'Provider Started', // Provider is travelling towards the service location
-		'Provider Arrived', // Provider has arrived at the service location
-		'Provider Service Started', //
-		'Provider Service Completed',
-		'Provider Rated',
+		tr('provider_none'),
+		tr('provider_accepted'), // Provider has accepted your request and will soon start towards the service location
+		tr('provider_started'), // Provider is travelling towards the service location
+		tr('provider_arrived'), // Provider has arrived at the service location
+		tr('provider_service_started'), //
+		tr('provider_service_completed'),
+		tr('provider_rated'),
 	];
 
 	return $status[$id];

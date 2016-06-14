@@ -7,9 +7,9 @@
 @section('page_tabs')
 <div class="page-tabs">
     <ul class="nav nav-tabs">
-		<li class="active"><a data-toggle="tab" href="#tab1">Account Details</a></li>
-		<li><a data-toggle="tab" href="#tab2">Password</a></li>
-		<li><a data-toggle="tab" href="#tab3">Update Location</a></li>
+		<li class="active"><a data-toggle="tab" href="#tab1">{{ tr('account_details') }}</a></li>
+		<li><a data-toggle="tab" href="#tab2">{{ tr('password') }}</a></li>
+		<li><a data-toggle="tab" href="#tab3">{{ tr('update_location') }}</a></li>
     </ul>
 </div>
 @endsection
@@ -21,11 +21,11 @@
 			<div class="row">
 				<div class="col-md-12">
 					<div class="panel panel-info">
-						<div class="panel-heading"><h2>Profile Update</h2></div>
+						<div class="panel-heading"><h2>{{ tr('profile_update') }}</h2></div>
 						<div class="panel-body">
 							<form action="{{route('provider.profile.save')}}" enctype="multipart/form-data" method="POST" class="form-horizontal row-border">
 									<div class="form-group pb10">
-										<label class="col-sm-2 control-label">Availability</label>
+										<label class="col-sm-2 control-label">{{ tr('availability') }}</label>
 										<div class="col-sm-8">
 											<input class="bootstrap-switch switch-alt" type="checkbox" 
 										 	 @if(Auth::guard('provider')->user()->is_available == 0)
@@ -39,14 +39,14 @@
 									</div>
 
 									<div class="form-group">
-										<label class="col-sm-2 control-label">First Name</label>
+										<label class="col-sm-2 control-label">{{ tr('first_name') }}</label>
 										<div class="col-sm-8">
 											<input type="text" name="first_name" class="form-control tooltips"  data-trigger="hover" value="{{ Auth::guard('provider')->user()->first_name }}" data-original-title="Update your First name." >
 										</div>
 									</div>
 
 									<div class="form-group">
-										<label class="col-sm-2 control-label">Last Name</label>
+										<label class="col-sm-2 control-label">{{ tr('last_name') }}</label>
 										<div class="col-sm-8">
 											<input type="text" name="last_name" class="form-control tooltips"  data-trigger="hover" value="{{ Auth::guard('provider')->user()->last_name }}"  data-original-title="Update your Last name.">
 										</div>
@@ -54,17 +54,17 @@
 
 
 									<div class="form-group">
-										<label class="col-sm-2 control-label">Email</label>
+										<label class="col-sm-2 control-label">{{ tr('email') }}</label>
 										<div class="col-sm-8">
 											<input type="text" name="email" class="form-control tooltips"  data-trigger="hover" readonly="true" value="{{ Auth::guard('provider')->user()->email }}"  data-original-title="Update your Email number.">
 										</div>
 									</div>
 
 									<div class="form-group">
-										<label class="col-sm-2 control-label">Service Type</label>
+										<label class="col-sm-2 control-label">{{ tr('service_type') }}</label>
 										<div class="col-sm-8">
 											<select class="form-control" name="service_type">
-				                                <option value="">Select Service Type</option>
+				                                <option value="">{{ tr('select_service') }}</option>
 				                                @foreach(get_all_service_types() as $type)
 				                                <option @if( get_provider_service_type(Auth::guard('provider')->user()->id) == $type->id ) selected @endif value="{{$type->id}}">{{$type->name}}</option>
 				                                @endforeach
@@ -73,19 +73,19 @@
 									</div>
 
 									<div class="form-group">
-										<label class="col-sm-2 control-label">Gender</label>
+										<label class="col-sm-2 control-label">{{ tr('gender') }}</label>
 										<div class="col-sm-8">
 											<label class="radio-inline icheck">
-												<div class="iradio_minimal-blue checked" style="position: relative;"><input type="radio" id="inlineradio1" value="male" name="gender" @if(Auth::guard('provider')->user()->gender == 'male') checked="true" @endif style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; border: 0px; opacity: 0; background: rgb(255, 255, 255);"></ins></div> Male
+												<div class="iradio_minimal-blue checked" style="position: relative;"><input type="radio" id="inlineradio1" value="male" name="gender" @if(Auth::guard('provider')->user()->gender == 'male') checked="true" @endif style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; border: 0px; opacity: 0; background: rgb(255, 255, 255);"></ins></div> {{ tr('male') }}
 											</label>
 											<label class="radio-inline icheck">
-												<div class="iradio_minimal-blue" style="position: relative;"><input type="radio" id="inlineradio2" @if(Auth::guard('provider')->user()->gender == 'female') checked="true" @endif value="female" name="gender" style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; border: 0px; opacity: 0; background: rgb(255, 255, 255);"></ins></div> Female
+												<div class="iradio_minimal-blue" style="position: relative;"><input type="radio" id="inlineradio2" @if(Auth::guard('provider')->user()->gender == 'female') checked="true" @endif value="female" name="gender" style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; border: 0px; opacity: 0; background: rgb(255, 255, 255);"></ins></div> {{ tr('female') }}
 											</label>
 										</div>
 									</div>
 
 									<div class="form-group">
-										<label class="col-sm-2 control-label">Profile Image</label>
+										<label class="col-sm-2 control-label">{{ tr('profile_pic') }}</label>
 										<div class="col-sm-5">
 											<div class="fileinput fileinput-new" style="width: 100%;" data-provides="fileinput">
 												<div class="fileinput-preview thumbnail mb20" data-trigger="fileinput" style="width: 100%; height: 150px;">
@@ -94,8 +94,8 @@
 													@endif
 												</div>
 												<div>
-													<a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
-													<span class="btn btn-default btn-file"><span class="fileinput-new">Select Profile Image</span><span class="fileinput-exists">Change</span><input type="file" name="picture"></span>
+													<a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput">{{ tr('remove') }}</a>
+													<span class="btn btn-default btn-file"><span class="fileinput-new">{{ tr('select_image') }}</span><span class="fileinput-exists">{{ tr('change') }}</span><input type="file" name="picture"></span>
 													
 												</div>
 											</div>
@@ -103,7 +103,7 @@
 									</div>
 
 									<div class="form-group">
-										<label class="col-sm-2 control-label">Mobile</label>
+										<label class="col-sm-2 control-label">{{ tr('phone') }}</label>
 										<div class="col-sm-8">
 											<input type="text" name="mobile" class="form-control tooltips"  data-trigger="hover" value="{{ Auth::guard('provider')->user()->mobile }}"  data-original-title="Update your Mobile number.">
 										</div>
@@ -114,7 +114,7 @@
 									<div class="panel-footer">
 									<div class="row">
 										<div class="col-sm-8 col-sm-offset-2">
-											<button type="submit" class="btn-primary btn">Submit</button>
+											<button type="submit" class="btn-primary btn">{{ tr('submit') }}</button>
 										</div>
 									</div>
 								</div>
@@ -131,7 +131,7 @@
 					<div data-widget-group="group1">
 						<div class="panel panel-info" data-widget='{"draggable": "false"}'>
 							<div class="panel-heading">
-								<h2>Change Password</h2>
+								<h2>{{ tr('change_password') }}</h2>
 								<div class="panel-ctrls"
 									data-actions-container="" 
 									data-action-collapse='{"target": ".panel-body"}'
@@ -144,7 +144,7 @@
 								<form action="{{ route('provider.password') }}" method="POST" class="form-horizontal row-border">
 
 			                        <div class="form-group">
-			                            <label class="col-md-2 control-label">Old Password</label>
+			                            <label class="col-md-2 control-label">{{ tr('old_password') }}</label>
 
 			                            <div class="col-md-8">
 			                                <input type="password" class="form-control tooltips" name="old_password" data-trigger="hover" data-original-title="Enter your current password">
@@ -154,7 +154,7 @@
 
 
 			                        <div class="form-group">
-			                            <label class="col-md-2 control-label">Password</label>
+			                            <label class="col-md-2 control-label">{{ tr('password') }}</label>
 
 			                            <div class="col-md-8">
 			                                <input type="password" class="form-control tooltips" name="password" data-trigger="hover" data-original-title="Enter new password">
@@ -163,7 +163,7 @@
 			                        </div>
 
 			                        <div class="form-group">
-			                            <label class="col-md-2 control-label">Confirm Password</label>
+			                            <label class="col-md-2 control-label">{{ tr('confirm_password') }}</label>
 			                            <div class="col-md-8">
 			                                <input type="password" class="form-control tooltips" name="confirm_password" data-trigger="hover" data-original-title="Enter your Confirm password">
 			                            </div>
@@ -172,7 +172,7 @@
 								<div class="panel-footer">
 									<div class="row">
 										<div class="col-sm-8 col-sm-offset-2">
-											<button type="submit" class="btn-primary btn">Submit</button>
+											<button type="submit" class="btn-primary btn">{{ tr('submit') }}</button>
 										</div>
 									</div>
 								</div>
@@ -190,7 +190,7 @@
 					<div data-widget-group="group1">
 						<div class="panel panel-info" data-widget='{"draggable": "false"}'>
 							<div class="panel-heading">
-								<h2>Update Your Location</h2>
+								<h2>{{ tr('update_ur_location') }}</h2>
 								<div class="panel-ctrls"
 									data-actions-container="" 
 									data-action-collapse='{"target": ".panel-body"}'
@@ -224,14 +224,14 @@
 									<div class="row">
 
 										<div class="col-sm-2 col-sm-offset-2">
-												Latitude : <span id="latitude_text"> {{Auth::guard('provider')->user()->latitude}} </span>
+												{{ tr('latitude') }} : <span id="latitude_text"> {{Auth::guard('provider')->user()->latitude}} </span>
 												</br>
-												Longitude : <span id="longitude_text"> {{Auth::guard('provider')->user()->longitude}} </span>
+												{{ tr('logitude') }} : <span id="longitude_text"> {{Auth::guard('provider')->user()->longitude}} </span>
 										</div>
 
 										<div class="col-sm-6 col-sm-offset-2">
 
-											<button type="submit" class="btn-primary btn">Update Location</button>
+											<button type="submit" class="btn-primary btn">{{ tr('update_location') }}</button>
 										</div>
 
 

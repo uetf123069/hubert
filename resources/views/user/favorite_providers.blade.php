@@ -7,7 +7,7 @@
 @section('content')
 <div class="panel panel-info">
 	<div class="panel-heading">
-		<h2>Your Favorite Providers</h2>
+		<h2>{{ tr('ur_fav_providers') }}</h2>
 		<div class="panel-ctrls">
 		</div>
 	</div>
@@ -17,9 +17,9 @@
 			<thead>
 				<tr>
 					<th>#</th>
-					<th>Provider</th>
-					<th>Rating</th>
-					<th>Actions</th>
+					<th>{{ tr('provider') }}</th>
+					<th>{{ tr('rating') }}</th>
+					<th>{{ tr('action') }}</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -41,7 +41,7 @@
 			
 			</tbody>
 			@else
-				<h4 class="text-center">You haven't made any provider as favorite!</h4>
+				<h4 class="text-center">{{ tr('fav_providers_error') }}</h4>
 			@endif
 		</table>
 		<div class="panel-footer"></div>

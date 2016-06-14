@@ -19,12 +19,12 @@
                     $payment = get_payment_details($Service->request_id);
                     $request_details = get_request_details($Service->request_id);
                 ?>
-                    <p><h5>Provider</h5> {{ $Service->provider_name }}</p>
-                    <p><h5>Address</h5> {{$request_details->s_address}}</p>
-                    <p><h5>Base Price</h5> {{ $payment['base_price'] }}</p>
-                    <p><h5>Tax Price</h5> {{ $payment['tax_price'] }}</p>
-                    <p><h5>Total</h5> {{ $payment['total'] }}</p>
-                    <p><h5>Date</h5> {{date('H:i - d M, Y',strtotime($request_details->start_time))}}</p>
+                    <p><h5>{{ tr('provider') }}</h5> {{ $Service->provider_name }}</p>
+                    <p><h5>{{ tr('address') }}</h5> {{$request_details->s_address}}</p>
+                    <p><h5>{{ tr('base_price') }}</h5> {{ $payment['base_price'] }}</p>
+                    <p><h5>{{ tr('tax_price') }}</h5> {{ $payment['tax_price'] }}</p>
+                    <p><h5>{{ tr('total') }}</h5> {{ $payment['total'] }}</p>
+                    <p><h5>{{ tr('date_time') }}</h5> {{date('H:i - d M, Y',strtotime($request_details->start_time))}}</p>
 
                 </div>
                 <div class="col-xs-4">

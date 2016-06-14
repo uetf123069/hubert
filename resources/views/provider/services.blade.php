@@ -14,7 +14,7 @@
 	<div class="col-md-12">
 		<div class="panel panel-info">
 			<div class="panel-heading">
-				<h2>Your Service History</h2>
+				<h2>{{ tr('your_history') }}</h2>
 				<div class="panel-ctrls">
 				</div>
 			</div>
@@ -23,15 +23,15 @@
 					@if(!empty($requests))
 					<thead>
 						<tr>
-							<th>Request #ID</th>
-							<th>Username</th>
-							<th>Base Price</th>
-							<th>Tax Price</th>
-							<th>Total</th>
-							<th>Address</th>
-							<th>Service Type</th>
-							<th>Service Started On</th>
-							<th>Service Ended On</th>
+							<th>{{ tr('request') }} #ID</th>
+							<th>{{ tr('user_name') }}</th>
+							<th>{{ tr('base_price') }}</th>
+							<th>{{ tr('tax_price') }}</th>
+							<th>{{ tr('total') }}</th>
+							<th>{{ tr('address') }}</th>
+							<th>{{ tr('service_type') }}</th>
+							<th>{{ tr('started_on') }}</th>
+							<th>{{ tr('ended_on') }}</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -54,7 +54,7 @@
 					
 					</tbody>
 					@else
-						<p>No Request found!</p>
+						<p>{{ tr('no_request') }}</p>
 					@endif
 				</table>
 				<div class="panel-footer"></div>

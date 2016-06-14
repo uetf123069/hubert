@@ -9,12 +9,12 @@
 @foreach($CurrentRequest->data as $Service)
 <div class="panel panel-default">
     <div class="panel-heading">
-        <ul class="stepy-header" id="service-state">
-            <li class="" id="wizard-head-0"><div>Step 1</div><span>Request</span></li>
-            <li class="@if($Service->provider_status <= 3) stepy-active @endif" id="wizard-head-1"><div>Step 2</div><span>Waiting</span></li>
-            <li class="@if($Service->provider_status > 3) stepy-active @endif" id="wizard-head-2"><div>Step 3</div><span>Servicing</span></li>
-            <li class="" id="wizard-head-2"><div>Step 4</div><span>Payment</span></li>
-            <li class="" id="wizard-head-2"><div>Step 5</div><span>Review</span></li>
+         <ul class="stepy-header" id="service-state">
+            <li class="" id="wizard-head-0"><div>Step 1</div><span>{{ tr('request') }}</span></li>
+            <li class="@if($Service->provider_status <= 3) stepy-active @endif" id="wizard-head-1"><div>Step 2</div><span>{{ tr('waiting') }}</span></li>
+            <li class="@if($Service->provider_status > 3) stepy-active @endif" id="wizard-head-2"><div>Step 3</div><span>{{ tr('servicing') }}</span></li>
+            <li class="" id="wizard-head-2"><div>Step 4</div><span>{{ tr('payment') }}</span></li>
+            <li class="" id="wizard-head-2"><div>Step 5</div><span>{{ tr('review') }}</span></li>
         </ul>
     </div>
     <div class="panel-body">
@@ -25,41 +25,41 @@
                         @if($Service->provider_status)
                         <tr>
                             <td data-title="Provider" colspan="2">
-                                <h2 class="text-center">Provider</h2>
+                                <h2 class="text-center">{{ tr('provider') }}</h2>
                                 <img src="{{ $Service->provider_picture }}" class="col-md-8 col-xs-offset-2 img-responsive img-circle">
                             </td>
                         </tr>
                         <tr>
-                            <th>Provider Name</th>
+                            <th>{{ tr('provider_name') }}</th>
                             <td data-title="Provider Name">{{ $Service->provider_name }}</td>
                         </tr>
                         <tr>
-                            <th>Provider Rating</th>
+                            <th>{{ tr('provider_rating') }}</th>
                             <td data-title="Provider Rating">{{ $Service->rating }}</td>
                         </tr>
                         @endif
                         <tr>
-                            <th>Request #</th>
+                            <th>{{ tr('request') }} #</th>
                             <td data-title="Service" align="left">{{ $Service->request_id }}</td>
                         </tr>
                         <tr>
-                            <th>Service</th>
+                            <th>{{ tr('service_type') }}</th>
                             <td data-title="Service" align="left">{{ $Service->service_type_name }}</td>
                         </tr>
                         <tr>
-                            <th>Requested Time</th>
+                            <th>{{ tr('requested_time') }}</th>
                             <td data-title="Requested Time">{{ $Service->request_start_time }}</td>
                         </tr>
                         <tr>
-                            <th>Amount</th>
+                            <th>{{ tr('amount') }}</th>
                             <td data-title="Amount">{{ $Service->amount }}</td>
                         </tr>
                         <tr>
-                            <th>Request Status</th>
+                            <th>{{ tr('req_status') }}</th>
                             <td data-title="Request Status">{{ get_user_request_status($Service->status) }}</td>
                         </tr>
                         <tr>
-                            <th>Provider Status</th>
+                            <th>{{ tr('provider_status') }}</th>
                             <td data-title="Provider Status">{{ get_provider_request_status($Service->provider_status) }}</td>
                         </tr>
                         @if($Service->provider_status < 3)
@@ -69,7 +69,7 @@
                                     {!! csrf_field() !!}
                                     <input type="hidden" name="_method" value="DELETE">
                                     <input type="hidden" name="request_id" value="{{ $Service->request_id }}">
-                                    <button class="btn-primary btn col-xs-12" id="submit_request">Cancel Request</button>
+                                    <button class="btn-primary btn col-xs-12" id="submit_request">{{ tr('cancel_requests') }}</button>
                                 </form>
                             </td>
                         </tr>
@@ -79,20 +79,20 @@
                 </table>
             </div>
             <div class="col-md-6">
-                <h2 class="text-center">Map</h2>                
+                <h2 class="text-center">{{ tr('map') }}</h2>                
                 <div id="map"></div>
             </div>
         </div>
         <div class="row">
             <div class="col-md-6">
                 @if(!empty($Service->before_image))
-                <h2 class="text-center">Before</h2>                
+                <h2 class="text-center">{{ tr('before')}}</h2>                
                 <img class="col-xs-8 col-xs-offset-2" src="{{ $Service->before_image }}">
                 @endif
             <div class="col-md-6">
             </div>
                 @if(!empty($Service->after_image))
-                <h2 class="col-xs-8 col-xs-offset-2">After</h2>                
+                <h2 class="col-xs-8 col-xs-offset-2">{{ tr('after') }}</h2>                
                 <img class="col-xs-8 col-xs-offset-2" src="{{ $Service->after_image }}">
                 @endif
             </div>

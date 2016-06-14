@@ -9,7 +9,7 @@
 		<div class="container-fluid">
 					<div class="panel panel-default" data-widget="{&quot;draggable&quot;: &quot;false&quot;}" data-widget-static="">
 				<div class="panel-heading">
-					<h2>Documents</h2>
+					<h2>{{ tr('documents') }}</h2>
 						<div class="panel-ctrls" data-actions-container="" data-action-collapse="{&quot;target&quot;: &quot;.panel-body&quot;}" data-action-expand="" data-action-colorpicker="">
 						</div>
 				</div>
@@ -24,7 +24,7 @@
 							@if($status['success'] == false)
 
 							<div class="form-group">
-								<label class="col-sm-2 control-label">Upload {{$document->name}}</label>
+								<label class="col-sm-2 control-label">{{ tr('upload') }} {{$document->name}}</label>
 								<div class="col-sm-8">
 									<div class="fileinput fileinput-new" data-provides="fileinput"><input type="hidden" value="" name="...">
 										<div class="input-group">
@@ -32,10 +32,10 @@
 												<i class="fa fa-file fileinput-exists"></i>&nbsp;<span class="fileinput-filename"></span>
 											</div>
 											<span class="input-group-btn">
-												<a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
+												<a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput">{{ tr('remove') }}</a>
 												<span class="btn btn-default btn-file">
-													<span class="fileinput-new">Select file</span>
-													<span class="fileinput-exists">Change</span>
+													<span class="fileinput-new">{{ tr('select_file') }}</span>
+													<span class="fileinput-exists">{{ tr('change') }}</span>
 													<input type="file" name="document_{{$document->id}}" accept=".jpg,.png,.pdf">
 												</span>
 												
@@ -50,7 +50,7 @@
 							@else
 
 							<div class="search-result">
-                           		<h5>{{$document->name}} Added</h5><a href="{{$status['document_url']}}" target="_blank">View</a> &nbsp; <a href="{{route('provider.delete.document',$document->id)}}">Delete</a>
+                           		<h5>{{$document->name}} {{ tr('added') }}</h5><a href="{{$status['document_url']}}" target="_blank">{{ tr('view') }}</a> &nbsp; <a href="{{route('provider.delete.document',$document->id)}}">{{ tr('delete') }}</a>
                            		
                         	</div>
 
@@ -61,7 +61,7 @@
                         	@endforeach
 
 							<div class="col-sm-8 col-sm-offset-2">
-								<button type="submit" class="btn-primary btn">Submit Documents</button>
+								<button type="submit" class="btn-primary btn">{{ tr('submit_documents') }}</button>
 							</div>
 
 					</form>
