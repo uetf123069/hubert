@@ -122,7 +122,7 @@ a { color: #ff646a; text-decoration: none; }
                                         West Victoria 8007 Australia
                                         <br />-->
                                         Bill No :
-                                        <span style="color:#3b3b3b"> <strong>{{$email_data['bill_no']}}</strong> 
+                                        <span style="color:#3b3b3b"> <strong>{{$email_data['bill_no']}}</strong> <br>
                                             {{$email_data['user_address']}}
                                         </span>
                                     </td>
@@ -341,7 +341,7 @@ a { color: #ff646a; text-decoration: none; }
 
                 <tr>
                     <td mc:edit="button" height="55" align="center" style="font-family: 'Open Sans', Arial, sans-serif; font-size:16px; color:#7f8c8d; line-height:30px; font-weight: bold;padding-left: 25px;padding-right: 25px;">
-                        <a href="{{URL::to('/')}}" target="_blank" style="color:#ffffff;text-decoration:none;" data-color="Button Link">{{Helper::tr('visit_website')}}</a>
+                        <a href="{{route('user.dashboard')}}" target="_blank" style="color:#ffffff;text-decoration:none;" data-color="Button Link">{{Helper::tr('visit_website')}}</a>
                     </td>
                 </tr>
             </table>

@@ -103,9 +103,10 @@
     var map;
     var markers = [
         @foreach($Providers as $Provider)
-        { name: "{{ $Provider->name }}", lat: {{ $Provider->latitude }}, lng: {{ $Provider->longitude }}, available: {{ $Provider->is_available }} },
+        { provider_id: "{{ $Provider->id }}",name: "{{ $Provider->name }}", lat: {{ $Provider->latitude }}, lng: {{ $Provider->longitude }}, available: {{ $Provider->is_available }} },
         @endforeach
     ];
+
     var mapIcons = [
         'http://maps.google.com/mapfiles/ms/icons/red-dot.png',
         'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
@@ -130,6 +131,8 @@
 
         markers.forEach( function(element, index) {
 
+            var url = "/admin/providerDetails/"
+
             marker = new google.maps.Marker({
                 position: {lat: element.lat, lng: element.lng},
                 map: map,
@@ -138,6 +141,10 @@
             });
 
             mapMarkers.push(marker);
+
+            google.maps.event.addListener(marker, 'click', function() {
+                window.location.href = url + element.provider_id;
+            });
 
         });
 
