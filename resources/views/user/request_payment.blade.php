@@ -59,6 +59,10 @@
                             <th>Provider Rating</th>
                             <td data-title="Provider Rating">{{ $Service->rating }}</td>
                         </tr>
+                        <tr>
+                            <th>Provider Mobile</th>
+                            <td data-title="Provider Rating">{{ $Service->provider_mobile }}</td>
+                        </tr>
                         @if($CurrentRequest->invoice != "")
                         <tr>
                             <td colspan="2">

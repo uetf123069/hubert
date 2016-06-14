@@ -14,6 +14,10 @@ use Carbon\Carbon;
 
 use App\ProviderService;
 
+use App\ProviderRating;
+
+use App\UserRating;
+
 use App\RequestPayment;
 
 function tr($key) {
@@ -127,7 +131,10 @@ function get_provider_service_type($provider_id)
 
 function get_request_details($request_id)
 {
-	return Requests::find($request_id);
+	$Request->ProviderRating = ProviderRating::where('request_id',$request_id)->first();
+	$Request->UserRating = UserRating::where('request_id',$request_id)->first();
+	$Request = Requests::find($request_id);
+	return $Request;
 }
 
 function get_payment_details($request_id)
