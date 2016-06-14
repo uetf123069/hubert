@@ -54,27 +54,35 @@
         <div class="col-md-6">
             <div class="panel panel-default" data-widget='{"draggable": "false"}'>
                 <div class="panel-heading">
-                    <h2>{{ tr('paypal') }}</h2>
+                    <h2>Default Payment Method</h2>
                 </div>
                 <div class="panel-body">
-                    <form action="{{ route('user.payment.paypal') }}" class="form-horizontal card" method="POST">
-                        <div class="form-group{{ $errors->has('paypal_email') ? ' has-error' : '' }}">
-                            <label for="#" class="col-sm-3 control-label">{{ tr('paypal_email') }}</label>   
-                            <div class="col-sm-9">
-                                <input placeholder="Paypal Mail ID" type="email" name="paypal_email" class="form-control" value="ds">
-                                @if ($errors->has('paypal_email'))
-                                    <span class="help-block">
-                                        <strong>{{ $errors->first('paypal_email') }}</strong>
-                                    </span>
-                                @endif
+                    @if(!empty($PaymentModes->payment_modes))
+                    <form action="{{ route('user.payment.default') }}" class="form-horizontal card" method="POST">
+                        <div class="form-group{{ $errors->has('payment_mode') ? ' has-error' : '' }}">
+                            <div class="icheck-square">
+                                @foreach($PaymentModes->payment_modes as $Index => $Value)
+                                <div class="radio aero icheck">
+                                    <label class="">{{ $Value }}</label>
+                                    <input name="payment_mode" value="{{ $Index }}" @if(\Auth::user()->payment_mode == $Index) checked="" @endif type="radio">
+                                </div>
+                                @endforeach
                             </div>
+                            @if ($errors->has('payment_mode'))
+                            <span class="help-block">
+                                <strong>{{ $errors->first('payment_mode') }}</strong>
+                            </span>
+                            @endif
                         </div>
                         <div class="panel-footer">
                             <div class="row">
-                                <button class="btn-primary btn col-sm-4 col-sm-offset-4">{{ tr('submit') }}</button>
+                                <button class="btn-primary btn col-sm-4 col-sm-offset-4">Submit</button>
                             </div>
                         </div>
                     </form>
+                    @else
+                    <h4>No default Payment Methods enabled</h4>
+                    @endif
                 </div>
             </div>
         </div>

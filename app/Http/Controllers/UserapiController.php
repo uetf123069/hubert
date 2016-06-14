@@ -1735,19 +1735,17 @@ class UserapiController extends Controller
 
             $payment_data = $data = $card_data = array();
 
-            if($user->payment_mode == CARD) {
-                if($user_cards = Cards::where('user_id' , $request->id)->get()) {
-                    foreach ($user_cards as $c => $card) {
-                        $data['id'] = $card->id;
-                        $data['customer_id'] = $card->customer_id;
-                        $data['card_id'] = $card->card_token;
-                        $data['last_four'] = $card->last_four;
-                        $data['is_default']= $card->is_default;
+            if($user_cards = Cards::where('user_id' , $request->id)->get()) {
+                foreach ($user_cards as $c => $card) {
+                    $data['id'] = $card->id;
+                    $data['customer_id'] = $card->customer_id;
+                    $data['card_id'] = $card->card_token;
+                    $data['last_four'] = $card->last_four;
+                    $data['is_default']= $card->is_default;
 
-                        array_push($card_data, $data);
-                    }
-                } 
-            }
+                    array_push($card_data, $data);
+                }
+            } 
 
             $response_array = Helper::null_safe(array('success' => true, 'payment_mode' => $user->payment_mode , 'card' => $card_data));
 

@@ -250,9 +250,9 @@ class UserController extends Controller
 
         $PaymentMethods = $this->UserAPI->get_user_payment_modes($request)->getData();
 
-        $PaypalID = \Auth::user()->paypal_email;
-        
-        return view('user.payment', compact('PaymentMethods', 'PaypalID'));
+        $PaymentModes = $this->UserAPI->get_payment_modes($request)->getData();
+
+        return view('user.payment', compact('PaymentMethods', 'PaymentModes'));
     }
 
     /**
@@ -377,18 +377,24 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function payment_update_paypal(Request $request)
+    public function payment_update_default(Request $request)
     {
         $this->validate($request, [
-                'paypal_email' => 'email',
+                'payment_mode' => 'required',
             ]);
 
-        \Auth::user()->paypal_email = $request->paypal_email;
-        \Auth::user()->save();
+        $request->request->add([ 
+            'id' => \Auth::user()->id,
+            'token' => \Auth::user()->token,
+        ]);        
 
-        $response = response()->json([]);
-        $response->success = true;
-        $response->message = 'Paypal Account has been successfully updated.';
+        $response = $this->UserAPI->payment_mode_update($request)->getData();
+
+        if($response->success) {
+            $response->message = "Successfully changed default payment method";
+        } else {
+            $response->message = "Unknown error please try again later";
+        }
 
         return back()->with('response', $response);
     }
