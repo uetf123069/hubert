@@ -84,7 +84,7 @@
             </div>
             @if($Service->provider_status > 0)
             <div class="col-md-6">
-     <h2 class="text-center">Chat with {{ $Service->provider_name }}</h2>
+                <h2 class="text-center">Chat with {{ $Service->provider_name }}</h2>
                 <div class="row">
                     <div class="panel-chat well m-n" id="chat-box" tabindex="5000" style="overflow-y: scroll; height: 400px; outline: none; border-radius: 0;">
                         <div class="chat-message me">
@@ -109,7 +109,7 @@
                             <div class="input-group">
                                 <input placeholder="Enter your message here" class="form-control" type="text" id="chat-input">
                                 <span class="input-group-btn">
-                                    <button type="button" class="btn btn-default"><i class="fa fa-arrow-right"></i></button>
+                                    <button type="button" id="chat-send" class="btn btn-default"><i class="fa fa-arrow-right"></i></button>
                                 </span>
                             </div>
                         </form>
@@ -178,9 +178,9 @@
             'type' : 'GET',
             'success' : function(response) {
                 if (response.success == true) {
-                    console.log('true');
+                    // console.log('true');
                     if(response.data != "") {
-                        console.log(response.data);
+                        // console.log(response.data);
                         if(response.data[0].provider_status == providerStatus && response.data[0].status == serviceStatus) {
                         } else {
                             location.reload();
@@ -199,6 +199,7 @@
     var defaultImage = "{{ asset('user_default.png') }}";
     var chatBox = document.getElementById('chat-box');
     var chatInput = document.getElementById('chat-input');
+    var chatSend = document.getElementById('chat-send');
 
     var messageTemplate = function(data) {
         var message = document.createElement('div');
@@ -224,51 +225,88 @@
         chatBox.appendChild(messageTemplate({contact: {img: defaultImage}, message: "Sdihartrh"+i}));
     }
 
-    chatSockets = function (contact) {
-        this.id = contact;
-        this.receiver = undefined;
+    chatSockets = function () {
         this.socket = undefined;
     }
     chatSockets.prototype.initialize = function() {
-        this.socket = io('{{ env("SOCKET_SERVER") }}', { query: "sender=" + this.id });
-        // this.socket = io('http://localhost:8890/', { query: "sender=" + this.id });
+        this.socket = io('{{ env("SOCKET_SERVER") }}', { query: "myid=" + this.id });
 
         // console.log('Initalize');
 
         this.socket.on('connected', function (data) {
             socketState = true;
             chatInput.enable();
-            // console.log('Connected :: '+data);
+            console.log('Connected :: '+data);
         });
 
         this.socket.on('message', function (data) {
-            // console.log("New Message :: "+JSON.stringify(data));
+            console.log("New Message :: "+JSON.stringify(data));
             if(data.message){
-                // console.log(this);
                 chatContainer.append(messageTemplate(data, currentContact));
-                var chtbxheight = $("#chat-container").outerHeight(true);
-                $("#chat-outer").animate({scrollTop: chtbxheight }, 100);
+                // var chtbxheight = $("#chat-container").outerHeight(true);
+                // $("#chat-outer").animate({scrollTop: chtbxheight }, 100);
             }
         });
 
         this.socket.on('disconnect', function (data) {
             socketState = false;
-            // console.log('Disconnected from server');
+            chatInput.disable();
+            console.log('Disconnected from server');
         });
     }
 
     chatSockets.prototype.sendMessage = function(data) {
         try {
-            // console.log('Sending Message :: ' + data);
-            // console.log(user_id);
-            // console.log(this.receiver.id);
             this.socket.emit('send message', { receiver: this.receiver.id, message: data }); 
         } catch(e) {
-            // statements
             // console.log(e);
         }
     }
 
+    chatInput.enable = function() {
+        // console.log('Chat Input Enable');
+        this.prop( "disabled", false );
+    };
+
+    chatInput.clear = function() {
+        // console.log('Chat Input Cleared');
+        this.val("");
+    };
+
+    chatInput.disable = function() {
+        // console.log('Chat Input Disable');
+        this.prop( "disabled", true );
+    };
+
+    chatInput.addEventListener("keyup", function (e) {
+        if (e.which == 13) {
+            sendMessage(chatInput);
+            return false;
+        }
+    });
+
+    chatSend.addEventListener('click', function() {
+        sendMessage(chatInput);
+    });
+    
+
+    function sendMessage(input) {
+        text = input.val().trim();
+        if(socketState && text != '') {
+            socketClient.sendMessage(text);
+
+            message = {};
+            message.type = 'up';
+            message.message = text;
+            message.time = new Date();
+            message.status = "unread";
+
+            chatBox.appendChild(messageTemplate(message));
+            chatInput.clear();
+            // var chtbxheight = $("#chat-container").outerHeight(true);
+            // $("#chat-outer").animate({scrollTop: chtbxheight }, 100);
+        }
+    }
 </script>
 @endsection
 
