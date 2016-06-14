@@ -1475,8 +1475,20 @@ class ProviderApiController extends Controller
 							->leftJoin('users', 'users.id', '=', 'requests.user_id')
                             ->leftJoin('service_types', 'service_types.id', '=', 'requests.request_type')
 							->orderBy('provider_status','desc')
-							->select('requests.id as request_id', 'requests.request_type as request_type', 'service_types.name as service_type_name', 'request_start_time as request_start_time', 'requests.status', 'requests.provider_status', 'requests.amount', DB::raw('CONCAT(users.first_name, " ", users.last_name) as user_name'), 'users.picture as user_picture', 'users.id as user_id','requests.s_latitude', 'requests.s_longitude')
-                            ->get()->toArray();
+							->select(
+								'requests.id as request_id',
+								'requests.request_type as request_type',
+								'service_types.name as service_type_name',
+								'request_start_time as request_start_time',
+								'requests.status', 'requests.provider_status',
+								'requests.amount',
+								DB::raw('CONCAT(users.first_name, " ", users.last_name) as user_name'),
+								'users.picture as user_picture',
+								'users.mobile as user_mobile',
+								'users.id as user_id',
+								'requests.s_latitude',
+								'requests.s_longitude'
+							)->get()->toArray();
 
         $requests_data = array();
         $invoice = array();

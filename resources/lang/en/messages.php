@@ -141,6 +141,7 @@ return array(
 	'cancel_requests'	=> 	'Cancel Request',
 	'map'	=> 	'Map',
 	'no_service'	=> 	'No Service History',
+	'user_mobile'	=>	'User Mobile',
 	
 
 	//Web Provider
@@ -205,8 +206,7 @@ return array(
 	'password_ph'	=>	'Atleast 6 letters',
 	'login'	=>	'Login',
 	'forgot_password'	=>	'Forgot Password?',
-	'provider_rated'	=>	'Provider Rated',
-	'provider_rated'	=>	'Provider Rated',
+	
 
 
 

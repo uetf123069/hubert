@@ -85,7 +85,11 @@
                             <td data-title="name" align="left">{{ $request_data[0]->user_name }}</td>
                         </tr>
                         <tr>
-                            <th>{{ tr('rating') }}</th>
+                            <th>{{ tr('user_mobile') }}</th>
+                            <td data-title="name" align="left">{{ $request_data[0]->user_mobile }}</td>
+                        </tr>
+                        <tr>
+                           <th>{{ tr('rating') }}</th>
                             <td data-title="rating" align="left">{{ $request_data[0]->user_rating }}</td>
                         </tr>
                         <tr>

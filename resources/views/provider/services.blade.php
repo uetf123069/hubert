@@ -32,6 +32,8 @@
 							<th>{{ tr('service_type') }}</th>
 							<th>{{ tr('started_on') }}</th>
 							<th>{{ tr('ended_on') }}</th>
+							<th>{{ tr('rating') }}</th>
+							<th>{{ tr('review') }}</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -49,6 +51,8 @@
 							<td>{{get_service_name($request->request_type)}}</td>
 							<td class="center">{{date('H:i - d M, Y',strtotime($request_details->start_time))}}</td>
 							<td class="center">{{date('H:i - d M, Y',strtotime($request_details->end_time))}}</td>
+							<td>{{ $request_details->UserRating->rating }}</td>
+							<td>{{ $request_details->UserRating->comment }}</td>
 						</tr>
 					@endforeach
 					
