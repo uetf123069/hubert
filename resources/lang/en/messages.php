@@ -291,6 +291,7 @@ return array(
 	'home'	=>	'Home',
 	'name'	=>	'Name',
 	'default'	=>	'Default',
+	'default_lang'	=>	'Default Language',
 
 	//Admin Notifications
 	'admin_not_profile'	=>	'Admin Details updated Successfully',

@@ -71,6 +71,10 @@ class SettingstableSeeder extends Seeder
 		        'key' => 'paypal_email',
 		        'value' => ''
 		    ], 
+		    [
+		        'key' => 'default_lang',
+		        'value' => 'en'
+		    ], 
 
 		]);
     }
