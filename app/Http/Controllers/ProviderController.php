@@ -421,4 +421,22 @@ class ProviderController extends Controller
 
         return response()->json($response->data);
     }
+
+        /**
+     * Popup incoming request.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function detect_request(Request $request)
+    {
+        $request->request->add([ 
+            'id' => \Auth::guard('provider')->user()->id,
+            'token' => \Auth::guard('provider')->user()->token,
+            'device_token' => \Auth::guard('provider')->user()->device_token,
+        ]);
+
+        $ApiResponse = $this->ProviderApiController->request_status_check($request)->getData();
+
+        return response()->json($ApiResponse);
+    }
 }
