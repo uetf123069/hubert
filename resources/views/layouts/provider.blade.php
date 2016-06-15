@@ -145,22 +145,24 @@
         </div>
     </div>
 
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyALHyNTDk1K_lmcFoeDRsrCgeMGJW6mGsY&libraries=places"></script>
+
     <script type="text/javascript">
         var globalOnPopup = 0;
         
         var maps = ['initMap'];
 
-        function initMap(serviceLocation) {
+        function initMap(lat,lng) {
             var map;
     
             map = new google.maps.Map(document.getElementById('map'), {
-                center: serviceLocation,
+                center: new google.maps.LatLng(lat,lng),
                 zoom: 15
             });
 
             var marker = new google.maps.Marker({
                 map: map,
-                position: serviceLocation,
+                position: new google.maps.LatLng(lat,lng),
                 visible: true,
                 animation: google.maps.Animation.DROP,
             });
@@ -199,7 +201,7 @@
                                 $('#request_decline_url').attr('href',"{{route('provider.request.decline')}}?request_id="+return_data.data[0].request_id);
 
                                 setTimeout(function() {
-                                    initMap({lat: return_data.data[0].latitude, lng: return_data.data[0].longitude})
+                                    initMap(return_data.data[0].latitude, return_data.data[0].longitude);
                                      },1000);
 
                                 $('#myModal').modal({
@@ -235,6 +237,6 @@
         }, 5000);
     </script>
     @yield('scripts')
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyALHyNTDk1K_lmcFoeDRsrCgeMGJW6mGsY&libraries=places"></script>
+
 </body>
 </html>
