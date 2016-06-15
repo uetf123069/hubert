@@ -76,9 +76,17 @@ class AdminController extends Controller
                     ->groupBy('provider_ratings.provider_id')
                     ->orderBy('provider_id','desc')
                     ->limit(1)->first();
+        if($top != null){
         $tot_rev = Requests::where('confirmed_provider',$top->id)->sum('amount');
         $pro_req = Requests::where('confirmed_provider',$top->id)->count();
         $avg_rev = ProviderRating::where('provider_id',$top->id)->avg('rating');
+        }
+        else
+        {
+        $tot_rev = 0;
+        $pro_req = 0;
+        $avg_rev = 0;
+        }
         $provider_reviews = DB::table('provider_ratings')
                 ->leftJoin('providers', 'provider_ratings.provider_id', '=', 'providers.id')
                 ->leftJoin('users', 'provider_ratings.user_id', '=', 'users.id')

@@ -46,8 +46,8 @@
                     <br><br>
             </div>
 
-            <div class="col-md-3">
-                <img src="{{$provider->picture ? $provider->picture : asset('logo.png')}}">
+            <div class="col-md-4">
+                <img style="width: 100%;" src="{{$provider->picture ? $provider->picture : asset('logo.png')}}">
             </div>
 
             </div>

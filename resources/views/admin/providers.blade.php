@@ -79,7 +79,7 @@
   <script type="text/javascript">
 $(document).ready(function() {
     $('#providers').DataTable( {
-        "order": [[ 3, "desc" ]]
+        "order": [[ 0, "desc" ]]
     } );
 } );
 </script>
