@@ -17,9 +17,10 @@
 				<div class="panel-body">
 					<form action="{{route('provider.upload.documents')}}" method="POST" enctype="multipart/form-data" class="form-horizontal row-border">
 
+					<?php $inc = 0; ?>
 						@foreach($documents as $document)
 
-							<?php $status = check_provider_document($document->id,Auth::guard('provider')->user()->id); ?>
+							<?php $status = check_provider_document($document->id,Auth::guard('provider')->user()->id); $inc++; ?>
 
 							@if($status['success'] == false)
 
@@ -60,9 +61,13 @@
 
                         	@endforeach
 
+                        	@if($inc != 0)
 							<div class="col-sm-8 col-sm-offset-2">
 								<button type="submit" class="btn-primary btn">{{ tr('submit_documents') }}</button>
 							</div>
+							@else
+								<div><strong style="text-align:center"> No Documents Types Found</strong></div>
+							@endif
 
 					</form>
 				</div>

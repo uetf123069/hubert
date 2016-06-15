@@ -180,7 +180,7 @@ return array(
 
 	//Web Provider
 	'overall_request'	=> 	'Overall Request Count',
-	'month_request'	=> 	'Request Count on this month',
+	'month_request'	=> 	'Request Accepted by month',
 	'provider_since'	=> 	'Provider Since',
 	'approval_waiting'	=> 	'Waiting for Approval',
 	'ongoing'	=> 	'Ongoing Services',

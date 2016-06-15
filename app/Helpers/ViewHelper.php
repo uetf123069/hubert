@@ -117,7 +117,7 @@ function get_provider_request_this_month($provider_id)
 
 function get_provider_completed_request($provider_id)
 {
-	$request_count = Requests::where('confirmed_provider',$provider_id)->where('provider_status',6)->count();
+	$request_count = Requests::where('confirmed_provider',$provider_id)->where('provider_status',6)->orWhere('provider_status',5)->count();
 	return $request_count;
 }
 
