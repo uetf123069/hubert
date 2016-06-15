@@ -299,7 +299,7 @@ $("#range-month").ionRangeSlider({
     	});
     	infowindow.open(map, marker);
     }
-    maps.push('ongoingMap');
+    ongoingMap();
 </script>
 <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
 <script type="text/javascript">

@@ -13,7 +13,7 @@
 
         <!-- logo -->
         <div class="brand-logo">
-            <img src="{{ Setting::get('site_logo', asset('logo.png')) }}" height="15" alt="">
+            <img src="{{ Setting::get('site_logo', asset('xuber.png')) }}" height="15" alt="">
         </div>
         <!-- /logo -->
 
