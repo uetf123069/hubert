@@ -499,8 +499,21 @@ class UserController extends Controller
         return back()->with('response', $response);
     }
 
-    public function test(Request $request)
+    /**
+     * Get all messages for current request.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function message_get(Request $request)
     {
-        dd($request);
+        $request->request->add([ 
+            'id' => \Auth::user()->id,
+            'token' => \Auth::user()->token,
+            'device_token' => \Auth::user()->device_token,
+        ]);
+
+        $response = $this->UserAPI->message_get($request)->getData();
+
+        return response()->json($response->data);
     }
 }

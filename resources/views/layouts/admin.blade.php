@@ -7,7 +7,7 @@
     
     <meta name="description" content="{{ Setting::get('site_description', 'Uber for Services') }}">
     <meta name="viewport" content="width=device-width">
-    <link rel="shortcut icon" href="{{ Setting::get('site_icon', asset('/favicon.ico') ) }}">
+    <link rel="shortcut icon" href="{{ Setting::get('site_logo', asset('favicon.ico') ) }}">
 
     <!-- page level plugin styles -->
     <link rel="stylesheet" href="{{ asset('admin_assets/styles/climacons-font.css') }}">
@@ -27,6 +27,7 @@
     <link rel="stylesheet" href="{{ asset('admin_assets/styles/animate.css') }}">
     <link rel="stylesheet" href="{{ asset('admin_assets/styles/urban.css') }}">
     <link rel="stylesheet" href="{{ asset('admin_assets/styles/urban.skins.css') }}">
+    <!-- <link rel="stylesheet" href="{{ asset('admin_assets/styles/app.min.css') }}"> -->
 
     @yield('styles')
 
@@ -74,6 +75,7 @@
     <script src="{{ asset('admin_assets/scripts/extentions/lib.js') }}"></script>
     <script src="{{ asset('admin_assets/scripts/jquery-1.12.3.min.js')}}"></script>
     <script src="{{ asset('admin_assets/scripts/jquery.dataTables.min.js')}}"></script>
+    <script src="{{ asset('admin_assets/scripts/bootstrap-datatables.js')}}"></script>
     <!-- endbuild -->
 
     <!-- page level scripts -->

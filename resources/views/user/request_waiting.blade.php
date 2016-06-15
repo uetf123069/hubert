@@ -26,7 +26,9 @@
                         <tr>
                             <td data-title="Provider" colspan="2">
                                 <h2 class="text-center">{{ tr('provider') }}</h2>
-                                <img src="{{ $Service->provider_picture }}" class="col-md-8 col-xs-offset-2 img-responsive img-circle">
+                                <div style="padding:30px">
+                                    <img id="provider-image" style="margin:0 auto; width:200px; height: 200px;" src="{{ $Service->provider_picture != '' ? $Service->provider_picture : asset('user_default.png') }}" class="img-responsive img-circle">
+                                </div>
                             </td>
                         </tr>
                         <tr>
@@ -53,10 +55,6 @@
                         <tr>
                             <th>{{ tr('requested_time') }}</th>
                             <td data-title="Requested Time">{{ $Service->request_start_time }}</td>
-                        </tr>
-                        <tr>
-                            <th>{{ tr('amount') }}</th>
-                            <td data-title="Amount">{{ $Service->amount }}</td>
                         </tr>
                         <tr>
                             <th>{{ tr('req_status') }}</th>
@@ -86,41 +84,19 @@
             <div class="col-md-6">
                 <h2 class="text-center">Chat with {{ $Service->provider_name }}</h2>
                 <div class="row">
-                    <div class="panel-chat well m-n" id="chat-box" tabindex="5000" style="overflow-y: scroll; height: 400px; outline: none; border-radius: 0;">
-                        <div class="chat-message me">
-                            <div class="chat-contact">
-                                <img src="{{ asset('user_default.png') }}" alt="">
-                            </div>
-                            <div class="chat-text">
-                                Chatroulette was one of those sites that didn’t impress me.
-                            </div>
-                        </div>
-                        <div class="chat-message chat-primary">
-                            <div class="chat-contact">
-                                <img src="{{ asset('user_default.png') }}" alt="">
-                            </div>
-                            <div class="chat-text">
-                                Well, that was almost like a visit to the local loony bin.
-                            </div>
-                        </div>
+                    <div class="panel-chat well m-n" id="chat-box" style="overflow-y: scroll; height: 400px;">
                     </div>
                     <div class="p-md">
-                        <form action="#">
-                            <div class="input-group">
-                                <input placeholder="Enter your message here" class="form-control" type="text" id="chat-input">
-                                <span class="input-group-btn">
-                                    <button type="button" id="chat-send" class="btn btn-default"><i class="fa fa-arrow-right"></i></button>
-                                </span>
-                            </div>
-                        </form>
+                        <div class="input-group">
+                            <input placeholder="Enter your message here" class="form-control" type="text" id="chat-input">
+                            <span class="input-group-btn">
+                                <button type="button" id="chat-send" class="btn btn-default"><i class="fa fa-arrow-right"></i></button>
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
             @endif
-            <div class="col-md-6">
-                <h2 class="text-center">{{ tr('map') }}</h2> 
-                <div id="map"></div>
-            </div>
         </div>
         <div class="row">
             <div class="col-md-6">
@@ -134,6 +110,10 @@
                 <h2 class="col-xs-8 col-xs-offset-2">{{ tr('after') }}</h2>                
                 <img class="col-xs-8 col-xs-offset-2" src="{{ $Service->after_image }}">
                 @endif
+            </div>
+            <div class="col-md-12">
+                <h2 class="text-center">{{ tr('map') }}</h2> 
+                <div id="map"></div>
             </div>
         </div>
     </div>
@@ -207,29 +187,30 @@
         var messageText = document.createElement('div');
 
         messageContact.className = "chat-contact";
-        messageContact.innerHTML = '<img src="' + data.contact.img + '">';
 
         messageText.className = "chat-text";
         messageText.innerHTML = data.message;
 
-        message.className = "chat-message chat-primary";
-        // message.className = "chat-message me";
-
+        if(data.type == 'up') {
+            message.className = "chat-message me";
+            messageContact.innerHTML = '<img src="' + socketClient.user_picture + '">';
+        } else {
+            message.className = "chat-message chat-primary";
+            messageContact.innerHTML = '<img src="' + socketClient.provider_picture + '">';
+        }
         message.appendChild(messageContact);
         message.appendChild(messageText);
 
         return message;
     }
 
-    for (var i = 0; i < 4; i++) {
-        chatBox.appendChild(messageTemplate({contact: {img: defaultImage}, message: "Sdihartrh"+i}));
-    }
-
     chatSockets = function () {
         this.socket = undefined;
+        this.provider_picture = "{{ $CurrentRequest->data[0]->provider_picture }}" == "" ? defaultImage : "{{ $CurrentRequest->data[0]->provider_picture }}";
+        this.user_picture = "{{ \Auth::user()->picture }}" == "" ? defaultImage : "{{ \Auth::user()->picture }}";
     }
     chatSockets.prototype.initialize = function() {
-        this.socket = io('{{ env("SOCKET_SERVER") }}', { query: "myid=" + this.id });
+        this.socket = io('{{ env("SOCKET_SERVER") }}', { query: "myid=up{{ \Auth::user()->id }}" });
 
         // console.log('Initalize');
 
@@ -242,9 +223,10 @@
         this.socket.on('message', function (data) {
             console.log("New Message :: "+JSON.stringify(data));
             if(data.message){
-                chatContainer.append(messageTemplate(data, currentContact));
-                // var chtbxheight = $("#chat-container").outerHeight(true);
-                // $("#chat-outer").animate({scrollTop: chtbxheight }, 100);
+                chatBox.appendChild(messageTemplate(data));
+                $(chatBox).animate({
+                    scrollTop: $(chatBox).height(),
+                }, 500);
             }
         });
 
@@ -256,26 +238,33 @@
     }
 
     chatSockets.prototype.sendMessage = function(data) {
-        try {
-            this.socket.emit('send message', { receiver: this.receiver.id, message: data }); 
-        } catch(e) {
-            // console.log(e);
-        }
+        // console.log('SendMessage'+data);
+
+        data = {};
+        data.type = 'up';
+        data.message = text;
+        data.user_id = "{{ \Auth::user()->id }}";
+        data.provider_id = "{{ $CurrentRequest->data[0]->provider_id }}";
+
+        this.socket.emit('send message', data); 
     }
+
+    socketClient = new chatSockets();
+    socketClient.initialize();
 
     chatInput.enable = function() {
         // console.log('Chat Input Enable');
-        this.prop( "disabled", false );
+        this.disabled = false;
     };
 
     chatInput.clear = function() {
         // console.log('Chat Input Cleared');
-        this.val("");
+        this.value = "";
     };
 
     chatInput.disable = function() {
         // console.log('Chat Input Disable');
-        this.prop( "disabled", true );
+        this.disabled = true;
     };
 
     chatInput.addEventListener("keyup", function (e) {
@@ -291,22 +280,39 @@
     
 
     function sendMessage(input) {
-        text = input.val().trim();
+        text = input.value.trim();
         if(socketState && text != '') {
-            socketClient.sendMessage(text);
 
             message = {};
             message.type = 'up';
             message.message = text;
-            message.time = new Date();
-            message.status = "unread";
 
+            socketClient.sendMessage(text);
             chatBox.appendChild(messageTemplate(message));
             chatInput.clear();
-            // var chtbxheight = $("#chat-container").outerHeight(true);
-            // $("#chat-outer").animate({scrollTop: chtbxheight }, 100);
+            $(chatBox).animate({
+                scrollTop: $(chatBox).height(),
+            }, 500);
         }
     }
+
+    $.get('{{ route("user.message.get") }}', {
+        provider_id: '{{ $CurrentRequest->data[0]->provider_id }}'
+    })
+    .done(function(response) {
+        for (var i = (response.length - 10 >= 0 ? response.length - 10 : 0); i < response.length; i++) {
+            chatBox.appendChild(messageTemplate(response[i]));
+            $(chatBox).animate({
+                scrollTop: $(chatBox).height(),
+            }, 500);
+        }
+    })
+    .fail(function(response) {
+        // console.log(response);
+    })
+    .always(function(response) {
+        // console.log(response);
+    });
 </script>
 @endsection
 
@@ -322,9 +328,15 @@
         height: 100%;
         min-height: 400px; 
     }
+
     #service-state {
         border-bottom: none;
         padding-bottom: 0;
+    }
+
+    .chat-contact > img {
+        height: 40px;
+        width: 40px;
     }
 </style>
 @endsection

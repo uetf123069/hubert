@@ -12950,3 +12950,32 @@ td.align-middle {
 .widget .widget-details {
   padding: 10px;
 }
+
+
+.provider-detail dt{
+  text-align: left;
+  margin-bottom: 10px;
+}
+.provider-detail dd{
+  text-align: left;
+  margin-bottom: 10px;
+
+}
+
+.prov-prof{
+      max-width: 450px;
+    margin: 0 auto;
+    border: 1px solid #e8e8e8;
+}
+
+.table th,.table td{
+  text-align: center;
+}
+
+th.min{
+  min-width: 100px;
+}
+
+.adm-log-logo{
+  max-height: 80px;
+}

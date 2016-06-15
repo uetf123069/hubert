@@ -83,13 +83,16 @@
 
     #legend {
         font-family: Arial, sans-serif;
-        background: #fff;
+        background: rgba(255,255,255,0.8);
         padding: 10px;
         margin: 10px;
-        border: 3px solid #000;
+        border: 2px solid #f3f3f3;
     }
     #legend h3 {
         margin-top: 0;
+        font-size: 16px;
+        font-weight: bold;
+        text-align: center;
     }
     #legend img {
         vertical-align: middle;
@@ -108,8 +111,10 @@
     ];
 
     var mapIcons = [
-        'http://maps.google.com/mapfiles/ms/icons/red-dot.png',
-        'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
+        // 'http://maps.google.com/mapfiles/ms/icons/red-dot.png',
+        '{{ asset('images/map-marker-red.png') }}',
+        '{{ asset('images/map-marker-blue.png') }}',
+        // 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
     ];
     var mapMarkers = [];
     function initMap() {

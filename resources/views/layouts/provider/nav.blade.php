@@ -15,7 +15,7 @@
 						</div>
 						<div class="tabular-cell welcome-options">
 							<span class="welcome-text">Welcome,</span>
-							<a href="#" class="name">{{Auth::guard('provider')->user()->name}}</a>
+							<a href="#" class="name">{{Auth::guard('provider')->user()->first_name.' '.Auth::guard('provider')->user()->last_name}}</a>
 							@if(Auth::guard('provider')->user()->is_approved == 1)
 								<span class="label label-info">{{ tr('approved') }}</span>
 							@else
@@ -41,7 +41,7 @@
 							</a>
 						</li>
 						<li>
-							<a href="{{ route('provider.ongoing') }}">
+							<a href="{{ route('provider.ongoing') }}" style="background-color:#088400">
 								<i class="fa fa-cog fa-spin"></i><span>{{ tr('ongoing') }}</span>
 							</a>
 						</li>

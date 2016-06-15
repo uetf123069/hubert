@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="container" id="login-form">
-    <a href="{{ url('/') }}" class="login-logo"><img src="{{ asset('logo.png') }}"></a>
+    <a href="{{ url('/') }}" class="login-logo"><img src="{{ Setting::get('site_logo', asset('logo.png')) }}"></a>
     <div class="row">
         <div class="col-md-6 col-md-offset-3">
             <div class="panel panel-default">

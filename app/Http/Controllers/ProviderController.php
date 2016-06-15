@@ -325,7 +325,7 @@ class ProviderController extends Controller
         }
 
         if($ApiResponse->success == true){
-            return redirect(route('provider.ongoing'))->with('success', tr('you_are').$request->type);
+            return redirect(route('provider.ongoing'))->with('success', tr('you_are').' '.$request->type);
         }elseif($ApiResponse->success == false){
             return back()->with('error', tr('something_error'));
         }
@@ -407,5 +407,36 @@ class ProviderController extends Controller
         }else{
             return back()->with('error', 'Something Went Wrong');
         }
+    }
+
+    public function message_get(Request $request)
+    {
+        $request->request->add([ 
+            'id' => \Auth::guard('provider')->user()->id,
+            'token' => \Auth::guard('provider')->user()->token,
+            'device_token' => \Auth::guard('provider')->user()->device_token,
+        ]);
+
+        $response = $this->ProviderApiController->message_get($request)->getData();
+
+        return response()->json($response->data);
+    }
+
+        /**
+     * Popup incoming request.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function detect_request(Request $request)
+    {
+        $request->request->add([ 
+            'id' => \Auth::guard('provider')->user()->id,
+            'token' => \Auth::guard('provider')->user()->token,
+            'device_token' => \Auth::guard('provider')->user()->device_token,
+        ]);
+
+        $ApiResponse = $this->ProviderApiController->request_status_check($request)->getData();
+
+        return response()->json($ApiResponse);
     }
 }

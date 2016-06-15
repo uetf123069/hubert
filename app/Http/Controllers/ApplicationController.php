@@ -123,7 +123,8 @@ class ApplicationController extends Controller
                 "type" => "required|in:up,pu",
                 "message" => "required",
             ]);
-        return ChatMessage::create($request);
+        
+        return ChatMessage::create($request->all());
     }
 }
 

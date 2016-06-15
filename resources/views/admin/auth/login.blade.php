@@ -7,7 +7,7 @@
     {{ csrf_field() }}
 
     <div class="text-center mb15">
-        <img src="{{ asset('logo.png') }}" />
+        <img class="adm-log-logo" src="{{ asset('logo.png') }}" />
     </div>
 
     <p class="text-center mb30">{{ tr('welcome') }}</p>
