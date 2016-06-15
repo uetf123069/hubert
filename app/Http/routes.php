@@ -219,6 +219,10 @@ Route::group(['prefix' => 'admin'], function(){
 
     Route::get('/viewRequest/{id}', 'AdminController@ViewRequest')->name('adminViewRequest');
 
+    Route::get('/chatHistory/{id}', 'AdminController@ViewChatHistory')->name('adminChatHistory');
+
+    Route::get('/deleteChatHistory/{id}', 'AdminController@adminChatHistoryDelete')->name('adminChatHistoryDelete');
+
 
     //User Routes
     Route::get('/users', 'AdminController@users')->name('admin.user');

@@ -143,11 +143,7 @@ return array(
 	'you_are'	=>	'You are',
 	'service_comp'	=>	'Service Completed',
 	'service_cancel'	=>	'Service Cancelled',
-	''	=>	'',
-	''	=>	'',
-	''	=>	'',
-	''	=>	'',
-	''	=>	'',
+	'payment_details'	=>	'Payment Details',
 
 	//Web User Request
 	'request'	=> 	'Request',
@@ -348,6 +344,7 @@ return array(
 	'recent_reviews'	=>	'Recent User Reviews',
 	'from'	=>	'From',
 	'to'	=>	'To',
+	'chat_history'	=>	'Chat History',
 
 	//Admin Button
 	'submit'	=>	'Submit',
@@ -420,6 +417,17 @@ return array(
 	'paypal'	=>	'Paypal',
 	'manual_request'	=>	'Manual Request',
 
+	//Admin Request
 
+	'booked_by'	=>	'Booked by',
+	'request_started'	=>	'Request Started',
+	'request_ended'	=>	'Request Ended',
+	'before_service'	=>	'Before Service',
+	'after_service'	=>	'After Service',
+	'admin_profile'	=>	'Admin Profile',
+	'provider_cap'	=>	'PROVIDER',
+	'user_cap'	=>	'USER',
+	'chat_history_delete'	=>	'Chat History Deleted Successfully',
+	'no_chat'	=>	'No Chat History Found',
 
 );
