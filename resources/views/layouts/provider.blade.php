@@ -147,9 +147,12 @@
 
     <script type="text/javascript">
         var globalOnPopup = 0;
+        
+        var maps = ['initMap'];
 
-        var map;
         function initMap(serviceLocation) {
+            var map;
+    
             map = new google.maps.Map(document.getElementById('map'), {
                 center: serviceLocation,
                 zoom: 15
@@ -176,7 +179,7 @@
                 'success' : function(return_data) {
                     if (return_data.success == true) {
 
-                        console.log('true');
+                        // console.log('true');
 
                         if(return_data.data != "" && globalOnPopup == 0){
                             if(return_data.data[0].time_left_to_respond > 0){
@@ -230,12 +233,20 @@
                 }
             });
         }, 5000);
+
+        function mapInitialize() {
+            $(document).trigger("startmap");
+        }
+
+        $(document).on( "startmap", function( event, param1, param2 ) {
+            console.log(maps);
+            $.each(maps, function(index, value) {
+                console.log(window[value]);
+                window[value]();
+            });
+        });
     </script>
-
-    <script type="text/javascript"
-  src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyALHyNTDk1K_lmcFoeDRsrCgeMGJW6mGsY&libraries=places">
-  </script>
-
     @yield('scripts')
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyALHyNTDk1K_lmcFoeDRsrCgeMGJW6mGsY&libraries=places&callback=mapInitialize"></script>
 </body>
 </html>

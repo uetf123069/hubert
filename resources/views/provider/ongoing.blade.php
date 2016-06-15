@@ -249,7 +249,6 @@
             });
         }, 5000);
 </script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyALHyNTDk1K_lmcFoeDRsrCgeMGJW6mGsY&libraries=places&callback=initMap" async defer></script>
 <script type="text/javascript">
 $("#range-month").ionRangeSlider({
     values: [
@@ -276,8 +275,7 @@ $("#range-month").ionRangeSlider({
 </script>
 
 <script>
-
-function initMap() {
+    function ongoingMap() {
         var myLatLng = {lat: {{$request_data[0]->s_latitude}}, lng: {{$request_data[0]->s_longitude}}};
 
         var map = new google.maps.Map(document.getElementById('user_location_map'), {
@@ -289,19 +287,19 @@ function initMap() {
           position: myLatLng,
           map: map,
           title: 'service location!',
-			animation: google.maps.Animation.DROP,
+    		animation: google.maps.Animation.DROP,
         });
 
         var infowindow = new google.maps.InfoWindow({
-		    content: "Service Location"
-		});
+    	    content: "Service Location"
+    	});
 
          google.maps.event.addListener(marker, 'mouseover', function () {
-		    infowindow.open(map, marker);
-		});
-		infowindow.open(map, marker);
-}
-
+    	    infowindow.open(map, marker);
+    	});
+    	infowindow.open(map, marker);
+    }
+    maps.push('ongoingMap');
 </script>
 <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
 <script type="text/javascript">
@@ -424,7 +422,7 @@ function initMap() {
     }
 
     $.get('{{ route("provider.message.get") }}', {
-        user_id: '{{ $request_data[0]->user_id }}'
+        request_id: '{{ $request_data[0]->request_id }}'
     })
     .done(function(response) {
         for (var i = (response.length - 10 >= 0 ? response.length - 10 : 0); i < response.length; i++) {
