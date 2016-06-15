@@ -65,7 +65,7 @@
 						</div>
 						<div class="col-xs-12 col-sm-offset-1 col-sm-6 m-small-top">
 							<h1 class="pop white">Xuber</h1>
-							<h5 class="light white">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</h5>
+							<h5 class="light white">Grow your business with high performing and custom mobile app Ideas that makes profit by using XUBER for X.Our mobile app developers built mobile application that deliver the customers with higher engagement and out-of-the-blue usability</h5>
 							
 							<div class="download-cta m-xsmall-top">
 								<a href="#" class="download"><img src="{{ asset('assets/landing/img/apple-download_2x.png') }}" alt="Xuber app store"></a>
@@ -117,21 +117,21 @@
 				<div class="container clearfix">
 					<div class="col-xs-12 col-sm-4 about">
 						<i class="large fa fa-comments blue"></i>
-						<h4 class="m-xsmall-top">Chat with your friends</h4>
-						<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,</p>
+						<h4 class="m-xsmall-top">Chat with Service Providers</h4>
+						<p>Xuber Messenger is a Cross-Platform messaging Module which allows you to exchange messages without having to pay for SMS and is available for all smart phones.</p>
 					</div>
 					
 					<div class="col-xs-12 col-sm-4 about">
-						<i class="large fa fa-share blue"></i>
-						<h4 class="m-xsmall-top">Share files faster</h4>
-						<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,</p>
+						<i class="large fa fa-credit-card blue"></i>
+						<h4 class="m-xsmall-top">Enjoy Cashless Payment</h4>
+						<p>Pay for every service using Paypal and Stripe which is an easy and secure way to start accepting payments online. It's also a well-known payment method that your shoppers trust.</p>
 					</div>
 					
 					
 					<div class="col-xs-12 col-sm-4 about">
 						<i class="large fa fa-eye blue"></i>
 						<h4 class="m-xsmall-top">Beautiful interface</h4>
-						<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,</p>
+						<p>Witness the easy to use stock built interface for effective usage.Interactive design that lets people manipulate and contribute to the application.</p>
 					</div>
 					
 				</div>
@@ -149,12 +149,12 @@
 				<div class="container clearfix">
 					<div class="col-xs-12 col-sm-4 m-medium-top">
 						<div class="features col-xs-12 m-small-top m-xsmall-bottom p-none">
-							<h6 class="blue-cap">great customization</h6>
-							<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, </p>
+							<h6 class="blue-cap">Great Customization</h6>
+							<p>Ask us for any customisations that you want to. We have solutions to satisfy all your need.</p>
 						</div>
 						<div class="features col-xs-12 m-small-top m-xsmall-bottom p-none">
-							<h6 class="blue-cap">Retina ready</h6>
-							<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, </p>
+							<h6 class="blue-cap">Live Tracking</h6>
+							<p>The application uses GPS to lively track various stages of users and providers and updates it regularly to the application users.</p>
 						</div>
 					</div>
 					
@@ -165,12 +165,12 @@
 					
 					<div class="col-xs-12 col-sm-4 m-medium-top">
 						<div class="features col-xs-12 m-small-top m-xsmall-bottom p-none">
-							<h6 class="blue-cap">Fully responsive</h6>
-							<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, </p>
+							<h6 class="blue-cap">Rate and Review</h6>
+							<p>We value your comfort and listen to your needs. Rate and Review providers for other users using the start rating system.</p>
 						</div>
 						<div class="features col-xs-12 m-small-top m-xsmall-bottom p-none">
 							<h6 class="blue-cap">Dedicated Support</h6>
-							<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, </p>
+							<p>Any trouble. Stay connected with our support team anytime, anyplace around the world. Overcome Your Challenges With Our Expert Assistance.</p>
 						</div>
 					</div>
 					
@@ -193,8 +193,8 @@
 					<img src="{{ asset('assets/landing/img/admin-map.png') }}" alt="iPhone Image Here">
 				</div>
 				<div class="col-sm-6 col-md-6 content">
-					<h1 class="pop text-gradient">Taking pictures had never been easier</h1>
-					<p class="m-xsmall-top">Lorem Ipsum is simply dummy text of the printing and <b>typesetting</b> industry. Lorem Ipsum has been the industry's <b class="highlight">standard</b> dummy text ever since the 1500s, when an unknown printer took a dark of type and bold it to italic a type <i class="italic">specimen</i> book.</p>
+					<h1 class="pop text-gradient">On the wheels Admin Panel</h1>
+					<p class="m-xsmall-top">Get access to muti-functional admin panel with all possible editing options. Easy to use understand statistics makes you to run the business at ease. But that's not it.</p>
 					<a href="#download" class="button m-small-top">Download Now</a>
 				</div>
 			</div>
@@ -203,8 +203,8 @@
 		<section id="extra-feature-2">
 			<div class="container clearfix">
 				<div class="col-sm-6 col-md-6 content">
-					<h1 class="pop text-gradient">Effects, Filters, Frames, it has it all</h1>
-					<p class="m-xsmall-top">Lorem Ipsum is simply dummy text of the printing and <b>typesetting</b> industry. Lorem Ipsum has been the industry's <b class="highlight">standard</b> dummy text ever since the 1500s, when an unknown printer took a dark of type and bold it to italic a type <i class="italic">specimen</i> book.</p>
+					<h1 class="pop text-gradient">One Step At a Time</h1>
+					<p class="m-xsmall-top">Services History tab to get track of the application usage. Lively handled Step By Step for a ongoing Service.</p>
 					<a href="#download" class="button m-small-top">Download Now</a>
 				</div>
 				<div class="col-sm-6 iphone-right">
