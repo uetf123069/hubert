@@ -134,12 +134,20 @@ function get_provider_service_type($provider_id)
 function get_request_details($request_id)
 {
 	$Request = Requests::find($request_id);
-	$Request->ProviderRating = ProviderRating::where('request_id',$request_id)->first();
+	$provider_data = ProviderRating::where('request_id',$request_id)->first();
 	$return_data = UserRating::where('request_id',$request_id)->first();
 	if(!isset($return_data)){
+		$Request->UserRating = new stdClass();
 		$Request->UserRating->rating = "";
 		$Request->UserRating->comment = "";
 	}
+
+	if(!isset($provider_data)){
+		$Request->ProviderRating = new stdClass();
+		$Request->ProviderRating->rating = "";
+		$Request->ProviderRating->comment = "";
+	}
+	
 	return $Request;
 }
 
