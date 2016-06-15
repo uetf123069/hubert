@@ -408,4 +408,17 @@ class ProviderController extends Controller
             return back()->with('error', 'Something Went Wrong');
         }
     }
+
+    public function message_get(Request $request)
+    {
+        $request->request->add([ 
+            'id' => \Auth::user()->id,
+            'token' => \Auth::user()->token,
+            'device_token' => \Auth::user()->device_token,
+        ]);
+
+        $response = $this->ProviderApiController->message_get($request)->getData();
+
+        return response()->json($response->data);
+    }
 }

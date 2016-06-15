@@ -22,6 +22,8 @@ use App\ServiceType;
 
 use App\Requests;
 
+use App\UserRating;
+
 use App\RequestPayment;
 
 use App\ProviderService;
@@ -557,7 +559,7 @@ class AdminController extends Controller
               
             }
         
-        return back()->with('setting', $settings);
+        return back()->with('setting', $settings)->with('flash_success','Settings Updated Successfully');
     }
 
     //Documents
@@ -745,13 +747,13 @@ class AdminController extends Controller
             return view('admin.reviews')->with('name', 'User')->with('reviews', $user_reviews);
     }
 
-    public function deleteUserReview(Request $request) {
-        $user = UserRating::find('id', $request->id)->delete();
+    public function deleteUserReviews(Request $request) {
+        $user = UserRating::find($request->id)->delete();
         return back()->with('flash_success', tr('admin_not_ur_del'));
     }
 
-    public function deleteProviderReview(Request $request) {
-        $provider = ProviderRating::find('id', $request->id)->delete();
+    public function deleteProviderReviews(Request $request) {
+        $provider = ProviderRating::find($request->id)->delete();
         return back()->with('flash_success', tr('admin_not_pr_del'));
     }
 

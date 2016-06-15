@@ -13,21 +13,31 @@ server.listen(port);
 io.on('connection', function (socket) {
 
     console.log('new connection established');
-    console.log('socket.handshake.query.sender', socket.handshake.query.sender);
+    console.log('socket.handshake.query.myid', socket.handshake.query.myid);
     
-    socket.join(socket.handshake.query.sender);
+    socket.join(socket.handshake.query.myid);
 
     socket.emit('connected', 'Connection to server established!');
 
     socket.on('send message', function(data) {
-        console.log(data);
-        data.sender = socket.handshake.query.sender;
 
-        socket.broadcast.to( (data.type + data.provider) ).emit('message', data);
+        if(data.type == 'up') {
+            receiver = 'pu' + data.provider_id;
+        } else {
+            receiver = 'up' + data.user_id;
+        }
 
-        request('http://dev.xuber.com/message/save?user_id='+data.user+'&provider_id='+data.provider+'&message='+data.message+'&type='+data.type, function (error, response, body) {
+        console.log('receiver',receiver);
+
+        socket.broadcast.to( receiver ).emit('message', data);
+
+        url = 'http://dev.xuber.com/message/save?user_id='+data.user_id+'&provider_id='+data.provider_id+'&message='+data.message+'&type='+data.type;
+
+        console.log(url);
+
+        request(url, function (error, response, body) {
             if (!error && response.statusCode == 200) {
-                console.log(body); // Show the HTML for the Google homepage. 
+                // console.log(body); // Show the HTML for the Google homepage. 
             }
         });
     });

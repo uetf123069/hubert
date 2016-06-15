@@ -7,7 +7,12 @@
 @section('styles')
 <link type="text/css" href="{{ asset('assets/plugins/Ion.RangeSlider/css/ion.rangeSlider.css')}}" rel="stylesheet">                    <!-- Ion Range Slider -->
 <link type="text/css" href="{{ asset('assets/plugins/Ion.RangeSlider/css/ion.rangeSlider.skinNice.css')}}" rel="stylesheet">           <!-- Ion Range Slider Default Skin -->
-
+<style type="text/css">
+    .chat-contact > img {
+        height: 40px;
+        width: 40px;
+    }
+</style>
 @endsection
 
 @section('content')
@@ -72,7 +77,8 @@
 				<h3 style="text-align:center" class="mt0">{{ tr('req_details') }}</h3>
 
 				<div style="padding:30px">
-                 <img style="margin:0 auto;width:200px;" src="{{ $request_data[0]->user_picture ? $request_data[0]->user_picture : asset('logo.png') }}" class="img-responsive img-circle">
+                
+                <img id="user-picture" style="margin:0 auto; width:200px;" src="{{ $request_data[0]->user_picture != '' ? $request_data[0]->user_picture : asset('user_default.png') }}" class="img-responsive img-circle">
 					
 				</div>
 				  <table class="table table-striped">
@@ -152,6 +158,26 @@
 			</div>
 		</div>
 	</div>
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading"></div>
+            <div class="panel-body">
+                <h2 class="text-center">Chat with {{ $request_data[0]->user_name }}</h2>
+                <div class="row">
+                    <div class="panel-chat well m-n" id="chat-box" style="overflow-y: scroll; height: 400px;">
+                    </div>
+                </div>
+                <div class="p-md panel-footer">
+                    <div class="input-group">
+                        <input placeholder="Enter your message here" class="form-control" type="text" id="chat-input">
+                        <span class="input-group-btn">
+                            <button type="button" id="chat-send" class="btn btn-default"><i class="fa fa-arrow-right"></i></button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 	<div class="col-md-6">
 		<div class="panel panel-default">
 			<div class="panel-heading"></div>
@@ -259,6 +285,139 @@ function initMap() {
 		});
 		infowindow.open(map, marker);
 }
+
+</script>
+<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+<script type="text/javascript">
+    var defaultImage = "{{ asset('user_default.png') }}";
+    var chatBox = document.getElementById('chat-box');
+    var chatInput = document.getElementById('chat-input');
+    var chatSend = document.getElementById('chat-send');
+
+    var messageTemplate = function(data) {
+        var message = document.createElement('div');
+        var messageContact = document.createElement('div');
+        var messageText = document.createElement('div');
+
+        messageContact.className = "chat-contact";
+
+        messageText.className = "chat-text";
+        messageText.innerHTML = data.message;
+
+        if(data.type == 'pu') {
+            message.className = "chat-message me";
+            messageContact.innerHTML = '<img src="' + socketClient.provider_picture + '">';
+        } else {
+            message.className = "chat-message chat-primary";
+            messageContact.innerHTML = '<img src="' + socketClient.user_picture + '">';
+        }
+        message.appendChild(messageContact);
+        message.appendChild(messageText);
+
+        return message;
+    }
+
+    chatSockets = function () {
+        this.socket = undefined;
+        this.user_picture = document.getElementById('user-picture').src == "" ? defaultImage : document.getElementById('user-picture').src;
+        this.provider_picture = "{{ \Auth::guard('provider')->user()->picture }}" == "" ? defaultImage : "{{ \Auth::guard('provider')->user()->picture }}";
+    }
+    chatSockets.prototype.initialize = function() {
+        this.socket = io('{{ env("SOCKET_SERVER") }}', { query: "myid=pu{{ \Auth::guard('provider')->user()->id }}" });
+
+        this.socket.on('connected', function (data) {
+            socketState = true;
+            chatInput.enable();
+            console.log('Connected :: '+data);
+        });
+
+        this.socket.on('message', function (data) {
+            console.log("New Message :: "+JSON.stringify(data));
+            if(data.message){
+                chatBox.appendChild(messageTemplate(data));
+                chatBox.scrollTo(0,chatBox.scrollHeight);
+            }
+        });
+
+        this.socket.on('disconnect', function (data) {
+            socketState = false;
+            chatInput.disable();
+            console.log('Disconnected from server');
+        });
+    }
+
+    chatSockets.prototype.sendMessage = function(data) {
+        console.log('SendMessage'+data);
+
+        data = {};
+        data.type = 'pu';
+        data.message = text;
+        data.user_id = "{{ $request_data[0]->user_id }}";
+        data.provider_id = "{{ \Auth::guard('provider')->user()->id }}";
+
+        this.socket.emit('send message', data); 
+    }
+
+    socketClient = new chatSockets();
+    socketClient.initialize();
+
+    chatInput.enable = function() {
+        // console.log('Chat Input Enable');
+        this.disabled = false;
+    };
+
+    chatInput.clear = function() {
+        // console.log('Chat Input Cleared');
+        this.value = "";
+    };
+
+    chatInput.disable = function() {
+        // console.log('Chat Input Disable');
+        this.disabled = true;
+    };
+
+    chatInput.addEventListener("keyup", function (e) {
+        if (e.which == 13) {
+            sendMessage(chatInput);
+            return false;
+        }
+    });
+
+    chatSend.addEventListener('click', function() {
+        sendMessage(chatInput);
+    });
+    
+
+    function sendMessage(input) {
+        text = input.value.trim();
+        if(socketState && text != '') {
+
+            message = {};
+            message.type = 'pu';
+            message.message = text;
+
+            socketClient.sendMessage(text);
+            chatBox.appendChild(messageTemplate(message));
+            chatBox.scrollTo(0,chatBox.scrollHeight);
+            chatInput.clear();
+        }
+    }
+
+    $.get('{{ route("provider.message.get") }}', {
+        user_id: '{{ $request_data[0]->user_id }}'
+    })
+    .done(function(response) {
+        for (var i = response.length - 1; i > response.length - 10 && i >= 0; i--) {
+            chatBox.appendChild(messageTemplate(response[i]));
+            chatBox.scrollTo(0,chatBox.scrollHeight);
+        }
+    })
+    .fail(function(response) {
+        // console.log(response);
+    })
+    .always(function(response) {
+        // console.log(response);
+    });
 
 </script>
 @endif
