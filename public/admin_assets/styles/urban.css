@@ -12979,3 +12979,7 @@ th.min{
 .adm-log-logo{
   max-height: 80px;
 }
+
+.table-responsive {
+    overflow-x: auto;
+}

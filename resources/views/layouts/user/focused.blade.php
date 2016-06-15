@@ -18,7 +18,7 @@
     
 </head>
 
-<body class="focused-form">
+<body class="focused-form usr-log-bg">
 	@yield('content')
 </body>
 </html>

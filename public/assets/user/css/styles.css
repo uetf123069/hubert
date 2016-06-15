@@ -439,3 +439,26 @@
   width: 14px;
   height: 14px;
 }
+
+.navbar-brand{
+      height: 38px;
+    margin-top: 5px;
+}
+.panel-chat{
+  min-height: 520px;
+}
+
+#user-picture{
+  width: 200px;
+  height: 200px;
+}
+
+.usr-log-bg{
+  background-color: #455a64;
+/*  color: #fff;*/
+}
+
+.login-logo img{
+  max-height: 80px;
+  max-width: 250px;
+}

@@ -30,8 +30,8 @@
 							</a>
 						</li>
 						<li>
-							<a href="{{ route('user.services.request') }}" style="background-color:#088400">
-								<i class="fa fa-columns"></i><span>{{ tr('request_services') }}</span>
+							<a href="{{ route('user.services.request') }}" style="background-color:#00bcd4">
+								<i class="fa fa-columns" style="color:#fff"></i><span style="color:#fff;font-weight:bold">{{ tr('request_services') }}</span>
 							</a>
 						</li>
 						<li>
