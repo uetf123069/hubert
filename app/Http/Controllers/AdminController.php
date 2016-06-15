@@ -22,6 +22,8 @@ use App\ServiceType;
 
 use App\Requests;
 
+use App\UserRating;
+
 use App\RequestPayment;
 
 use App\ProviderService;
@@ -172,7 +174,14 @@ class AdminController extends Controller
 
     public function payment()
     {
-        $payment = RequestPayment::all();
+        $payment = DB::table('request_payments')
+                    ->leftJoin('requests','requests.id','=','request_payments.request_id')
+                    ->leftJoin('users','users.id','=','requests.user_id')
+                    ->leftJoin('providers','providers.id','=','requests.confirmed_provider')
+                    ->select('request_payments.*','users.first_name as user_first_name','users.last_name as user_last_name','providers.first_name as provider_first_name','providers.last_name as provider_last_name')
+                    ->orderBy('created_at','desc')
+                    ->get();
+                    
         return view('admin.adminPayment')->with('payments',$payment);
     }
 
@@ -550,7 +559,7 @@ class AdminController extends Controller
               
             }
         
-        return back()->with('setting', $settings);
+        return back()->with('setting', $settings)->with('flash_success','Settings Updated Successfully');
     }
 
     //Documents
@@ -738,13 +747,13 @@ class AdminController extends Controller
             return view('admin.reviews')->with('name', 'User')->with('reviews', $user_reviews);
     }
 
-    public function deleteUserReview(Request $request) {
-        $user = UserRating::find('id', $request->id)->delete();
+    public function deleteUserReviews(Request $request) {
+        $user = UserRating::find($request->id)->delete();
         return back()->with('flash_success', tr('admin_not_ur_del'));
     }
 
-    public function deleteProviderReview(Request $request) {
-        $provider = ProviderRating::find('id', $request->id)->delete();
+    public function deleteProviderReviews(Request $request) {
+        $provider = ProviderRating::find($request->id)->delete();
         return back()->with('flash_success', tr('admin_not_pr_del'));
     }
 

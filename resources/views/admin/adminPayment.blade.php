@@ -23,10 +23,8 @@
                 <tr>
                   <th>{{ tr('request_id') }}</th>
                   <th>{{ tr('transaction_id') }}</th>
-                  <th>{{ tr('base_price') }}</th>
-                  <th>{{ tr('total_time') }}</th>
-                  <th>{{ tr('time_price') }}</th>
-                  <th>{{ tr('tax_price') }}</th>
+                  <th>{{ tr('from') }}</th>
+                  <th>{{ tr('to') }}</th>
                   <th>{{ tr('total_amount') }}</th>
                   <th>{{ tr('payment_mode') }}</th>
                   <th>{{ tr('payment_status') }}</th>
@@ -37,10 +35,8 @@
               <tr>
                   <td>{{$payment->request_id}}</td>
                   <td>{{$payment->payment_id}}</td>
-                  <td>{{$payment->base_price}}</td>
-                  <td>{{$payment->total_time}}</td>
-                  <td>{{$payment->time_price}}</td>
-                  <td>{{$payment->tax_price}}</td>
+                  <td>{{$payment->user_first_name.' '.$payment->user_last_name}}</td>
+                  <td>{{$payment->provider_first_name.' '.$payment->provider_last_name}}</td>
                   <td>{{$payment->total}}</td>
                   <td>{{$payment->payment_mode}}</td>
                   <td>@if($payment->status==0) {{ tr('not_paid') }} @else {{ tr('paid') }} @endif</td>

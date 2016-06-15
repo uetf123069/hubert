@@ -10,7 +10,7 @@
         <img src="{{ Setting::get('site_logo', asset('logo.png')) }}" />
     </div>
 
-    <p class="text-center mb25">Enter a new password and log in to your account</p>
+    <p class="text-center mb25">{{ tr('password_reset_msg') }}</p>
 
     <div class="form-inputs">
 
@@ -47,7 +47,7 @@
 
     <div class="col-md-6 col-md-offset-3">
         <button class="btn btn-success btn-block mb15" type="submit">
-                <span><i class="fa fa-btn fa-refresh"></i> Reset Password</span>
+                <span><i class="fa fa-btn fa-refresh"></i> {{ tr('password_reset_button') }}</span>
         </button>
     </div>
     
