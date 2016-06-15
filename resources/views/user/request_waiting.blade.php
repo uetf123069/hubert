@@ -57,10 +57,6 @@
                             <td data-title="Requested Time">{{ $Service->request_start_time }}</td>
                         </tr>
                         <tr>
-                            <th>{{ tr('amount') }}</th>
-                            <td data-title="Amount">{{ $Service->amount }}</td>
-                        </tr>
-                        <tr>
                             <th>{{ tr('req_status') }}</th>
                             <td data-title="Request Status">{{ get_user_request_status($Service->status) }}</td>
                         </tr>
@@ -102,7 +98,7 @@
             </div>
             @endif
         </div>
-         <div class="row">
+        <div class="row">
             <div class="col-md-6">
                 @if(!empty($Service->before_image))
                 <h2 class="text-center">{{ tr('before')}}</h2>                
@@ -119,9 +115,8 @@
                 <h2 class="text-center">{{ tr('map') }}</h2> 
                 <div id="map"></div>
             </div>
-            </div>
         </div>
-
+    </div>
 </div>
 @endforeach
 
@@ -229,7 +224,9 @@
             console.log("New Message :: "+JSON.stringify(data));
             if(data.message){
                 chatBox.appendChild(messageTemplate(data));
-                chatBox.scrollTo(0,chatBox.scrollHeight);
+                $(chatBox).animate({
+                    scrollTop: chatBox.scrollHeight,
+                }, 500);
             }
         });
 
@@ -293,7 +290,9 @@
             socketClient.sendMessage(text);
             chatBox.appendChild(messageTemplate(message));
             chatInput.clear();
-            chatBox.scrollTo(0,chatBox.scrollHeight);
+            $(chatBox).animate({
+                scrollTop: chatBox.scrollHeight,
+            }, 500);
         }
     }
 
@@ -301,9 +300,11 @@
         provider_id: '{{ $CurrentRequest->data[0]->provider_id }}'
     })
     .done(function(response) {
-        for (var i = response.length - 1; i > response.length - 10 && i >= 0; i--) {
+        for (var i = (response.length - 10 >= 0 ? response.length - 10 : 0); i < response.length; i++) {
             chatBox.appendChild(messageTemplate(response[i]));
-            chatBox.scrollTo(0,chatBox.scrollHeight);
+            $(chatBox).animate({
+                scrollTop: chatBox.scrollHeight,
+            }, 500);
         }
     })
     .fail(function(response) {

@@ -149,7 +149,7 @@ class UserapiController extends Controller
                             array(
                                 'social_unique_id' => 'required',
                                 'first_name' => 'required|max:255',
-                                'last_name' => 'required|max:255',
+                                'last_name' => 'max:255',
                                 'email' => 'email|max:255',
                                 'mobile' => 'digits_between:6,13',
                                 'picture' => 'mimes:jpeg,jpg,bmp,png',
@@ -268,7 +268,6 @@ class UserapiController extends Controller
 
                 // Settings table - COD Check is enabled 
                 if(Settings::where('key' , COD)->where('value' , DEFAULT_TRUE)->first()) {
-
                     // Save the default payment method
                     $user->payment_mode = COD;
                 }
@@ -1141,6 +1140,9 @@ class UserapiController extends Controller
                         $provider->is_available = PROVIDER_AVAILABLE;
                         $provider->save();
 
+                        // clearing chat table
+                        ChatMessage::where('request_id',$request_id)->delete();
+
                         // Send Push Notification to Provider
                         $title = Helper::tr('cancel_by_user_title');
                         $message = Helper::tr('cancel_by_user_message');
@@ -1947,8 +1949,8 @@ class UserapiController extends Controller
     public function message_get(Request $request)
     {
         $Messages = ChatMessage::where('user_id', $request->id)
-                ->where('provider_id', $request->provider_id)
-                ->orderBy('id', 'desc');
+                ->where('provider_id', $request->provider_id);
+                // ->orderBy('id', 'desc');
 
         $response_array = Helper::null_safe(array(
             'success' => true,

@@ -108,10 +108,6 @@
                             <td data-title="Requested Time">{{ $request_data[0]->request_start_time }}</td>
                         </tr>
                         <tr>
-                            <th>{{ tr('amount') }}</th>
-                            <td data-title="Amount">{{ $request_data[0]->amount }}</td>
-                        </tr>
-                        <tr>
                             <th>{{ tr('req_status') }}</th>
                             <td data-title="Request Status">{{ get_user_request_status($request_data[0]->status) }}</td>
                         </tr>
@@ -233,6 +229,21 @@
 <script type="text/javascript" src="{{ asset('assets/plugins/Ion.RangeSlider/js/ion-rangeSlider/ion.rangeSlider.min.js') }}"></script>
 
 @if(!empty($request_data))
+<script type="text/javascript">
+            window.setInterval(function(){
+            $.ajax({
+                'url' : '{{route("provider.detect.request")}}',
+                'type' : 'GET',
+                'success' : function(return_data) {
+                    if (return_data.success == true) {
+                        if(return_data.data == ""){
+                            location.reload();
+                        }
+                    }
+                }
+            });
+        }, 5000);
+</script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyALHyNTDk1K_lmcFoeDRsrCgeMGJW6mGsY&libraries=places&callback=initMap" async defer></script>
 <script type="text/javascript">
 $("#range-month").ionRangeSlider({
@@ -335,7 +346,9 @@ function initMap() {
             console.log("New Message :: "+JSON.stringify(data));
             if(data.message){
                 chatBox.appendChild(messageTemplate(data));
-                chatBox.scrollTo(0,chatBox.scrollHeight);
+                $(chatBox).animate({
+                    scrollTop: chatBox.scrollHeight,
+                }, 500);
             }
         });
 
@@ -398,7 +411,9 @@ function initMap() {
 
             socketClient.sendMessage(text);
             chatBox.appendChild(messageTemplate(message));
-            chatBox.scrollTo(0,chatBox.scrollHeight);
+            $(chatBox).animate({
+                scrollTop: chatBox.scrollHeight,
+            }, 500);
             chatInput.clear();
         }
     }
@@ -407,9 +422,11 @@ function initMap() {
         user_id: '{{ $request_data[0]->user_id }}'
     })
     .done(function(response) {
-        for (var i = response.length - 1; i > response.length - 10 && i >= 0; i--) {
+        for (var i = (response.length - 10 >= 0 ? response.length - 10 : 0); i < response.length; i++) {
             chatBox.appendChild(messageTemplate(response[i]));
-            chatBox.scrollTo(0,chatBox.scrollHeight);
+            $(chatBox).animate({
+                scrollTop: chatBox.scrollHeight,
+            }, 500);
         }
     })
     .fail(function(response) {

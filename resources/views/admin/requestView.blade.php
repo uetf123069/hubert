@@ -47,6 +47,7 @@
               </div>
             </div>
         </div>
+        @if($request->before_image !='')
         <div class="col-md-6">
             <div class="row">
               <div class="col-md-12">
@@ -71,6 +72,7 @@
               </div>
             </div>
         </div>
+        @endif
         <div class="row">
             <div class="col-xs-12">
                 <div id="map"></div>
