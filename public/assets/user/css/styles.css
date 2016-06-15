@@ -462,3 +462,44 @@
   max-height: 80px;
   max-width: 250px;
 }
+
+.wel-cont{
+  padding-left: 20%;
+  padding-right: 20%;
+}
+
+.full-width{
+  width: 100%;
+}
+
+.welcome-box{
+  background-image: url(../../../images/welcome-bg.jpg);
+  border: 0;
+  border-radius: 0px;
+  color: #fff;
+      padding: 30px 10px;
+}
+
+.welcome-box h3{
+      font-size: 32px;
+    color: #fff;
+    font-weight: bold;
+}
+
+.welcome-box .btn{
+  border-color: #fff;
+  background-color: #fff;
+    color: #333;
+    font-size: 16px;
+    padding: 6px 20px;
+    font-weight: bold;
+  }
+
+  .welcome-box .btn:hover{
+  border-color: #fff;
+  background-color: #fff;
+    color: #333;
+    font-size: 16px;
+    padding: 6px 20px;
+  }
+
