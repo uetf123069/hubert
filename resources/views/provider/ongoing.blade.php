@@ -287,7 +287,6 @@ function initMap() {
 }
 
 </script>
-@endif
 <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
 <script type="text/javascript">
     var defaultImage = "{{ asset('user_default.png') }}";
@@ -421,4 +420,5 @@ function initMap() {
     });
 
 </script>
+@endif
 @endsection

@@ -41,7 +41,7 @@
 							</a>
 						</li>
 						<li>
-							<a href="{{ route('provider.ongoing') }}" style="background-color:#840000">
+							<a href="{{ route('provider.ongoing') }}" style="background-color:#088400">
 								<i class="fa fa-cog fa-spin"></i><span>{{ tr('ongoing') }}</span>
 							</a>
 						</li>
