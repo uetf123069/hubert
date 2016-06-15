@@ -52,6 +52,13 @@
                           <dt>Service Type :</dt>
                           <dd>{{$service}}</dd>
 
+                          <dt>Average Rating :</dt>
+                          <dd><ul class="text-white list-style-none mb0">
+                        @for($i=0; $i<$review; $i++)
+                          <li class="fa fa-star text-warning"></li>
+                        @endfor
+                        </ul></dd>
+
                           <dt>Available :</dt>
                           <dd>
                             @if($provider->is_available==1) 
