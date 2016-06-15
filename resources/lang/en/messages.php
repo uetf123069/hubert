@@ -87,6 +87,11 @@ return array(
 	// User
 	'request_complete_payment_title' => "Your Request is completed.Please check the invoice details",
 
+	'cron_no_provider_title' => 'No Provider Available', 
+	'cron_no_provider_message' => 'No provider available to take the service.',
+
+	'cron_new_request_title' => 'New Service',
+
 
 	//Web User
 	'welcome_user'	=> 	'Welcome',
@@ -411,11 +416,6 @@ return array(
 	'cod'	=>	'Cash on Delivery',
 	'paypal'	=>	'Paypal',
 	'manual_request'	=>	'Manual Request',
-
-
-
-
-
 
 
 

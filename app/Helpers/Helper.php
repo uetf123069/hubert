@@ -3,7 +3,9 @@
    namespace App\Helpers;
 
    use Hash;
+
    use App\Admin;
+
    use App\User;
 
    use App\Provider;
@@ -16,9 +18,13 @@
 
    use App\Requests;
 
+   use App\RequestsMeta;
+
    use App\RequestPayment;
 
    use App\Settings;
+
+   use App\ServiceType;
 
    use App\ProviderRating;
 
@@ -32,7 +38,7 @@
 
    use Log;
 
-    class Helper
+    class Helper 
     {
         public static function tr($key) {
 
@@ -672,6 +678,98 @@
         public static function settings($key) {
             $settings = Settings::where('key' , $key)->first();
             return $settings->value;
+        }
+
+        // Usage : provider Incoming request and cron function
+        public static function assign_next_provider($request_id,$provider_id) {
+
+            if($requests = Requests::find($request_id)) {
+
+                //Check the request is offered to the current provider
+                if($provider_id) {
+                    $current_offered_provider = RequestsMeta::where('provider_id',$provider_id)
+                                    ->where('request_id',$request_id)
+                                    ->where('status', REQUEST_META_OFFERED)
+                                    ->first();
+
+                    // Change waiting to respond state
+                    if($current_offered_provider) {
+                        $get_offered_provider = Provider::where('id',$current_offered_provider->provider_id)->first();
+                        $get_offered_provider->waiting_to_respond = WAITING_TO_RESPOND_NORMAL;
+                        $get_offered_provider->save();
+
+                        // TimeOut the current assigned provider
+                        $current_offered_provider->status = REQUEST_META_TIMEDOUT;
+                        $current_offered_provider->save();
+                    }
+                }
+
+                //Select the new provider who is in the next position.
+                $next_request_meta = RequestsMeta::where('request_id', '=', $request_id)->where('status', REQUEST_META_NONE)
+                                    ->leftJoin('providers', 'providers.id', '=', 'requests_meta.provider_id')
+                                    ->where('providers.is_activated',DEFAULT_TRUE)
+                                    ->where('providers.is_available',DEFAULT_TRUE)
+                                    ->where('providers.is_approved',DEFAULT_TRUE)
+                                    ->where('providers.waiting_to_respond',WAITING_TO_RESPOND_NORMAL)
+                                    ->select('requests_meta.id','requests_meta.status','requests_meta.provider_id')
+                                    ->orderBy('requests_meta.created_at')
+                                    ->first();
+
+                //Check the next provider exist or not.
+                if($next_request_meta){
+
+                    // change waiting to respond state
+                    $provider_detail = Provider::find($next_request_meta->provider_id);
+                    $provider_detail->waiting_to_respond = WAITING_TO_RESPOND;
+                    $provider_detail->save();
+
+                    //Assign the next provider.
+                    $next_request_meta->status = REQUEST_META_OFFERED;
+                    $next_request_meta->save();
+
+                    $time = date("Y-m-d H:i:s");
+
+                    //Update the request start time in request table
+                    Requests::where('id', '=', $request_id)->update( array('request_start_time' => date("Y-m-d H:i:s")) );
+                    Log::info('assign_next_provider_cron assigned provider to request_id:'.$request_id.' at '.$time);
+
+                    // Push Start
+                    
+                    $service = ServiceType::find($requests->request_type);
+                    $user = User::find($requests->user_id);
+                    $request_data = Requests::find($request_id);
+
+                    // Push notification has to add
+                    $push_data = array();
+                    $title = Helper::tr('cron_new_request_title');
+                    $push_msg = "You got a new service from ".$user->first_name.''.$user->last_name;
+                    $message = array(
+                        'success' => true,
+                        'msg' => $push_msg,
+                        'data' => array((object) $push_data)
+                    );
+                    // Send Push Notification to Provider 
+                    dispatch(new sendPushNotification($next_request_meta->provider_id,PROVIDER,$request_id,$title,$message));
+
+                } else {
+                    Log::info("No provider available this time - cron");
+                    //End the request
+                    //Update the request status to no provider available
+                    Requests::where('id', '=', $request_id)->update( array('status' => REQUEST_NO_PROVIDER_AVAILABLE) );
+
+                    // No longer need request specific rows from RequestMeta
+                    RequestsMeta::where('request_id', '=', $request_id)->delete();
+                    // Log::info('assign_next_provider_cron ended the request_id:'.$request_id.' at '.$time);
+
+                    // Send Push Notification to User
+                    $title = Helper::tr('cron_no_provider_title');
+                    $message = Helper::tr('cron_no_provider_message');
+
+                    dispatch(new NormalPushNotification($requests->user_id,USER,$title,$message));
+                
+                }
+            }
+        
         }
     }
 

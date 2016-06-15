@@ -1451,8 +1451,15 @@ class ProviderApiController extends Controller
         $request_meta_data = array();
         foreach($request_meta as $each_request_meta){
             $each_request_meta['user_rating'] = DB::table('user_ratings')->where('user_id', $each_request_meta['user_id'])->avg('rating') ?: 0;
-            unset($each_request_meta['user_id']);
-            $each_request_meta['time_left_to_respond'] = $provider_timeout - (time() - strtotime($each_request_meta['request_start_time']) );
+
+            $time_left_to_respond = $provider_timeout - (time() - strtotime($each_request_meta['request_start_time']) );
+            $each_request_meta['time_left_to_respond'] = $time_left_to_respond;
+            // Check the time is negative
+            if($time_left_to_respond < 0) {
+            	// Assign to the next provider
+            	Helper::assign_next_provider($each_request_meta['request_id'],$request->id);
+            }
+
             $request_meta_data[] = $each_request_meta;
         }
 

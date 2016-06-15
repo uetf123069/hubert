@@ -149,7 +149,7 @@ class UserapiController extends Controller
                             array(
                                 'social_unique_id' => 'required',
                                 'first_name' => 'required|max:255',
-                                'last_name' => 'required|max:255',
+                                'last_name' => 'max:255',
                                 'email' => 'email|max:255',
                                 'mobile' => 'digits_between:6,13',
                                 'picture' => 'mimes:jpeg,jpg,bmp,png',
@@ -268,7 +268,6 @@ class UserapiController extends Controller
 
                 // Settings table - COD Check is enabled 
                 if(Settings::where('key' , COD)->where('value' , DEFAULT_TRUE)->first()) {
-
                     // Save the default payment method
                     $user->payment_mode = COD;
                 }
