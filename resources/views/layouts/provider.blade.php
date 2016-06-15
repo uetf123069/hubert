@@ -107,7 +107,7 @@
                             <tbody>
                                 <tr>
                                     <td colspan="2">
-                                        <img src="{{ asset('logo.png') }}" id="request_user_image" class="img-responsive img-circle col-xs-8 col-xs-offset-2">
+                                        <img src="{{ asset('logo.png') }}" id="request_user_image" class="img-responsive img-circle col-xs-8 col-xs-offset-2" width="200px">
                                     </td>
                                 </tr>
                                 <tr>

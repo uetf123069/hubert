@@ -325,7 +325,7 @@ class ProviderController extends Controller
         }
 
         if($ApiResponse->success == true){
-            return redirect(route('provider.ongoing'))->with('success', tr('you_are').$request->type);
+            return redirect(route('provider.ongoing'))->with('success', tr('you_are').' '.$request->type);
         }elseif($ApiResponse->success == false){
             return back()->with('error', tr('something_error'));
         }
