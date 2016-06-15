@@ -341,7 +341,7 @@ a { color: #ff646a; text-decoration: none; }
 
                 <tr>
                     <td mc:edit="button" height="55" align="center" style="font-family: 'Open Sans', Arial, sans-serif; font-size:16px; color:#7f8c8d; line-height:30px; font-weight: bold;padding-left: 25px;padding-right: 25px;">
-                        <a href="{{route('user.dashboard')}}" target="_blank" style="color:#ffffff;text-decoration:none;" data-color="Button Link">{{Helper::tr('visit_website')}}</a>
+                        <a href="http://xuber.appoets.co/" target="_blank" style="color:#ffffff;text-decoration:none;" data-color="Button Link">{{Helper::tr('visit_website')}}</a>
                     </td>
                 </tr>
             </table>
