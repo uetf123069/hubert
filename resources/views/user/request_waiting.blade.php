@@ -225,7 +225,7 @@
             if(data.message){
                 chatBox.appendChild(messageTemplate(data));
                 $(chatBox).animate({
-                    scrollTop: $(chatBox).height(),
+                    scrollTop: chatBox.scrollHeight,
                 }, 500);
             }
         });
@@ -291,7 +291,7 @@
             chatBox.appendChild(messageTemplate(message));
             chatInput.clear();
             $(chatBox).animate({
-                scrollTop: $(chatBox).height(),
+                scrollTop: chatBox.scrollHeight,
             }, 500);
         }
     }
@@ -303,7 +303,7 @@
         for (var i = (response.length - 10 >= 0 ? response.length - 10 : 0); i < response.length; i++) {
             chatBox.appendChild(messageTemplate(response[i]));
             $(chatBox).animate({
-                scrollTop: $(chatBox).height(),
+                scrollTop: chatBox.scrollHeight,
             }, 500);
         }
     })

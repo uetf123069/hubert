@@ -347,7 +347,7 @@ function initMap() {
             if(data.message){
                 chatBox.appendChild(messageTemplate(data));
                 $(chatBox).animate({
-                    scrollTop: $(chatBox).height(),
+                    scrollTop: chatBox.scrollHeight,
                 }, 500);
             }
         });
@@ -412,7 +412,7 @@ function initMap() {
             socketClient.sendMessage(text);
             chatBox.appendChild(messageTemplate(message));
             $(chatBox).animate({
-                scrollTop: $(chatBox).height(),
+                scrollTop: chatBox.scrollHeight,
             }, 500);
             chatInput.clear();
         }
@@ -425,7 +425,7 @@ function initMap() {
         for (var i = (response.length - 10 >= 0 ? response.length - 10 : 0); i < response.length; i++) {
             chatBox.appendChild(messageTemplate(response[i]));
             $(chatBox).animate({
-                scrollTop: $(chatBox).height(),
+                scrollTop: chatBox.scrollHeight,
             }, 500);
         }
     })

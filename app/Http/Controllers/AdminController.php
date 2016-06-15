@@ -822,6 +822,8 @@ class AdminController extends Controller
     public function providerDetails(Request $request) 
     {
         $provider = Provider::find($request->id);
+        $avg_rev = ProviderRating::where('provider_id',$request->id)->avg('rating');
+
 
         if($provider) {
             $service = "";
@@ -831,7 +833,7 @@ class AdminController extends Controller
             if($service_type) {
                 $service = $service_type->name;
             }
-            return view('admin.providerDetails')->with('provider' , $provider)->withService($service);
+            return view('admin.providerDetails')->with('provider' , $provider)->withService($service)->with('review',$avg_rev);
         } else {
             return back()->with('error' , "Provider details not found");
         }

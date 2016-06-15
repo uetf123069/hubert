@@ -10,13 +10,13 @@
     <div class="panel-heading border">
         <ol class="breadcrumb mb0 no-padding">
             <li>
-                <a href="{{ route('admin.dashboard') }}">Home</a>
+                <a href="{{ route('admin.dashboard') }}">{{ tr('home') }}</a>
             </li>
             <li>
-                <a href="{{ route('admin.mapmapview') }}">Map View</a>
+                <a href="{{ route('admin.mapmapview') }}">{{ tr('map') }}</a>
             </li>
             <li>
-                <a href="#">View Provider</a>
+                <a href="#">{{ tr('view_providers') }}</a>
             </li>
         </ol>
     </div>
@@ -34,38 +34,45 @@
                     <div class="widget bg-blue mb0 text-center no-radius"> 
                         <dl class="dl-horizontal provider-detail">
 
-                          <dt>Full Name :</dt>
+                          <dt>{{ tr('full_name') }} :</dt>
                           <dd>{{$provider->first_name}} {{$provider->last_name}}</dd>
 
-                          <dt>Email :</dt>
+                          <dt>{{ tr('email') }} :</dt>
                           <dd>{{$provider->email}}</dd>
 
-                          <dt>Mobile :</dt>
+                          <dt>{{ tr('phone') }} :</dt>
                           <dd>{{$provider->mobile}}</dd>
 
-                          <dt>Gender :</dt>
+                          <dt>{{ tr('gender') }} :</dt>
                           <dd>{{$provider->gender}}</dd>
 
-                          <dt>Address :</dt>
+                          <dt>{{ tr('address') }} :</dt>
                           <dd>{{$provider->address}}</dd>
 
-                          <dt>Service Type :</dt>
+                          <dt>{{ tr('service_type') }} :</dt>
                           <dd>{{$service}}</dd>
 
-                          <dt>Available :</dt>
+                          <dt>{{ tr('avg_rating') }} :</dt>
+                          <dd><ul class="text-white list-style-none mb0">
+                        @for($i=0; $i<$review; $i++)
+                          <li class="fa fa-star text-warning"></li>
+                        @endfor
+                        </ul></dd>
+
+                          <dt>{{ tr('available') }} :</dt>
                           <dd>
                             @if($provider->is_available==1) 
-                                <span  class="label label-success"><b>Yes</b></span>
+                                <span  class="label label-success"><b>{{ tr('yes') }}</b></span>
                             @else 
-                                <span class="label label-warning"><b>N/A</b> </span>
+                                <span class="label label-warning"><b>{{ tr('n_a') }}</b> </span>
                             @endif
                            </dd>
 
-                          <dt>Approved :</dt>
+                          <dt>{{ tr('approved') }} :</dt>
                           <dd>
                             @if($provider->is_approved==1) 
-                                <span class="label label-success"><b>Approved</b></span>
-                            @else <span class="label label-warning"><b>Unapproved</b></span>
+                                <span class="label label-success"><b>{{ tr('approved') }}</b></span>
+                            @else <span class="label label-warning"><b>{{ tr('unapproved') }}</b></span>
                             @endif
                           </dd>
 
