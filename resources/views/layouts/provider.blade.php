@@ -233,20 +233,8 @@
                 }
             });
         }, 5000);
-
-        function mapInitialize() {
-            $(document).trigger("startmap");
-        }
-
-        $(document).on( "startmap", function( event, param1, param2 ) {
-            console.log(maps);
-            $.each(maps, function(index, value) {
-                console.log(window[value]);
-                window[value]();
-            });
-        });
     </script>
     @yield('scripts')
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyALHyNTDk1K_lmcFoeDRsrCgeMGJW6mGsY&libraries=places&callback=mapInitialize"></script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyALHyNTDk1K_lmcFoeDRsrCgeMGJW6mGsY&libraries=places"></script>
 </body>
 </html>
