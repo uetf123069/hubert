@@ -84,6 +84,8 @@ Route::group(['prefix' => 'userApi'], function(){
 
 	Route::post('/deleteCard', 'UserapiController@delete_card');
 
+    Route::post('/message/get', 'UserapiController@message_get');
+
 });
 
 
@@ -133,6 +135,8 @@ Route::group(['prefix' => 'providerApi'], function(){
 	Route::post('/incomingRequest', 'ProviderApiController@get_incoming_request');
 
 	Route::post('/requestStatusCheck', 'ProviderApiController@request_status_check');
+
+    Route::post('/messsage/get', 'ProviderApiController@message_get');
 
 });
 
@@ -243,7 +247,6 @@ Route::group(['prefix' => 'admin'], function(){
     Route::post('/addProviderProcess', 'AdminController@addProviderProcess')->name('adminaddProviderProcess');
 
     Route::get('/ProviderApprove/{id}/{status}', 'AdminController@ProviderApprove')->name('adminProviderApprove');
-
 });
 
 Route::get('/', 'UserController@index')->name('user.dashboard');
@@ -288,8 +291,7 @@ Route::group([], function(){
 
     Route::get('/user/payment/status','PaypalController@getPaymentStatus')->name('paypalstatus');
 
-    Route::get('/test', 'UserController@test')->name('user.test');
-
+    Route::get('/message/get', 'UserController@message_get')->name('user.message.get');
 });
 
 
@@ -330,7 +332,7 @@ Route::group(['prefix' => 'provider'], function(){
     Route::post('/cancel/service', 'ProviderController@cancel_service')->name('provider.cancel.service');
     Route::post('/paid/status', 'ProviderController@paid_status')->name('provider.paid.status');
 
-
+    Route::get('/message/get', 'ProviderController@message_get')->name('provider.message.get');
 });
 
 

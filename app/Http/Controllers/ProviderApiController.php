@@ -36,6 +36,8 @@ use App\ProviderRating;
 
 use App\Cards;
 
+use App\ChatMessage;
+
 use App\Jobs\sendPushNotification;
 
 use App\Jobs\NormalPushNotification;
@@ -1527,8 +1529,18 @@ class ProviderApiController extends Controller
 		$response = response()->json($response_array, 200);
 		return $response;
 	}
+
+	public function message_get(Request $request)
+	{
+        $Messages = ChatMessage::where('user_id', $request->user_id)
+                ->where('provider_id', $request->id)
+                ->orderBy('id', 'desc');
+
+        $response_array = Helper::null_safe(array(
+            'success' => true,
+            'data' => $Messages->get()->toArray(),
+        ));
+    
+        return response()->json($response_array, 200);
+	}
 }
-
-
-
-
