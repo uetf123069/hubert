@@ -273,7 +273,7 @@ return array(
 	'delete'	=>	'Delete',
 	'view_history'	=>	'View History',
 	'edit'	=> 	'Edit',
-	'delete_confimation'	=> 'Are you sure want to Delete?',
+	'delete_confirmation'	=> 'Are you sure want to Delete?',
 	'first_name'	=>	'First Name',
 	'last_name'	=>	'Last Name',
 	'male'	=>	'Male',
