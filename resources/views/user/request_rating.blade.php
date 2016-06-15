@@ -19,20 +19,9 @@
     </div>
     <div class="panel-body">
         <div class="row">
+            <div class="col-md-6">
             @if(!empty($Service->before_image)||!empty($Service->before_image))
-            <div class="col-md-6">
-                @if(!empty($Service->before_image))
-                <h2 class="text-center">{{ tr('before') }}</h2>                
-                <img class="col-xs-8 col-xs-offset-2" src="{{ $Service->before_image}}">
-                @endif
-                @if(!empty($Service->after_image))
-                <h2 class="text-center">{{ tr('after') }}</h2>                
-                <img class="col-xs-8 col-xs-offset-2" src="{{ $Service->after_image }}">
-                @endif
-            </div>
-            @endif
 
-            <div class="col-md-6">
                 <h2 class="text-center">{{ tr('req_details') }}</h2>
                 <table class="table table-striped">
                     <tbody>
@@ -54,7 +43,19 @@
                         </tr>
                     </tbody>
                 </table>
+
+                @if(!empty($Service->before_image))
+                <h2 class="text-center">{{ tr('before') }}</h2>                
+                <img class="col-xs-12" src="{{ $Service->before_image}}">
+                @endif
+                @if(!empty($Service->after_image))
+                <h2 class="text-center">{{ tr('after') }}</h2>                
+                <img class="col-xs-12" src="{{ $Service->after_image }}">
+                @endif
+            @endif
+
             </div>
+
             <div class="col-md-6">
                 <form method="POST" action="{{ route('user.services.request.review') }}" class="form-horizontal row-border">
                     <input name="request_id" value="{{ $Service->request_id }}" type="hidden">
@@ -63,7 +64,7 @@
                         <h2 class="text-center">{{ tr('rate_provider') }}</h2>
                         @if(!empty($Service->provider_picture))
                         <div class="form-group">
-                            <img src="{{ $Service->provider_picture }}" class="col-xs-8 col-xs-offset-2 img-responsive img-circle">
+                            <img src="{{ $Service->provider_picture }}" style="margin:0 auto;width:200px;" class="img-responsive img-circle">
                         </div>
                         @endif
                         <div class="form-group">

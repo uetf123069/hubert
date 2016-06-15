@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-touch-fullscreen" content="yes">
-    
+    <link rel="shortcut icon" href="{{ Setting::get('site_logo', asset('favicon.ico') ) }}">
     <meta name="description" content="{{ Setting::get('site_description', 'Xuber for all Services') }}">
     <meta name="author" content="Appoets">
     

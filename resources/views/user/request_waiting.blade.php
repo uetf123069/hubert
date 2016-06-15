@@ -26,7 +26,9 @@
                         <tr>
                             <td data-title="Provider" colspan="2">
                                 <h2 class="text-center">{{ tr('provider') }}</h2>
-                                <img id="provider-image" src="{{ $Service->provider_picture }}" class="col-md-8 col-xs-offset-2 img-responsive img-circle">
+                                <div style="padding:30px">
+                                    <img id="provider-image" style="margin:0 auto; width:200px; height: 200px;" src="{{ $Service->provider_picture != '' ? $Service->provider_picture : asset('user_default.png') }}" class="img-responsive img-circle">
+                                </div>
                             </td>
                         </tr>
                         <tr>
@@ -99,12 +101,8 @@
                 </div>
             </div>
             @endif
-            <div class="col-md-6">
-                <h2 class="text-center">{{ tr('map') }}</h2> 
-                <div id="map"></div>
-            </div>
         </div>
-        <div class="row">
+         <div class="row">
             <div class="col-md-6">
                 @if(!empty($Service->before_image))
                 <h2 class="text-center">{{ tr('before')}}</h2>                
@@ -117,8 +115,13 @@
                 <img class="col-xs-8 col-xs-offset-2" src="{{ $Service->after_image }}">
                 @endif
             </div>
+            <div class="col-md-12">
+                <h2 class="text-center">{{ tr('map') }}</h2> 
+                <div id="map"></div>
+            </div>
+            </div>
         </div>
-    </div>
+
 </div>
 @endforeach
 

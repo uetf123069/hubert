@@ -15,7 +15,7 @@
         <img src="{{ Setting::get('site_logo', asset('logo.png')) }}" />
     </div>
 
-    <p class="text-center mb25">Lost your password? Please enter your email address. You will receive a link to create a new password.</p>
+    <p class="text-center mb25">{{ tr('password_reset_email') }}</p>
 
     <div class="form-inputs">
         <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
@@ -31,7 +31,7 @@
         <div class="form-group">
             <div class="col-md-6 col-md-offset-3">
                 <button class="btn btn-success btn-block mb15" type="submit">
-                    <i class="fa fa-btn fa-envelope"></i> Send Password Reset
+                    <i class="fa fa-btn fa-envelope"></i> {{ tr('password_reset_button') }}
                 </button>
             </div>
         </div>

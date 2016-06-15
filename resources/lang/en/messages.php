@@ -273,7 +273,7 @@ return array(
 	'delete'	=>	'Delete',
 	'view_history'	=>	'View History',
 	'edit'	=> 	'Edit',
-	'delete_confimation'	=> 'Are you sure want to Delete?',
+	'delete_confirmation'	=> 'Are you sure want to Delete?',
 	'first_name'	=>	'First Name',
 	'last_name'	=>	'Last Name',
 	'male'	=>	'Male',
@@ -321,6 +321,9 @@ return array(
 	'login'	=>	'Login',
 	'forgot'	=>	'Forgot Your Password?',
 	'remember'	=>	'Remember Me',
+	'password_reset_msg'	=>	'Enter a new password and log in to your account',
+	'password_reset_email'	=>	'Lost your password? Please enter your email address. You will receive a link to create a new password.',
+	'password_reset_button'	=>	'Reset Password',
 	
 	//Admin Dashboard
 
@@ -335,6 +338,8 @@ return array(
 	'tot_revenue'	=>	'Total Revenue',
 	'avg_review'	=>	'Average Reviews',
 	'recent_reviews'	=>	'Recent User Reviews',
+	'from'	=>	'From',
+	'to'	=>	'To',
 
 	//Admin Button
 	'submit'	=>	'Submit',
