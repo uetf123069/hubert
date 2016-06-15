@@ -1094,8 +1094,6 @@ class ProviderApiController extends Controller
 	            $requests->provider_status = PROVIDER_SERVICE_COMPLETED;
     			$requests->save();
 
-    			// clearing chat table
-                ChatMessage::where('request_id',$request_id)->delete();
 
     			//Update provider availability
 	            $provider = Provider::find($requests->confirmed_provider);
@@ -1306,9 +1304,6 @@ class ProviderApiController extends Controller
                     /*Update status of the request to cancellation*/
                     $requests->status = REQUEST_CANCELLED;
                     $requests->save();
-
-                    // clearing chat table
-                    ChatMessage::where('request_id',$request_id)->delete();
 
                     // Send Push Notification to User
                     $title = Helper::tr('cancel_by_provider_title');
