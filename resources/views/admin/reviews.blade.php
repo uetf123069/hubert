@@ -29,12 +29,12 @@
                   <th>{{ tr('user_name') }}</th>
                   <th>{{ tr('provider_name') }}</th>
                 @else                
-                  <th>{{ tr('provider_name') }}</th>
-                  <th>{{ tr('user_name') }}</th>
+                  <th class="min">{{ tr('provider_name') }}</th>
+                  <th class="min">{{ tr('user_name') }}</th>
                 @endif
                   <th>{{ tr('rating') }}</th>
-                  <th>{{ tr('date_time') }}</th>
-                  <th>{{ tr('comments') }}</th>
+                  <th class="min">{{ tr('date_time') }}</th>
+                  <th class="min">{{ tr('comments') }}</th>
                   <th>{{ tr('action') }}</th>
                   </tr>
               </thead>

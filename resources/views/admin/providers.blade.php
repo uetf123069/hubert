@@ -15,7 +15,7 @@
               <thead>
                 <tr>
                   <th>{{ tr('id') }}</th>
-                  <th>{{ tr('full_name') }}</th>
+                  <th class="min">{{ tr('full_name') }}</th>
                   <th>{{ tr('email') }}</th>
                   <th>{{ tr('total_request') }}</th>
                   <th>{{ tr('accepted_requests') }}</th>
@@ -34,8 +34,8 @@
                   <td>{{$provider->total_requests}}</td>
                   <td>{{$provider->accepted_requests}}</td>
                   <td>{{$provider->total_requests -$provider->accepted_requests }}</td>
-                  <td>@if($provider->is_available==1) {{ tr('yes')}} @else N/A @endif</td>
-                  <td>@if($provider->is_approved==1) {{ tr('approved') }} @else {{ tr('unapproved') }} @endif</td>
+                  <td>@if($provider->is_available==1) <span class="label label-primary">{{ tr('yes')}}</span> @else <span class="label label-warning">N/A</span> @endif</td>
+                  <td>@if($provider->is_approved==1) <span class="label label-success">{{ tr('approved') }}</span> @else <span class="label label-danger">{{ tr('unapproved') }}</span> @endif</td>
                   
                   <td>
                       <div class="input-group-btn">

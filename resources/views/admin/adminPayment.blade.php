@@ -39,7 +39,7 @@
                   <td>{{$payment->provider_first_name.' '.$payment->provider_last_name}}</td>
                   <td>{{$payment->total}}</td>
                   <td>{{$payment->payment_mode}}</td>
-                  <td>@if($payment->status==0) {{ tr('not_paid') }} @else {{ tr('paid') }} @endif</td>
+                  <td>@if($payment->status==0) <span class="label label-danger">{{ tr('not_paid') }}</span> @else <span class="label label-success">{{ tr('paid') }}</span> @endif</td>
                  
               </tr>
               @endforeach
