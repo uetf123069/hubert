@@ -7,9 +7,9 @@
 @section('page_tabs')
 <div class="page-tabs">
     <ul class="nav nav-tabs">
-		<li class="active"><a data-toggle="tab" href="#tab1">{{ tr('account_details') }}</a></li>
-		<li><a data-toggle="tab" href="#tab2">{{ tr('password') }}</a></li>
-		<li><a data-toggle="tab" href="#tab3">{{ tr('update_location') }}</a></li>
+		<li class="active"><a data-toggle="tab" href="#tab1">{{ tr('update_location') }}</a></li>
+		<li ><a data-toggle="tab" href="#tab2">{{ tr('account_details') }}</a></li>
+		<li><a data-toggle="tab" href="#tab3">{{ tr('password') }}</a></li>
     </ul>
 </div>
 @endsection
@@ -17,7 +17,7 @@
 @section('content')
 <div class="container-fluid">
     <div class="tab-content">
-		<div class="tab-pane active" id="tab1">
+		<div class="tab-pane" id="tab2">
 			<div class="row">
 				<div class="col-md-12">
 					<div class="panel panel-info">
@@ -125,7 +125,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="tab-pane" id="tab2">
+		<div class="tab-pane" id="tab3">
 			<div class="row">
 				<div class="col-md-12">
 					<div data-widget-group="group1">
@@ -184,7 +184,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="tab-pane" id="tab3">
+		<div class="tab-pane active" id="tab1">
 			<div class="row">
 				<div class="col-md-12">
 					<div data-widget-group="group1">
@@ -302,7 +302,7 @@ function change_availability(){
 
 
     function start_map() {
-    	console.log('sdfds');
+
         map = new google.maps.Map(document.getElementById('update_location_map'), {
             center: center_point,
             zoom: 16
@@ -389,7 +389,7 @@ function change_availability(){
 
     }
 
-maps.push('start_map');
+setTimeout(function() { start_map(); },2000);
 
 
 </script>
