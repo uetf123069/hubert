@@ -84,7 +84,7 @@ define('REQUEST_META_OFFERED',   1);
 define('REQUEST_META_TIMEDOUT', 2);
 define('REQUEST_META_DECLINED', 3);
 
-define('RATINGS', '1,2,3,4,5');
+define('RATINGS', '0,1,2,3,4,5');
 
 define('DEVICE_ANDROID', 'android');
 define('DEVICE_IOS', 'ios');

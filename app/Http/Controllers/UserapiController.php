@@ -97,7 +97,7 @@ define('REQUEST_META_DECLINED', 3);
 define('WAITING_TO_RESPOND', 1);
 define('WAITING_TO_RESPOND_NORMAL',0);
 
-define('RATINGS', '1,2,3,4,5');
+define('RATINGS', '0,1,2,3,4,5');
 
 define('DEVICE_ANDROID', 'android');
 define('DEVICE_IOS', 'ios');
@@ -1139,9 +1139,6 @@ class UserapiController extends Controller
                         $provider = Provider::find( $requests->confirmed_provider );
                         $provider->is_available = PROVIDER_AVAILABLE;
                         $provider->save();
-
-                        // clearing chat table
-                        ChatMessage::where('request_id',$request_id)->delete();
 
                         // Send Push Notification to Provider
                         $title = Helper::tr('cancel_by_user_title');
