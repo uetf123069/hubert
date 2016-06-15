@@ -346,7 +346,9 @@ function initMap() {
             console.log("New Message :: "+JSON.stringify(data));
             if(data.message){
                 chatBox.appendChild(messageTemplate(data));
-                chatBox.scrollTo(0,chatBox.scrollHeight);
+                $(chatBox).animate({
+                    scrollTop: $(chatBox).height(),
+                }, 500);
             }
         });
 
@@ -409,7 +411,9 @@ function initMap() {
 
             socketClient.sendMessage(text);
             chatBox.appendChild(messageTemplate(message));
-            chatBox.scrollTo(0,chatBox.scrollHeight);
+            $(chatBox).animate({
+                scrollTop: $(chatBox).height(),
+            }, 500);
             chatInput.clear();
         }
     }
@@ -418,9 +422,11 @@ function initMap() {
         user_id: '{{ $request_data[0]->user_id }}'
     })
     .done(function(response) {
-        for (var i = response.length - 1; i > response.length - 10 && i >= 0; i--) {
+        for (var i = (response.length - 10 >= 0 ? response.length - 10 : 0); i < response.length; i++) {
             chatBox.appendChild(messageTemplate(response[i]));
-            chatBox.scrollTo(0,chatBox.scrollHeight);
+            $(chatBox).animate({
+                scrollTop: $(chatBox).height(),
+            }, 500);
         }
     })
     .fail(function(response) {

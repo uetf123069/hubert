@@ -15,8 +15,8 @@
               <thead>
                 <tr>
                   <th>{{ tr('id') }}</th>
-                  <th>{{ tr('name') }}</th>
-                  <th>{{ tr('status') }}</th>
+                  <th class="min">{{ tr('name') }}</th>
+                  <th class="min">{{ tr('status') }}</th>
                   <th>{{ tr('action') }}</th>
                   </tr>
               </thead>

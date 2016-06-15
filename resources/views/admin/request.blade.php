@@ -22,9 +22,9 @@
               <thead>
                 <tr>
                   <th>ID</th>
-                  <th>User Name</th>
-                  <th>Provider Name</th>
-                  <th>DateTime</th>
+                  <th class="min">User Name</th>
+                  <th class="min">Provider Name</th>
+                  <th class="min">DateTime</th>
                   <th>Status</th>
                   <th>Amount</th>
                   <th>Payment Mode</th>
@@ -80,7 +80,7 @@
                     </td>
                     <td>{{$requestss->amount}}</td>
                     <td>{{$requestss->payment_mode}}</td>
-                    <td>@if($requestss->payment_status==0) Not Paid @else Paid @endif</td>
+                    <td>@if($requestss->payment_status==0) <span class="label label-danger">Not Paid</span> @else <span class="label label-success">Paid</span> @endif</td>
                   <td>
                       <div class="input-group-btn">
                           <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">Action

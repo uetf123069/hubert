@@ -1947,8 +1947,8 @@ class UserapiController extends Controller
     public function message_get(Request $request)
     {
         $Messages = ChatMessage::where('user_id', $request->id)
-                ->where('provider_id', $request->provider_id)
-                ->orderBy('id', 'desc');
+                ->where('provider_id', $request->provider_id);
+                // ->orderBy('id', 'desc');
 
         $response_array = Helper::null_safe(array(
             'success' => true,

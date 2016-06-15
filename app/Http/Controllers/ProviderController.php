@@ -412,9 +412,9 @@ class ProviderController extends Controller
     public function message_get(Request $request)
     {
         $request->request->add([ 
-            'id' => \Auth::user()->id,
-            'token' => \Auth::user()->token,
-            'device_token' => \Auth::user()->device_token,
+            'id' => \Auth::guard('provider')->user()->id,
+            'token' => \Auth::guard('provider')->user()->token,
+            'device_token' => \Auth::guard('provider')->user()->device_token,
         ]);
 
         $response = $this->ProviderApiController->message_get($request)->getData();
