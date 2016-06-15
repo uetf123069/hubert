@@ -82,6 +82,7 @@
             </div>
           </div>
         </div>
+        @if($top!=null || $reviews!=null)
         <div class="row">
         <div class="col-md-4">
             <div class="widget bg-white no-padding">
@@ -148,6 +149,7 @@
           </div>
           
           </div>
+          @endif
 @endsection
 
 @section('scripts')

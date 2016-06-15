@@ -138,6 +138,8 @@ Route::group(['prefix' => 'providerApi'], function(){
 
 Route::get('/assign_next_provider_cron' , 'ApplicationController@assign_next_provider_cron');
 
+Route::get('/message/save' , 'ApplicationController@message_save');
+
 // Admin Routes
 
 Route::group(['prefix' => 'admin'], function(){

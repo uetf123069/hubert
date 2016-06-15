@@ -18,6 +18,8 @@ use App\User;
 
 use App\Provider;
 
+use App\ChatMessage;
+
 use App\Jobs\NormalPushNotification;
 
 use App\Jobs\sendPushNotification;
@@ -178,4 +180,14 @@ class ApplicationController extends Controller
         }
     }
 
+    public function message_save(Request $request)
+    {
+        $this->validate($request, [
+                "user_id" => "required|integer",
+                "provider_id" => "required|integer",
+                "type" => "required|in:up,pu",
+                "message" => "required",
+            ]);
+        return ChatMessage::create($request);
+    }
 }
