@@ -172,7 +172,14 @@ class AdminController extends Controller
 
     public function payment()
     {
-        $payment = RequestPayment::all();
+        $payment = DB::table('request_payments')
+                    ->leftJoin('requests','requests.id','=','request_payments.request_id')
+                    ->leftJoin('users','users.id','=','requests.user_id')
+                    ->leftJoin('providers','providers.id','=','requests.confirmed_provider')
+                    ->select('request_payments.*','users.first_name as user_first_name','users.last_name as user_last_name','providers.first_name as provider_first_name','providers.last_name as provider_last_name')
+                    ->orderBy('created_at','desc')
+                    ->get();
+                    
         return view('admin.adminPayment')->with('payments',$payment);
     }
 
