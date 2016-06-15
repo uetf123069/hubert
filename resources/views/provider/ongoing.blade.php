@@ -337,7 +337,7 @@ $("#range-month").ionRangeSlider({
         this.provider_picture = "{{ \Auth::guard('provider')->user()->picture }}" == "" ? defaultImage : "{{ \Auth::guard('provider')->user()->picture }}";
     }
     chatSockets.prototype.initialize = function() {
-        this.socket = io('{{ env("SOCKET_SERVER") }}', { query: "myid=pu{{ \Auth::guard('provider')->user()->id }}" });
+        this.socket = io('{{ env("SOCKET_SERVER") }}', { query: "myid=pu{{ \Auth::guard('provider')->user()->id }}&reqid={{ $request_data[0]->request_id }}" });
 
         this.socket.on('connected', function (data) {
             socketState = true;

@@ -118,6 +118,7 @@ class ApplicationController extends Controller
     public function message_save(Request $request)
     {
         $this->validate($request, [
+                "request_id" => "required|integer",
                 "user_id" => "required|integer",
                 "provider_id" => "required|integer",
                 "type" => "required|in:up,pu",
