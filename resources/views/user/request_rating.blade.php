@@ -79,7 +79,7 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">{{ tr('comments') }}</label>
                             <div class="col-sm-12">
-                                <textarea name="comments" class="form-control"></textarea>
+                                <textarea name="comment" class="form-control"></textarea>
                             </div>
                         </div>
                         <div class="form-group">
