@@ -5,6 +5,25 @@
 @section('page_title', 'Dashboard')
 
 @section('content')
+
+<div class="row">
+    <div class="col-md-12 full-width">
+        <div class="panel panel-default welcome-box">
+            <!-- <div class="panel-heading"></div> -->
+            <div class="panel-body text-center">
+                <h3 class="mt0">Welcome to Xuber!</h3>
+                <div>                        
+                    <p class="wel-cont">Open up new and exciting opportunities for your business. Select your service, verify credentials with admin and you're set for unlimited business requests on-demand from our very own userbase. Sign up, gear up and Serve your customers now!</p>
+                </div>
+                <br>
+                <a href="#" class="btn btn-primary-alt">Change Your Location & Make Business Now!</a>
+                <!-- FOR PROVIDER -->
+                
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="row">
 			<div class="col-md-3">
 				<div class="amazo-tile tile-white">

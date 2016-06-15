@@ -96,6 +96,11 @@
                     </div>
                 </div>
             </div>
+            @else
+            <div class="col-md-6">
+                <h2 class="text-center"> Chat will appear Here Once Connected! </h2>
+                
+            </div>
             @endif
         </div>
         <div class="row">

@@ -13010,4 +13010,7 @@ th.min{
     overflow-y: auto;
     border: 1px solid #eee;
     margin: 20px 0px;
+
+.table-responsive {
+    overflow-x: auto;
 }
