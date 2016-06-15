@@ -121,7 +121,7 @@ table[class="table3-3"] { width: 100% !important; text-align: center !important;
                                         <table data-bgcolor="Main Color" align="center" bgcolor="#3cb2d0" border="0" cellspacing="0" cellpadding="0" style=" border-radius:4px; box-shadow: 0px 2px 0px #dedfdf;">
                                             <tr>
                                                 <td mc:edit="button" height="55" align="center" style="font-family: 'Open Sans', Arial, sans-serif; font-size:16px; color:#7f8c8d; line-height:30px; font-weight: bold;padding-left: 25px;padding-right: 25px;">
-                                                    <a href="http://xuber.appoets.co/login" target="_blank" style="color:#ffffff;text-decoration:none;" data-color="Button Link">Login Here</a>
+                                                    <a href="{{ route('user.login.form') }}" target="_blank" style="color:#ffffff;text-decoration:none;" data-color="Button Link">Login Here</a>
                                                 </td>
                                             </tr>
                                         </table>
