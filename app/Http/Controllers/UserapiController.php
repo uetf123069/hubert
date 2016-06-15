@@ -1141,6 +1141,9 @@ class UserapiController extends Controller
                         $provider->is_available = PROVIDER_AVAILABLE;
                         $provider->save();
 
+                        // clearing chat table
+                        ChatMessage::where('request_id',$request_id)->delete();
+
                         // Send Push Notification to Provider
                         $title = Helper::tr('cancel_by_user_title');
                         $message = Helper::tr('cancel_by_user_message');

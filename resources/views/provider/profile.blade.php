@@ -105,7 +105,7 @@
 									<div class="form-group">
 										<label class="col-sm-2 control-label">{{ tr('phone') }}</label>
 										<div class="col-sm-8">
-											<input type="text" name="mobile" class="form-control tooltips"  data-trigger="hover" value="{{ Auth::guard('provider')->user()->mobile }}"  data-original-title="Update your Mobile number.">
+											<input type="text" required="true" name="mobile" class="form-control tooltips"  data-trigger="hover" value="{{ Auth::guard('provider')->user()->mobile }}"  data-original-title="Update your Mobile number.">
 										</div>
 									</div>
 
