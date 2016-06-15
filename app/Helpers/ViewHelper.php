@@ -134,8 +134,8 @@ function get_provider_service_type($provider_id)
 function get_request_details($request_id)
 {
 	$Request = Requests::find($request_id);
-	$Request->ProviderRating = ProviderRating::where('request_id',$request_id)->first();
-	$Request->UserRating = UserRating::where('request_id',$request_id)->first();
+	$Request->ProviderRating = ProviderRating::where('request_id',$request_id)->first() ? ProviderRating::where('request_id',$request_id)->first() : "" ;
+	$Request->UserRating = UserRating::where('request_id',$request_id)->first() ? UserRating::where('request_id',$request_id)->first() : "";
 	return $Request;
 }
 
