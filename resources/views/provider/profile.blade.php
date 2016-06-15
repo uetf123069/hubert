@@ -284,7 +284,8 @@ function change_availability(){
 
 <script>
     	    var map;
-		    var center_point = new google.maps.LatLng(11.8508117,79.7854668);
+		    // var center_point = new google.maps.LatLng(11.8508117,79.7854668);
+		    var center_point = {lat:11.8508117,lng:79.7854668};
 		    var input = document.getElementById('my-dest');
 		    var s_latitude = document.getElementById('latitude');
 		    var s_longitude = document.getElementById('longitude');
@@ -292,7 +293,7 @@ function change_availability(){
 		    var longitude_text = document.getElementById("longitude_text");
 
 		    @if(Auth::guard('provider')->user()->latitude != 0)
-		    	center_point = new google.maps.LatLng( {{Auth::guard('provider')->user()->latitude}}, {{Auth::guard('provider')->user()->longitude}});
+		    	center_point = { lat: {{Auth::guard('provider')->user()->latitude}}, lng: {{Auth::guard('provider')->user()->longitude}} };
 		    	latitude_text.innertext = {{Auth::guard('provider')->user()->latitude}};
 		    	longitude_text.innertext = {{Auth::guard('provider')->user()->longitude}};
 		    	s_latitude.value = {{Auth::guard('provider')->user()->latitude}};
@@ -301,7 +302,7 @@ function change_availability(){
 
 
     function start_map() {
-
+    	console.log('sdfds');
         map = new google.maps.Map(document.getElementById('update_location_map'), {
             center: center_point,
             zoom: 16
@@ -388,7 +389,7 @@ function change_availability(){
 
     }
 
-setTimeout(function() { start_map() },2000);
+maps.push('start_map');
 
 
 </script>

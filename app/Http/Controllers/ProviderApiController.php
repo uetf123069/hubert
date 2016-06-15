@@ -1540,8 +1540,8 @@ class ProviderApiController extends Controller
 
 	public function message_get(Request $request)
 	{
-        $Messages = ChatMessage::where('user_id', $request->user_id)
-                ->where('provider_id', $request->id);
+        $Messages = ChatMessage::where('provider_id', $request->id)
+                ->where('request_id', $request->request_id);
                 // ->orderBy('id', 'desc');
 
         $response_array = Helper::null_safe(array(

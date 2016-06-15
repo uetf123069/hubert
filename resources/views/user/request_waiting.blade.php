@@ -215,7 +215,9 @@
         this.user_picture = "{{ \Auth::user()->picture }}" == "" ? defaultImage : "{{ \Auth::user()->picture }}";
     }
     chatSockets.prototype.initialize = function() {
-        this.socket = io('{{ env("SOCKET_SERVER") }}', { query: "myid=up{{ \Auth::user()->id }}" });
+        this.socket = io('{{ env("SOCKET_SERVER") }}', { 
+                query: "myid=up{{ \Auth::user()->id }}&reqid={{ $CurrentRequest->data[0]->request_id }}" 
+            });
 
         // console.log('Initalize');
 
@@ -302,7 +304,7 @@
     }
 
     $.get('{{ route("user.message.get") }}', {
-        provider_id: '{{ $CurrentRequest->data[0]->provider_id }}'
+        request_id: '{{ $CurrentRequest->data[0]->request_id }}'
     })
     .done(function(response) {
         for (var i = (response.length - 10 >= 0 ? response.length - 10 : 0); i < response.length; i++) {

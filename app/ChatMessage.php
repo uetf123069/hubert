@@ -12,6 +12,7 @@ class ChatMessage extends Model
      * @var array
      */
     protected $fillable = [
+        'request_id',
         'user_id',
         'provider_id', 
         'type', 
