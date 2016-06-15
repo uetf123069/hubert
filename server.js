@@ -14,6 +14,9 @@ io.on('connection', function (socket) {
 
     console.log('new connection established');
     console.log('socket.handshake.query.myid', socket.handshake.query.myid);
+    console.log('socket.handshake.query.reqid', socket.handshake.query.reqid);
+
+    socket.reqid = socket.handshake.query.reqid;
     
     socket.join(socket.handshake.query.myid);
 
@@ -31,7 +34,11 @@ io.on('connection', function (socket) {
 
         socket.broadcast.to( receiver ).emit('message', data);
 
-        url = 'http://dev.xuber.com/message/save?user_id='+data.user_id+'&provider_id='+data.provider_id+'&message='+data.message+'&type='+data.type;
+        url = 'http://xuber.appoets.co/message/save?user_id='+data.user_id
+        +'&provider_id='+data.provider_id
+        +'&message='+data.message
+        +'&type='+data.type
+        +'&request_id='+socket.reqid;
 
         console.log(url);
 
