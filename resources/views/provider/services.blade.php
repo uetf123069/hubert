@@ -51,8 +51,8 @@
 							<td>{{get_service_name($request->request_type)}}</td>
 							<td class="center">{{date('H:i - d M, Y',strtotime($request_details->start_time))}}</td>
 							<td class="center">{{date('H:i - d M, Y',strtotime($request_details->end_time))}}</td>
-							<td>{{ $request_details->UserRating->rating }}</td>
-							<td>{{ $request_details->UserRating->comment }}</td>
+							<td>{{ $request_details->ProviderRating!=null ? $request_details->ProviderRating->rating : "N/A" }}</td>
+							<td>{{ $request_details->ProviderRating!=null ? $request_details->ProviderRating->comment : "N/A" }}</td>
 						</tr>
 					@endforeach
 					
