@@ -97,7 +97,7 @@ define('REQUEST_META_DECLINED', 3);
 define('WAITING_TO_RESPOND', 1);
 define('WAITING_TO_RESPOND_NORMAL',0);
 
-define('RATINGS', '1,2,3,4,5');
+define('RATINGS', '0,1,2,3,4,5');
 
 define('DEVICE_ANDROID', 'android');
 define('DEVICE_IOS', 'ios');

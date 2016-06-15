@@ -68,6 +68,42 @@
 	                    @endif
                 </div>
             </div>
+
+            <div class="row" style="padding:20px;">
+                <div class="col-md-6">
+                    <form action="{{ route('provider.switch.state') }}" enctype="multipart/form-data" method="POST">
+                        {!! csrf_field() !!}
+                        <input type="hidden" name="request_id" value="{{$request_data[0]->request_id}}">
+                        @if($request_data[0]->provider_status == 1)
+                        <input type="hidden" name="type" value="STARTED">
+                        <button class="btn-primary  btn col-xs-12" type="submit">{{ tr('started') }}</button>
+                        @elseif($request_data[0]->provider_status == 2)
+                        <input type="hidden" name="type" value="ARRIVED">
+                        <button class="btn-primary btn col-xs-12" type="submit">{{ tr('arrived') }}</button>
+                        @elseif($request_data[0]->provider_status == 3)
+                        <input type="hidden" name="type" value="SERVICE_STARTED">
+                        <strong>{{ tr('before_image') }}</strong> : <br> <input class="form-control" type="file" name="before_image" accept=".png,.jpg,.jpeg">
+                        <br>
+                        <button class="btn-primary btn col-xs-12" type="submit">{{ tr('service_started') }}</button>
+                        @elseif($request_data[0]->provider_status == 4)
+                        <input type="hidden" name="type" value="SERVICE_COMPLETED">
+                        <strong>{{ tr('after_image') }}</strong> :  <br><input class="form-control" type="file" name="after_image" accept=".png,.jpg,.jpeg">
+                        <br>
+                        <button class="btn-primary btn col-xs-12" type="submit">{{ tr('service_completed') }}</button>
+                        @endif
+                    </form>
+                </div>
+                @if($request_data[0]->provider_status == 1 || $request_data[0]->provider_status == 2)
+                    <div class="col-md-6">
+                     <form action="{{ route('provider.cancel.service') }}" method="POST">
+                        {!! csrf_field() !!}
+                        <input type="hidden" name="request_id" value="{{$request_data[0]->request_id}}">
+                        <button class="btn-danger btn col-xs-12" type="submit">{{ tr('cancel_requests') }}</button>
+                    </form>
+                    </div>
+                @endif
+
+            </div>
         </div>
 	</div>
 
@@ -103,51 +139,20 @@
                             <th>{{ tr('services') }}</th>
                             <td data-title="Service" align="left">{{ $request_data[0]->service_type_name }}</td>
                         </tr>
+                         <tr>
+                            <th>{{ tr('address') }}</th>
+                            <td data-title="Address" align="left">{{ get_request_address($request_data[0]->request_id) }}</td>
+                        </tr>
                         <tr>
                             <th>{{ tr('requested_time') }}</th>
                             <td data-title="Requested Time">{{ $request_data[0]->request_start_time }}</td>
                         </tr>
+                        
                         <tr>
                             <th>{{ tr('req_status') }}</th>
                             <td data-title="Request Status">{{ get_user_request_status($request_data[0]->status) }}</td>
                         </tr>
 
-                        <tr>
-                            <td colspan="2">
-                                <form action="{{ route('provider.switch.state') }}" enctype="multipart/form-data" method="POST">
-                                    {!! csrf_field() !!}
-                                    <input type="hidden" name="request_id" value="{{$request_data[0]->request_id}}">
-                                    @if($request_data[0]->provider_status == 1)
-                                    <input type="hidden" name="type" value="STARTED">
-                                    <button class="btn-primary  btn col-xs-12" type="submit">{{ tr('started') }}</button>
-                                    @elseif($request_data[0]->provider_status == 2)
-                                    <input type="hidden" name="type" value="ARRIVED">
-                                    <button class="btn-primary btn col-xs-12" type="submit">{{ tr('arrived') }}</button>
-                                    @elseif($request_data[0]->provider_status == 3)
-                                    <input type="hidden" name="type" value="SERVICE_STARTED">
-                                    <strong>{{ tr('before_image') }}</strong> : <br> <input class="form-control" type="file" name="before_image" accept=".png,.jpg,.jpeg">
-                                    <br>
-                                    <button class="btn-primary btn col-xs-12" type="submit">{{ tr('service_started') }}</button>
-                                    @elseif($request_data[0]->provider_status == 4)
-                                    <input type="hidden" name="type" value="SERVICE_COMPLETED">
-                                    <strong>{{ tr('after_image') }}</strong> :  <br><input class="form-control" type="file" name="after_image" accept=".png,.jpg,.jpeg">
-                                    <br>
-                                    <button class="btn-primary btn col-xs-12" type="submit">{{ tr('service_completed') }}</button>
-                                    @endif
-                                </form>
-                            </td>
-                        </tr>
-                         @if($request_data[0]->provider_status == 1 || $request_data[0]->provider_status == 2)
-                        <tr>
-                        	<td colspan="2">
-                        		 <form action="{{ route('provider.cancel.service') }}" method="POST">
-                                    {!! csrf_field() !!}
-                                    <input type="hidden" name="request_id" value="{{$request_data[0]->request_id}}">
-                                    <button class="btn-danger btn col-xs-12" type="submit">{{ tr('cancel_requests') }}</button>
-                                </form>
-                        	</td>
-                        </tr>
-                        @endif
                     </tbody>
                     <!-- <caption>List of countries by distribution wealth</caption> -->
                 </table>

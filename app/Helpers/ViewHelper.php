@@ -148,3 +148,8 @@ function get_payment_type($user_id)
 {
 	return User::find($user_id)->payment_mode;
 }
+
+function get_request_address($request_id)
+{
+	return Requests::find($request_id)->s_address;
+}
