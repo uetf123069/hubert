@@ -91,6 +91,11 @@
                             <li>
                               <a href="{{route('adminViewRequest', array('id' => $requestss->id))}}">View Request</a>
                             </li>
+                            @if($requestss->status == 5)
+                            <li>
+                              <a href="{{route('adminChatHistory', array('id' => $requestss->id))}}">View Chat History</a>
+                            </li>
+                            @endif
                             
                           </ul>
                         </div>

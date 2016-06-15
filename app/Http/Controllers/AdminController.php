@@ -16,6 +16,8 @@ use App\ProviderDocument;
 
 use App\ProviderRating;
 
+use App\ChatMessage;
+
 use App\Admin;
 
 use App\ServiceType;
@@ -802,7 +804,7 @@ class AdminController extends Controller
                 ->leftJoin('providers', 'requests.confirmed_provider', '=', 'providers.id')
                 ->leftJoin('users', 'requests.user_id', '=', 'users.id')
                 ->leftJoin('request_payments', 'requests.id', '=', 'request_payments.request_id')
-                ->select('users.first_name as user_first_name', 'users.last_name as user_last_name', 'providers.first_name as provider_first_name', 'providers.last_name as provider_last_name', 'users.id as user_id', 'providers.id as provider_id', 'requests.is_paid',  'requests.id as id', 'requests.created_at as date', 'requests.confirmed_provider', 'requests.status', 'requests.provider_status', 'requests.amount', 'request_payments.payment_mode as payment_mode', 'request_payments.status as payment_status', 'request_payments.total_time as total_time','request_payments.base_price as base_price', 'request_payments.time_price as time_price', 'request_payments.tax_price as tax', 'request_payments.total as total_amount', 'requests.s_latitude as latitude', 'requests.s_longitude as longitude','requests.start_time','requests.end_time','requests.before_image', 'requests.after_image')
+                ->select('users.first_name as user_first_name', 'users.last_name as user_last_name', 'providers.first_name as provider_first_name', 'providers.last_name as provider_last_name', 'users.id as user_id', 'providers.id as provider_id', 'requests.is_paid',  'requests.id as id', 'requests.created_at as date', 'requests.confirmed_provider', 'requests.status', 'requests.provider_status', 'requests.amount', 'request_payments.payment_mode as payment_mode', 'request_payments.status as payment_status', 'request_payments.total_time as total_time','request_payments.base_price as base_price', 'request_payments.time_price as time_price', 'request_payments.tax_price as tax', 'request_payments.total as total_amount', 'requests.s_latitude as latitude', 'requests.s_longitude as longitude','requests.start_time','requests.end_time','requests.before_image', 'requests.after_image', 'requests.s_address as request_address')
                 ->first();    
         return view('admin.requestView')->with('request', $requests);
     }
@@ -837,5 +839,22 @@ class AdminController extends Controller
         } else {
             return back()->with('error' , "Provider details not found");
         }
+    }
+
+    public function ViewChatHistory(Request $request)
+    {
+        $history = DB::table('chat_messages')
+                ->where('chat_messages.request_id',$request->id)
+                ->leftJoin('requests', 'chat_messages.request_id', '=', 'requests.id')
+                ->leftJoin('providers', 'requests.confirmed_provider', '=', 'providers.id')
+                ->leftJoin('users', 'requests.user_id', '=', 'users.id')
+                ->select('users.first_name as user_first_name', 'users.last_name as user_last_name', 'providers.first_name as provider_first_name', 'providers.last_name as provider_last_name', 'users.id as user_id', 'providers.id as provider_id', 'chat_messages.*','users.picture as user_picture', 'providers.picture as provider_picture')
+                ->get();    
+        return view('admin.chatHistory')->with('chat_history', $history)->with('request_id',$request->id);
+    }
+
+    public function adminChatHistoryDelete(Request $request) {
+        $provider = ChatMessage::where('request_id',$request->id)->delete();
+        return back()->with('flash_success', tr('chat_history_delete'));
     }
 }

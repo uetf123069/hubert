@@ -59,6 +59,8 @@
 					</tbody>
 					@else
 						<p>{{ tr('no_request') }}</p>
+
+						
 					@endif
 				</table>
 				<div class="panel-footer"></div>
