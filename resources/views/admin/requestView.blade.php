@@ -67,7 +67,7 @@
                 <section class="widget bg-white post-comments">
                     <div class="widget bg-success mb0 text-center no-radius"><strong>{{ tr('after_service') }}</strong></div>
                         <div class="media">
-                            <img style="width:100%;" src="{{$request->before_image}}" alt="">
+                            <img style="width:100%;" src="{{$request->after_image}}" alt="">
                         </div>
                 </section>
               </div>
