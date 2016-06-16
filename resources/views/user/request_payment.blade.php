@@ -103,8 +103,8 @@
                         <div class="col-sm-9">
                             <select tabindex="1" name="payment_mode" id="payment_mode" class="form-control">
                                 <option disabled>{{ tr('select_payment_mode') }}</option>
-                                @foreach($PaymentMethods->payment_modes as $Index => $PaymentMethod)
-                                <option value="{{ $PaymentMethod }}">{{ $PaymentMethod }}</option>
+                                @foreach($PaymentMethods->payment_modes as $Index => $Value)
+                                <option value="{{ $Value }}" {{ Auth::user()->payment_mode == $Value ? 'selected' : '' }}>{{ $Value }}</option>
                                 @endforeach
                             </select>
                             @if ($errors->has('payment_mode'))
