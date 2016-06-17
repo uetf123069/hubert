@@ -130,7 +130,7 @@ return array(
 	'unknown_error' 	=>	'Unknown error please try again later',
 	'something_error' 	=>	'Something went wrong! please try again later',
 	'fav_remove' 	=>	'Removed Provider from Favorites',
-	'profile_upadated' 	=>	'Profile has been updated',
+	'profile_updated' 	=>	'Profile has been updated',
 	'password_success' 	=>	'Password has been updated. You can log in with the new password from next time.',
 	'profile_save'	=>	'Profile has been saved',
 	'password_save'	=>	'Password Updated',
