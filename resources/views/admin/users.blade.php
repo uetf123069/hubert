@@ -65,7 +65,7 @@
                               <a href="{{route('adminUserEdit', array('id' => $user->id))}}">{{ tr('edit') }}</a>
                             </li>
                             <li>
-                              <a onclick="return confirm('{{ tr ('delete_confrimation')}}')" href="{{route('adminUserDelete', array('id' => $user->id))}}">{{ tr('delete') }}</a>
+                              <a onclick="return confirm('{{ tr ('delete_confirmation')}}')" href="{{route('adminUserDelete', array('id' => $user->id))}}">{{ tr('delete') }}</a>
                             </li>
                             <li>
                               <a href="{{route('adminUserHistory', array('id' => $user->id))}}">{{ tr('view_history') }}</a>
