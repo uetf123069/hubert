@@ -234,21 +234,24 @@
 <script type="text/javascript" src="{{ asset('assets/plugins/Ion.RangeSlider/js/ion-rangeSlider/ion.rangeSlider.min.js') }}"></script>
 
 @if(!empty($request_data))
+
+@if($request_data[0]->provider_status == 5)
 <script type="text/javascript">
-            window.setInterval(function(){
-            $.ajax({
-                'url' : '{{route("provider.detect.request")}}',
-                'type' : 'GET',
-                'success' : function(return_data) {
-                    if (return_data.success == true) {
-                        if(return_data.data == ""){
-                            location.reload();
-                        }
+    window.setInterval(function(){
+        $.ajax({
+            'url' : '{{route("provider.detect.request")}}',
+            'type' : 'GET',
+            'success' : function(return_data) {
+                if (return_data.success == true) {
+                    if(return_data.data == ""){
+                        location.reload();
                     }
                 }
-            });
-        }, 5000);
+            }
+        });
+    }, 5000);
 </script>
+@endif
 <script type="text/javascript">
 $("#range-month").ionRangeSlider({
     values: [

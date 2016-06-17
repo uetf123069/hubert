@@ -20,13 +20,13 @@
                     $request_details = get_request_details($Service->request_id);
                     // dd($request_details);
                 ?>
-                <dl>
+                <dl class="service-dl">
                     <dt>{{ tr('provider') }}</dt> <dd> {{ $Service->provider_name }}</dd>
-                    @if($request_details->ProviderRating != null)
-                    <dt>{{ tr('rating') }}</dt> <dd> {{ $request_details->ProviderRating->rating }}</dd>
-                    <dt>{{ tr('review') }}</dt> <dd>{{ $request_details->ProviderRating->comment }}</dd>
+                    @if($request_details->UserRating != null)
+                    <dt>{{ tr('rating') }}</dt> <dd> {{ $request_details->UserRating->rating }}</dd>
+                    <dt>{{ tr('review') }}</dt> <dd>{{ $request_details->UserRating->comment }}</dd>
                     @endif
-                    <dt>{{ tr('address') }}</dt> <dd>{{$request_details->s_address}}</dd>
+                    <dt>{{ tr('address') }}</dt> <dd class="address-min">{{$request_details->s_address}}</dd>
                     <dt>{{ tr('base_price') }}</dt> <dd>{{ $payment['base_price'] }}</dd>
                     <dt>{{ tr('tax_price') }}</dt> <dd>{{ $payment['tax_price'] }}</dd>
                     <dt>{{ tr('total') }}</dt> <dd>{{ $payment['total'] }}</dd>
@@ -81,6 +81,13 @@
     .row > [class*='col-'] {
         display: flex;
         flex-direction: column;
+    }
+    .address-min {
+        min-height: 130px;
+        overflow: auto;
+    }
+    .service-dl dd {
+        min-height: 20px;
     }
 </style>
 @endsection
