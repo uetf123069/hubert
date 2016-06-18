@@ -415,6 +415,9 @@
                 case 154:
                     $string = "provider rating already done or previous status is mismatched";
                     break;
+                case 155:
+                    $string = "Already confirmed the payment or previous state is mismatched.";
+                    break;
                 default:
                     $string = "Unknown error occurred.";
             }
@@ -477,6 +480,9 @@
                     break;
                 case 118:
                     $string = "Request rejected successfully.";
+                    break;
+                case 119:
+                    $string = "Payment confirmed successfully.";
                     break;
                 default:
                     $string = "";

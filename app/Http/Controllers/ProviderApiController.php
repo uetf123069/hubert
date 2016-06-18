@@ -64,6 +64,8 @@ define('REQUEST_RATING',      4);
 define('REQUEST_COMPLETED',      5);
 define('REQUEST_CANCELLED',      6);
 define('REQUEST_NO_PROVIDER_AVAILABLE',7);
+define('WAITING_FOR_PROVIDER_CONFRIMATION_COD',  8);
+
 
 // Only when manual request
 define('REQUEST_REJECTED_BY_PROVIDER', 8);
@@ -1094,11 +1096,7 @@ class ProviderApiController extends Controller
 	            $requests->provider_status = PROVIDER_SERVICE_COMPLETED;
     			$requests->save();
 
-
-    			//Update provider availability
-	            $provider = Provider::find($requests->confirmed_provider);
-	            $provider->is_available = PROVIDER_AVAILABLE;
-	            $provider->save();
+    			//The availability will be change after the provider rated for user
 
     			// Initialize variables
     			$base_price = $price_per_minute = $tax_price = $total_time = $total_time_price = $total = 0;
@@ -1222,7 +1220,7 @@ class ProviderApiController extends Controller
             $request->all(),
             array(
                 'request_id' => 'required|integer|exists:requests,id,confirmed_provider,'.$provider->id.'|unique:provider_ratings,request_id',
-                'rating' => 'required|integer|in:'.RATINGS,
+                'rating' => 'integer|in:'.RATINGS,
                 'comments' => 'max:255'
             ),
             array(
@@ -1244,17 +1242,25 @@ class ProviderApiController extends Controller
             		->first();
 
             if ($req && intval($req->provider_status) != PROVIDER_RATED) { 
-	            //Save Rating
-	            $rev_user = new ProviderRating();
-	            $rev_user->provider_id = $req->confirmed_provider;
-	            $rev_user->user_id = $req->user_id;
-	            $rev_user->request_id = $req->id;
-	            $rev_user->rating = $request->rating;
-	            $rev_user->comment = $comments ?: '';
-	            $rev_user->save();
+            	
+            	if($request->has('rating')) {
+		            //Save Rating
+		            $rev_user = new ProviderRating();
+		            $rev_user->provider_id = $req->confirmed_provider;
+		            $rev_user->user_id = $req->user_id;
+		            $rev_user->request_id = $req->id;
+		            $rev_user->rating = $request->rating;
+		            $rev_user->comment = $comments ?: '';
+		            $rev_user->save();
+		        }
 
 	            $req->provider_status = PROVIDER_RATED;
 	            $req->save();
+
+	            //Update provider availability
+	            $provider = Provider::find($req->confirmed_provider);
+	            $provider->is_available = PROVIDER_AVAILABLE;
+	            $provider->save();
 
 	            // Send Push Notification to User
 	            $title = Helper::tr('user_rated_by_provider_title');
@@ -1366,6 +1372,7 @@ class ProviderApiController extends Controller
 
 		$requests = Requests::where('confirmed_provider', '=', $provider->id)
 							->where('requests.status', '=', REQUEST_COMPLETED)
+							->where('requests.provider_status', '=', PROVIDER_RATED)
 							->leftJoin('request_payments', 'requests.id', '=', 'request_payments.request_id')
 							->leftJoin('providers', 'providers.id', '=', 'requests.confirmed_provider')
 							->leftJoin('users', 'users.id', '=', 'requests.user_id')
@@ -1481,7 +1488,10 @@ class ProviderApiController extends Controller
 
 		$requests = Requests::where('requests.confirmed_provider', '=', $provider->id)
 							->whereNotIn('requests.status', $check_status)
-							->where('provider_status', '!=', PROVIDER_RATED)
+							->orWhere(function($q) {
+						          $q->where('provider_status', PROVIDER_SERVICE_COMPLETED)
+						            ->where('requests.status', REQUEST_COMPLETED);
+						      })
 							->leftJoin('users', 'users.id', '=', 'requests.user_id')
                             ->leftJoin('service_types', 'service_types.id', '=', 'requests.request_type')
 							->orderBy('provider_status','desc')
@@ -1511,7 +1521,7 @@ class ProviderApiController extends Controller
                 // unset($each_request['user_id']);
                 $requests_data[] = $each_request;
 
-                $allowed_status = array(REQUEST_COMPLETE_PENDING,REQUEST_COMPLETED,REQUEST_RATING);
+                $allowed_status = array(REQUEST_COMPLETE_PENDING,WAITING_FOR_PROVIDER_CONFRIMATION_COD,REQUEST_COMPLETED,REQUEST_RATING);
 
                 if( in_array($each_request['status'], $allowed_status)) {
                     $invoice = RequestPayment::where('request_id' , $each_request['request_id'])
@@ -1549,6 +1559,42 @@ class ProviderApiController extends Controller
             'data' => $Messages->get()->toArray(),
         ));
     
+        return response()->json($response_array, 200);
+	}
+
+	public function cod_paid_confirmation(Request $request) {
+
+
+		$validator = Validator::make(
+            $request->all(),
+            array(
+                'request_id' => 'required|integer|exists:requests,id,confirmed_provider,'.$request->id,
+            ),
+            array(
+                'exists' => 'The :attribute doesn\'t belong to user:'.$request->id,
+            )
+        );
+    
+        if ($validator->fails()) {
+            $error_messages = implode(',', $validator->messages()->all());
+            $response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101, 'error_messages'=>$error_messages);
+        
+        } else {
+
+        	$requests = Requests::find($request->request_id);
+
+        	if($requests->status == WAITING_FOR_PROVIDER_CONFRIMATION_COD && $requests->status != REQUEST_RATING) {
+	        	$requests->status = REQUEST_RATING;
+	        	$requests->is_paid = DEFAULT_TRUE;
+	        	$requests->save();
+
+	        	$response_array = array('success' => true , 'message' => Helper::get_message(119));
+	        } else {
+	        	$response_array = array('success' => false , 'error' => Helper::get_error_message(155) ,'error_code' =>155);
+	        }
+
+        }
+
         return response()->json($response_array, 200);
 	}
 }

@@ -72,6 +72,7 @@ define('REQUEST_RATING',      4);
 define('REQUEST_COMPLETED',      5);
 define('REQUEST_CANCELLED',      6);
 define('REQUEST_NO_PROVIDER_AVAILABLE',7);
+define('WAITING_FOR_PROVIDER_CONFRIMATION_COD',  8);
 
 //Only when manual request
 define('REQUEST_REJECTED_BY_PROVIDER', 8);
@@ -1361,7 +1362,7 @@ class UserapiController extends Controller
 
     public function paynow(Request $request) {
 
-        $validator = Validator::make($request->all() , 
+        $validator = Validator::make($request->all(), 
             array(
                     'request_id' => 'required|exists:requests,id,user_id,'.$request->id,
                     'payment_mode' => 'required|in:'.COD.','.PAYPAL.','.CARD.'|exists:settings,key,value,1',
@@ -1393,8 +1394,8 @@ class UserapiController extends Controller
 
                 if($request->payment_mode == COD) {
 
-                    $requests->status = REQUEST_RATING;
-                    $requests->is_paid = DEFAULT_TRUE;
+                    $requests->status = WAITING_FOR_PROVIDER_CONFRIMATION_COD;
+                    // $requests->is_paid = DEFAULT_TRUE;
 
                     $request_payment->payment_id = uniqid();
                     $request_payment->status = DEFAULT_TRUE;
@@ -1651,7 +1652,6 @@ class UserapiController extends Controller
     public function history(Request $request) {
     
         // Get the completed request details 
-
         $requests = Requests::where('requests.user_id', '=', $request->id)
                             ->where('requests.status', '=', REQUEST_COMPLETED)
                             ->leftJoin('providers', 'providers.id', '=', 'requests.confirmed_provider')
