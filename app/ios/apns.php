@@ -65,6 +65,9 @@ class Apns {
             $payload = json_encode(array("aps" => $message));
             $result = 0;
             $bodyError = "";
+
+            Log::info('payload'.print_r($payload , true));
+
             foreach ((array)$devices as $key => $value) {
                 $msg = chr(0) . pack("n", 32) . pack('H*', str_replace(' ', '', $value)) . pack('n', (strlen($payload))) . $payload;
                 $result = fwrite($this->fp, $msg);
