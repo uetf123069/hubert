@@ -4,9 +4,9 @@ session_start();
 
 define("DefA", 2);
 
-define("Certi_Path", 'base.pem');
+define("Certi_Path", 'xuber.pem');
 
-define("PassPH", '');
+define("PassPH", 'xuber13');
 
 class Apns {
 
