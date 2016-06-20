@@ -68,7 +68,7 @@ define('WAITING_FOR_PROVIDER_CONFRIMATION_COD',  8);
 
 
 // Only when manual request
-define('REQUEST_REJECTED_BY_PROVIDER', 8);
+define('REQUEST_REJECTED_BY_PROVIDER', 9);
 
 define('PROVIDER_NOT_AVAILABLE', 0);
 define('PROVIDER_AVAILABLE', 1);

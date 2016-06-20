@@ -76,7 +76,11 @@ class sendPushNotification extends Job implements ShouldQueue
             $push_data['user_rating'] = ProviderRating::where('provider_id', 1)->avg('rating') ?: 0;
             $push_data['time_left_to_respond'] = $provider_timeout - (time() - strtotime($requests->request_start_time));
 
-            $push_message = array('success' => true,'message' => $this->message,'data' => array((object) $push_data));
+            $push_message = array(
+                    'success' => true,
+                    'message' => $this->message,
+                    // 'data' => array((object) $push_data)
+                );
 
             $push_notification = 1; // Check the push notifictaion is enabled
 
