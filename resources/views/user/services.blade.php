@@ -21,7 +21,7 @@
         </div>
     </div>
 
-    @if($Services)
+    @if(!empty($Services->requests))
     @foreach($Services->requests as $Index => $Service)
     <div class="col-md-4">
         <div class="panel panel-primary">
