@@ -105,16 +105,20 @@
         </div>
         <div class="row">
             <div class="col-md-6">
-                @if(!empty($Service->before_image))
-                <h2 class="text-center">{{ tr('before')}}</h2>                
-                <img class="col-xs-8 col-xs-offset-2" src="{{ $Service->before_image }}">
-                @endif
-            <div class="col-md-6">
+                <div class="row">
+                    @if(!empty($Service->before_image))
+                    <h2 class="text-center">{{ tr('before')}}</h2>                
+                    <img class="col-xs-8 col-xs-offset-2" src="{{ $Service->before_image }}">
+                    @endif
+                </div>
             </div>
-                @if(!empty($Service->after_image))
-                <h2 class="col-xs-8 col-xs-offset-2">{{ tr('after') }}</h2>                
-                <img class="col-xs-8 col-xs-offset-2" src="{{ $Service->after_image }}">
-                @endif
+            <div class="col-md-6">
+                <div class="row">
+                    @if(!empty($Service->after_image))
+                    <h2 class="col-xs-8 col-xs-offset-2">{{ tr('after') }}</h2>                
+                    <img class="col-xs-8 col-xs-offset-2" src="{{ $Service->after_image }}">
+                    @endif
+                </div>
             </div>
             <div class="col-md-12">
                 <h2 class="text-center">{{ tr('map') }}</h2> 

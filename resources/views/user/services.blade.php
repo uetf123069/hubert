@@ -6,7 +6,21 @@
 
 @section('content')
 <div class="row ui-sortable" data-widget-group="group-demo">
-    @if(!empty($Services->requests))
+
+    <div class="col-md-12 full-width">
+        <div class="panel panel-default welcome-box">
+            <!-- <div class="panel-heading"></div> -->
+            <div class="panel-body text-center">
+                <h3 class="mt0">Welcome to Xuber!</h3>
+                <div>                        
+                    <p class="wel-cont">Thank you for signing up. Enjoy fast on-demand services from the best verified and validated service providers from your own neighborhood. Check out the list of best services we provide and enjoy your Xuber experience.</p>
+                </div>
+                <br>
+                <a href="{{ route('user.services.request') }}" class="btn btn-primary-alt">Request A Service Now!</a>                        
+            </div>
+        </div>
+    </div>
+
     @foreach($Services->requests as $Index => $Service)
     <div class="col-md-4">
         <div class="panel panel-primary">
@@ -43,25 +57,6 @@
         </div>
     </div>
     @endforeach
-    @else
-        <!-- <h4>{{ tr('no_service') }}</h4> -->
-        <div class="row">
-            <div class="col-md-12 full-width">
-                <div class="panel panel-default welcome-box">
-                    <!-- <div class="panel-heading"></div> -->
-                    <div class="panel-body text-center">
-                        <h3 class="mt0">Welcome to Xuber!</h3>
-                        <div>                        
-                            <p class="wel-cont">Thank you for signing up. Enjoy fast on-demand services from the best verified and validated service providers from your own neighborhood. Check out the list of best services we provide and enjoy your Xuber experience.</p>
-                        </div>
-                        <br>
-                        <a href="#" class="btn btn-primary-alt">Request A Service Now!</a>
-                        
-                    </div>
-                </div>
-            </div>
-        </div>
-    @endif
 </div>
 @endsection
 

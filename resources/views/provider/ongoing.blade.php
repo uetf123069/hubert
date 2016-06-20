@@ -147,18 +147,13 @@
                             <th>{{ tr('requested_time') }}</th>
                             <td data-title="Requested Time">{{ $request_data[0]->request_start_time }}</td>
                         </tr>
-                        
-                        <tr>
-                            <th>{{ tr('req_status') }}</th>
-                            <td data-title="Request Status">{{ get_user_request_status($request_data[0]->status) }}</td>
-                        </tr>
-
                     </tbody>
                     <!-- <caption>List of countries by distribution wealth</caption> -->
                 </table>
 			</div>
 		</div>
 	</div>
+    @if($request_data[0]->status < 3)
     <div class="col-md-6">
         <div class="panel panel-default">
             <div class="panel-heading"></div>
@@ -179,46 +174,50 @@
             </div>
         </div>
     </div>
+    @endif
 	<div class="col-md-6">
 		<div class="panel panel-default">
 			<div class="panel-heading"></div>
 			<div class="panel-body">
 
-            @if(get_payment_type($request_data[0]->user_id) == 'cod' && $request_data[0]->provider_status == 5 && $request_data[0]->is_paid == 0)
-                <h3 style="text-align:center" class="mt0">{{ $request_data[0]->amount }}</h3>
-                <h6 style="text-align:center">Amount Need to Pay</h6>
+            @if($request_data[0]->status == 3)
+                <h3 class="mt0 text-center">Waiting For Payment</h3>
+                <h2 class="text-center"><span class="fa fa-5x fa-money"></span></h2>
+                <h4 class="text-center">Waiting for user to select payment method</h4>
+            @elseif($request_data[0]->status == 8)
+                <h3 class="mt0 text-center">Cash On Delivery</h3>
+                <h4 class="text-center">Amount Need to Pay: {{ $request_data[0]->amount }}</h4>
 
                 <form method="POST" action="{{ route('provider.paid.status') }}" class="form-horizontal row-border">
                     <input type="hidden" name="request_id" value="{{$request_data[0]->request_id}}">
-                            <div class="form-group">
-                                <button class="btn-primary btn col-xs-12" type="submit">Paid</button>
-                            </div>
-                    </form>
-                @elseif($request_data[0]->provider_status == 5)
-					<form method="POST" action="{{ route('provider.submit.review') }}" class="form-horizontal row-border">
-						<div class="col-md-12">
-							<h3 style="text-align:center" class="mt0">{{ tr('rate_this_user') }}</h3>
-							<div class="form-group">
-								<div class="col-xs-12"><div name="samep" id="range-month"></div></div>
-								<input type="hidden" name="rating" id="rating_value">
-							</div>
-							<div class="form-group">
-								<label class="col-sm-2 control-label">{{ tr('comments') }}</label>
-								<div class="col-sm-12">
-									<textarea name="comments" class="form-control"></textarea>
-                                    <input type="hidden" name="request_id" value="{{$request_data[0]->request_id}}">
-								</div>
-							</div>
-							<div class="form-group">
-								<button class="btn-primary btn col-xs-12" type="submit">{{ tr('submit') }} Review</button>
+                    <div class="form-group">
+                        <button class="btn-primary btn col-xs-12" type="submit">Paid</button>
+                    </div>
+                </form>
+            @elseif($request_data[0]->provider_status == 5)
+				<form method="POST" action="{{ route('provider.submit.review') }}" class="form-horizontal row-border">
+					<div class="col-md-12">
+						<h3 class="mt0 text-center">{{ tr('rate_this_user') }}</h3>
+						<div class="form-group">
+							<div class="col-xs-12"><div name="samep" id="range-month"></div></div>
+							<input type="hidden" name="rating" id="rating_value">
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">{{ tr('comments') }}</label>
+							<div class="col-sm-12">
+								<textarea name="comments" class="form-control"></textarea>
+                                <input type="hidden" name="request_id" value="{{$request_data[0]->request_id}}">
 							</div>
 						</div>
-					</form>
-
-				@else
-				<h3 style="text-align:center" class="mt0">{{ tr('location_details') }}</h3>
+						<div class="form-group">
+							<button class="btn-primary btn col-xs-12" type="submit">{{ tr('submit') }} Review</button>
+						</div>
+					</div>
+				</form>
+			@else
+				<h3 class="mt0 text-center">{{ tr('location_details') }}</h3>
             	<div style="height:100%;min-height:400px" id="user_location_map"></div>	
-            	@endif					
+        	@endif
 			</div>
 		</div>
 	</div>
@@ -237,6 +236,7 @@
 
 @if($request_data[0]->provider_status == 5)
 <script type="text/javascript">
+    var requestStatus = "{{ $request_data[0]->status }}";
     window.setInterval(function(){
         $.ajax({
             'url' : '{{route("provider.detect.request")}}',
@@ -245,6 +245,10 @@
                 if (return_data.success == true) {
                     if(return_data.data == ""){
                         location.reload();
+                    } else {
+                        if(return_data.data[0].status != requestStatus) {
+                            location.reload();
+                        }
                     }
                 }
             }
@@ -304,6 +308,7 @@ $("#range-month").ionRangeSlider({
     }
     ongoingMap();
 </script>
+@if($request_data[0]->status < 3)
 <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
 <script type="text/javascript">
     var defaultImage = "{{ asset('user_default.png') }}";
@@ -443,5 +448,6 @@ $("#range-month").ionRangeSlider({
     });
 
 </script>
+@endif
 @endif
 @endsection

@@ -83,7 +83,7 @@ class UserController extends Controller
         } else {
             if($CurrentRequest->data[0]->status < 3) {
                 return view('user.request_waiting', compact('CurrentRequest'));
-            } else if($CurrentRequest->data[0]->status == 3) {
+            } else if($CurrentRequest->data[0]->status == 3 || $CurrentRequest->data[0]->status == 8) {
                 $PaymentMethods = $this->UserAPI->get_payment_modes($request)->getData();
                 // dd($PaymentMethods);
                 return view('user.request_payment', compact('CurrentRequest','PaymentMethods'));

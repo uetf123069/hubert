@@ -10,11 +10,11 @@
 <div class="panel panel-default">
     <div class="panel-heading">
         <ul class="stepy-header" id="service-state">
-            <li class="stepy-active" id="wizard-head-0"><div>Step 1</div><span>{{ tr('request') }}</span></li>
-            <li class="" id="wizard-head-1"><div>Step 2</div><span>{{ tr('waiting') }}</span></li>
-            <li class="" id="wizard-head-2"><div>Step 3</div><span>{{ tr('servicing') }}</span></li>
+            <li id="wizard-head-0"><div>Step 1</div><span>{{ tr('request') }}</span></li>
+            <li id="wizard-head-1"><div>Step 2</div><span>{{ tr('waiting') }}</span></li>
+            <li id="wizard-head-2"><div>Step 3</div><span>{{ tr('servicing') }}</span></li>
             <li class="stepy-active" id="wizard-head-3"><div>Step 4</div><span>{{ tr('payment') }}</span></li>
-            <li class="" id="wizard-head-4"><div>Step 5</div><span>{{ tr('review') }}</span></li>
+            <li id="wizard-head-4"><div>Step 5</div><span>{{ tr('review') }}</span></li>
         </ul>
     </div>
     <div class="panel-body">
@@ -94,6 +94,13 @@
                     </tbody>
                 </table>
             </div>
+            @if($Service->status == 8)
+            <div class="col-md-6 row-border">
+                <h2 class="text-center">Payment Status</h2>
+                <h2 class="text-center"><span class="fa fa-5x fa-money"></span></h2>
+                <h4 class="text-center">Waiting for payment confirmation from provider</h4>
+            </div>
+            @else
             <div class="col-md-6 row-border">
                 <h2 class="text-center">{{ tr('select_payment') }}</h2>
                 <form action="{{ route('user.services.request.payment') }}" class="form-horizontal" method="POST">
@@ -117,6 +124,7 @@
                     <button class="btn-primary btn col-sm-4 col-sm-offset-4">{{ tr('submit') }}</button>
                 </form>
             </div>
+            @endif
         </div>
     </div>
 </div>
@@ -126,6 +134,31 @@
 
 @section('scripts')
 <script type="text/javascript" src="{{ asset('assets/user/js/application.js') }}"></script>
+<script type="text/javascript">
+
+    var serviceStatus = {{ $CurrentRequest->data[0]->status }};
+
+    window.setInterval(function(){
+        $.ajax({
+            'url' : '{{ route("user.services.updates") }}',
+            'type' : 'GET',
+            'success' : function(response) {
+                if (response.success == true) {
+                    // console.log('true');
+                    if(response.data != "") {
+                        // console.log(response.data);
+                        if(response.data[0].status == serviceStatus) {
+                        } else {
+                            location.reload();
+                        } 
+                    } else {
+                        location.reload(); 
+                    }
+                }
+            }
+        });
+    }, 3000);
+</script>
 @endsection
 
 @section('styles')
