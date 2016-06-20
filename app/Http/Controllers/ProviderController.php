@@ -399,11 +399,15 @@ class ProviderController extends Controller
 
     public function paid_status(Request $request)
     {
-        $request_state = Requests::find($request->request_id);
-        $request_state->is_paid = 1;
-        $request_state->save();
+        $request->request->add([ 
+            'id' => \Auth::guard('provider')->user()->id,
+            'token' => \Auth::guard('provider')->user()->token,
+            'device_token' => \Auth::guard('provider')->user()->device_token,
+        ]);
 
-        if($request_state){
+        $ApiResponse = $this->ProviderApiController->cod_paid_confirmation($request)->getData();
+
+        if($ApiResponse->success){
             return redirect(route('provider.ongoing'))->with('success', 'User Paid');
         }else{
             return back()->with('error', 'Something Went Wrong');
