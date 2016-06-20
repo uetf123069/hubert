@@ -133,11 +133,11 @@
                 </div>
                 <div class="modal-footer">
                     <div class="row">
-                        <div class="col-md-5">
-                            <a href="" id="request_accept_url" style="width:150px;" class="btn btn-success">Accept Sevice</a>
+                        <div class="col-md-6">
+                            <a href="" id="request_accept_url" class="btn btn-success col-xs-12">Accept Sevice</a>
                         </div>
-                        <div class="col-md-5">
-                            <a href="" id="request_decline_url" style="width:150px;" class="btn btn-danger">Decline Service</a>
+                        <div class="col-md-6">
+                            <a href="" id="request_decline_url" class="btn btn-danger col-xs-12">Decline Service</a>
                         </div>
                     </div>
                 </div>

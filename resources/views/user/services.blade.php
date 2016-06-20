@@ -21,6 +21,7 @@
         </div>
     </div>
 
+    @if($Services)
     @foreach($Services->requests as $Index => $Service)
     <div class="col-md-4">
         <div class="panel panel-primary">
@@ -57,6 +58,7 @@
         </div>
     </div>
     @endforeach
+    @endif
 </div>
 @endsection
 
