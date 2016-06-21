@@ -42,9 +42,9 @@
                     <dt>{{ tr('review') }}</dt> <dd>{{ $request_details->UserRating->comment }}</dd>
                     @endif
                     <dt>{{ tr('address') }}</dt> <dd class="address-min">{{$request_details->s_address}}</dd>
-                    <dt>{{ tr('base_price') }}</dt> <dd>{{ $payment['base_price'] }}</dd>
-                    <dt>{{ tr('tax_price') }}</dt> <dd>{{ $payment['tax_price'] }}</dd>
-                    <dt>{{ tr('total') }}</dt> <dd>{{ $payment['total'] }}</dd>
+                    <dt>{{ tr('base_price') }}</dt> <dd>{{ get_currency_value($payment['base_price']) }}</dd>
+                    <dt>{{ tr('tax_price') }}</dt> <dd>{{ get_currency_value($payment['tax_price']) }}</dd>
+                    <dt>{{ tr('total') }}</dt> <dd>{{ get_currency_value($payment['total']) }}</dd>
                     <dt>{{ tr('date_time') }}</dt> <dd>{{date('H:i - d M, Y',strtotime($request_details->start_time))}}</dd>
 
                 </dl>

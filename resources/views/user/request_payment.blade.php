@@ -71,24 +71,24 @@
                         </tr>
                         <tr>
                             <th>{{ tr('base_price') }}</th>
-                            <td data-title="Base Price">{{ $CurrentRequest->invoice[$Index]->base_price }}</td>
+                            <td data-title="Base Price">{{ get_currency_value($CurrentRequest->invoice[$Index]->base_price) }}</td>
                         </tr>
                         <tr>
                             <th>{{ tr('time_price') }}</th>
-                            <td data-title="Time Price">{{ $CurrentRequest->invoice[$Index]->time_price }}</td>
+                            <td data-title="Time Price">{{ get_currency_value($CurrentRequest->invoice[$Index]->time_price) }}</td>
                         </tr>
                         <tr>
                             <th>{{ tr('tax_price') }}</th>
-                            <td data-title="Tax">{{ $CurrentRequest->invoice[$Index]->tax_price }}</td>
+                            <td data-title="Tax">{{ get_currency_value($CurrentRequest->invoice[$Index]->tax_price) }}</td>
                         </tr>
                         <tr>
                             <th>{{ tr('total_amount') }}</th>
-                            <td data-title="Total Amount">{{ $CurrentRequest->invoice[$Index]->total }}</td>
+                            <td data-title="Total Amount">{{ get_currency_value($CurrentRequest->invoice[$Index]->total) }}</td>
                         </tr>
                         @else
                         <tr>
                             <th>{{ tr('amount') }}</th>
-                            <td data-title="Amount">{{ $Service->amount }}</td>
+                            <td data-title="Amount">{{ get_currency_value($Service->amount) }}</td>
                         </tr>
                         @endif
                     </tbody>

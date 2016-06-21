@@ -186,7 +186,7 @@
                 <h4 class="text-center">Waiting for user to select payment method</h4>
             @elseif($request_data[0]->status == 8)
                 <h3 class="mt0 text-center">Cash On Delivery</h3>
-                <h4 class="text-center">Amount Need to Pay: {{ $request_data[0]->amount }}</h4>
+                <h4 class="text-center">Amount to be paid: {{ get_currency_value($request_data[0]->amount) }}</h4>
 
                 <form method="POST" action="{{ route('provider.paid.status') }}" class="form-horizontal row-border">
                     <input type="hidden" name="request_id" value="{{$request_data[0]->request_id}}">

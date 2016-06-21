@@ -40,10 +40,10 @@
                 <strong>{{ tr('total_time') }} :</strong> {{$request->total_time}} <br>
                 <strong>{{ tr('request_started') }} :</strong> {{ date('jS \of F Y h:i:s A', strtotime($request->start_time)) }} <br>
                 <strong>{{ tr('request_ended') }} :</strong> {{ date('jS \of F Y h:i:s A', strtotime($request->end_time)) }} <br>
-                <strong>{{ tr('base_price') }} :</strong> {{$request->base_price}} <br>
-                <strong>{{ tr('time_price') }} :</strong> {{$request->time_price}} <br>
-                <strong>{{ tr('tax_price') }} :</strong> {{$request->tax}} <br>
-                <strong>{{ tr('total_amount') }} :</strong> {{$request->total_amount}} <br>
+                <strong>{{ tr('base_price') }} :</strong> {{ get_currency_value($request->base_price) }} <br>
+                <strong>{{ tr('time_price') }} :</strong> {{ get_currency_value($request->time_price) }} <br>
+                <strong>{{ tr('tax_price') }} :</strong> {{ get_currency_value($request->tax) }} <br>
+                <strong>{{ tr('total_amount') }} :</strong> {{ get_currency_value($request->total_amount) }} <br>
                 <strong>{{ tr('address') }} :</strong> {{$request->request_address}}
               </div>
             </div>
