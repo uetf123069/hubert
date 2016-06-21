@@ -52,15 +52,15 @@
                             <td data-title="Requested Time">{{ $Service->end_time }}</td>
                         </tr>
                         <tr>
-                            <th>{{ tr('provider_name') }}</th>
+                            <th>{{ $Service->service_provider_name.' '.tr('name') }}</th>
                             <td data-title="Provider Name">{{ $Service->provider_name }}</td>
                         </tr>
                         <tr>
-                            <th>{{ tr('provider_rating') }}</th>
+                            <th>{{ $Service->service_provider_name.' '.tr('rating') }}</th>
                             <td data-title="Provider Rating">{{ $Service->rating }}</td>
                         </tr>
                         <tr>
-                            <th>Provider Mobile</th>
+                            <th>{{$Service->service_provider_name}} Mobile</th>
                             <td data-title="Provider Rating">{{ $Service->provider_mobile }}</td>
                         </tr>
                         @if($CurrentRequest->invoice != "")
@@ -98,7 +98,7 @@
             <div class="col-md-6 row-border">
                 <h2 class="text-center">Payment Status</h2>
                 <h2 class="text-center"><span class="fa fa-5x fa-money"></span></h2>
-                <h4 class="text-center">Waiting for payment confirmation from provider</h4>
+                <h4 class="text-center">Waiting for payment confirmation from {{$Service->service_provider_name}}</h4>
             </div>
             @else
             <div class="col-md-6 row-border">

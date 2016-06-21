@@ -1238,6 +1238,7 @@ class UserapiController extends Controller
                                 'requests.id as request_id',
                                 'requests.request_type as request_type',
                                 'service_types.name as service_type_name',
+                                'service_types.provider_name as service_provider_name',
                                 'requests.after_image as after_image',
                                 'requests.before_image as before_image',
                                 'requests.end_time as end_time',
