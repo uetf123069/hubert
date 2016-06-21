@@ -91,11 +91,11 @@ class AdminController extends Controller
         $pro_req = 0;
         $avg_rev = 0;
         }
-        $provider_reviews = DB::table('provider_ratings')
-                ->leftJoin('providers', 'provider_ratings.provider_id', '=', 'providers.id')
-                ->leftJoin('users', 'provider_ratings.user_id', '=', 'users.id')
-                ->select('provider_ratings.id as review_id', 'provider_ratings.rating', 'provider_ratings.comment', 'users.first_name as user_first_name', 'users.last_name as user_last_name', 'providers.first_name as provider_first_name', 'providers.last_name as provider_last_name', 'users.id as user_id', 'users.picture as user_picture', 'providers.id as provider_id', 'provider_ratings.created_at')
-                ->orderBy('provider_ratings.id', 'DESC')
+        $provider_reviews = DB::table('user_ratings')
+                ->leftJoin('providers', 'user_ratings.provider_id', '=', 'providers.id')
+                ->leftJoin('users', 'user_ratings.user_id', '=', 'users.id')
+                ->select('user_ratings.id as review_id', 'user_ratings.rating', 'user_ratings.comment', 'users.first_name as user_first_name', 'users.last_name as user_last_name', 'providers.first_name as provider_first_name', 'providers.last_name as provider_last_name', 'users.id as user_id', 'users.picture as user_picture', 'providers.id as provider_id', 'user_ratings.created_at')
+                ->orderBy('user_ratings.id', 'DESC')
                 ->limit(3)
                 ->get();
         
