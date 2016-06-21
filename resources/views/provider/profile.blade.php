@@ -321,7 +321,7 @@ function change_availability(){
         });
 
         var infowindow = new google.maps.InfoWindow({
-            content: "Point your location",
+            content: "You are here",
         });
 
         google.maps.event.addListener(map, 'click', updateMarker);

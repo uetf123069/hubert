@@ -210,7 +210,7 @@
 							</div>
 						</div>
 						<div class="form-group">
-							<button class="btn-primary btn col-xs-12" type="submit">{{ tr('submit') }} Review</button>
+							<button class="btn-primary btn col-xs-12" type="submit">{{ tr('submit_review') }} </button>
 						</div>
 					</div>
 				</form>
