@@ -70,9 +70,12 @@ class NormalPushNotification extends Job implements ShouldQueue
                 $msg = array("alert" => "" . $this->title,
                     "status" => "success",
                     "title" => $this->title,
-                    "message" => $push_message,
+                    // "message" => $push_message,
                     "badge" => 1,
-                    "sound" => "default");
+                    "sound" => "default"
+                    "status" => "",
+                    "rid" => "",
+                    );
 
                 if (!isset($user->device_token) || empty($user->device_token)) {
                     $deviceTokens = array();
