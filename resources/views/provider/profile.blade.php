@@ -13,7 +13,6 @@
     </ul>
 </div>
 @endsection
-
 @section('content')
 <div class="container-fluid">
     <div class="tab-content">
@@ -32,6 +31,10 @@
 											 	checked="false"
 											 @else
 											 	checked="true"
+											 @endif
+
+											 @if($allow == 1)
+											 	disable="true"
 											 @endif
 											 id="change_avail" onchange="change_availability()" data-on-color="success" data-off-color="default">
 										</div>

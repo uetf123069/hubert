@@ -18,6 +18,8 @@ use Auth;
 
 use App\Helpers\Helper;
 
+define('REQUEST_TIME_EXCEED_CANCELLED', 10);
+
 class ProviderController extends Controller
 {
     protected $ProviderApiController;
@@ -52,7 +54,17 @@ class ProviderController extends Controller
      */
     public function profile()
     {
-        return view('provider.profile');
+        $check_status = array(REQUEST_NO_PROVIDER_AVAILABLE,REQUEST_CANCELLED,REQUEST_TIME_EXCEED_CANCELLED,REQUEST_COMPLETED);
+
+        $check_requests = Requests::where('confirmed_provider' , \Auth::guard('provider')->user()->id)->whereNotIn('status' , $check_status)->count();
+
+        $allow_availability_change = 1;
+
+        if($check_requests == 0) {
+            $allow_availability_change = 0;
+        }
+
+        return view('provider.profile')->with('allow',$allow_availability_change);
     }
 
     /**

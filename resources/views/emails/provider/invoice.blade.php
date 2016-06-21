@@ -34,7 +34,7 @@ a { color: #ff646a; text-decoration: none; }
             <td>
                 <table width="600" border="0" align="center" cellpadding="0" cellspacing="0">
                     <tr>
-                        <td data-bgcolor="Alternate Color" width="208" align="center" valign="top" bgcolor="#607e9d">
+                        <td data-bgcolor="Alternate Color" width="208" align="center" valign="top" bgcolor="">
                             <table width="158" border="0" align="center" cellpadding="0" cellspacing="0">
                                 <tr>
                                     <td height="50"></td>
@@ -53,7 +53,7 @@ a { color: #ff646a; text-decoration: none; }
 
                                 <!-- Compane Name -->
                                 <tr>
-                                    <td data-link-style="text-decoration:none; color:#FFFFFF;" data-link-color="Address Link 1" mc:edit="Company Name" data-color="Company Title" style="font-family: 'Open Sans', Arial, sans-serif; font-size:16px; color:#FFFFFF; line-height:26px; font-weight: bold;">{{$email_data['provider_name']}}</td>
+                                    <td data-link-style="text-decoration:none; color:#3b3b3b;font-weight:bold;" data-link-color="Address Link 1" mc:edit="Company Name" data-color="Company Title" style="font-family: 'Open Sans', Arial, sans-serif; font-size:16px; color:#FFFFFF; line-height:26px; font-weight: bold;">{{$email_data['provider_name']}}</td>
                                 </tr>
                                 <!-- end Compane Name -->
 

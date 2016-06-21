@@ -64,7 +64,9 @@
                         <h2 class="text-center">{{ tr('rate_provider') }}</h2>
                         @if(!empty($Service->provider_picture))
                         <div class="form-group">
-                            <img src="{{ $Service->provider_picture }}" style="margin:0 auto;width:200px;" class="img-responsive img-circle">
+                            <div class="service-user-img">
+                                <img src="{{ $Service->provider_picture }}" class="img-responsive img-circle">
+                            </div>
                         </div>
                         @endif
                         <div class="form-group">
