@@ -67,9 +67,14 @@
                     </div>
                   </div>
                   <div class="form-group">
-                    <label class="col-sm-2 control-label">{{ tr('currency') }} ( {{ isset($setting[14]['value']) ? $setting[14]['value'] : '' }} )</label>
+                    <label class="col-sm-2 control-label">{{ tr('currency') }} ( <strong>{{ isset($setting[15]['value']) ? $setting[15]['value'] : '' }} </strong>)</label>
                     <div class="col-sm-10">
                       <select name="currency" value="" required class="form-control">
+                      @if(isset($setting[15]['value']))
+                      <option value="{{ $setting[15]['value'] }}">{{ $setting[15]['value'] }}</option>
+                      @else
+                      <option value="">{{ tr('select') }}</option>
+                      @endif
                       <option value="$">US Dollar (USD)</option>
                       <option value="₹"> Indian Rupee</option>
                       <option value="د.ك">Kuwaiti Dinar (KWD)</option>

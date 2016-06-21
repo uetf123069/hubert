@@ -281,6 +281,7 @@ return array(
 	'picture'	=>	'Picture',
 	'action'	=>	'Action',
 	'delete'	=>	'Delete',
+	'select'	=>	'Select',
 	'view_history'	=>	'View History',
 	'edit'	=> 	'Edit',
 	'delete_confirmation'	=> 'Are you sure want to Delete?',

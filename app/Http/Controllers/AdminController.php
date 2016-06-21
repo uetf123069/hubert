@@ -671,6 +671,7 @@ class AdminController extends Controller
                     $request->all(),
                     array(
                         'service_name' => 'required|max:255',
+                        'provider_name' => 'required|max:255',
                                          
                     )
                 );
@@ -701,6 +702,7 @@ class AdminController extends Controller
                 $service->status = 0;
             }
                 $service->name = $request->service_name;
+                $service->provider_name = $request->provider_name;
                 $service->save();
             
         if($service)

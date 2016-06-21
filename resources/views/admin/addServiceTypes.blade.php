@@ -24,7 +24,13 @@
                   <div class="form-group">
                     <label class="col-sm-2 control-label">{{ tr('service_name') }}</label>
                     <div class="col-sm-10">
-                      <input type="text" name="service_name" value="{{ isset($service->name) ? $service->name : '' }}" required class="form-control">
+                      <input placeholder="Eg: Car Wash" type="text" name="service_name" value="{{ isset($service->name) ? $service->name : '' }}" required class="form-control">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-sm-2 control-label">{{ tr('provider_name') }}</label>
+                    <div class="col-sm-10">
+                      <input placeholder="Eg: Car Washer" type="text" name="provider_name" value="{{ isset($service->provider_name) ? $service->provider_name : '' }}" required class="form-control">
                     </div>
                   </div>
                    <div class="checkbox">

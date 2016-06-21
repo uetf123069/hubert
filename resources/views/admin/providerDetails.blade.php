@@ -13,7 +13,7 @@
                 <a href="{{ route('admin.dashboard') }}">{{ tr('home') }}</a>
             </li>
             <li>
-                <a href="{{ route('admin.mapmapview') }}">{{ tr('map') }}</a>
+                <a href="{{ route('admin.mapview') }}">{{ tr('map') }}</a>
             </li>
             <li>
                 <a href="#">{{ tr('view_providers') }}</a>

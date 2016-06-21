@@ -75,6 +75,10 @@ class SettingstableSeeder extends Seeder
 		        'key' => 'default_lang',
 		        'value' => 'en'
 		    ], 
+		    [
+		        'key' => 'currency',
+		        'value' => '$'
+		    ], 
 
 		]);
     }

@@ -15,7 +15,8 @@
               <thead>
                 <tr>
                   <th>{{ tr('id') }}</th>
-                  <th class="min">{{ tr('name') }}</th>
+                  <th class="min">{{ tr('service_type') }}</th>
+                  <th class="min">{{ tr('provider_name') }}</th>
                   <th class="min">{{ tr('status') }}</th>
                   <th>{{ tr('action') }}</th>
                   </tr>
@@ -25,6 +26,7 @@
               <tr>
                   <td>{{$index + 1 }}</td>
                   <td>{{$service->name}}</td>
+                  <td>{{$service->provider_name}}</td>
                   <td>@if($service->status == 1) {{ tr('default') }} @else NA @endif</td>
                   <td>
                       <div class="input-group-btn">
