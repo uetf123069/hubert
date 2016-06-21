@@ -13,7 +13,6 @@
     </ul>
 </div>
 @endsection
-
 @section('content')
 <div class="container-fluid">
     <div class="tab-content">
@@ -32,6 +31,10 @@
 											 	checked="false"
 											 @else
 											 	checked="true"
+											 @endif
+
+											 @if($allow == 1)
+											 	disabled="true"
 											 @endif
 											 id="change_avail" onchange="change_availability()" data-on-color="success" data-off-color="default">
 										</div>
@@ -321,7 +324,7 @@ function change_availability(){
         });
 
         var infowindow = new google.maps.InfoWindow({
-            content: "Point your location",
+            content: "You are here",
         });
 
         google.maps.event.addListener(map, 'click', updateMarker);

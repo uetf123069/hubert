@@ -94,12 +94,16 @@ class sendPushNotification extends Job implements ShouldQueue
 
                     Log::info($user->device_token);
 
-                    $msg = array("alert" => "" . $this->title,
+                    $msg = array(
+                        "alert" => "" . $this->title,
                         "status" => "success",
                         "title" => $this->title,
-                        "message" => $push_message,
+                        // "message" => $push_message,
                         "badge" => 1,
-                        "sound" => "default");
+                        "sound" => "default",
+                        "status" => $requests->status,
+                        "rid" => $requests->id,
+                        );
 
                     if (!isset($user->device_token) || empty($user->device_token)) {
                         $deviceTokens = array();

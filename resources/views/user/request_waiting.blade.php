@@ -27,7 +27,9 @@
                             <td data-title="Provider" colspan="2">
                                 <h2 class="text-center">{{ tr('provider') }}</h2>
                                 <div style="padding:30px">
-                                    <img id="provider-image" style="margin:0 auto; width:200px; height: 200px;" src="{{ $Service->provider_picture != '' ? $Service->provider_picture : asset('user_default.png') }}" class="img-responsive img-circle">
+                                    <div class="service-user-img">
+                                        <img id="provider-image" src="{{ $Service->provider_picture != '' ? $Service->provider_picture : asset('user_default.png') }}" class="img-responsive img-circle">
+                                    </div>
                                 </div>
                             </td>
                         </tr>

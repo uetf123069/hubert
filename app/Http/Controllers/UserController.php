@@ -14,6 +14,8 @@ use App\User;
 
 use App\Cards;
 
+use Validator;
+
 class UserController extends Controller
 {
 
@@ -78,8 +80,20 @@ class UserController extends Controller
         // dd($CurrentRequest);
 
         if(empty($CurrentRequest->data)) {
-            $ServiceTypes = $this->UserAPI->service_list($request)->getData();
-            return view('user.request', compact('ServiceTypes'));
+            $validator = Validator::make($request->all(), [
+                    'service' => 'exists:service_types,id',
+                ]);
+            if ($validator->fails()) {
+                dd('Invalid Service Type');
+            } else {
+                if($request->has('service')) {
+                    return view('user.request');
+                } else {
+                    $ServiceTypes = $this->UserAPI->service_list($request)->getData();
+                    // dd($ServiceTypes);
+                    return view('user.request_picker', compact('ServiceTypes'));
+                }
+            }
         } else {
             if($CurrentRequest->data[0]->status < 3) {
                 return view('user.request_waiting', compact('CurrentRequest'));

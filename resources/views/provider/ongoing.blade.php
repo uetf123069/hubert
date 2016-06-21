@@ -113,9 +113,9 @@
 				<h3 style="text-align:center" class="mt0">{{ tr('req_details') }}</h3>
 
 				<div style="padding:30px">
-                
-                <img id="user-picture" style="margin:0 auto; width:200px;" src="{{ $request_data[0]->user_picture != '' ? $request_data[0]->user_picture : asset('user_default.png') }}" class="img-responsive img-circle">
-					
+                    <div class="service-user-img">
+                        <img id="user-picture" src="{{ $request_data[0]->user_picture != '' ? $request_data[0]->user_picture : asset('user_default.png') }}" class="img-responsive img-circle">
+    				</div>
 				</div>
 				  <table class="table table-striped">
                     <tbody>
@@ -210,7 +210,7 @@
 							</div>
 						</div>
 						<div class="form-group">
-							<button class="btn-primary btn col-xs-12" type="submit">{{ tr('submit') }} Review</button>
+							<button class="btn-primary btn col-xs-12" type="submit">{{ tr('submit_review') }} </button>
 						</div>
 					</div>
 				</form>

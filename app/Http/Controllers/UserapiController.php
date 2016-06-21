@@ -758,7 +758,13 @@ class UserapiController extends Controller
         } else {
             Log::info('Create request start');
             // Check the user filled the payment details
+
             $user = User::find($request->id);
+            // Save the user location
+            $user->latitude = $request->s_latitude;
+            $user->longitude = $request->s_longitude;
+            $user->save();
+
             if(!$user->payment_mode) {
                 // Log::info('Payment Mode is not available');
                 $response_array = array('success' => false , 'error' => Helper::get_error_message(134) , 'error_code' => 134);
