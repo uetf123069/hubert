@@ -64,7 +64,7 @@
                         </tr>
                         <tr>
                             <th>{{ $Service->service_provider_name.' '.tr('status') }}</th>
-                            <td data-title="Provider Status">{{ str_replace('Provider',$Service->service_provider_name,get_provider_request_status($Service->provider_status)) }}</td>
+                            <td data-title="Provider Status">{{ str_replace(tr('provider'),$Service->service_provider_name,get_provider_request_status($Service->provider_status)) }}</td>
                         </tr>
                         @if($Service->provider_status < 3)
                         <tr>

@@ -85,7 +85,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-6 control-label">{{ str_replace('Provider',$Service->service_provider_name,tr('add_provider_to_fav')) }}</label>
+                            <label class="col-sm-6 control-label">{{ str_replace(tr('provider'),$Service->service_provider_name,tr('add_provider_to_fav')) }}</label>
                             <div class="col-sm-4">
                                 <input class="bootstrap-switch" 
                                     data-on-text="<i class='fa fa-check'></i>" 
