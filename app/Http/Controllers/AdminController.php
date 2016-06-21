@@ -96,7 +96,7 @@ class AdminController extends Controller
                 ->leftJoin('users', 'user_ratings.user_id', '=', 'users.id')
                 ->select('user_ratings.id as review_id', 'user_ratings.rating', 'user_ratings.comment', 'users.first_name as user_first_name', 'users.last_name as user_last_name', 'providers.first_name as provider_first_name', 'providers.last_name as provider_last_name', 'users.id as user_id', 'users.picture as user_picture', 'providers.id as provider_id', 'user_ratings.created_at')
                 ->orderBy('user_ratings.id', 'DESC')
-                ->limit(3)
+                
                 ->get();
         
         return view('admin.dashboard')
@@ -560,8 +560,10 @@ class AdminController extends Controller
                 }
                 else
                 {
+                   if($request->$key!=null){
                 $temp_setting->value = $request->$key;
                 $temp_setting->save();
+                }
             }
 
               

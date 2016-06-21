@@ -43,7 +43,7 @@
                 <i class="fa fa-dollar"></i>
               </div>
               <div class="widget-details">
-                <span class="block h4 mt0 mb5">${{ round($tot_pay) }}</span>
+                <span class="block h4 mt0 mb5">{{ Setting::get('currency') }}{{ round($tot_pay) }}</span>
                 <span>{{ tr('total_payment') }}</span>
               </div>
             </div>
@@ -54,7 +54,7 @@
                 <i class="fa fa-cc-stripe"></i>
               </div>
               <div class="widget-details">
-                <span class="block h4 mt0 mb5">${{ round($card_pay) }}</span>
+                <span class="block h4 mt0 mb5">{{ Setting::get('currency') }}{{ round($card_pay) }}</span>
                 <span>{{ tr('card_payment') }}</span>
               </div>
             </div>
@@ -65,7 +65,7 @@
                 <i class="fa fa-money"></i>
               </div>
               <div class="widget-details">
-                <span class="block h4 mt0 mb5">${{ round($cod) }}</span>
+                <span class="block h4 mt0 mb5">{{ Setting::get('currency') }}{{ round($cod) }}</span>
                 <span>{{ tr('cash_payment') }}</span>
               </div>
             </div>
@@ -76,7 +76,7 @@
                 <i class="fa fa-paypal"></i>
               </div>
               <div class="widget-details">
-                <span class="block h4 mt0 mb5">${{ round($paypal) }}</span>
+                <span class="block h4 mt0 mb5">{{ Setting::get('currency') }}{{ round($paypal) }}</span>
                 <span>{{ tr('paypal_payment') }}</span>
               </div>
             </div>
@@ -113,11 +113,12 @@
           </div>
             <div class="col-md-8">
             <div class="row">
-              <div class="col-md-12">
-                <section class="widget bg-white post-comments">
+              <div class="col-md-12 ">
+                <section class="widget  bg-white post-comments">
                 <div class="widget bg-success mb0 text-center no-radius"><strong>{{ tr('recent_reviews') }}</strong></div>
+                <div class="cht-scroll-box">
                 @foreach($reviews as $review)
-                  <div class="media">
+                  <div class="media ">
                     <a class="pull-left" href="javascript:;">
                       <img class="media-object avatar avatar-sm" src="@if($review->user_picture !='') {{ $review->user_picture }} @else {{ asset('user_default.png') }} @endif" alt="">
                     </a>
@@ -141,6 +142,7 @@
 
                   <hr>
                   @endforeach
+                  </div>
 
 
                 </section>
