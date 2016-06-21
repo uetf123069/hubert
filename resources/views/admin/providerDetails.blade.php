@@ -23,15 +23,11 @@
     <div class="panel-body">
         <div class="col-md-12">
             <div class="row">
-
                 <div class="widget bg-white no-padding prov-prof"> 
                     <a href="javascript:;" class="block text-center relative p15"> 
-                        <img src="{{$provider->picture ? $provider->picture : asset('logo.png')}}" class="avatar avatar-xlg img-circle" alt=""> 
-                        <div class="h5 mb0">
-                            <strong>{{$provider->first_name}} {{$provider->last_name}}</strong> 
-                        </div> 
+                        <img src="{{$provider->picture ? $provider->picture : asset('logo.png')}}" class="avatar avatar-xlg img-circle" alt="">
                     </a> 
-                    <div class="widget bg-blue mb0 text-center no-radius"> 
+                    <div class="widget mb0 text-center no-radius"> 
                         <dl class="dl-horizontal provider-detail">
 
                           <dt>{{ tr('full_name') }} :</dt>
@@ -46,18 +42,21 @@
                           <dt>{{ tr('gender') }} :</dt>
                           <dd>{{$provider->gender}}</dd>
 
-                          <dt>{{ tr('address') }} :</dt>
-                          <dd>{{$provider->address}}</dd>
-
                           <dt>{{ tr('service_type') }} :</dt>
                           <dd>{{$service}}</dd>
 
-                          <dt>{{ tr('avg_rating') }} :</dt>
-                          <dd><ul class="text-white list-style-none mb0">
-                        @for($i=0; $i<$review; $i++)
-                          <li class="fa fa-star text-warning"></li>
-                        @endfor
-                        </ul></dd>
+                            <dt>{{ tr('avg_rating') }} :</dt>
+                            <dd>
+                                @if($review > 0)
+                                    <ul class="text-white list-style-none mb0">
+                                    @for($i=0; $i<$review; $i++)
+                                        <li class="fa fa-star text-warning"></li>
+                                    @endfor
+                                    </ul>
+                                @else
+                                    <span>N/A</span>
+                                @endif
+                            </dd>
 
                           <dt>{{ tr('available') }} :</dt>
                           <dd>

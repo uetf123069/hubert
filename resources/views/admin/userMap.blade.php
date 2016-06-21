@@ -32,7 +32,6 @@
         <div class="row">
             <div class="col-xs-12">
                 <div id="map"></div>
-                <div id="legend"><h3>{{ tr('providers')}}</h3></div>
             </div>
         </div>
     </div>
@@ -108,17 +107,16 @@
 <script>
     var map;
     var markers = [
-        @foreach($Providers as $Provider)
-        { provider_id: "{{ $Provider->id }}",name: "{{ $Provider->name }}", lat: {{ $Provider->latitude }}, lng: {{ $Provider->longitude }}, available: {{ $Provider->is_available }} },
+        @foreach($Users as $User)
+        {
+            user_id: "{{ $User->id }}",
+            name: "{{ $User->name }}",
+            lat: {{ $User->latitude }},
+            lng: {{ $User->longitude }},
+        },
         @endforeach
     ];
 
-    var mapIcons = [
-        // 'http://maps.google.com/mapfiles/ms/icons/red-dot.png',
-        '{{ asset('images/map-marker-red.png') }}',
-        '{{ asset('images/map-marker-blue.png') }}',
-        // 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
-    ];
     var mapMarkers = [];
     function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
@@ -127,92 +125,23 @@
             minZoom: 1
         });
 
-        /*
-        var input = document.getElementById('pac-input');
-
-        var button = document.getElementById('location-search');
-
-        var autocomplete = new google.maps.places.Autocomplete(input);
-        autocomplete.bindTo('bounds', map);
-
-        var infowindow = new google.maps.InfoWindow();
-        */
-
         markers.forEach( function(element, index) {
 
-            var url = "/admin/providerDetails/"
+            var url = "/admin/userDetails/"
 
             marker = new google.maps.Marker({
                 position: {lat: element.lat, lng: element.lng},
                 map: map,
                 title: element.name,
-                icon: mapIcons[element.available],
             });
 
             mapMarkers.push(marker);
 
             google.maps.event.addListener(marker, 'click', function() {
-                window.location.href = url + element.provider_id;
+                window.location.href = url + element.user_id;
             });
 
         });
-
-        var legend = document.getElementById('legend');
-        var div = document.createElement('div');
-        div.innerHTML = '<img src="' + mapIcons[0] + '"> ' + 'Unavailable';
-        legend.appendChild(div);
-        var div = document.createElement('div');
-        div.innerHTML = '<img src="' + mapIcons[1] + '"> ' + 'Available';
-        legend.appendChild(div);
-        map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(legend);
-        /*
-
-        function search() {
-            infowindow.close();
-            marker.setVisible(false);
-            var place = autocomplete.getPlace();
-            // get first autocomplete value *************
-            console.log(autocomplete.getPlace());
-            if (!place.geometry) {
-                window.alert("Autocomplete's returned place contains no geometry");
-                return;
-            }
-
-            // If the place has a geometry, then present it on a map.
-            if (place.geometry.viewport) {
-                map.fitBounds(place.geometry.viewport);
-            } else {
-                map.setCenter(place.geometry.location);
-                map.setZoom(17);  // Why 17? Because it looks good.
-            }
-            marker.setIcon(({
-                url: place.icon,
-                size: new google.maps.Size(71, 71),
-                origin: new google.maps.Point(0, 0),
-                anchor: new google.maps.Point(17, 34),
-                scaledSize: new google.maps.Size(35, 35)
-            }));
-            marker.setPosition(place.geometry.location);
-            marker.setVisible(true);
-
-            var address = '';
-            if (place.address_components) {
-                address = [
-                  (place.address_components[0] && place.address_components[0].short_name || ''),
-                  (place.address_components[1] && place.address_components[1].short_name || ''),
-                  (place.address_components[2] && place.address_components[2].short_name || '')
-                ].join(' ');
-            }
-
-            infowindow.setContent('<div><strong>' + place.name + '</strong><br>' + address);
-            infowindow.open(map, marker);
-        }; 
-
-        autocomplete.addListener('place_changed', search);
-
-        button.addEventListener('click', search);
-
-        */
     }
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyALHyNTDk1K_lmcFoeDRsrCgeMGJW6mGsY&libraries=places&callback=initMap" async defer></script>

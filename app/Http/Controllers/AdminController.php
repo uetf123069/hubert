@@ -827,8 +827,8 @@ class AdminController extends Controller
     public function usermapview()
     {
         // dd(\Auth::guard('admin')->user());
-        $Providers = Provider::all();
-        return view('admin.userMap', compact('Providers'));
+        $Users = User::where('latitude', '!=', '0')->where('longitude', '!=', '0')->get();
+        return view('admin.userMap', compact('Users'));
     }
 
     public function help()
@@ -853,6 +853,18 @@ class AdminController extends Controller
             return view('admin.providerDetails')->with('provider' , $provider)->withService($service)->with('review',$avg_rev);
         } else {
             return back()->with('error' , "Provider details not found");
+        }
+    }
+
+    public function userDetails(Request $request) 
+    {
+        $user = User::find($request->id);
+        $avg_rev = UserRating::where('user_id',$request->id)->avg('rating');
+
+        if($user) {
+            return view('admin.userDetails')->with('user' , $user)->with('review',$avg_rev);
+        } else {
+            return back()->with('error' , "User details not found");
         }
     }
 
