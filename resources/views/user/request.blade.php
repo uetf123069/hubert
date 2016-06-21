@@ -19,23 +19,16 @@
         <form class="form-horizontal" id="service_request_form" action="{{ route('user.services.request.submit') }}" method="POST">
             <input type="hidden" name="s_latitude" id="s_latitude"></input>
             <input type="hidden" name="s_longitude" id="s_longitude"></input>
+            <input type="hidden" name="service_type" value="{{ Request::get('service') }}" class="form-control">
 
             <div class="row">
-                <div class="col-md-3">
-                    <label for="service_type" class="control-label"><h5 style="margin-bottom: 0;">{{ tr('select_service') }}</h5></label>
-                    <select tabindex="1" name="service_type" id="service_type" class="form-control">
-                        <option disabled>{{ tr('select_service') }}</option>
-                        @foreach($ServiceTypes->services as $ServiceType)
-                        <option value="{{ $ServiceType->id }}">{{ $ServiceType->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-md-6">
+                <div class="col-xs-12">
                     <label for="pac-input" class="control-label"><h5 style="margin-bottom: 0;">{{ tr('search_loc') }}</h5></label>
+                </div>
+                <div class="col-md-8">
                     <input tabindex="2" id="pac-input" class="controls" type="text" placeholder="Enter a location" name="s_address">
                 </div>
-                <div class="col-md-3">
-                    <label for="service_type" class="control-label"><h5 style="margin-bottom: 0;">{{ tr('submit_req') }}</h5></label>
+                <div class="col-md-4">
                     <a class="btn-primary btn btn-block" tabindex="3" id="submit_request">{{ tr('submit_req') }}</a>
                 </div>
             </div>
@@ -52,9 +45,6 @@
 
 @section('scripts')
 <script type="text/javascript" src="{{ asset('assets/user/js/application.js') }}"></script>
-<script type="text/javascript" src="{{ asset('assets/user/js/demo.js') }}"></script>
-<script type="text/javascript" src="{{ asset('assets/user/js/demo-switcher.js') }}"></script>
-<script type="text/javascript" src="{{ asset('assets/user/js/demo-index.js') }}"></script>
 <script>
     var map;
     var appoets = {lat: 11.8508117, lng: 79.7854668};

@@ -37,7 +37,7 @@
 						<li class="nav-separator">{{ tr('services') }}</li>
 						<li>
 							<a href="{{ route('provider.history') }}">
-								<i class="fa fa-flask"></i><span>{{ tr('service_history') }}</span>
+								<i class="fa fa-history"></i><span>{{ tr('service_history') }}</span>
 							</a>
 						</li>
 						<li>
@@ -54,7 +54,7 @@
 						</li>
 						<li>
 							<a href="{{ route('provider.documents') }}">
-								<i class="fa fa-flask"></i><span>{{ tr('documents') }}</span>
+								<i class="fa fa-file-o"></i><span>{{ tr('documents') }}</span>
 							</a>
 						</li>
 						<li>

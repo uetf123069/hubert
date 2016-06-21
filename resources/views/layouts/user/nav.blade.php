@@ -23,15 +23,16 @@
 			<div class="widget stay-on-collapse" id="widget-sidebar">
 				<nav role="navigation" class="widget-body">
 					<ul class="acc-menu">
+ 						<li class="nav-separator">{{ tr('request_services') }}</li>
 						<li>
 							<a href="{{ route('user.services.request') }}" style="background-color:#00bcd4">
-								<i class="fa fa-columns" style="color:#fff"></i><span style="color:#fff;font-weight:bold">{{ tr('request_services') }}</span>
+								<i class="fa fa-thumbs-up" style="color:#fff"></i><span style="color:#fff;font-weight:bold">{{ tr('request_services') }}</span>
 							</a>
 						</li>
  						<li class="nav-separator">{{ tr('user_services') }}</li>
 						<li>
 							<a href="{{ route('user.services.list') }}">
-								<i class="fa fa-flask"></i><span>{{ tr('service_history') }}</span>
+								<i class="fa fa-history"></i><span>{{ tr('service_history') }}</span>
 							</a>
 						</li>
 						<li>

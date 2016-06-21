@@ -34,7 +34,7 @@
 											 @endif
 
 											 @if($allow == 1)
-											 	disable="true"
+											 	disabled="true"
 											 @endif
 											 id="change_avail" onchange="change_availability()" data-on-color="success" data-off-color="default">
 										</div>
