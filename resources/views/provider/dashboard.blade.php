@@ -13,10 +13,10 @@
             <div class="panel-body text-center">
                 <h3 class="mt0">Welcome to Xuber!</h3>
                 <div>                        
-                    <p class="wel-cont">Open up new and exciting opportunities for your business. Select your service, verify credentials with admin and you're set for unlimited business requests on-demand from our very own userbase. Sign up, gear up and Serve your customers now!</p>
+                    <p class="wel-cont">tr('welcome_provider')</p>
                 </div>
                 <br>
-                <a href="{{route('provider.profile')}}" class="btn btn-primary-alt">Change Your Location & Make Business Now!</a>
+                <a href="{{route('provider.profile')}}" class="btn btn-primary-alt">tr('provider_change_loc')</a>
                 <!-- FOR PROVIDER -->
                 
             </div>

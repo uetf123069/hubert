@@ -209,6 +209,9 @@ return array(
 	'ended_on'	=>	'Service Ended on',
 	'no_request'	=>	'No Request found',
 	'provider'		=>	'Provider',
+	'welcome_provider' => 'Open up new and exciting opportunities for your business. Select your service, verify credentials with admin and you\'re set for unlimited business requests on-demand from our very own userbase. Sign up, gear up and Serve your customers now!',
+	'provider_change_loc' => 'Update Your Location & Start Your Service',
+	''	=> '',
 
 	//Web Notification
 	'new_request'	=>  'New Request', 
