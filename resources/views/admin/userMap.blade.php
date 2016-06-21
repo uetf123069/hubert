@@ -16,7 +16,7 @@
                 <a href="#">{{ tr('map') }}</a>
             </li>
             <li>
-                <a href="#">{{ tr('provider_map_view') }}</a>
+                <a href="#">{{ tr('user_map_view') }}</a>
             </li>
         </ol>
     </div>

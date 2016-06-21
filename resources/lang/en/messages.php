@@ -144,6 +144,9 @@ return array(
 	'service_comp'	=>	'Service Completed',
 	'service_cancel'	=>	'Service Cancelled',
 	'payment_details'	=>	'Payment Details',
+	'welcome_user_msg'	=>	'Thank you for signing up. Enjoy fast on-demand services from the best verified and validated service providers from your own neighborhood. Check out the list of best services we provide and enjoy your Xuber experience.',
+	'request_now' 	=>	'Request A Service Now!',
+
 
 	//Web User Request
 	'request'	=> 	'Request',
@@ -165,7 +168,7 @@ return array(
 	'after'	=> 	'After',
 	'rate_provider'	=> 	'Rate your Provider',
 	'add_provider_to_fav'	=> 	'Add Provider to Favorite',
-	'submit_review'	=> 	'Submit Review',
+	'submit_review'	=> 	'Submit Feedback',
 	'req_status'	=> 	'Request Status',
 	'provider_status'	=> 	'Provider Status',
 	'cancel_requests'	=> 	'Cancel Request',
@@ -246,6 +249,7 @@ return array(
 //Admin General
 	'dashboard'	=> 	'Dashboard',
 	'users' 	=>	'Users',
+	'currency' 	=>	'Currency',
 	'view_users'	=>	'View Users',
 	'add_users'	=>	'Add Users',
 	'providers'	=>	'Providers',
@@ -255,7 +259,8 @@ return array(
 	'view_service'	=>	'View Service Types',
 	'add_service'	=>	'Add Service Types',
 	'requests'	=>	'Requests',
-	'map_view'	=>	'Map View',
+	'user_map_view'	=>	'User Map View',
+	'provider_map_view'	=>	'Provider Map View',
 	'documents'	=>	'Documents',
 	'view_documents'	=>	'View Document Type',
 	'add_documents'	=>	'Add Document Type',
@@ -268,6 +273,7 @@ return array(
 	'profile'	=>	'Profile',
 	'help'	=>	'Help',
 	'id'	=>	'ID',
+	'on_off'	=>	'ON / OFF',
 	'full_name'	=>	'Full Name',
 	'email'	=>	'Email',
 	'phone'	=>	'Phone',
@@ -296,6 +302,7 @@ return array(
 	'name'	=>	'Name',
 	'default'	=>	'Default',
 	'default_lang'	=>	'Default Language',
+	'payment_setting'	=>	'Payment Settings',
 
 	//Admin Notifications
 	'admin_not_profile'	=>	'Admin Details updated Successfully',
@@ -335,7 +342,7 @@ return array(
 	'comp_request'	=>	'Completed Requests',
 	'cancel_request'	=>	'Cancelled Requests',
 	'total_payment'	=>	'Total Payment',
-	'card_payment'	=>	'Card Payment',
+	'card_payment'	=>	'Stripe Payment',
 	'cash_payment'	=>	'Cash Payment',
 	'paypal_payment'	=>	'Paypal Payment',
 	'top_provider'	=>	'Top Rated Provider',
@@ -415,7 +422,7 @@ return array(
 	'search_radius'	=>	'Search Radius',
 	'stripe_secret'	=>	'Stripe Secret key',
 	'stripe_publish'	=>	'Stripe Publishable Key',
-	'card'	=>	'Card',
+	'card'	=>	'Stripe',
 	'cod'	=>	'Cash on Delivery',
 	'paypal'	=>	'Paypal',
 	'manual_request'	=>	'Manual Request',

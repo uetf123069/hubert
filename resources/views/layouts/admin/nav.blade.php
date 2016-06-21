@@ -68,12 +68,25 @@
                       </li>
                     </ul>
             </li>
-
-            <li>
-                <a href="{{ route('admin.mapmapview') }}">
+             <li>
+                <a href="javascript:;">
                     <i class="fa fa-map-marker"></i>
-                    <span>{{tr('map_view')}}</span>
+                    <span>{{tr('map')}}</span>
                 </a>
+                    <ul class="sub-menu">
+                        <li>
+                            <a href="{{ route('admin.usermapview') }}">
+                            
+                            <span>{{tr('user_map_view')}}</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('admin.mapview') }}">
+                            
+                            <span>{{tr('provider_map_view')}}</span>
+                            </a>
+                        </li>
+                    </ul>
             </li>
 
             <li>
@@ -124,7 +137,7 @@
             </li>
 
             <li>
-                <a href="#" target="_blank">
+                <a href="javascript:;" >
                     <i class="fa fa-sliders"></i>
                     <span>{{tr('rating_review')}}</span>
                 </a>
@@ -143,12 +156,23 @@
             </li>
 
             <li>
-                <a href="{{ route('adminPayment') }}">
+                <a href="javascript:;">
                     <i class="fa fa-money"></i>
-                    <span>{{tr('payment_history')}}</span>
+                    <span>{{tr('payment')}}</span>
                 </a>
+                <ul class="sub-menu">
+                <li>
+                    <a href="{{ route('adminPayment') }}">
+                    <span>{{tr('payment_history')}}</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('adminPaymentSettings') }}">
+                    <span>{{tr('payment_setting')}}</span>
+                    </a>
+                </li>
+            </ul>
             </li>
-
             <li>
                 <a href="{{ route('admin.settings') }}">
                     <i class="fa fa-gears"></i>

@@ -165,7 +165,9 @@ Route::group(['prefix' => 'admin'], function(){
 
     Route::get('/', 'AdminController@index')->name('admin.dashboard');
 
-    Route::get('/mapview', 'AdminController@mapview')->name('admin.mapmapview');
+    Route::get('/mapview', 'AdminController@mapview')->name('admin.mapview');
+
+    Route::get('/usermapview', 'AdminController@usermapview')->name('admin.usermapview');
 
     Route::get('/providerDetails/{id}', 'AdminController@providerDetails')->name('admin.providerDetails');
 
@@ -174,6 +176,8 @@ Route::group(['prefix' => 'admin'], function(){
     Route::post('/profileProcess', 'AdminController@profileProcess')->name('adminProfileProcess');
 
     Route::get('/settings', 'AdminController@settings')->name('admin.settings');
+
+    Route::get('/paymentsettings', 'AdminController@paymentSettings')->name('adminPaymentSettings');
 
     Route::get('/payment', 'AdminController@payment')->name('adminPayment');
 

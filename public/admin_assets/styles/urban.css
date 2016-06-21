@@ -13010,7 +13010,78 @@ th.min{
     overflow-y: auto;
     border: 1px solid #eee;
     margin: 20px 0px;
-
+}
 .table-responsive {
     overflow-x: auto;
 }
+.ad-pro-img{
+  width: 32px;
+  height: 32px;
+  overflow: hidden;
+  display: inline-block;
+  margin-left: 10px;
+  margin-top: -6px;
+}
+.ad-pro-img img{
+  height: 100%;
+  width: auto!important;
+  min-height: 100%;
+  min-width: 100%;
+  margin: 0!important;
+}
+.pay-tab .box-tab{
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.pay-tab .box-tab .nav-tabs{
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  margin-top: -1px;
+  text-align: left;
+}
+.pay-tab .box-tab .nav-tabs li a{
+  text-align: left;
+  font-weight: bold;
+  padding: 0;
+}
+.pay-tab .box-tab .nav-tabs li.active a, .pay-tab .box-tab .nav-tabs li.active a:hover{
+  background-color: #eee;
+}
+
+.pay-tab .widget{
+  margin-bottom: 0;
+}
+
+.pay-tab .widget .widget-bg-icon {
+    position: absolute;
+    right: 15px;
+    top: 0;
+    line-height: 50px;
+    font-size: 30px;
+}
+
+.pay-tab .widget .widget-details{
+  padding: 0;
+  line-height: 30px;
+}
+
+.pay-tab .widget .widget-details .title{
+  font-weight: bold;
+  margin-bottom: 0;
+}
+.pay-tab .box-tab .nav-tabs li a .widget{
+      background-color: #848484;
+}
+
+.pay-tab .box-tab .nav-tabs li.active a .widget, .pay-tab .box-tab .nav-tabs li.active a:hover .widget{
+  background-color: #4cc3d9;
+}
+
+.pay-tab .switch{
+  margin-bottom: 0;
+  margin-top: 5px;
+}
+
+.pay-tab.paypal .box-tab .nav-tabs li.active a .widget, .pay-tab.paypal .box-tab .nav-tabs li.active a:hover .widget{
+  background-color: #2196f3;
+}
+

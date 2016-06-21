@@ -66,39 +66,28 @@
                       <input type="number" name="tax_price" value="{{ isset($setting[6]['value']) ? $setting[6]['value'] : '' }}" required class="form-control">
                     </div>
                   </div>
-
                   <div class="form-group">
-                    <label class="col-sm-2 control-label">{{ tr('stripe_secret') }}</label>
+                    <label class="col-sm-2 control-label">{{ tr('currency') }} ( {{ isset($setting[14]['value']) ? $setting[14]['value'] : '' }} )</label>
                     <div class="col-sm-10">
-                      <input type="text" name="stripe_secret_key" value="{{ isset($setting[7]['value']) ? $setting[7]['value'] : '' }}" required class="form-control">
+                      <select name="currency" value="" required class="form-control">
+                      <option value="$">US Dollar (USD)</option>
+                      <option value="₹"> Indian Rupee</option>
+                      <option value="د.ك">Kuwaiti Dinar (KWD)</option>
+                      <option value="د.ب">Bahraini Dinar (BHD)</option>
+                      <option value="﷼">Omani Rial (OMR)</option>
+                      <option value="£">British Pound (GBP)</option>
+                      <option value="€">Euro (EUR)</option>
+                      <option value="CHF">Swiss Franc (CHF)</option>
+                      <option value="ل.د">Libyan Dinar (LYD)</option>
+                      <option value="B$">Bruneian Dollar (BND)</option>
+                      <option value="S$">Singapore Dollar (SGD)</option>
+                      <option value="AU$"> Australian Dollar (AUD)</option>
+                      </select>
                     </div>
                   </div>
 
-                  <div class="form-group">
-                    <label class="col-sm-2 control-label">{{ tr('stripe_publish') }}</label>
-                    <div class="col-sm-10">
-                      <input type="text" name="stripe_publishable_key" value="{{ isset($setting[8]['value']) ? $setting[8]['value'] : '' }}" required class="form-control">
-                    </div>
-                  </div>
-
-                  <div class="form-group">
-                   <label class="col-sm-2 control-label">{{ tr('payment_mode') }}</label>
-                    <div class="col-sm-10">
-                      <div class="checkbox">
-                          <label>
-                            <input name="cod"  @if($setting[9]['value'] ==1) checked  @else  @endif  value="1"  type="checkbox">{{ tr('cod') }}</label>
-                        </div>
-                        <div class="checkbox">
-                          <label>
-                            <input name="paypal" @if($setting[10]['value'] ==1) checked  @else  @endif  value="1"  type="checkbox">{{ tr('paypal') }}</label>
-                        </div>
-                        <div class="checkbox">
-                          <label>
-                            <input name="card" @if($setting[11]['value'] ==1) checked  @else  @endif  value="1"  type="checkbox">{{ tr('card') }}</label>
-                        </div>
-                      </div>
-                  </div>
-                  <div class="form-group">
+                  
+                  <!-- <div class="form-group">
                    <label class="col-sm-2 control-label">{{ tr('default_lang') }}</label>
                     <div class="col-sm-10">
                       <div class="checkbox">
@@ -117,19 +106,12 @@
                             <input name="manual_request"  @if($setting[12]['value'] ==1) checked  @else  @endif  value="1"  type="checkbox">{{ tr('manual_request') }}</label>
                         </div>
                     </div>
-                  </div>
-
-                  <div class="form-group">
-                    <label class="col-sm-2 control-label">{{ tr('paypal_email') }}</label>
-                    <div class="col-sm-10">
-                      <input type="text" name="paypal_email" value="{{ isset($setting[13]['value']) ? $setting[13]['value'] : '' }}" required class="form-control">
-                    </div>
-                  </div>
+                  </div> -->
 
                 <div class="form-group">
                   <label></label>
                   <div>
-                    <button class="btn btn-primary mr10">{{ tr('submit') }}</button>
+                    <button  class="pull-right btn btn-primary mr10">{{ tr('submit') }}</button>
                     
                   </div>
                 </div>

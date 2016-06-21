@@ -13,10 +13,10 @@
             <div class="panel-body text-center">
                 <h3 class="mt0">Welcome to Xuber!</h3>
                 <div>                        
-                    <p class="wel-cont">Thank you for signing up. Enjoy fast on-demand services from the best verified and validated service providers from your own neighborhood. Check out the list of best services we provide and enjoy your Xuber experience.</p>
+                    <p class="wel-cont">{{tr('welcome_user_msg')}}</p>
                 </div>
                 <br>
-                <a href="{{ route('user.services.request') }}" class="btn btn-primary-alt">Request A Service Now!</a>                        
+                <a href="{{ route('user.services.request') }}" class="btn btn-primary-alt">{{tr('request_now')}}</a>                        
             </div>
         </div>
     </div>

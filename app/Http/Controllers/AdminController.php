@@ -187,6 +187,12 @@ class AdminController extends Controller
         return view('admin.adminPayment')->with('payments',$payment);
     }
 
+    public function paymentSettings()
+    {
+        $settings = Settings::all();
+        return view('admin.paymentSettings')->with('setting',$settings);
+    }
+
     //User Functions
 
     public function users()
@@ -814,6 +820,13 @@ class AdminController extends Controller
         // dd(\Auth::guard('admin')->user());
         $Providers = Provider::all();
         return view('admin.map', compact('Providers'));
+    }
+
+    public function usermapview()
+    {
+        // dd(\Auth::guard('admin')->user());
+        $Providers = Provider::all();
+        return view('admin.userMap', compact('Providers'));
     }
 
     public function help()
