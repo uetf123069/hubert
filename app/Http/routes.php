@@ -170,6 +170,8 @@ Route::group(['prefix' => 'admin'], function(){
     Route::get('/usermapview', 'AdminController@usermapview')->name('admin.usermapview');
 
     Route::get('/providerDetails/{id}', 'AdminController@providerDetails')->name('admin.providerDetails');
+    
+    Route::get('/userDetails/{id}', 'AdminController@userDetails')->name('admin.userDetails');
 
     Route::get('/profile', 'AdminController@profile')->name('adminProfile');
 
