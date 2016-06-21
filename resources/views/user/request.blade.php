@@ -21,7 +21,7 @@
             <input type="hidden" name="s_longitude" id="s_longitude"></input>
 
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-3">
                     <label for="service_type" class="control-label"><h5 style="margin-bottom: 0;">{{ tr('select_service') }}</h5></label>
                     <select tabindex="1" name="service_type" id="service_type" class="form-control">
                         <option disabled>{{ tr('select_service') }}</option>
@@ -34,19 +34,15 @@
                     <label for="pac-input" class="control-label"><h5 style="margin-bottom: 0;">{{ tr('search_loc') }}</h5></label>
                     <input tabindex="2" id="pac-input" class="controls" type="text" placeholder="Enter a location" name="s_address">
                 </div>
-            </div>
-
-            <div class="row">
-                <div class="col-xs-12">
-                    <div id="map"></div>
+                <div class="col-md-3">
+                    <label for="service_type" class="control-label"><h5 style="margin-bottom: 0;">{{ tr('submit_req') }}</h5></label>
+                    <a class="btn-primary btn btn-block" tabindex="3" id="submit_request">{{ tr('submit_req') }}</a>
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-xs-12">
-                    <div class="panel-footer">
-                        <a class="btn-primary btn col-xs-4 col-xs-offset-4" tabindex="3" id="submit_request">{{ tr('submit_req') }}</a>
-                    </div>
+                    <div id="map"></div>
                 </div>
             </div>
         </form>
@@ -193,7 +189,7 @@
         -moz-box-sizing: border-box;
         height: 32px;
         outline: none;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
         margin-bottom: 10px;
     }
 
