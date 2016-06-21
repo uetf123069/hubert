@@ -54,7 +54,7 @@
 								<a href="#"><img src="{{ asset('assets/landing/img/logo-white.png') }}" alt="Xuber"></a>
 							</div>
 							<div class="col-xs-5 col-xs-offset-4 col-sm-offset-8 col-lg-offset-9 col-sm-2 p-none">
-								<a href="{{ route('user.login.form') }}" class="button white align-right">Login / Signup</a>
+								<a href="{{ route('user.login.form') }}" target="_blank" class="button white align-right">Login / Signup</a>
 							</div>
 						</div>
 					</header>
@@ -96,8 +96,8 @@
 						<li><a href="#screenshots">Screens</a></li>
 						<li><a href="#video">Video</a></li>
 						<li><a href="#reviews">Reviews</a></li>
-						<li><a href="{{ route('provider.login.form') }}">Provider Login</a></li>
-						<li><a href="{{ route('user.login.form') }}">User Login</a></li>
+						<li><a href="{{ route('provider.login.form') }}" target="_blank">Provider Login</a></li>
+						<li><a href="{{ route('user.login.form') }}" target="_blank">User Login</a></li>
 					</ul>
 				</nav>
 				
