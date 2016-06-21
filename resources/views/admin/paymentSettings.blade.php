@@ -51,7 +51,7 @@
                                 <label class="col-sm-2 control-label">{{ tr('card') }} {{ tr('on_off') }}</label>
                                 <div class="col-sm-10">
                                   <label class="switch switch-sm switch-primary mb15">
-                                    <input id="card" onchange="cardselect()" name="card" @if($setting[11]['value'] ==1) checked  @else  @endif  value="1"  type="checkbox">
+                                    <input id="card" onchange="cardselect()" name="card" @if($setting[11]['value'] ==1) checked  @endif value="1" type="checkbox">
                                     <span>
                                               <i class="handle"></i>
                                           </span>
@@ -110,7 +110,7 @@
                                 <label class="col-sm-2 control-label">{{ tr('paypal') }} {{ tr('on_off') }}</label>
                                 <div class="col-sm-10">
                                   <label class="switch switch-sm switch-primary mb15">
-                                    <input  id="paypali" onchange="paypalselect()" name="paypal" @if($setting[10]['value'] ==1) checked  @else  @endif  value="1"  type="checkbox">
+                                    <input  id="paypali" onchange="paypalselect()" name="paypal" @if($setting[10]['value'] ==1) checked  @else  @endif value="1" type="checkbox">
                                     <span>
                                               <i class="handle"></i>
                                           </span>
@@ -160,4 +160,5 @@ function paypalselect()
         $("#paypal_field").hide();
 }
 </script>
+
 @endsection

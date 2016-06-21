@@ -560,7 +560,41 @@ class AdminController extends Controller
                 }
                 else
                 {
-                   if($request->$key!=null){
+                    if($temp_setting->key == 'card'){
+                        if($request->$key==1)
+                        {
+                            $temp_setting->value   = 1;
+
+                        }
+                        else
+                        {
+                            $temp_setting->value = 0;
+                        }
+                        $temp_setting->save();
+                    }
+                    if($temp_setting->key == 'paypal'){
+                        if($request->$key==1)
+                        {
+                            $temp_setting->value   = 1;
+                        }
+                        else
+                        {
+                            $temp_setting->value = 0;
+                        }
+                        $temp_setting->save();
+                    }
+                    if($temp_setting->key == 'manual_request'){
+                        if($request->$key==1)
+                        {
+                            $temp_setting->value   = 1;
+                        }
+                        else
+                        {
+                            $temp_setting->value = 0;
+                        }
+                        $temp_setting->save();
+                    }
+                   if($request->$key!=''){
                 $temp_setting->value = $request->$key;
                 $temp_setting->save();
                 }

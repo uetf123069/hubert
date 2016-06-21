@@ -25,7 +25,7 @@
             <div class="row">
                 <div class="widget bg-white no-padding prov-prof"> 
                     <a href="javascript:;" class="block text-center relative p15"> 
-                        <img src="{{$provider->picture ? $provider->picture : asset('logo.png')}}" class="avatar avatar-xlg img-circle" alt="">
+                        <img src="{{$provider->picture ? $provider->picture : asset('user_default.png')}}" class="avatar avatar-xlg img-circle" alt="">
                     </a> 
                     <div class="widget mb0 text-center no-radius"> 
                         <dl class="dl-horizontal provider-detail">
