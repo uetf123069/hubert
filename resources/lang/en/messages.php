@@ -126,7 +126,7 @@ return array(
 	'request_w_cancel'	=> 'Request was Canecelled',
 	'payment_successful'	=> 'Payment Successful',
 	'review_thanks'	=> 'Thank you for reviewing the provider.',
-	'card_default_success' 	=>	'Successfully made card as default',
+	'card_default_success' 	=>	'Successfully changed default payment method',
 	'unknown_error' 	=>	'Unknown error please try again later',
 	'something_error' 	=>	'Something went wrong! please try again later',
 	'fav_remove' 	=>	'Removed Provider from Favorites',

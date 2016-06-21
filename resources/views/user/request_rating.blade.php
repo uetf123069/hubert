@@ -19,8 +19,8 @@
     </div>
     <div class="panel-body">
         <div class="row">
-            <div class="col-md-6">
             @if(!empty($Service->before_image)||!empty($Service->before_image))
+            <div class="col-md-6">
 
                 <h2 class="text-center">{{ tr('req_details') }}</h2>
                 <table class="table table-striped">
@@ -52,9 +52,9 @@
                 <h2 class="text-center">{{ tr('after') }}</h2>                
                 <img class="col-xs-12" src="{{ $Service->after_image }}">
                 @endif
-            @endif
 
             </div>
+            @endif
 
             <div class="col-md-6">
                 <form method="POST" action="{{ route('user.services.request.review') }}" class="form-horizontal row-border">
