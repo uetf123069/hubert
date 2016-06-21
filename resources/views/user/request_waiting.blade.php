@@ -25,7 +25,7 @@
                         @if($Service->provider_status)
                         <tr>
                             <td data-title="Provider" colspan="2">
-                                <h2 class="text-center">{{ tr('provider') }}</h2>
+                                <h2 class="text-center">{{$Service->service_provider_name}}</h2>
                                 <div style="padding:30px">
                                     <div class="service-user-img">
                                         <img id="provider-image" src="{{ $Service->provider_picture != '' ? $Service->provider_picture : asset('user_default.png') }}" class="img-responsive img-circle">
@@ -34,15 +34,15 @@
                             </td>
                         </tr>
                         <tr>
-                            <th>{{ tr('provider_name') }}</th>
+                            <th>{{ $Service->service_provider_name.' '.tr('name') }}</th>
                             <td data-title="Provider Name">{{ $Service->provider_name }}</td>
                         </tr>
                         <tr>
-                            <th>{{ tr('provider_rating') }}</th>
+                            <th>{{ $Service->service_provider_name.' '.tr('rating') }}</th>
                             <td data-title="Provider Rating">{{ $Service->rating }}</td>
                         </tr>
                         <tr>
-                            <th>Provider Mobile</th>
+                            <th>{{$Service->service_provider_name}} Mobile</th>
                             <td data-title="Provider Rating">{{ $Service->provider_mobile }}</td>
                         </tr>
                         @endif
@@ -63,8 +63,8 @@
                             <td data-title="Request Status">{{ get_user_request_status($Service->status) }}</td>
                         </tr>
                         <tr>
-                            <th>{{ tr('provider_status') }}</th>
-                            <td data-title="Provider Status">{{ get_provider_request_status($Service->provider_status) }}</td>
+                            <th>{{ $Service->service_provider_name.' '.tr('status') }}</th>
+                            <td data-title="Provider Status">{{ str_replace(tr('provider'),$Service->service_provider_name,get_provider_request_status($Service->provider_status)) }}</td>
                         </tr>
                         @if($Service->provider_status < 3)
                         <tr>

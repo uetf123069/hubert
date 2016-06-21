@@ -61,7 +61,7 @@
                     <input name="request_id" value="{{ $Service->request_id }}" type="hidden">
                     <input name="provider_id" value="{{ $Service->request_id }}" type="hidden">
                     <div class="col-md-12">
-                        <h2 class="text-center">{{ tr('rate_provider') }}</h2>
+                        <h2 class="text-center">{{ str_replace('Provider',$Service->service_provider_name,tr('rate_provider')) }}</h2>
                         @if(!empty($Service->provider_picture))
                         <div class="form-group">
                             <div class="service-user-img">
@@ -70,7 +70,7 @@
                         </div>
                         @endif
                         <div class="form-group">
-                            <div><strong>{{ tr('provider_name') }}</strong> : {{ $Service->provider_name }}</div>
+                            <div><strong>{{ $Service->service_provider_name.' '.tr('name') }}</strong> : {{ $Service->provider_name }}</div>
                         </div>
                         <div class="form-group">
                             <div class="col-xs-12">
@@ -85,7 +85,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-6 control-label">{{ tr('add_provider_to_fav') }}</label>
+                            <label class="col-sm-6 control-label">{{ str_replace(tr('provider'),$Service->service_provider_name,tr('add_provider_to_fav')) }}</label>
                             <div class="col-sm-4">
                                 <input class="bootstrap-switch" 
                                     data-on-text="<i class='fa fa-check'></i>" 
