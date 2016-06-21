@@ -186,14 +186,15 @@
                 <h4 class="text-center">Waiting for user to select payment method</h4>
             @elseif($request_data[0]->status == 8)
                 <h3 class="mt0 text-center">Cash On Delivery</h3>
-                <h4 class="text-center">Amount Need to Pay: {{ $request_data[0]->amount }}</h4>
+                <h1 style="font-size:50px;" class="text-center"><strong>{{ get_currency_value($request_data[0]->amount) }}</strong></h1>
+                <h5 class="text-center">Amount to be Paid</h5>
 
-                <form method="POST" action="{{ route('provider.paid.status') }}" class="form-horizontal row-border">
-                    <input type="hidden" name="request_id" value="{{$request_data[0]->request_id}}">
-                    <div class="form-group">
-                        <button class="btn-primary btn col-xs-12" type="submit">Paid</button>
-                    </div>
-                </form>
+                <div class="panel-footer">
+                    <form method="POST" action="{{ route('provider.paid.status') }}" class="form-horizontal">
+                        <input type="hidden" name="request_id" value="{{$request_data[0]->request_id}}">
+                            <button class="btn-primary btn col-xs-12" type="submit">Paid</button>
+                    </form>
+                </div>
             @elseif($request_data[0]->provider_status == 5)
 				<form method="POST" action="{{ route('provider.submit.review') }}" class="form-horizontal row-border">
 					<div class="col-md-12">

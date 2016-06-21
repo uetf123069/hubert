@@ -49,13 +49,6 @@
         <div class="col-md-6">
             <a class="btn btn-link" href="{{ url('/admin/password/reset') }}">{{ tr('forgot')}}</a>
         </div>
-        <div class="col-md-6 text-right">
-            <div class="checkbox">
-                <label>
-                    <input type="checkbox" name="remember"> {{ tr('remember')}}
-                </label>
-            </div>
-        </div>
     </div>
 
 </form>

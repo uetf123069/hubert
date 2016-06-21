@@ -78,7 +78,7 @@
                               Provider Not Available
                         @endif
                     </td>
-                    <td>{{$requestss->amount}}</td>
+                    <td>{{get_currency_value($requestss->amount ? $requestss->amount : 0)}}</td>
                     <td>{{$requestss->payment_mode}}</td>
                     <td>@if($requestss->payment_status==0) <span class="label label-danger">Not Paid</span> @else <span class="label label-success">Paid</span> @endif</td>
                   <td>

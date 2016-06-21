@@ -154,3 +154,8 @@ function get_request_address($request_id)
 {
 	return Requests::find($request_id)->s_address;
 }
+
+function get_currency_value($value)
+{
+	return Setting::get('currency').$value;
+}

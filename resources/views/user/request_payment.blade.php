@@ -52,15 +52,15 @@
                             <td data-title="Requested Time">{{ $Service->end_time }}</td>
                         </tr>
                         <tr>
-                            <th>{{ tr('provider_name') }}</th>
+                            <th>{{ $Service->service_provider_name.' '.tr('name') }}</th>
                             <td data-title="Provider Name">{{ $Service->provider_name }}</td>
                         </tr>
                         <tr>
-                            <th>{{ tr('provider_rating') }}</th>
+                            <th>{{ $Service->service_provider_name.' '.tr('rating') }}</th>
                             <td data-title="Provider Rating">{{ $Service->rating }}</td>
                         </tr>
                         <tr>
-                            <th>Provider Mobile</th>
+                            <th>{{$Service->service_provider_name}} Mobile</th>
                             <td data-title="Provider Rating">{{ $Service->provider_mobile }}</td>
                         </tr>
                         @if($CurrentRequest->invoice != "")
@@ -71,24 +71,24 @@
                         </tr>
                         <tr>
                             <th>{{ tr('base_price') }}</th>
-                            <td data-title="Base Price">{{ $CurrentRequest->invoice[$Index]->base_price }}</td>
+                            <td data-title="Base Price">{{ get_currency_value($CurrentRequest->invoice[$Index]->base_price) }}</td>
                         </tr>
                         <tr>
                             <th>{{ tr('time_price') }}</th>
-                            <td data-title="Time Price">{{ $CurrentRequest->invoice[$Index]->time_price }}</td>
+                            <td data-title="Time Price">{{ get_currency_value($CurrentRequest->invoice[$Index]->time_price) }}</td>
                         </tr>
                         <tr>
                             <th>{{ tr('tax_price') }}</th>
-                            <td data-title="Tax">{{ $CurrentRequest->invoice[$Index]->tax_price }}</td>
+                            <td data-title="Tax">{{ get_currency_value($CurrentRequest->invoice[$Index]->tax_price) }}</td>
                         </tr>
                         <tr>
                             <th>{{ tr('total_amount') }}</th>
-                            <td data-title="Total Amount">{{ $CurrentRequest->invoice[$Index]->total }}</td>
+                            <td data-title="Total Amount">{{ get_currency_value($CurrentRequest->invoice[$Index]->total) }}</td>
                         </tr>
                         @else
                         <tr>
                             <th>{{ tr('amount') }}</th>
-                            <td data-title="Amount">{{ $Service->amount }}</td>
+                            <td data-title="Amount">{{ get_currency_value($Service->amount) }}</td>
                         </tr>
                         @endif
                     </tbody>
@@ -98,7 +98,7 @@
             <div class="col-md-6 row-border">
                 <h2 class="text-center">Payment Status</h2>
                 <h2 class="text-center"><span class="fa fa-5x fa-money"></span></h2>
-                <h4 class="text-center">Waiting for payment confirmation from provider</h4>
+                <h4 class="text-center">Waiting for payment confirmation from {{$Service->service_provider_name}}</h4>
             </div>
             @else
             <div class="col-md-6 row-border">
@@ -110,9 +110,13 @@
                         <div class="col-sm-9">
                             <select tabindex="1" name="payment_mode" id="payment_mode" class="form-control">
                                 <option disabled>{{ tr('select_payment_mode') }}</option>
-                                @foreach($PaymentMethods->payment_modes as $Index => $Value)
-                                <option value="{{ $Value }}" {{ Auth::user()->payment_mode == $Value ? 'selected' : '' }}>{{ $Value }}</option>
-                                @endforeach
+                                @if(!empty($PaymentMethods->payment_modes))
+                                    @foreach($PaymentMethods->payment_modes as $Index => $Value)
+                                    <option value="{{ $Value }}" {{ Auth::user()->payment_mode == $Value ? 'selected' : '' }}>{{ strtoupper($Value) }}</option>
+                                    @endforeach
+                                @else
+                                    <option value="cod">COD</option>
+                                @endif
                             </select>
                             @if ($errors->has('payment_mode'))
                                 <span class="help-block">

@@ -40,12 +40,12 @@
 					
 					@foreach($requests as $request)
 						<tr>
-							<td># {{$request->id}}</td>
+							<td>{{$request->id}}</td>
 							<td>{{ $request->user_name }}</td>
 							<?php $payment = get_payment_details($request->id); ?>
-							<td>{{$payment->base_price}}</td>
-							<td>{{$payment->tax_price}}</td>
-							<td>{{$payment->total ? $payment->total : 0 }}</td>
+							<td>{{get_currency_value($payment->base_price) }}</td>
+							<td>{{get_currency_value($payment->tax_price) }}</td>
+							<td>{{get_currency_value($payment->total ? $payment->total : 0) }}</td>
 							<?php $request_details = get_request_details($request->id); ?>
 							<td>{{$request_details->s_address}}</td>
 							<td>{{get_service_name($request->request_type)}}</td>

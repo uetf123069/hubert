@@ -37,7 +37,7 @@
                   <td>{{$payment->payment_id}}</td>
                   <td>{{$payment->user_first_name.' '.$payment->user_last_name}}</td>
                   <td>{{$payment->provider_first_name.' '.$payment->provider_last_name}}</td>
-                  <td>{{$payment->total}}</td>
+                  <td>{{get_currency_value($payment->total)}}</td>
                   <td>{{$payment->payment_mode}}</td>
                   <td>@if($payment->status==0) <span class="label label-danger">{{ tr('not_paid') }}</span> @else <span class="label label-success">{{ tr('paid') }}</span> @endif</td>
                  

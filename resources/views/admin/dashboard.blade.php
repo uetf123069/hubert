@@ -43,7 +43,8 @@
                 <i class="fa fa-dollar"></i>
               </div>
               <div class="widget-details">
-                <span class="block h4 mt0 mb5">{{ Setting::get('currency') }}{{ round($tot_pay) }}</span>
+
+                <span class="block h4 mt0 mb5">{{ get_currency_value(round($tot_pay)) }}</span>
                 <span>{{ tr('total_payment') }}</span>
               </div>
             </div>
@@ -54,7 +55,9 @@
                 <i class="fa fa-cc-stripe"></i>
               </div>
               <div class="widget-details">
-                <span class="block h4 mt0 mb5">{{ Setting::get('currency') }}{{ round($card_pay) }}</span>
+
+                <span class="block h4 mt0 mb5">{{ get_currency_value(round($card_pay)) }}</span>
+
                 <span>{{ tr('card_payment') }}</span>
               </div>
             </div>
@@ -65,7 +68,9 @@
                 <i class="fa fa-money"></i>
               </div>
               <div class="widget-details">
-                <span class="block h4 mt0 mb5">{{ Setting::get('currency') }}{{ round($cod) }}</span>
+
+                <span class="block h4 mt0 mb5">{{ get_currency_value(round($cod)) }}</span>
+
                 <span>{{ tr('cash_payment') }}</span>
               </div>
             </div>
@@ -76,7 +81,9 @@
                 <i class="fa fa-paypal"></i>
               </div>
               <div class="widget-details">
-                <span class="block h4 mt0 mb5">{{ Setting::get('currency') }}{{ round($paypal) }}</span>
+
+                <span class="block h4 mt0 mb5">{{ get_currency_value(round($paypal)) }}</span>
+
                 <span>{{ tr('paypal_payment') }}</span>
               </div>
             </div>

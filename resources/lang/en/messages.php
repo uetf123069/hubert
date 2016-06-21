@@ -97,7 +97,7 @@ return array(
 	'welcome_user'	=> 	'Welcome',
 	'user_services'	=> 	'Services',
 	'service_history'	=> 	'Service History',
-	'request_services'	=> 	'Request Services',
+	'request_services'	=> 	'Book A Service',
 	'fav_providers'	=> 	'Favorite Providers',
 	'payment_method'	=> 	'Payment Method',
 	'account'	=> 	'Account',
