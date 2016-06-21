@@ -153,7 +153,7 @@ class AdminController extends Controller
                     $admin->name = $name;
                     $admin->email = $email;
                     $admin->mobile = $mobile;
-                    if($admin->picture == ''){
+                    if($picture != ''){
                     $admin->picture = Helper::upload_picture($picture);
                     }
                     $admin->remember_token = Helper::generate_token();
