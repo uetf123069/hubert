@@ -11,7 +11,7 @@
 
     <meta name="description" content="Uber for Services">
     <meta name="author" content="Appoets">
-    <link rel="shortcut icon" href="{{ Setting::get('site_logo', asset('favicon.ico') ) }}">
+    <link rel="shortcut icon" href="{{ Setting::get('site_icon', asset('favicon.ico') ) }}">
     <link href='http://fonts.googleapis.com/css?family=RobotoDraft:300,400,400italic,500,700' rel='stylesheet' type='text/css'>
     <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,400,400italic,600,700' rel='stylesheet' type='text/css'>
 

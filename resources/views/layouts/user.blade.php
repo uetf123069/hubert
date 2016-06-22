@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-touch-fullscreen" content="yes">
-    <link rel="shortcut icon" href="{{ Setting::get('site_logo', asset('favicon.ico') ) }}">
+    <link rel="shortcut icon" href="{{ Setting::get('site_icon', asset('favicon.ico') ) }}">
 
     <meta name="description" content="Uber for Services">
     <meta name="author" content="Appoets">
