@@ -95,7 +95,7 @@ class AdminController extends Controller
                 ->leftJoin('providers', 'user_ratings.provider_id', '=', 'providers.id')
                 ->leftJoin('users', 'user_ratings.user_id', '=', 'users.id')
                 ->select('user_ratings.id as review_id', 'user_ratings.rating', 'user_ratings.comment', 'users.first_name as user_first_name', 'users.last_name as user_last_name', 'providers.first_name as provider_first_name', 'providers.last_name as provider_last_name', 'users.id as user_id', 'users.picture as user_picture', 'providers.id as provider_id', 'user_ratings.created_at')
-                ->orderBy('user_ratings.id', 'DESC')
+                ->orderBy('user_ratings.created_at', 'desc')
                 
                 ->get();
         
@@ -788,7 +788,7 @@ class AdminController extends Controller
                 ->leftJoin('providers', 'user_ratings.provider_id', '=', 'providers.id')
                 ->leftJoin('users', 'user_ratings.user_id', '=', 'users.id')
                 ->select('user_ratings.id as review_id', 'user_ratings.rating', 'user_ratings.comment', 'users.first_name as user_first_name', 'users.last_name as user_last_name', 'providers.first_name as provider_first_name', 'providers.last_name as provider_last_name', 'users.id as user_id', 'providers.id as provider_id', 'user_ratings.created_at')
-                ->orderBy('user_ratings.id', 'DESC')
+                ->orderBy('user_ratings.id', 'ASC')
                 ->get();
             return view('admin.reviews')->with('name', 'User')->with('reviews', $user_reviews);
     }
@@ -811,7 +811,7 @@ class AdminController extends Controller
                 ->leftJoin('users', 'requests.user_id', '=', 'users.id')
                 ->leftJoin('request_payments', 'requests.id', '=', 'request_payments.request_id')
                 ->select('users.first_name as user_first_name', 'users.last_name as user_last_name', 'providers.first_name as provider_first_name', 'providers.last_name as provider_last_name', 'users.id as user_id', 'providers.id as provider_id', 'requests.is_paid',  'requests.id as id', 'requests.created_at as date', 'requests.confirmed_provider', 'requests.status', 'requests.provider_status', 'requests.amount', 'request_payments.payment_mode as payment_mode', 'request_payments.status as payment_status')
-                ->orderBy('requests.created_at', 'DESC')
+                ->orderBy('requests.created_at', 'ASC')
                 ->get();
         return view('admin.request')->with('requests', $requests);
     }
@@ -824,7 +824,7 @@ class AdminController extends Controller
                 ->leftJoin('users', 'requests.user_id', '=', 'users.id')
                 ->leftJoin('request_payments', 'requests.id', '=', 'request_payments.request_id')
                 ->select('users.first_name as user_first_name', 'users.last_name as user_last_name', 'providers.first_name as provider_first_name', 'providers.last_name as provider_last_name', 'users.id as user_id', 'providers.id as provider_id', 'requests.is_paid',  'requests.id as id', 'requests.created_at as date', 'requests.confirmed_provider', 'requests.status', 'requests.provider_status', 'requests.amount', 'request_payments.payment_mode as payment_mode', 'request_payments.status as payment_status')
-                ->orderBy('requests.created_at', 'DESC')
+                ->orderBy('requests.created_at', 'ASC')
                 ->get();
         return view('admin.request')->with('requests', $requests);
     }
@@ -836,7 +836,7 @@ class AdminController extends Controller
                 ->leftJoin('users', 'requests.user_id', '=', 'users.id')
                 ->leftJoin('request_payments', 'requests.id', '=', 'request_payments.request_id')
                 ->select('users.first_name as user_first_name', 'users.last_name as user_last_name', 'providers.first_name as provider_first_name', 'providers.last_name as provider_last_name', 'users.id as user_id', 'providers.id as provider_id', 'requests.is_paid',  'requests.id as id', 'requests.created_at as date', 'requests.confirmed_provider', 'requests.status', 'requests.provider_status', 'request_payments.total as amount', 'request_payments.payment_mode as payment_mode', 'request_payments.status as payment_status')
-                ->orderBy('requests.created_at', 'DESC')
+                ->orderBy('requests.created_at', 'ASC')
                 ->get();
         return view('admin.request')->with('requests', $requests);
     }
