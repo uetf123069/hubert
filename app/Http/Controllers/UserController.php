@@ -166,10 +166,9 @@ class UserController extends Controller
                 $response->message = $response->error;
             }
         } else {
-            $response = response()->json([
-                    "success" => true,
-                    "message" => tr('request_w_cancel'),
-                ], 200);
+            $response = json_decode('{}');
+            $response->success = true;
+            $response->message = tr('request_w_cancel');
         }
 
         return back()->with('response', $response);
@@ -281,24 +280,26 @@ class UserController extends Controller
             'token' => \Auth::user()->token,
         ]);
 
-        $user_id = \Auth::user()->id;
-        $user = User::find($user_id);
-        // $user = \Auth::user();
-        $payment_token = $request->stripeToken;
-        $last_four = substr($request->number,-4);
-        $email = $user->email;
-        $settings = Settings::where('key' , 'stripe_secret_key')->first();
-        $stripe_secret_key = $settings->value;
-        \Stripe\Stripe::setApiKey($stripe_secret_key);
+        $last_four = substr($request->number, -4);
+        $stripe_secret_key = \Setting::get('stripe_secret_key');
+        if($stripe_secret_key) {
+            \Stripe\Stripe::setApiKey($stripe_secret_key);
+        } else {
+            $response = json_decode('{}');
+            $response->success = false;
+            $response->message = 'Adding cards is not enabled on this application. Please contact administrator';
+
+            return back()->with('response', $response);
+        }
 
         try{
 
             // Get the key from settings table
             
-            $customer = \Stripe\Customer::create(array(
-                    "card" => $payment_token,
-                    "email" => $email)
-                );
+            $customer = \Stripe\Customer::create([
+                    "card" => $request->stripeToken,
+                    "email" => \Auth::user()->email
+                ]);
 
             if($customer){
 
@@ -320,11 +321,9 @@ class UserController extends Controller
                 
                 $cards->save();
 
-                if($user) {
-                    $user->payment_mode = 'card';
-                    $user->default_card = $cards->id;
-                    $user->save();
-                }
+                \Auth::user()->payment_mode = 'card';
+                \Auth::user()->default_card = $cards->id;
+                \Auth::user()->save();
 
                 $response_array = array('success' => true);
                 $response_code = 200;
@@ -378,7 +377,7 @@ class UserController extends Controller
         $response = $this->UserAPI->delete_card($request)->getData();
         
         if($response->success) {
-            $response->message = tr('card_default_success');
+            $response->message = tr('card_deleted');
         } else {
             $response->message = tr('unkown_error');
         }

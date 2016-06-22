@@ -5,7 +5,6 @@
 @section('page_title', 'Payment')
 
 @section('content')
-<div class="container-fluid">
     <div class="row">
         <div class="col-md-6">
             <div class="panel panel-default" data-widget='{"draggable": "false"}'>
@@ -132,7 +131,6 @@
             </form>
         </div>
     </div>
-</div>
 @endsection
 
 @section('styles')
