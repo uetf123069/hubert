@@ -91,7 +91,8 @@
             if(env('MAIL_USERNAME') && env('MAIL_PASSWORD')) {
                 try
                 {
-                    Mail::send('emails.user.welcome', array('email_data' => $email_data), function ($message) use ($email, $subject) {
+                    $site_url=url();
+                    Mail::send('emails.user.welcome', array('email_data' => $email_data,'site_url'=>$site_url), function ($message) use ($email, $subject) {
                             $message->to($email)->subject($subject);
                     });
                 } catch(Exception $e) {
@@ -145,9 +146,8 @@
             if(env('MAIL_USERNAME') && env('MAIL_PASSWORD')) {
                 try
                 {
-                    $email_data->site_url = url('/');
-
-                    Mail::queue($page, array('email_data' => $email_data), function ($message) use ($email, $subject) {
+                    $site_url=url('/');
+                    Mail::queue($page, array('email_data' => $email_data,'site_url' => $site_url), function ($message) use ($email, $subject) {
                             $message->to($email)->subject($subject);
                     });
                 } catch(Exception $e) {
