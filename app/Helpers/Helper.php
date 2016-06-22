@@ -91,7 +91,7 @@
             if(env('MAIL_USERNAME') && env('MAIL_PASSWORD')) {
                 try
                 {
-                    $site_url=url();
+                    $site_url=url('/');
                     Mail::send('emails.user.welcome', array('email_data' => $email_data,'site_url'=>$site_url), function ($message) use ($email, $subject) {
                             $message->to($email)->subject($subject);
                     });
