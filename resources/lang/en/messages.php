@@ -44,6 +44,7 @@ return array(
 	'note' => 'NOTES',
 	'invoice_note'	 => 'THIS IS A COMPUTER GENERATED INVOICE AND DOES NOT REQUIRE ANY SIGNATURE. PLEASE CONTACT ADMINISTRATOR FOR MORE DETAILS.',
 	'invoice' => 'INVOICE',
+	'web_url'	=>env('APP_URL'),
 	'description' => 'Description',
 	'amount' => 'Amount',
 	'base_fees' => 'Base Fees',
