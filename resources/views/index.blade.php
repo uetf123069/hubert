@@ -180,8 +180,8 @@
 						</h3>
 					</div>
 					<div class="col-xs-12 col-sm-offset-1 col-sm-10 m-xsmall-top text-center log-btn">
-						<a href="" class="button m-small-top">User Login</a>
-						<a href="" class="button m-small-top">Provider Login</a>
+						<a href="{{ route('provider.login.form') }}" class="button m-small-top" target="_blank">Provider Login</a>
+						<a href="{{ route('user.login.form') }}" class="button m-small-top" target="_blank">User Login</a>
 					</div>
 				</div>
 			</div>

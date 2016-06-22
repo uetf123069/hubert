@@ -708,7 +708,8 @@ class UserapiController extends Controller
             $request->all(),
             array(
                 'latitude' => 'required|numeric',
-                'longitude' => 'required|numeric'
+                'longitude' => 'required|numeric',
+                'service_id' => 'exists:service_types,id',
             ));
 
         if ($validator->fails()) {
@@ -722,10 +723,20 @@ class UserapiController extends Controller
             $settings = Settings::where('key', 'search_radius')->first();
             $distance = $settings->value;
 
-            $query = "SELECT providers.id,providers.first_name,providers.last_name,providers.latitude,providers.longitude,
+            $service_type_id = $request->service_id;
+
+            if(!$request->service_id) {
+                if($service_type = ServiceType::where('status' , DEFAULT_TRUE)->first()) {
+                    $service_type_id = $service_type->id;
+                }
+            }
+
+           $query = "SELECT providers.id,providers.first_name,providers.last_name,providers.latitude,providers.longitude,
                             1.609344 * 3956 * acos( cos( radians('$latitude') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians('$longitude') ) + sin( radians('$latitude') ) * sin( radians(latitude) ) ) AS distance
                       FROM providers
-                      WHERE is_available = 1 AND is_activated = 1 AND is_approved = 1
+                      LEFT JOIN provider_services ON providers.id = provider_services.provider_id
+                      WHERE provider_services.service_type_id = $service_type_id AND
+                       providers.is_available = 1 AND is_activated = 1 AND is_approved = 1
                             AND (1.609344 * 3956 * acos( cos( radians('$latitude') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians('$longitude') ) + sin( radians('$latitude') ) * sin( radians(latitude) ) ) ) <= $distance
                       ORDER BY distance";
 
