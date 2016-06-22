@@ -352,7 +352,7 @@ class AdminController extends Controller
                 ->whereRaw('confirmed_provider = providers.id and status in (1,2,3,4,5)');
         $providers = DB::table('providers')
                 ->select('providers.*', DB::raw("(" . $subQuery->toSql() . ") as 'total_requests'"), DB::raw("(" . $subQuery1->toSql() . ") as 'accepted_requests'"))
-                ->orderBy('providers.created_at', 'DESC')
+                ->orderBy('providers.id', 'DESC')
                 ->get();
 
         // dd($providers);
@@ -903,7 +903,7 @@ class AdminController extends Controller
                 ->leftJoin('users', 'requests.user_id', '=', 'users.id')
                 ->leftJoin('request_payments', 'requests.id', '=', 'request_payments.request_id')
                 ->select('users.first_name as user_first_name', 'users.last_name as user_last_name', 'providers.first_name as provider_first_name', 'providers.last_name as provider_last_name', 'users.id as user_id', 'providers.id as provider_id', 'requests.is_paid',  'requests.id as id', 'requests.created_at as date', 'requests.confirmed_provider', 'requests.status', 'requests.provider_status', 'request_payments.total as amount', 'request_payments.payment_mode as payment_mode', 'request_payments.status as payment_status')
-                ->orderBy('requests.created_at', 'ASC')
+                ->orderBy('requests.created_at', 'desc')
                 ->get();
         return view('admin.request')->with('requests', $requests);
     }

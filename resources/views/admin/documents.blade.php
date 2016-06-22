@@ -24,7 +24,7 @@
               <tr>
                   <td>{{$index + 1}}</td>
                   <td>{{$document->name}}</td>
-                  <td>
+                  <td class="btn-left">
                       <div class="input-group-btn">
                           <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">Action
                             <span class="caret"></span>

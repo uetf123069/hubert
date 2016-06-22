@@ -6,7 +6,7 @@
     
     <meta name="description" content="{{ Setting::get('site_description', 'Uber for Services') }}">
     <meta name="viewport" content="width=device-width">
-    <link rel="shortcut icon" href="{{ Setting::get('site_name', asset('/favicon.ico') ) }}">
+    <link rel="shortcut icon" href="{{ Setting::get('site_icon', asset('/favicon.ico') ) }}">
 
     <link rel="stylesheet" href="{{ asset('vendor/bootstrap/dist/css/bootstrap.css') }}">
     <link rel="stylesheet" href="{{ asset('admin_assets/styles/urban.css') }}">

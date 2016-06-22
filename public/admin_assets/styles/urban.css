@@ -13086,4 +13086,6 @@ th.min{
 .pay-tab.paypal .box-tab .nav-tabs li.active a .widget, .pay-tab.paypal .box-tab .nav-tabs li.active a:hover .widget{
   background-color: #2196f3;
 }
-
+.btn-left{
+  text-align: left !important;
+}
