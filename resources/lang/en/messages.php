@@ -221,7 +221,7 @@ return array(
 	'new_request'	=>  'New Request', 
 	'request_waiting'	=>	'Request Waiting',
 	'request_progress'	=>	'Request In Progress', 
-	'request_complete_pending'	=>	'Request Complete is Pending', 
+	'request_complete_pending'	=>	'Your service closure is pending customer action', 
 	'request_rating'	=>	'Request Rating', 
 	'request_completed'	=>	'Request Completed',
 	'request_cancelled'	=>	'Request Cancelled',

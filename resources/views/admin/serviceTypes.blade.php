@@ -28,7 +28,7 @@
                   <td>{{$service->name}}</td>
                   <td>{{$service->provider_name}}</td>
                   <td>@if($service->status == 1) {{ tr('default') }} @else NA @endif</td>
-                  <td>
+                  <td class="btn-left">
                       <div class="input-group-btn">
                           <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">{{ tr('action') }}
                             <span class="caret"></span>
