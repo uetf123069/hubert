@@ -52,7 +52,7 @@ return array(
 	'tax_price' => 'Tax Fees',
 	'sub_total' => 'Sub Total',
 	'total' => 'Total',
-	'currency' => "$",
+	
 
 	// Push notifications title and messages
 	'cancel_by_user_title' => 'Service Cancelled',
@@ -418,6 +418,7 @@ return array(
 
 	'site_name'	=>	'Site Name',
 	'site_logo'	=>	'Site Logo',
+	'site_icon'	=>	'Site Favicon',
 	'price_per_min'	=>	'Price Per Minute',
 	'provider_time'	=>	'Provider Timout',
 	'search_radius'	=>	'Search Radius',

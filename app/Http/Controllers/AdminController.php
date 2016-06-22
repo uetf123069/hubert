@@ -534,7 +534,58 @@ class AdminController extends Controller
     public function settings()
     {
         $settings = Settings::all();
-        return view('admin.settings')->with('setting',$settings);
+        switch (Setting::get('currency')) {
+            case '$':
+                $symbol = '$';
+                $currency = 'US Dollar (USD)';
+                break;
+            
+            case '₹':
+                $symbol = '₹';
+                $currency = 'Indian Rupee (INR)';
+                break;
+            case 'د.ك':
+                $symbol = 'د.ك';
+                $currency = 'Kuwaiti Dinar (KWD)';
+                break;
+            case 'د.ب':
+                $symbol = 'د.ب';
+                $currency = 'Bahraini Dinar (BHD)';
+                break;
+            case '﷼':
+                $symbol = '﷼';
+                $currency = 'Omani Rial (OMR)';
+                break;
+            case '£':
+                $symbol = '£';
+                $currency = 'Euro (EUR)';
+                break;
+            case '€':
+                $symbol = '€';
+                $currency = 'British Pound (GBP)';
+                break;
+            case 'ل.د':
+                $symbol = 'ل.د';
+                $currency = 'Libyan Dinar (LYD)';
+                break;
+            case 'B$':
+                $symbol = 'B$';
+                $currency = 'Bruneian Dollar (BND)';
+                break;
+            case 'S$':
+                $symbol = 'S$';
+                $currency = 'Singapore Dollar (SGD)';
+                break;
+            case 'AU$':
+                $symbol = 'AU$';
+                $currency = 'Australian Dollar (AUD)';
+                break;
+            case 'CHF':
+                $symbol = 'CHF';
+                $currency = 'Swiss Franc (CHF)';
+                break;
+        }
+        return view('admin.settings')->with('symbol',$symbol)->with('currency',$currency);
     }
 
 
@@ -546,7 +597,24 @@ class AdminController extends Controller
            
                 $temp_setting = Settings::find($setting->id);
 
-                if($temp_setting->key == 'site_logo'){
+                if($temp_setting->key == 'site_icon'){
+                    $site_icon = $request->file('site_icon');
+                    if($site_icon == null)
+                    {
+                       
+                        $icon = $temp_setting->value;
+                    }
+                    else
+                    {
+
+                        $icon = Helper::upload_picture($site_icon);
+                       
+                    }
+                    $temp_setting->value = $icon;
+                    $temp_setting->save();
+                }
+
+               else if($temp_setting->key == 'site_logo'){
                     $picture = $request->file('picture');
                     if($picture == null){
                     $logo = $temp_setting->value;
@@ -558,9 +626,8 @@ class AdminController extends Controller
                     $temp_setting->value = $logo;
                     $temp_setting->save();
                 }
-                else
-                {
-                    if($temp_setting->key == 'card'){
+                
+                   else if($temp_setting->key == 'card'){
                         if($request->$key==1)
                         {
                             $temp_setting->value   = 1;
@@ -572,7 +639,7 @@ class AdminController extends Controller
                         }
                         $temp_setting->save();
                     }
-                    if($temp_setting->key == 'paypal'){
+                   else if($temp_setting->key == 'paypal'){
                         if($request->$key==1)
                         {
                             $temp_setting->value   = 1;
@@ -583,7 +650,7 @@ class AdminController extends Controller
                         }
                         $temp_setting->save();
                     }
-                    if($temp_setting->key == 'manual_request'){
+                    else if($temp_setting->key == 'manual_request'){
                         if($request->$key==1)
                         {
                             $temp_setting->value   = 1;
@@ -594,10 +661,10 @@ class AdminController extends Controller
                         }
                         $temp_setting->save();
                     }
-                   if($request->$key!=''){
+                  else if($request->$key!=''){
                 $temp_setting->value = $request->$key;
                 $temp_setting->save();
-                }
+                
             }
 
               

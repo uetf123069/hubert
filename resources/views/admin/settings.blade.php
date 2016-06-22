@@ -17,15 +17,15 @@
                   <div class="form-group">
                     <label class="col-sm-2 control-label">{{ tr('site_name') }}</label>
                     <div class="col-sm-10">
-                      <input type="text" name="site_name" value="{{ isset($setting[0]['value']) ? $setting[0]['value'] : '' }}" required class="form-control">
+                      <input type="text" name="site_name" value="{{ Setting::get('site_name', '')  }}" required class="form-control">
                     </div>
                   </div>
 
                   <div class="form-group">
                     <label class="col-sm-2 control-label">{{ tr('site_logo') }}</label>
                     <div class="col-sm-10">
-                    @if(isset($setting[1]['value']))
-                    <img style="height: 90px; margin-bottom: 15px; border-radius:2em;" src="{{$setting[1]['value']}}">
+                    @if(Setting::get('site_logo')!='')
+                    <img style="height: 90px; margin-bottom: 15px; border-radius:2em;" src="{{Setting::get('site_logo')}}">
                     @endif
                       <input name="picture" type="file">
                       <p class="help-block">{{ tr('upload_message') }}</p>
@@ -33,50 +33,61 @@
                   </div>
 
                   <div class="form-group">
+                    <label class="col-sm-2 control-label">{{ tr('site_icon') }}</label>
+                    <div class="col-sm-10">
+                    @if(Setting::get('site_icon')!='')
+                    <img style="height: 90px; margin-bottom: 15px; border-radius:2em;" src="{{Setting::get('site_icon')}}">
+                    @endif
+                      <input name="site_icon" type="file">
+                      <p class="help-block">{{ tr('upload_message') }}</p>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
                     <label class="col-sm-2 control-label">{{ tr('provider_time') }}</label>
                     <div class="col-sm-10">
-                      <input type="number" name="provider_select_timeout" value="{{ isset($setting[2]['value']) ? $setting[2]['value'] : '' }}" required class="form-control">
+                      <input type="number" name="provider_select_timeout" value="{{ Setting::get('provider_select_timeout', '')  }}" required class="form-control">
                     </div>
                   </div>
 
                   <div class="form-group">
                     <label class="col-sm-2 control-label">{{ tr('search_radius') }}</label>
                     <div class="col-sm-10">
-                      <input type="number" name="search_radius" value="{{ isset($setting[3]['value']) ? $setting[3]['value'] : '' }}" required class="form-control">
+                      <input type="number" name="search_radius" value="{{ Setting::get('search_radius', '')  }}" required class="form-control">
                     </div>
                   </div>
 
                   <div class="form-group">
                     <label class="col-sm-2 control-label">{{ tr('base_price') }}</label>
                     <div class="col-sm-10">
-                      <input type="number" name="base_price" value="{{ isset($setting[4]['value']) ? $setting[4]['value'] : '' }}" required class="form-control">
+                      <input type="number" name="base_price" value="{{ Setting::get('base_price', '')  }}" required class="form-control">
                     </div>
                   </div>
 
                   <div class="form-group">
                     <label class="col-sm-2 control-label">{{ tr('price_per_min') }}</label>
                     <div class="col-sm-10">
-                      <input type="number" name="price_per_minute" value="{{ isset($setting[5]['value']) ? $setting[5]['value'] : '' }}" required class="form-control">
+                      <input type="number" name="price_per_minute" value="{{ Setting::get('price_per_minute', '')  }}" required class="form-control">
                     </div>
                   </div>
 
                   <div class="form-group">
                     <label class="col-sm-2 control-label">{{ tr('tax_price') }}</label>
                     <div class="col-sm-10">
-                      <input type="number" name="tax_price" value="{{ isset($setting[6]['value']) ? $setting[6]['value'] : '' }}" required class="form-control">
+                      <input type="number" name="tax_price" value="{{ Setting::get('tax_price', '')  }}" required class="form-control">
                     </div>
                   </div>
                   <div class="form-group">
-                    <label class="col-sm-2 control-label">{{ tr('currency') }} ( <strong>{{ isset($setting[15]['value']) ? $setting[15]['value'] : '' }} </strong>)</label>
+                    <label class="col-sm-2 control-label">{{ tr('currency') }} ( <strong>{{ Setting::get('currency', '')  }} </strong>)</label>
                     <div class="col-sm-10">
                       <select name="currency" value="" required class="form-control">
-                      @if(isset($setting[15]['value']))
-                      <option value="{{ $setting[15]['value'] }}">{{ $setting[15]['value'] }}</option>
+                      @if(Setting::get('currency')!='')
+                      <option value="{{ $symbol }}">{{ $currency }}</option>
                       @else
                       <option value="">{{ tr('select') }}</option>
                       @endif
                       <option value="$">US Dollar (USD)</option>
-                      <option value="₹"> Indian Rupee</option>
+                      <option value="₹"> Indian Rupee (INR)</option>
                       <option value="د.ك">Kuwaiti Dinar (KWD)</option>
                       <option value="د.ب">Bahraini Dinar (BHD)</option>
                       <option value="﷼">Omani Rial (OMR)</option>
@@ -108,7 +119,7 @@
                     <div class="col-sm-10">
                       <div class="checkbox">
                           <label>
-                            <input name="manual_request"  @if($setting[12]['value'] ==1) checked  @else  @endif  value="1"  type="checkbox">{{ tr('manual_request') }}</label>
+                            <input name="manual_request"  @if(Setting::get('manual_request') ==1) checked  @else  @endif  value="1"  type="checkbox">{{ tr('manual_request') }}</label>
                         </div>
                     </div>
                   </div> -->
