@@ -72,7 +72,7 @@ class NormalPushNotification extends Job implements ShouldQueue
                     "title" => $this->title,
                     // "message" => $push_message,
                     "badge" => 1,
-                    "sound" => "default"
+                    "sound" => "default",
                     "status" => "",
                     "rid" => "",
                     );
