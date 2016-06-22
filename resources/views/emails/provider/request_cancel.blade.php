@@ -192,7 +192,7 @@ table[class="table3-3"] { width: 100% !important; text-align: center !important;
                             <table bgcolor="#ecf0f1" style="box-shadow: 0px 3px 0px #bdc3c7; border-radius:4px;" class="table3-3" align="left" width="183" border="0" cellspacing="0" cellpadding="0">
                                 <tr>
                                     <td data-link-style="text-decoration:none; color:#3b3b3b;" data-link-color="Text Link" mc:edit="button-1" height="50" align="center" style="font-family: 'Open Sans', Arial, sans-serif; font-size:14px; color:#3b3b3b; line-height:30px;padding-left: 25px;padding-right: 25px;">
-                                        <a href="http://xuber.appoets.co" target="_blank" style="color:#3b3b3b;text-decoration:none;" data-color="Text Link">{{Helper::tr('need_help')}}</a>
+                                        <a href="{{$email_data->site_url}}" target="_blank" style="color:#3b3b3b;text-decoration:none;" data-color="Text Link">{{Helper::tr('need_help')}}</a>
                                     </td>
                                 </tr>
                             </table>
@@ -216,7 +216,7 @@ table[class="table3-3"] { width: 100% !important; text-align: center !important;
                             <table bgcolor="#ecf0f1" style="box-shadow: 0px 3px 0px #bdc3c7; border-radius:4px;" class="table3-3" align="left" width="183" border="0" cellspacing="0" cellpadding="0">
                                 <tr>
                                     <td data-link-style="text-decoration:none; color:#3b3b3b;" data-link-color="Text Link" mc:edit="button-2" height="50" align="center" style="font-family: 'Open Sans', Arial, sans-serif; font-size:14px; color:#3b3b3b; line-height:30px;padding-left: 25px;padding-right: 25px;">
-                                        <a href="http://xuber.appoets.co" target="_blank" style="color:#3b3b3b;text-decoration:none;" data-color="Text Link">{{Helper::tr('search_new')}}</a>
+                                        <a href="{{$email_data->site_url}}" target="_blank" style="color:#3b3b3b;text-decoration:none;" data-color="Text Link">{{Helper::tr('search_new')}}</a>
                                     </td>
                                 </tr>
                             </table>
@@ -240,7 +240,7 @@ table[class="table3-3"] { width: 100% !important; text-align: center !important;
                             <table bgcolor="#ecf0f1" style="box-shadow: 0px 3px 0px #bdc3c7; border-radius:4px;" class="table3-3" align="right" width="183" border="0" cellspacing="0" cellpadding="0">
                                 <tr>
                                     <td data-link-style="text-decoration:none; color:#3b3b3b;" data-link-color="Text Link" mc:edit="button-3" height="50" align="center" style="font-family: 'Open Sans', Arial, sans-serif; font-size:14px; color:#3b3b3b; line-height:30px;padding-left: 25px;padding-right: 25px;">
-                                        <a href="http://xuber.appoets.co" target="_blank" style="color:#3b3b3b;text-decoration:none;" data-color="Text Link">{{Helper::tr('visit_website')}}</a>
+                                        <a href="{{$email_data->site_url}}" target="_blank" style="color:#3b3b3b;text-decoration:none;" data-color="Text Link">{{Helper::tr('visit_website')}}</a>
                                     </td>
                                 </tr>
                             </table>

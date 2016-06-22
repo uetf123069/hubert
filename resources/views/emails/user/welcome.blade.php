@@ -98,7 +98,7 @@ table[class="table3-3"] { width: 100% !important; text-align: center !important;
                                                 <td data-link-style="text-decoration:none; color:#3cb2d0;" data-link-color="Content Link" data-color="Main Text" data-size="Main Text" mc:edit="content" align="center" style="font-family: 'Open Sans', Arial, sans-serif; font-size:13px; color:#7f8c8d; line-height:30px;">
                                                     Hi, {{$email_data->first_name}} {{$email_data->last_name}} . Welcome to {{Helper::settings('site_name')}}. You've just joined a community of millions who have discovered how quick and easy it is to use.
                                                     <br>
-                                                    <b>Your fullname is : {{$email_data->first_name}} {{$email_data->last_name}}</b>
+                                                    <b>Name : {{$email_data->first_name}} {{$email_data->last_name}}</b>
                                                     <br>
                                                     Thank you!
                                                 </td>
@@ -121,7 +121,7 @@ table[class="table3-3"] { width: 100% !important; text-align: center !important;
                                         <table data-bgcolor="Main Color" align="center" bgcolor="#3cb2d0" border="0" cellspacing="0" cellpadding="0" style=" border-radius:4px; box-shadow: 0px 2px 0px #dedfdf;">
                                             <tr>
                                                 <td mc:edit="button" height="55" align="center" style="font-family: 'Open Sans', Arial, sans-serif; font-size:16px; color:#7f8c8d; line-height:30px; font-weight: bold;padding-left: 25px;padding-right: 25px;">
-                                                    <a href="http://xuber.appoets.co/login" target="_blank" style="color:#ffffff;text-decoration:none;" data-color="Button Link">Login Here</a>
+                                                    <a href="{{$email_data->site_url}}" target="_blank" style="color:#ffffff;text-decoration:none;" data-color="Button Link">Login Here</a>
                                                 </td>
                                             </tr>
                                         </table>

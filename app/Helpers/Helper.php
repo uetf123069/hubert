@@ -145,6 +145,8 @@
             if(env('MAIL_USERNAME') && env('MAIL_PASSWORD')) {
                 try
                 {
+                    $email_data->site_url = URL::to('/');
+
                     Mail::queue($page, array('email_data' => $email_data), function ($message) use ($email, $subject) {
                             $message->to($email)->subject($subject);
                     });

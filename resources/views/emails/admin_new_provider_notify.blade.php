@@ -99,7 +99,7 @@ table[class="table3-3"] { width: 100% !important; text-align: center !important;
                                                     Hi admin, 
                                                         New provider joined in {{Helper::settings('site_name')}}
                                                     <br>
-                                                    <b>Provider fullname is : {{$email_data->first_name}} {{$email_data->last_name}}</b>
+                                                    <b>Provider Name : {{$email_data->first_name}} {{$email_data->last_name}}</b>
                                                     <br>
                                                     Thank you!
                                                 </td>
