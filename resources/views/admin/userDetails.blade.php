@@ -4,7 +4,7 @@
 
 @section('content')
 
-<a href="{{ route('admin.mapview') }}" class="btn btn-info btn-round btn-sm" style="margin-bottom: 10px;">
+<a href="{{ route('admin.usermapview') }}" class="btn btn-info btn-round btn-sm" style="margin-bottom: 10px;">
     <i class="fa fa-arrow-left"></i> Back
 </a>
 
