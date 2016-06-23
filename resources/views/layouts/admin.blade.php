@@ -57,7 +57,7 @@
     </div>
 
     <!-- build:js({.tmp,app}) scripts/app.min.js -->
-    <script src="{{ asset('admin_assets/scripts/extentions/modernizr.js') }}"></script>
+    <script src="{{ asset('admin_assets/scripts/extensions/modernizr.js') }}"></script>
     <script src="{{ asset('vendor/jquery/dist/jquery.js') }}"></script>
     <script src="{{ asset('vendor/bootstrap/dist/js/bootstrap.js') }}"></script>
     <script src="{{ asset('vendor/jquery.easing/jquery.easing.js') }}"></script>
@@ -72,7 +72,7 @@
     <script src="{{ asset('admin_assets/scripts/ui/preloader.js') }}"></script>
     <script src="{{ asset('admin_assets/scripts/ui/toggle.js') }}"></script>
     <script src="{{ asset('admin_assets/scripts/urban-constants.js') }}"></script>
-    <script src="{{ asset('admin_assets/scripts/extentions/lib.js') }}"></script>
+    <script src="{{ asset('admin_assets/scripts/extensions/lib.js') }}"></script>
     <script src="{{ asset('admin_assets/scripts/jquery-1.12.3.min.js')}}"></script>
     <script src="{{ asset('admin_assets/scripts/jquery.dataTables.min.js')}}"></script>
     <script src="{{ asset('admin_assets/scripts/bootstrap-datatables.js')}}"></script>
