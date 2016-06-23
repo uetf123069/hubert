@@ -16,3 +16,4 @@ $.urbanApp = {
   bodyBg: '#e0e8f2',
   textColor: '#6B6B6B',
 };
+

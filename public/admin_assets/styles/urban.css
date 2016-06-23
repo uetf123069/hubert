@@ -13013,6 +13013,7 @@ th.min{
 }
 .table-responsive {
     overflow-x: auto;
+    padding-bottom: 130px;
 }
 .ad-pro-img{
   width: 32px;
@@ -13089,3 +13090,12 @@ th.min{
 .btn-left{
   text-align: left !important;
 }
+
+.panel-heading .btn{
+  margin-top: -8px;
+}
+
+/*.table-responsive .dropdown-menu{
+  left: auto;
+  right: 0;
+}*/
