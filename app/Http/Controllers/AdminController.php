@@ -260,7 +260,7 @@ class AdminController extends Controller
                 {
                     // Edit User
                     $user = User::find($request->id);
-                    if($user->picture == ''){
+                    if($picture != ''){
                     $user->picture = Helper::upload_picture($picture);
                     }
                 }
@@ -418,7 +418,7 @@ class AdminController extends Controller
                 {
                     // Edit Provider
                     $provider = Provider::find($request->id);
-                    if($provider->picture == ''){
+                    if($picture != ''){
                     $provider->picture = Helper::upload_picture($picture);
                     }
                 }
