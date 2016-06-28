@@ -260,7 +260,7 @@ class AdminController extends Controller
                 {
                     // Edit User
                     $user = User::find($request->id);
-                    if($user->picture == ''){
+                    if($picture != ''){
                     $user->picture = Helper::upload_picture($picture);
                     }
                 }
@@ -352,7 +352,7 @@ class AdminController extends Controller
                 ->whereRaw('confirmed_provider = providers.id and status in (1,2,3,4,5)');
         $providers = DB::table('providers')
                 ->select('providers.*', DB::raw("(" . $subQuery->toSql() . ") as 'total_requests'"), DB::raw("(" . $subQuery1->toSql() . ") as 'accepted_requests'"))
-                ->orderBy('providers.created_at', 'DESC')
+                ->orderBy('providers.id', 'DESC')
                 ->get();
 
         // dd($providers);
@@ -418,7 +418,7 @@ class AdminController extends Controller
                 {
                     // Edit Provider
                     $provider = Provider::find($request->id);
-                    if($provider->picture == ''){
+                    if($picture != ''){
                     $provider->picture = Helper::upload_picture($picture);
                     }
                 }
@@ -534,7 +534,58 @@ class AdminController extends Controller
     public function settings()
     {
         $settings = Settings::all();
-        return view('admin.settings')->with('setting',$settings);
+        switch (Setting::get('currency')) {
+            case '$':
+                $symbol = '$';
+                $currency = 'US Dollar (USD)';
+                break;
+            
+            case '₹':
+                $symbol = '₹';
+                $currency = 'Indian Rupee (INR)';
+                break;
+            case 'د.ك':
+                $symbol = 'د.ك';
+                $currency = 'Kuwaiti Dinar (KWD)';
+                break;
+            case 'د.ب':
+                $symbol = 'د.ب';
+                $currency = 'Bahraini Dinar (BHD)';
+                break;
+            case '﷼':
+                $symbol = '﷼';
+                $currency = 'Omani Rial (OMR)';
+                break;
+            case '£':
+                $symbol = '£';
+                $currency = 'Euro (EUR)';
+                break;
+            case '€':
+                $symbol = '€';
+                $currency = 'British Pound (GBP)';
+                break;
+            case 'ل.د':
+                $symbol = 'ل.د';
+                $currency = 'Libyan Dinar (LYD)';
+                break;
+            case 'B$':
+                $symbol = 'B$';
+                $currency = 'Bruneian Dollar (BND)';
+                break;
+            case 'S$':
+                $symbol = 'S$';
+                $currency = 'Singapore Dollar (SGD)';
+                break;
+            case 'AU$':
+                $symbol = 'AU$';
+                $currency = 'Australian Dollar (AUD)';
+                break;
+            case 'CHF':
+                $symbol = 'CHF';
+                $currency = 'Swiss Franc (CHF)';
+                break;
+        }
+        return view('admin.settings')->with('symbol',$symbol)->with('currency',$currency);
     }
 
 
@@ -546,7 +597,24 @@ class AdminController extends Controller
            
                 $temp_setting = Settings::find($setting->id);
 
-                if($temp_setting->key == 'site_logo'){
+                if($temp_setting->key == 'site_icon'){
+                    $site_icon = $request->file('site_icon');
+                    if($site_icon == null)
+                    {
+                       
+                        $icon = $temp_setting->value;
+                    }
+                    else
+                    {
+
+                        $icon = Helper::upload_picture($site_icon);
+                       
+                    }
+                    $temp_setting->value = $icon;
+                    $temp_setting->save();
+                }
+
+               else if($temp_setting->key == 'site_logo'){
                     $picture = $request->file('picture');
                     if($picture == null){
                     $logo = $temp_setting->value;
@@ -558,9 +626,8 @@ class AdminController extends Controller
                     $temp_setting->value = $logo;
                     $temp_setting->save();
                 }
-                else
-                {
-                    if($temp_setting->key == 'card'){
+                
+                   else if($temp_setting->key == 'card'){
                         if($request->$key==1)
                         {
                             $temp_setting->value   = 1;
@@ -572,7 +639,7 @@ class AdminController extends Controller
                         }
                         $temp_setting->save();
                     }
-                    if($temp_setting->key == 'paypal'){
+                   else if($temp_setting->key == 'paypal'){
                         if($request->$key==1)
                         {
                             $temp_setting->value   = 1;
@@ -583,7 +650,7 @@ class AdminController extends Controller
                         }
                         $temp_setting->save();
                     }
-                    if($temp_setting->key == 'manual_request'){
+                    else if($temp_setting->key == 'manual_request'){
                         if($request->$key==1)
                         {
                             $temp_setting->value   = 1;
@@ -594,10 +661,10 @@ class AdminController extends Controller
                         }
                         $temp_setting->save();
                     }
-                   if($request->$key!=''){
+                  else if($request->$key!=''){
                 $temp_setting->value = $request->$key;
                 $temp_setting->save();
-                }
+                
             }
 
               
@@ -836,7 +903,7 @@ class AdminController extends Controller
                 ->leftJoin('users', 'requests.user_id', '=', 'users.id')
                 ->leftJoin('request_payments', 'requests.id', '=', 'request_payments.request_id')
                 ->select('users.first_name as user_first_name', 'users.last_name as user_last_name', 'providers.first_name as provider_first_name', 'providers.last_name as provider_last_name', 'users.id as user_id', 'providers.id as provider_id', 'requests.is_paid',  'requests.id as id', 'requests.created_at as date', 'requests.confirmed_provider', 'requests.status', 'requests.provider_status', 'request_payments.total as amount', 'request_payments.payment_mode as payment_mode', 'request_payments.status as payment_status')
-                ->orderBy('requests.created_at', 'ASC')
+                ->orderBy('requests.created_at', 'desc')
                 ->get();
         return view('admin.request')->with('requests', $requests);
     }

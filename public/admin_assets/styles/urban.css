@@ -13013,6 +13013,7 @@ th.min{
 }
 .table-responsive {
     overflow-x: auto;
+    padding-bottom: 130px;
 }
 .ad-pro-img{
   width: 32px;
@@ -13086,4 +13087,15 @@ th.min{
 .pay-tab.paypal .box-tab .nav-tabs li.active a .widget, .pay-tab.paypal .box-tab .nav-tabs li.active a:hover .widget{
   background-color: #2196f3;
 }
+.btn-left{
+  text-align: left !important;
+}
 
+.panel-heading .btn{
+  margin-top: -8px;
+}
+
+/*.table-responsive .dropdown-menu{
+  left: auto;
+  right: 0;
+}*/

@@ -22,7 +22,10 @@ class SettingstableSeeder extends Seeder
 		        'key' => 'site_logo',
 		        'value' => ''
 		    ],
-		    
+		    [
+		        'key' => 'site_icon',
+		        'value' => ''
+		    ],
 		    [
 		        'key' => 'provider_select_timeout',
 		        'value' => 60

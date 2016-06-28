@@ -44,6 +44,7 @@ return array(
 	'note' => 'NOTES',
 	'invoice_note'	 => 'THIS IS A COMPUTER GENERATED INVOICE AND DOES NOT REQUIRE ANY SIGNATURE. PLEASE CONTACT ADMINISTRATOR FOR MORE DETAILS.',
 	'invoice' => 'INVOICE',
+	'web_url'	=>env('APP_URL'),
 	'description' => 'Description',
 	'amount' => 'Amount',
 	'base_fees' => 'Base Fees',
@@ -52,7 +53,7 @@ return array(
 	'tax_price' => 'Tax Fees',
 	'sub_total' => 'Sub Total',
 	'total' => 'Total',
-	'currency' => "$",
+	
 
 	// Push notifications title and messages
 	'cancel_by_user_title' => 'Service Cancelled',
@@ -221,7 +222,7 @@ return array(
 	'new_request'	=>  'New Request', 
 	'request_waiting'	=>	'Request Waiting',
 	'request_progress'	=>	'Request In Progress', 
-	'request_complete_pending'	=>	'Request Complete is Pending', 
+	'request_complete_pending'	=>	'Your service closure is pending customer action', 
 	'request_rating'	=>	'Request Rating', 
 	'request_completed'	=>	'Request Completed',
 	'request_cancelled'	=>	'Request Cancelled',
@@ -419,6 +420,7 @@ return array(
 
 	'site_name'	=>	'Site Name',
 	'site_logo'	=>	'Site Logo',
+	'site_icon'	=>	'Site Favicon',
 	'price_per_min'	=>	'Price Per Minute',
 	'provider_time'	=>	'Provider Timout',
 	'search_radius'	=>	'Search Radius',

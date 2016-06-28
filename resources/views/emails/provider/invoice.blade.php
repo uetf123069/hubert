@@ -7,7 +7,7 @@ use App\Helpers\Helper;
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1" />
-    <title>Xuber</title>
+    <title>{{Setting::get('site_logo', 'Xuber')}}</title>
     <style type="text/css">
 .ReadMsgBody { width: 100%; background-color: #ffffff; }
 .ExternalClass { width: 100%; background-color: #ffffff; }
@@ -196,7 +196,7 @@ a { color: #ff646a; text-decoration: none; }
                                             <tr>
                                                 <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Content Link" mc:edit="desctiption" width="263" align="left" valign="top" style="font-family: 'Open Sans', Arial, sans-serif; font-size:14px; color:#3b3b3b; line-height:26px;  font-weight: bold;">{{Helper::tr('base_fees')}}</td>
                                                 
-                                                <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Content Link" mc:edit="value-3" width="87" align="right" valign="top" style="font-family: 'Open Sans', Arial, sans-serif; font-size:14px; color:#3b3b3b; line-height:26px;  font-weight: bold;">{{Helper::tr('currency')}}{{$email_data['base_price']}}</td>
+                                                <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Content Link" mc:edit="value-3" width="87" align="right" valign="top" style="font-family: 'Open Sans', Arial, sans-serif; font-size:14px; color:#3b3b3b; line-height:26px;  font-weight: bold;">{{ get_currency_value($email_data['base_price'])}}</td>
                                             </tr>
                                         </table>
                                     </td>
@@ -212,7 +212,7 @@ a { color: #ff646a; text-decoration: none; }
                                             <tr>
                                                 <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Content Link" mc:edit="desctiption" width="263" align="left" valign="top" style="font-family: 'Open Sans', Arial, sans-serif; font-size:14px; color:#3b3b3b; line-height:26px;  font-weight: bold;">{{Helper::tr('extra_price')}}</td>
                                                 
-                                                <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Content Link" mc:edit="value-3" width="87" align="right" valign="top" style="font-family: 'Open Sans', Arial, sans-serif; font-size:14px; color:#3b3b3b; line-height:26px;  font-weight: bold;">{{Helper::tr('currency')}}{{$email_data['total_time_price']}}</td>
+                                                <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Content Link" mc:edit="value-3" width="87" align="right" valign="top" style="font-family: 'Open Sans', Arial, sans-serif; font-size:14px; color:#3b3b3b; line-height:26px;  font-weight: bold;">{{ get_currency_value($email_data['total_time_price'])}}</td>
                                             </tr>
                                         </table>
                                     </td>
@@ -228,7 +228,7 @@ a { color: #ff646a; text-decoration: none; }
                                             <tr>
                                                 <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Content Link" mc:edit="desctiption" width="263" align="left" valign="top" style="font-family: 'Open Sans', Arial, sans-serif; font-size:14px; color:#3b3b3b; line-height:26px;  font-weight: bold;">{{Helper::tr('other_price')}}</td>
                                                 
-                                                <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Content Link" mc:edit="value-3" width="87" align="right" valign="top" style="font-family: 'Open Sans', Arial, sans-serif; font-size:14px; color:#3b3b3b; line-height:26px;  font-weight: bold;">{{Helper::tr('currency')}}{{$email_data['other_price']}}</td>
+                                                <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Content Link" mc:edit="value-3" width="87" align="right" valign="top" style="font-family: 'Open Sans', Arial, sans-serif; font-size:14px; color:#3b3b3b; line-height:26px;  font-weight: bold;">{{get_currency_value($email_data['other_price'])}}</td>
                                             </tr>
                                         </table>
                                     </td>
@@ -253,7 +253,7 @@ a { color: #ff646a; text-decoration: none; }
                                             <tr>
                                                 <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Content Link" mc:edit="desctiption" width="263" align="left" valign="top" style="font-family: 'Open Sans', Arial, sans-serif; font-size:14px; color:#3b3b3b; line-height:26px;  font-weight: bold;">{{Helper::tr('sub_total')}}</td>
                                                 
-                                                <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Content Link" mc:edit="value-3" width="87" align="right" valign="top" style="font-family: 'Open Sans', Arial, sans-serif; font-size:14px; color:#3b3b3b; line-height:26px;  font-weight: bold;">${{$email_data['sub_total']}}</td>
+                                                <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Content Link" mc:edit="value-3" width="87" align="right" valign="top" style="font-family: 'Open Sans', Arial, sans-serif; font-size:14px; color:#3b3b3b; line-height:26px;  font-weight: bold;">{{ get_currency_value($email_data['sub_total'])}}</td>
                                             </tr>
                                         </table>
                                     </td>
@@ -291,7 +291,7 @@ a { color: #ff646a; text-decoration: none; }
                                                 <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Content Link" mc:edit="total title" align="left" valign="top" style="font-family: 'Open Sans', Arial, sans-serif; font-size:12px; color:#3b3b3b; line-height:26px; text-transform:uppercase;line-height:24px;">{{Helper::tr('tax_price')}}</td>
                                             </tr>
                                             <tr>
-                                                <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Content Link" mc:edit="total content" align="left" valign="top" style="font-family: 'Open Sans', Arial, sans-serif; font-size:24px; color:#3b3b3b;  font-weight: bold;">+{{Helper::tr('currency')}}{{$email_data['tax_price']}} USD</td>
+                                                <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Content Link" mc:edit="total content" align="left" valign="top" style="font-family: 'Open Sans', Arial, sans-serif; font-size:24px; color:#3b3b3b;  font-weight: bold;">+{{get_currency_value($email_data['tax_price'])}}</td>
                                             </tr>
                                             <tr>
                                                 <td height="15"></td>
@@ -307,7 +307,7 @@ a { color: #ff646a; text-decoration: none; }
                                                 <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Content Link" mc:edit="total title-1" align="right" valign="top" style="font-family: 'Open Sans', Arial, sans-serif; font-size:12px; color:#3b3b3b; line-height:26px; text-transform:uppercase;line-height:24px;">{{Helper::tr('total')}}</td>
                                             </tr>
                                             <tr>
-                                                <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Content Link" mc:edit="total content-2" align="right" valign="top" style="font-family: 'Open Sans', Arial, sans-serif; font-size:24px; color:#3b3b3b;  font-weight: bold;">${{$email_data['total']}} USD</td>
+                                                <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Content Link" mc:edit="total content-2" align="right" valign="top" style="font-family: 'Open Sans', Arial, sans-serif; font-size:24px; color:#3b3b3b;  font-weight: bold;">{{get_currency_value($email_data['total'])}}</td>
                                             </tr>
                                             <tr>
                                                 <td height="15"></td>
@@ -342,7 +342,7 @@ a { color: #ff646a; text-decoration: none; }
 
                 <tr>
                     <td mc:edit="button" height="55" align="center" style="font-family: 'Open Sans', Arial, sans-serif; font-size:16px; color:#7f8c8d; line-height:30px; font-weight: bold;padding-left: 25px;padding-right: 25px;">
-                        <a href="http://xuber.appoets.co/" target="_blank" style="color:#ffffff;text-decoration:none;" data-color="Button Link">{{Helper::tr('visit_website')}}</a>
+                        <a href="{{$site_url}}" target="_blank" style="color:#ffffff;text-decoration:none;" data-color="Button Link">{{Helper::tr('visit_website')}}</a>
                     </td>
                 </tr>
             </table>
