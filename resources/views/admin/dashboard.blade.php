@@ -95,8 +95,11 @@
             <div class="widget bg-white no-padding">
             <div class="widget bg-blue mb0 text-center no-radius"><strong>{{ tr('top_provider') }}</strong></div>
               <a href="javascript:;" class="block text-center relative p15">
-                <img src="@if($top->picture !='') {{ $top->picture }} @else {{ asset('user_default.png') }} @endif" class="avatar avatar-lg img-circle" alt="">
-                <div class="h5 mb0"><strong>{{ $top->first_name .' '. $top->last_name}}</strong>
+                <img src="@if($top) 
+                            @if($top->picture !='') {{ $top->picture }} @else {{ asset('user_default.png') }} @endif
+
+                        @else {{ asset('user_default.png') }} @endif" class="avatar avatar-lg img-circle" alt="">
+                <div class="h5 mb0"><strong>@if($top) {{ $top->first_name .' '. $top->last_name}} @endif</strong>
                 </div>
               </a>
 
