@@ -53,7 +53,7 @@ a { color: #ff646a; text-decoration: none; }
 
                                 <!-- Compane Name -->
                                 <tr>
-                                    <td data-link-style="text-decoration:none; color:#3b3b3b;font-weight:bold;" data-link-color="Address Link 1" mc:edit="Company Name" data-color="Company Title" style="font-family: 'Open Sans', Arial, sans-serif; font-size:16px; color:#FFFFFF; line-height:26px; font-weight: bold;">{{$email_data['provider_name']}}</td>
+                                    <td data-link-style="text-decoration:none; color:#3b3b3b;font-weight:bold;" data-link-color="Address Link 1" mc:edit="Company Name" data-color="Company Title" style="font-family: 'Open Sans', Arial, sans-serif; font-size:16px; color:#3b3b3b; line-height:26px; font-weight: bold;">{{$email_data['provider_name']}}</td>
                                 </tr>
                                 <!-- end Compane Name -->
 
