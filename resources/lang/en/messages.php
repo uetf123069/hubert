@@ -420,6 +420,7 @@ return array(
 
 	'site_name'	=>	'Site Name',
 	'site_logo'	=>	'Site Logo',
+	'email_logo'	=>	'Email Logo',
 	'site_icon'	=>	'Site Favicon',
 	'price_per_min'	=>	'Price Per Minute',
 	'provider_time'	=>	'Provider Timout',

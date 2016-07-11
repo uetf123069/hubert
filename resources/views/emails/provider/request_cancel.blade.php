@@ -41,7 +41,7 @@ table[class="table3-3"] { width: 100% !important; text-align: center !important;
     <!-- Layout-->
     <table data-thumb="noti-3.jpg" data-module="Layout-3" data-bgcolor="Background" width="100%" border="0" align="center" cellpadding="0" cellspacing="0" bgcolor="#91c444">
         <tr>
-            <td data-bg="Background" align="center" background="{{asset('email/bg-3.jpg')}}" style="background-size:cover; background-position:top;">
+            <td data-bg="Background" align="center" background="{{$site_url}}/email/bg-3.jpg" style="background-size:cover; background-position:top;">
                 <table class="table600" width="600" border="0" align="center" cellpadding="0" cellspacing="0">
                     <tr>
                         <td height="60"></td>
@@ -62,7 +62,7 @@ table[class="table3-3"] { width: 100% !important; text-align: center !important;
                                                     <table class="table3-3" width="50" border="0" align="left" cellpadding="0" cellspacing="0">
                                                         <tr>
                                                             <td align="center" style="line-height:0px;">
-                                                                <img mc:edit="logo" data-crop="false" style="display:block; line-height:0px; font-size:0px; border:0px;max-height:30px;" src="{{Helper::settings('site_logo')}}" alt="logo" />
+                                                                <img mc:edit="logo" data-crop="false" style="display:block; line-height:0px; font-size:0px; border:0px;max-height:30px;" src="{{Helper::settings('mail_logo')}}" alt="logo" />
                                                             </td>
                                                         </tr>
                                                     </table>

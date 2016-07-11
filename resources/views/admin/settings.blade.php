@@ -44,6 +44,17 @@
                   </div>
 
                   <div class="form-group">
+                    <label class="col-sm-2 control-label">{{ tr('email_logo') }}</label>
+                    <div class="col-sm-10">
+                    @if(Setting::get('mail_logo')!='')
+                    <img style="height: 90px; margin-bottom: 15px; border-radius:2em;" src="{{Setting::get('mail_logo')}}">
+                    @endif
+                      <input name="email_logo" type="file">
+                      <p class="help-block">{{ tr('upload_message') }}</p>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
                     <label class="col-sm-2 control-label">{{ tr('provider_time') }}</label>
                     <div class="col-sm-10">
                       <input type="number" name="provider_select_timeout" value="{{ Setting::get('provider_select_timeout', '')  }}" required class="form-control">

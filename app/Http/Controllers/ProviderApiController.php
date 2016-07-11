@@ -1485,13 +1485,15 @@ class ProviderApiController extends Controller
 		$provider = Provider::find($request->id);
 
 		$check_status = array(REQUEST_COMPLETED,REQUEST_CANCELLED,REQUEST_NO_PROVIDER_AVAILABLE);
-
+		
 		$requests = Requests::where('requests.confirmed_provider', '=', $provider->id)
 							->whereNotIn('requests.status', $check_status)
-							->orWhere(function($q) {
-						          $q->where('provider_status', PROVIDER_SERVICE_COMPLETED)
-						            ->where('requests.status', REQUEST_COMPLETED);
-						      })
+							->whereNotIn('requests.provider_status', array(PROVIDER_RATED))
+							->orWhere(function($q) use ($provider) {
+						 	         $q->where('requests.confirmed_provider', $provider->id)
+						 	         	->where('provider_status', PROVIDER_SERVICE_COMPLETED)						          	
+						 	           ->where('requests.status', REQUEST_COMPLETED);
+						 	     })
 							->leftJoin('users', 'users.id', '=', 'requests.user_id')
                             ->leftJoin('service_types', 'service_types.id', '=', 'requests.request_type')
 							->orderBy('provider_status','desc')
@@ -1499,6 +1501,8 @@ class ProviderApiController extends Controller
 								'requests.id as request_id',
 								'requests.request_type as request_type',
 								'service_types.name as service_type_name',
+								'requests.after_image as after_image',
+                                'requests.before_image as before_image',
 								'request_start_time as request_start_time',
 								'requests.status', 'requests.provider_status',
 								'requests.amount',
@@ -1524,12 +1528,17 @@ class ProviderApiController extends Controller
                 $allowed_status = array(REQUEST_COMPLETE_PENDING,WAITING_FOR_PROVIDER_CONFRIMATION_COD,REQUEST_COMPLETED,REQUEST_RATING);
 
                 if( in_array($each_request['status'], $allowed_status)) {
-                    $invoice = RequestPayment::where('request_id' , $each_request['request_id'])
+
+                	$user = User::find($each_request['user_id']);
+
+                    $invoice_query = RequestPayment::where('request_id' , $each_request['request_id'])
                                     ->leftJoin('requests' , 'request_payments.request_id' , '=' , 'requests.id')
                                     ->leftJoin('users' , 'requests.user_id' , '=' , 'users.id')
-                                    ->leftJoin('cards' , 'users.default_card' , '=' , 'cards.id')
-                                    ->where('cards.is_default' , DEFAULT_TRUE)
-                                    ->select('requests.confirmed_provider as provider_id' , 'request_payments.total_time',
+                                    ->leftJoin('cards' , 'users.default_card' , '=' , 'cards.id');
+                    if($user->payment_mode == CARD) {
+                        $invoice_query = $invoice_query->where('cards.is_default' , DEFAULT_TRUE) ;  
+                    }
+                    $invoice = $invoice_query->select('requests.confirmed_provider as provider_id' , 'request_payments.total_time',
                                         'request_payments.payment_mode as payment_mode' , 'request_payments.base_price',
                                         'request_payments.time_price' , 'request_payments.tax_price' , 'request_payments.total',
                                         'cards.card_token','cards.customer_id','cards.last_four')

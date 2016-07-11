@@ -68,11 +68,12 @@ define('REQUEST_NEW',        0);
 define('REQUEST_WAITING',      1);
 define('REQUEST_INPROGRESS',    2);
 define('REQUEST_COMPLETE_PENDING',  3);
+define('WAITING_FOR_PROVIDER_CONFRIMATION_COD',  8);
 define('REQUEST_RATING',      4);                                                                      
 define('REQUEST_COMPLETED',      5);
 define('REQUEST_CANCELLED',      6);
 define('REQUEST_NO_PROVIDER_AVAILABLE',7);
-define('WAITING_FOR_PROVIDER_CONFRIMATION_COD',  8);
+
 
 //Only when manual request
 define('REQUEST_REJECTED_BY_PROVIDER', 9);
@@ -1238,6 +1239,8 @@ class UserapiController extends Controller
 
     public function request_status_check(Request $request) {
 
+        $user = User::find($request->id);
+
         $check_status = array(REQUEST_COMPLETED,REQUEST_CANCELLED,REQUEST_NO_PROVIDER_AVAILABLE);
 
         $requests = Requests::where('requests.user_id', '=', $request->id)
@@ -1280,12 +1283,16 @@ class UserapiController extends Controller
                 $allowed_status = array(REQUEST_COMPLETE_PENDING,REQUEST_COMPLETED,REQUEST_RATING);
 
                 if( in_array($req['status'], $allowed_status)) {
-                    $invoice = RequestPayment::where('request_id' , $req['request_id'])
+
+                    $invoice_query = RequestPayment::where('request_id' , $req['request_id'])
                                     ->leftJoin('requests' , 'request_payments.request_id' , '=' , 'requests.id')
                                     ->leftJoin('users' , 'requests.user_id' , '=' , 'users.id')
-                                    ->leftJoin('cards' , 'users.default_card' , '=' , 'cards.id')
-                                    ->where('cards.is_default' , DEFAULT_TRUE)
-                                    ->select('requests.confirmed_provider as provider_id' , 'request_payments.total_time',
+                                    ->leftJoin('cards' , 'users.default_card' , '=' , 'cards.id');
+                    if($user->payment_mode == CARD) {
+                        $invoice_query = $invoice_query->where('cards.is_default' , DEFAULT_TRUE) ;  
+                    }
+
+                    $invoice = $invoice_query->select('requests.confirmed_provider as provider_id' , 'request_payments.total_time',
                                         'request_payments.payment_mode as payment_mode' , 'request_payments.base_price',
                                         'request_payments.time_price' , 'request_payments.tax_price' , 'request_payments.total',
                                         'cards.card_token','cards.customer_id','cards.last_four')
@@ -1293,7 +1300,7 @@ class UserapiController extends Controller
                 }
             }
         }
-
+        
         $response_array = Helper::null_safe(array(
             'success' => true,
             'data' => $requests_data,
