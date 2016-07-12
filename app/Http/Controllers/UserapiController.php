@@ -1632,11 +1632,9 @@ class UserapiController extends Controller
                 $providers[] = $fav_provider;
             }
 
-            $response_array = Helper::null_safe(array('success' => true , 'providers' => $providers));
-
-        } else {
-            $response_array = array('success' => false , 'error' => Helper::get_error_message(132) , 'error_code' => 132);
         }
+
+        $response_array = Helper::null_safe(array('success' => true , 'providers' => $providers));
 
         return response()->json($response_array,200);
     
@@ -1720,7 +1718,7 @@ class UserapiController extends Controller
                                 ->leftJoin('user_ratings' , 'requests.id','=' , 'user_ratings.request_id')
                                 ->leftJoin('request_payments' , 'requests.id','=' , 'request_payments.request_id')
                                 ->leftJoin('cards','users.default_card','=' , 'cards.id')
-                                ->select('providers.id as provider_id' , 'providers.picture as provider_picture',
+                                ->select('providers.id as provider_id' , 'providers.picture as provider_picture','request_payments.payment_mode as payment_mode',
                                     DB::raw('CONCAT(providers.first_name, " ", providers.last_name) as provider_name'),'user_ratings.rating','user_ratings.comment',
                                      DB::raw('ROUND(request_payments.base_price) as base_price'), DB::raw('ROUND(request_payments.tax_price) as tax_price'),
                                      DB::raw('ROUND(request_payments.time_price) as time_price'), DB::raw('ROUND(request_payments.total) as total'),
