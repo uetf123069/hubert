@@ -1708,6 +1708,7 @@ class UserapiController extends Controller
                                 ->leftJoin('users' , 'requests.user_id','=' , 'users.id')
                                 ->leftJoin('user_ratings' , 'requests.id','=' , 'user_ratings.request_id')
                                 ->leftJoin('request_payments' , 'requests.id','=' , 'request_payments.request_id')
+                                ->leftJoin('service_types', 'service_types.id', '=', 'requests.request_type')
                                 ->leftJoin('cards','users.default_card','=' , 'cards.id')
                                 ->select('providers.id as provider_id' , 'providers.picture as provider_picture','request_payments.payment_mode as payment_mode',
                                     DB::raw('CONCAT(providers.first_name, " ", providers.last_name) as provider_name'),'user_ratings.rating','user_ratings.comment',
@@ -1717,6 +1718,9 @@ class UserapiController extends Controller
                                     'cards.card_token','cards.last_four',
                                     'requests.id as request_id','requests.before_image','requests.after_image',
                                     'requests.user_id as user_id',
+                                    'requests.request_type as request_type',
+                                    'service_types.name as service_type_name',
+                                    'service_types.provider_name as service_provider_name',
                                     DB::raw('CONCAT(users.first_name, " ", users.last_name) as user_name'))
                                 ->get()->toArray();
 
