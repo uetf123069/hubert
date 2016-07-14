@@ -117,6 +117,7 @@ class UserapiController extends Controller
     {
         $response_array = array();
         $operation = false;
+        $new_user = DEFAULT_TRUE;
 
         // validate basic field
 
@@ -152,22 +153,12 @@ class UserapiController extends Controller
                                 'social_unique_id' => 'required',
                                 'first_name' => 'required|max:255',
                                 'last_name' => 'max:255',
-                                'email' => 'email|max:255',
+                                'email' => 'required|email|max:255',
                                 'mobile' => 'digits_between:6,13',
                                 'picture' => 'mimes:jpeg,jpg,bmp,png',
                                 'gender' => 'in:male,female,others',
                             )
                         );
-
-                // validate social_unique_id and email existence 
-
-                $socialEmailValidator = Validator::make(
-                    $request->all(),
-                    array(
-                        'social_unique_id' => 'unique:users,social_unique_id',
-                        'email' => 'unique:users,email'
-                    )
-                );
 
                 if($socialValidator->fails()) {
 
@@ -176,13 +167,14 @@ class UserapiController extends Controller
 
                     Log::info('Registration social validation failed');
 
-                } elseif($socialEmailValidator->fails()) {
+                }else {
+                    
+                    $check_social_user = User::where('email' , $request->email)->first();
+                    
+                    if($check_social_user) {
+                        $new_user = DEFAULT_FALSE;
+                    }
 
-                    $error_messages = implode(',', $socialEmailValidator->messages()->all());
-                    $response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101, 'error_messages'=> $error_messages);
-                    Log::info('Registration manual email validation failed');
-
-                } else {
                     Log::info('Registration passed social validation');
                     $operation = true;
                 }
@@ -208,7 +200,7 @@ class UserapiController extends Controller
                 $emailValidator = Validator::make(
                     $request->all(),
                     array(
-                        'email' => 'unique:users,email'
+                        'email' => 'unique:users,email',
                     )
                 );
 
@@ -228,42 +220,37 @@ class UserapiController extends Controller
                     Log::info('Registration passed manual validation');
                     $operation = true;
                 }
+            
             }
 
             if($operation) {
 
                 // Creating the user
-
-                $first_name = $request->first_name;
-                $last_name = $request->last_name;
-                $email = $request->email;
-                $mobile = $request->mobile;
-                $password = $request->password;
-                $picture = $request->file('picture');
-                $device_token = $request->device_token;
-                $device_type = $request->device_type;
-                $login_by = $request->login_by;
-                $social_unique_id = $request->social_unique_id;
-
-                $user = new User;
-                $user->first_name = $first_name;
-                $user->last_name = $last_name;
-                $user->email = $email;
-                $user->mobile = $mobile!=NULL ? $mobile : '';
-                $user->password = $password!=NULL ? Hash::make($password) : '';
-                if($request->has('gender')) {
-                    $user->gender = $request->gender;
+                if($new_user) {
+                    $user = new User;
+                } else {
+                    $user = $check_social_user;
                 }
+
+                $user->first_name = $request->has('first_name') ? $request->first_name : "";
+                $user->last_name =  $request->has('last_name') ? $request->last_name : "";
+                
+                $user->mobile = $request->has('mobile')? $request->mobile : "";
+
+                if($request->has('password'))
+                    $user->password = Hash::make($request->password);
+
+                $user->gender = $request->has('gender') ? $request->gender : "male";
                 
                 $user->token = Helper::generate_token();
                 $user->token_expiry = Helper::generate_token_expiry();
-                $user->device_token = $device_token;
-                $user->device_type = $device_type;
-                $user->login_by = $login_by;
-                $user->social_unique_id = $social_unique_id!=NULL ? $social_unique_id : '';
+                $user->device_token = $request->has('device_token') ? $request->device_token : "";
+                $user->device_type = $request->has('device_type') ? $request->device_type : "";
+                $user->login_by = $request->has('login_by') ? $request->login_by : "";
+                $user->social_unique_id = $request->has('social_unique_id') ? $request->social_unique_id : '';
 
                 // Upload picture
-                $user->picture = Helper::upload_picture($picture);
+                $user->picture = Helper::upload_picture($request->file('picture'));
 
                 $user->is_activated = 1;
                 $user->is_approved = 1;
@@ -279,11 +266,13 @@ class UserapiController extends Controller
                 $payment_mode_status = $user->payment_mode ? $user->payment_mode : 0;
 
                 // Send welcome email to the new user:
-                $subject = Helper::tr('user_welcome_title');
-                $email_data = $user;
-                $page = "emails.user.welcome";
-                $email = $user->email;
-                Helper::send_email($page,$subject,$email,$email_data);
+                if($new_user) {
+                    $subject = Helper::tr('user_welcome_title');
+                    $email_data = $user;
+                    $page = "emails.user.welcome";
+                    $email = $user->email;
+                    Helper::send_email($page,$subject,$email,$email_data);
+                }
 
                 // Response with registered user details:
 
