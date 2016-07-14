@@ -746,6 +746,8 @@ class UserapiController extends Controller
     // Automated Request
     public function send_request(Request $request) {
 
+        Log::info('send_request'.print_r($request->all()));
+
         $validator = Validator::make(
                 $request->all(),
                 array(
