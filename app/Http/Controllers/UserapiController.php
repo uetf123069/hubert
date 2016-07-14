@@ -228,12 +228,19 @@ class UserapiController extends Controller
                 // Creating the user
                 if($new_user) {
                     $user = new User;
+                    // Settings table - COD Check is enabled 
+                    if(Settings::where('key' , COD)->where('value' , DEFAULT_TRUE)->first()) {
+                        // Save the default payment method
+                        $user->payment_mode = COD;
+                    }
+
                 } else {
                     $user = $check_social_user;
                 }
 
                 $user->first_name = $request->has('first_name') ? $request->first_name : "";
                 $user->last_name =  $request->has('last_name') ? $request->last_name : "";
+                $user->email =  $request->has('email') ? $request->email : "";
                 
                 $user->mobile = $request->has('mobile')? $request->mobile : "";
 
@@ -255,12 +262,7 @@ class UserapiController extends Controller
                 $user->is_activated = 1;
                 $user->is_approved = 1;
 
-                // Settings table - COD Check is enabled 
-                if(Settings::where('key' , COD)->where('value' , DEFAULT_TRUE)->first()) {
-                    // Save the default payment method
-                    $user->payment_mode = COD;
-                }
-
+               
                 $user->save();
 
                 $payment_mode_status = $user->payment_mode ? $user->payment_mode : 0;
