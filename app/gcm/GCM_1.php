@@ -5,13 +5,7 @@
  * and open the template in the editor.
  */
 
-/**
- * Description of GCM
- *
- * @author Ravi Tamada
- */
-define("GOOGLE_API_KEY", "AIzaSyC4beuacZLNddstDIF2kNfZANfzQOuHTYk");
-/*define("GOOGLE_API_KEY", "AIzaSyC0JjF-O72-gUvUmUm_dsHHvG5o3aWosp8");*/
+define("GOOGLE_API_KEY", "AIzaSyAaCR_zQmLD0p1WFYetrJHjlzY809amX9g");
 
 //change the browser key from admin panel
 

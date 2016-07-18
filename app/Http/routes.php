@@ -88,6 +88,7 @@ Route::group(['prefix' => 'userApi'], function(){
 
 });
 
+Route::get('/serviceList' , 'HomeController@service_list');
 
 Route::group(['prefix' => 'providerApi'], function(){
 
