@@ -279,22 +279,24 @@ class ProviderApiController extends Controller
 					}
 				}
 
-				// Send welcome email to the new provider
-	            $email_data = array();
-	            $subject = Helper::tr('provider_welcome_title');
-	            $email_data  = $provider;
-	            $page = "emails.provider.welcome";
-	            $email_send = Helper::send_email($page,$subject,$provider->email,$email_data);
+				if($new_user) {
+					// Send welcome email to the new provider
+		            $email_data = array();
+		            $subject = Helper::tr('provider_welcome_title');
+		            $email_data  = $provider;
+		            $page = "emails.provider.welcome";
+		            $email_send = Helper::send_email($page,$subject,$provider->email,$email_data);
 
-	            // Send mail notification to the Admin
-	            $email_data = array(); $admin_email = "appoetstest@gmail.com";
-	            $subject = Helper::tr('new_provider_signup');
-	            if($admin = Admin::first()) {
-	            	$admin_email = $admin->email;
-	            }
-	            $email_data  = $provider;
-	            $page = "emails.admin_new_provider_notify";
-	            $email_send = Helper::send_email($page,$subject,$admin_email,$email_data);
+		            // Send mail notification to the Admin
+		            $email_data = array(); $admin_email = "appoetstest@gmail.com";
+		            $subject = Helper::tr('new_provider_signup');
+		            if($admin = Admin::first()) {
+		            	$admin_email = $admin->email;
+		            }
+		            $email_data  = $provider;
+		            $page = "emails.admin_new_provider_notify";
+		            $email_send = Helper::send_email($page,$subject,$admin_email,$email_data);
+		        }
                
             	Log::info("New provider registration: ".print_r($provider, true));
 
