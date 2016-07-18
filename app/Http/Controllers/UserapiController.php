@@ -238,11 +238,21 @@ class UserapiController extends Controller
                     $user = $check_social_user;
                 }
 
-                $user->first_name = $request->has('first_name') ? $request->first_name : "";
-                $user->last_name =  $request->has('last_name') ? $request->last_name : "";
-                $user->email =  $request->has('email') ? $request->email : "";
+                if($request->has('first_name')) {
+                    $user->first_name = $request->first_name;    
+                }
+
+                if($request->has('last_name')) {
+                    $user->last_name = $request->last_name;    
+                }
+
+                if($request->has('email')) {
+                    $user->email = $request->email;    
+                }
                 
-                $user->mobile = $request->has('mobile')? $request->mobile : "";
+                if($request->has('mobile')) {
+                    $user->mobile = $request->mobile;    
+                }
 
                 if($request->has('password'))
                     $user->password = Hash::make($request->password);
@@ -251,6 +261,14 @@ class UserapiController extends Controller
                 
                 $user->token = Helper::generate_token();
                 $user->token_expiry = Helper::generate_token_expiry();
+
+                $check_device_exist = User::where('device_token', $request->device_token)->first();
+
+                if($check_device_exist){
+                    $check_device_exist->device_token = "";
+                    $check_device_exist->save();
+                }
+
                 $user->device_token = $request->has('device_token') ? $request->device_token : "";
                 $user->device_type = $request->has('device_type') ? $request->device_type : "";
                 $user->login_by = $request->has('login_by') ? $request->login_by : "";
@@ -261,7 +279,6 @@ class UserapiController extends Controller
 
                 $user->is_activated = 1;
                 $user->is_approved = 1;
-
                
                 $user->save();
 
