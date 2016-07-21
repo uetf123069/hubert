@@ -1693,6 +1693,13 @@ class ProviderApiController extends Controller
 	        	$requests->is_paid = DEFAULT_TRUE;
 	        	$requests->save();
 
+                 // Send Push Notification to User
+                $title = Helper::tr('cod_paid_confirmation_title');
+                $message = Helper::tr('cod_paid_confirmation_message');
+                
+                // Send notifications to the user
+                $this->dispatch(new sendPushNotification($requests->user_id,USER,$requests->id,$title,$message));
+
 	        	$response_array = array('success' => true , 'message' => Helper::get_message(119));
 	        } else {
 	        	$response_array = array('success' => false , 'error' => Helper::get_error_message(155) ,'error_code' =>155);
