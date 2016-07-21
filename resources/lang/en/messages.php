@@ -85,6 +85,9 @@ return array(
 	'user_rated_by_provider_title' => 'Provider Rated',
 	'user_rated_by_provider_message' => 'The provider rated your service.',
 
+	'cod_paid_confirmation_title' => "Provider confirmed COD payment.",
+	'cod_paid_confirmation_message' => "Provider confirmed your COD payment.",
+
 	// User
 	'request_complete_payment_title' => "Your Request is completed.Please check the invoice details",
 
