@@ -1279,7 +1279,8 @@ class ProviderApiController extends Controller
 
 	            // Send Push Notification to User
 	            $title = Helper::tr('request_complete_payment_title');
-	            $message = $invoice_data;
+                // $message = $invoice_data;
+	            $message = Helper::tr('request_complete_payment_message');
 
 	            $this->dispatch( new sendPushNotification($requests->user_id, USER,$requests->id,$title, $message));
 

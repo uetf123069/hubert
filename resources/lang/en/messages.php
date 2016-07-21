@@ -89,7 +89,9 @@ return array(
 	'cod_paid_confirmation_message' => "Provider confirmed your COD payment.",
 
 	// User
-	'request_complete_payment_title' => "Your Request is completed.Please check the invoice details",
+	'request_complete_payment_title' => "Request is completed.",
+
+	'request_complete_payment_message' => "Your Request is completed.Please check the invoice details",
 
 	'cron_no_provider_title' => 'No Provider Available', 
 	'cron_no_provider_message' => 'No provider available to take the service.',
