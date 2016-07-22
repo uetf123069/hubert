@@ -116,6 +116,7 @@ class ProviderApiController extends Controller
                 'device_type' => 'required|in:'.DEVICE_ANDROID.','.DEVICE_IOS,
                 'device_token' => 'required',
                 'login_by' => 'required|in:manual,facebook,google',
+                'service_type' => 'numeric|exists:service_types,id',
             )
         );
 
@@ -270,8 +271,18 @@ class ProviderApiController extends Controller
                 $provider->save();
 
                 if($provider) {
+
 					if($request->has('service_type')) {
-						$provider_service = new  ProviderService;
+
+                        $check_provider_service = ProviderService::where('provider_id' , $provider->id)
+                                                ->first();
+
+                        if(!$check_provider_service) {
+                            $provider_service = new ProviderService;
+                        } else {
+                            $provider_service = $check_provider_service;
+                        }
+
 						$provider_service->provider_id = $provider->id;
 						$provider_service->service_type_id = $request->service_type;
 						$provider_service->is_available = DEFAULT_TRUE;
@@ -534,22 +545,22 @@ class ProviderApiController extends Controller
 	
 	public function profile(Request $request)
 	{
-		$provider = Provider::find($request->id);
-
-        // Generate new tokens
-        // $provider->token = Helper::generate_token();
-        // $provider->token_expiry = Helper::generate_token_expiry();
-        // $provider->token_refresh = Helper::generate_token();
-        // $provider->save();
+		$provider = Provider::where('providers.id' ,$request->id)
+                        ->leftJoin('provider_services' , 'providers.id' , '=' , 'provider_services.provider_id')
+                        ->leftJoin('service_types' , 'provider_services.service_type_id' , '=' , 'service_types.id')
+                        ->select('providers.*' , 'service_types.id as service_type' , 'service_types.provider_name' , 'service_types.name as service_name')
+                        ->first();
 
 		$response_array = array(
             'success' => true,
             'id' => $provider->id,
+            'email' => $provider->email,
             'first_name' => $provider->first_name,
             'last_name' => $provider->last_name,
             'mobile' => $provider->mobile,
-            'email' => $provider->email,
             'picture' => $provider->picture,
+            'service_type' => $provider->service_type,
+            'service_name' => $provider->service_name,
             'token' => $provider->token,
             'token_expiry' => $provider->token_expiry,
             'active' => boolval($provider->is_activated)
@@ -570,7 +581,8 @@ class ProviderApiController extends Controller
 					'mobile' => 'required|digits_between:6,13',
 					'picture' => 'mimes:jpeg,bmp,png',
 					'gender' => 'in:male,female,others',
-					'email' => 'email|max:255|unique:providers,email,'.$request->id
+					'email' => 'email|max:255|unique:providers,email,'.$request->id,
+                    'service_type' => 'numeric|exists:service_types,id',
 				),
 				array(
 						'unique' => 'Email ID already exists',
@@ -630,24 +642,20 @@ class ProviderApiController extends Controller
 
 				$service_type_id = $request->service_type_id;
 
-				if($check_service = ServiceType::find($request->service_type)) {
+				$check_provider_service = ProviderService::where('provider_id' , $request->id)
+											->first();
 
-					$check_provider_service = ProviderService::where('service_type_id', $request->service_type)
-												->where('provider_id' , $request->id)
-												->first();
-
-					if(!$check_provider_service) {
-						$provider_service = new ProviderService;
-					} else {
-						$provider_service = $check_provider_service;
-					}
-
-					$provider_service->provider_id = $request->id;
-					$provider_service->service_type_id = $request->service_type;
-					$provider_service->is_available = DEFAULT_TRUE;
-					$provider_service->save();
-				
+				if(!$check_provider_service) {
+					$provider_service = new ProviderService;
+				} else {
+					$provider_service = $check_provider_service;
 				}
+
+				$provider_service->provider_id = $request->id;
+				$provider_service->service_type_id = $request->service_type;
+				$provider_service->is_available = DEFAULT_TRUE;
+				$provider_service->save();
+				
 			
 			}
 
