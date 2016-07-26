@@ -34,6 +34,8 @@ use App\Settings;
 
 use App\ProviderRating;
 
+use App\UserRating;
+
 use App\Cards;
 
 use App\ChatMessage;
@@ -954,20 +956,31 @@ class ProviderApiController extends Controller
                     // No longer need request specific rows from RequestMeta
                     RequestsMeta::where('request_id', '=', $request_id)->delete();
 
+                    $user = User::find($requests->user_id);
+                    $services = ServiceType::find($requests->request_type);
+
                     $requestData = array(
                         'request_id' => $requests->id,
                         'user_id' => $requests->user_id,
                         'request_type' => $requests->request_type,
+                        'status' => $requests->status,
+                        'provider_status' => $requests->provider_status,
+                        's_longitude' => $requests->s_longitude,
+                        's_latitude' => $requests->s_latitude,
+                        'service_type_name' => $services->name,
+                        'user_name' => $user->first_name." ".$user->last_name,
+                        'user_picture' => $user->picture,
+                        'user_mobile' => $user->mobile,
+                        'user_rating' => UserRating::where('user_id', $requests->user_id)->avg('rating') ?: 0,
                     );
                     $response_array = Helper::null_safe(array(
                         'success' => true,
+                        'message' => Helper::get_message(111),
                         'data' => $requestData,
-                        'message' => Helper::get_message(111)
                         ));
                 }
             }
 		}
-		// Send Notification to User
 		
 		$response = response()->json($response_array , 200);
 		return $response;
