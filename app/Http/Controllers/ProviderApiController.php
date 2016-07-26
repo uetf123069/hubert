@@ -404,6 +404,7 @@ class ProviderApiController extends Controller
 						$response_array = array(
                             'success' => true,
                             'id' => $provider->id,
+                            'name' => $provider->first_name.' '.$provider->last_name,
                             'first_name' => $provider->first_name,
                             'last_name' => $provider->last_name,
                             'mobile' => $provider->mobile,

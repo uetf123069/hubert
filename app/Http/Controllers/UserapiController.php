@@ -434,7 +434,9 @@ class UserapiController extends Controller
                 $response_array = array(
                     'success' => true,
                     'id' => $user->id,
-                    'name' => $user->name,
+                    'name' => $user->first_name.' '.$user->last_name,
+                    'first_name' => $user->first_name,
+                    'last_name' => $user->last_name,
                     'mobile' => $user->mobile,
                     'email' => $user->email,
                     'gender' => $user->gender,
