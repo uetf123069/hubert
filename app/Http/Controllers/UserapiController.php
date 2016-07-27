@@ -271,12 +271,14 @@ class UserapiController extends Controller
 
                 $user->device_token = $request->has('device_token') ? $request->device_token : "";
                 $user->device_type = $request->has('device_type') ? $request->device_type : "";
-                $user->login_by = $request->has('login_by') ? $request->login_by : "";
+                $user->login_by = $request->has('login_by') ? $request->login_by : "manual";
                 $user->social_unique_id = $request->has('social_unique_id') ? $request->social_unique_id : '';
 
                 // Upload picture
-                $user->picture = Helper::upload_picture($request->file('picture'));
-
+                if($request->hasFile('picture')) {
+                    $user->picture = Helper::upload_picture($request->file('picture'));    
+                }
+                
                 $user->is_activated = 1;
                 $user->is_approved = 1;
                
