@@ -626,6 +626,18 @@ class AdminController extends Controller
                     $temp_setting->value = $logo;
                     $temp_setting->save();
                 }
+                else if($temp_setting->key == 'mail_logo'){
+                    $picture = $request->file('email_logo');
+                    if($picture == null){
+                    $logo = $temp_setting->value;
+                    }
+                    else
+                    {
+                        $logo = Helper::upload_picture($picture);
+                    }
+                    $temp_setting->value = $logo;
+                    $temp_setting->save();
+                }
                 
                    else if($temp_setting->key == 'card'){
                         if($request->$key==1)

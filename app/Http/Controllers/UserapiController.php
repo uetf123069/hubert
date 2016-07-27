@@ -68,11 +68,12 @@ define('REQUEST_NEW',        0);
 define('REQUEST_WAITING',      1);
 define('REQUEST_INPROGRESS',    2);
 define('REQUEST_COMPLETE_PENDING',  3);
+define('WAITING_FOR_PROVIDER_CONFRIMATION_COD',  8);
 define('REQUEST_RATING',      4);                                                                      
 define('REQUEST_COMPLETED',      5);
 define('REQUEST_CANCELLED',      6);
 define('REQUEST_NO_PROVIDER_AVAILABLE',7);
-define('WAITING_FOR_PROVIDER_CONFRIMATION_COD',  8);
+
 
 //Only when manual request
 define('REQUEST_REJECTED_BY_PROVIDER', 9);
@@ -116,6 +117,7 @@ class UserapiController extends Controller
     {
         $response_array = array();
         $operation = false;
+        $new_user = DEFAULT_TRUE;
 
         // validate basic field
 
@@ -151,22 +153,12 @@ class UserapiController extends Controller
                                 'social_unique_id' => 'required',
                                 'first_name' => 'required|max:255',
                                 'last_name' => 'max:255',
-                                'email' => 'email|max:255',
+                                'email' => 'required|email|max:255',
                                 'mobile' => 'digits_between:6,13',
                                 'picture' => 'mimes:jpeg,jpg,bmp,png',
                                 'gender' => 'in:male,female,others',
                             )
                         );
-
-                // validate social_unique_id and email existence 
-
-                $socialEmailValidator = Validator::make(
-                    $request->all(),
-                    array(
-                        'social_unique_id' => 'unique:users,social_unique_id',
-                        'email' => 'unique:users,email'
-                    )
-                );
 
                 if($socialValidator->fails()) {
 
@@ -175,13 +167,14 @@ class UserapiController extends Controller
 
                     Log::info('Registration social validation failed');
 
-                } elseif($socialEmailValidator->fails()) {
+                }else {
+                    
+                    $check_social_user = User::where('email' , $request->email)->first();
+                    
+                    if($check_social_user) {
+                        $new_user = DEFAULT_FALSE;
+                    }
 
-                    $error_messages = implode(',', $socialEmailValidator->messages()->all());
-                    $response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101, 'error_messages'=> $error_messages);
-                    Log::info('Registration manual email validation failed');
-
-                } else {
                     Log::info('Registration passed social validation');
                     $operation = true;
                 }
@@ -207,7 +200,7 @@ class UserapiController extends Controller
                 $emailValidator = Validator::make(
                     $request->all(),
                     array(
-                        'email' => 'unique:users,email'
+                        'email' => 'unique:users,email',
                     )
                 );
 
@@ -227,68 +220,87 @@ class UserapiController extends Controller
                     Log::info('Registration passed manual validation');
                     $operation = true;
                 }
+            
             }
 
             if($operation) {
 
                 // Creating the user
+                if($new_user) {
+                    $user = new User;
+                    // Settings table - COD Check is enabled 
+                    if(Settings::where('key' , COD)->where('value' , DEFAULT_TRUE)->first()) {
+                        // Save the default payment method
+                        $user->payment_mode = COD;
+                    }
 
-                $first_name = $request->first_name;
-                $last_name = $request->last_name;
-                $email = $request->email;
-                $mobile = $request->mobile;
-                $password = $request->password;
-                $picture = $request->file('picture');
-                $device_token = $request->device_token;
-                $device_type = $request->device_type;
-                $login_by = $request->login_by;
-                $social_unique_id = $request->social_unique_id;
-
-                $user = new User;
-                $user->first_name = $first_name;
-                $user->last_name = $last_name;
-                $user->email = $email;
-                $user->mobile = $mobile!=NULL ? $mobile : '';
-                $user->password = $password!=NULL ? Hash::make($password) : '';
-                if($request->has('gender')) {
-                    $user->gender = $request->gender;
+                } else {
+                    $user = $check_social_user;
                 }
+
+                if($request->has('first_name')) {
+                    $user->first_name = $request->first_name;    
+                }
+
+                if($request->has('last_name')) {
+                    $user->last_name = $request->last_name;    
+                }
+
+                if($request->has('email')) {
+                    $user->email = $request->email;    
+                }
+                
+                if($request->has('mobile')) {
+                    $user->mobile = $request->mobile;    
+                }
+
+                if($request->has('password'))
+                    $user->password = Hash::make($request->password);
+
+                $user->gender = $request->has('gender') ? $request->gender : "male";
                 
                 $user->token = Helper::generate_token();
                 $user->token_expiry = Helper::generate_token_expiry();
-                $user->device_token = $device_token;
-                $user->device_type = $device_type;
-                $user->login_by = $login_by;
-                $user->social_unique_id = $social_unique_id!=NULL ? $social_unique_id : '';
 
-                // Upload picture
-                $user->picture = Helper::upload_picture($picture);
+                $check_device_exist = User::where('device_token', $request->device_token)->first();
 
-                $user->is_activated = 1;
-                $user->is_approved = 1;
-
-                // Settings table - COD Check is enabled 
-                if(Settings::where('key' , COD)->where('value' , DEFAULT_TRUE)->first()) {
-                    // Save the default payment method
-                    $user->payment_mode = COD;
+                if($check_device_exist){
+                    $check_device_exist->device_token = "";
+                    $check_device_exist->save();
                 }
 
+                $user->device_token = $request->has('device_token') ? $request->device_token : "";
+                $user->device_type = $request->has('device_type') ? $request->device_type : "";
+                $user->login_by = $request->has('login_by') ? $request->login_by : "manual";
+                $user->social_unique_id = $request->has('social_unique_id') ? $request->social_unique_id : '';
+
+                // Upload picture
+                if($request->hasFile('picture')) {
+                    $user->picture = Helper::upload_picture($request->file('picture'));    
+                }
+                
+                $user->is_activated = 1;
+                $user->is_approved = 1;
+               
                 $user->save();
 
                 $payment_mode_status = $user->payment_mode ? $user->payment_mode : 0;
 
                 // Send welcome email to the new user:
-                $subject = Helper::tr('user_welcome_title');
-                $email_data = $user;
-                $page = "emails.user.welcome";
-                $email = $user->email;
-                Helper::send_email($page,$subject,$email,$email_data);
+                if($new_user) {
+                    $subject = Helper::tr('user_welcome_title');
+                    $email_data = $user;
+                    $page = "emails.user.welcome";
+                    $email = $user->email;
+                    Helper::send_email($page,$subject,$email,$email_data);
+                }
 
                 // Response with registered user details:
 
                 $response_array = array(
                     'success' => true,
                     'id' => $user->id,
+                    'name' => $user->first_name.' '.$user->last_name,
                     'first_name' => $user->first_name,
                     'last_name' => $user->last_name,
                     'mobile' => $user->mobile,
@@ -425,7 +437,9 @@ class UserapiController extends Controller
                 $response_array = array(
                     'success' => true,
                     'id' => $user->id,
-                    'name' => $user->name,
+                    'name' => $user->first_name.' '.$user->last_name,
+                    'first_name' => $user->first_name,
+                    'last_name' => $user->last_name,
                     'mobile' => $user->mobile,
                     'email' => $user->email,
                     'gender' => $user->gender,
@@ -753,6 +767,8 @@ class UserapiController extends Controller
 
     // Automated Request
     public function send_request(Request $request) {
+
+        Log::info('send_request'.print_r($request->all() ,true));
 
         $validator = Validator::make(
                 $request->all(),
@@ -1238,6 +1254,8 @@ class UserapiController extends Controller
 
     public function request_status_check(Request $request) {
 
+        $user = User::find($request->id);
+
         $check_status = array(REQUEST_COMPLETED,REQUEST_CANCELLED,REQUEST_NO_PROVIDER_AVAILABLE);
 
         $requests = Requests::where('requests.user_id', '=', $request->id)
@@ -1280,12 +1298,16 @@ class UserapiController extends Controller
                 $allowed_status = array(REQUEST_COMPLETE_PENDING,REQUEST_COMPLETED,REQUEST_RATING);
 
                 if( in_array($req['status'], $allowed_status)) {
-                    $invoice = RequestPayment::where('request_id' , $req['request_id'])
+
+                    $invoice_query = RequestPayment::where('request_id' , $req['request_id'])
                                     ->leftJoin('requests' , 'request_payments.request_id' , '=' , 'requests.id')
                                     ->leftJoin('users' , 'requests.user_id' , '=' , 'users.id')
-                                    ->leftJoin('cards' , 'users.default_card' , '=' , 'cards.id')
-                                    ->where('cards.is_default' , DEFAULT_TRUE)
-                                    ->select('requests.confirmed_provider as provider_id' , 'request_payments.total_time',
+                                    ->leftJoin('cards' , 'users.default_card' , '=' , 'cards.id');
+                    if($user->payment_mode == CARD) {
+                        $invoice_query = $invoice_query->where('cards.is_default' , DEFAULT_TRUE) ;  
+                    }
+
+                    $invoice = $invoice_query->select('requests.confirmed_provider as provider_id' , 'request_payments.total_time',
                                         'request_payments.payment_mode as payment_mode' , 'request_payments.base_price',
                                         'request_payments.time_price' , 'request_payments.tax_price' , 'request_payments.total',
                                         'cards.card_token','cards.customer_id','cards.last_four')
@@ -1293,7 +1315,7 @@ class UserapiController extends Controller
                 }
             }
         }
-
+        
         $response_array = Helper::null_safe(array(
             'success' => true,
             'data' => $requests_data,
@@ -1625,11 +1647,9 @@ class UserapiController extends Controller
                 $providers[] = $fav_provider;
             }
 
-            $response_array = Helper::null_safe(array('success' => true , 'providers' => $providers));
-
-        } else {
-            $response_array = array('success' => false , 'error' => Helper::get_error_message(132) , 'error_code' => 132);
         }
+
+        $response_array = Helper::null_safe(array('success' => true , 'providers' => $providers));
 
         return response()->json($response_array,200);
     
@@ -1712,8 +1732,9 @@ class UserapiController extends Controller
                                 ->leftJoin('users' , 'requests.user_id','=' , 'users.id')
                                 ->leftJoin('user_ratings' , 'requests.id','=' , 'user_ratings.request_id')
                                 ->leftJoin('request_payments' , 'requests.id','=' , 'request_payments.request_id')
+                                ->leftJoin('service_types', 'service_types.id', '=', 'requests.request_type')
                                 ->leftJoin('cards','users.default_card','=' , 'cards.id')
-                                ->select('providers.id as provider_id' , 'providers.picture as provider_picture',
+                                ->select('providers.id as provider_id' , 'providers.picture as provider_picture','request_payments.payment_mode as payment_mode',
                                     DB::raw('CONCAT(providers.first_name, " ", providers.last_name) as provider_name'),'user_ratings.rating','user_ratings.comment',
                                      DB::raw('ROUND(request_payments.base_price) as base_price'), DB::raw('ROUND(request_payments.tax_price) as tax_price'),
                                      DB::raw('ROUND(request_payments.time_price) as time_price'), DB::raw('ROUND(request_payments.total) as total'),
@@ -1721,6 +1742,9 @@ class UserapiController extends Controller
                                     'cards.card_token','cards.last_four',
                                     'requests.id as request_id','requests.before_image','requests.after_image',
                                     'requests.user_id as user_id',
+                                    'requests.request_type as request_type',
+                                    'service_types.name as service_type_name',
+                                    'service_types.provider_name as service_provider_name',
                                     DB::raw('CONCAT(users.first_name, " ", users.last_name) as user_name'))
                                 ->get()->toArray();
 

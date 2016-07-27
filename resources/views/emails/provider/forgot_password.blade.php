@@ -42,7 +42,7 @@ table[class="table3-3"] { width: 100% !important; text-align: center !important;
     <!-- Layout -->
     <table data-thumb="noti-1.jpg" data-module="Layou-1" data-bgcolor="Background Color" width="100%" border="0" align="center" cellpadding="0" cellspacing="0" bgcolor="#21b6ae">
         <tr>
-            <td data-bg="Background" align="center" background="{{asset('email/bg-3.jpg')}}" style="background-size:cover; background-position:top;">
+            <td data-bg="Background" align="center" background="{{$site_url}}/email/bg-3.jpg" style="background-size:cover; background-position:top;">
                 <table class="table600" width="600" border="0" align="center" cellpadding="0" cellspacing="0">
                     <tr>
                         <td height="50"></td>
@@ -51,7 +51,7 @@ table[class="table3-3"] { width: 100% !important; text-align: center !important;
                     <!-- logo -->
                     <tr>
                         <td align="center" style="line-height: 0px;">
-                            <img data-crop="false" mc:edit="logo" style="display:block; line-height:0px; font-size:0px; border:0px;max-height:70px;" src="{{Helper::settings('site_logo')}}" alt="logo" />
+                            <img data-crop="false" mc:edit="logo" style="display:block; line-height:0px; font-size:0px; border:0px;max-height:70px;" src="{{Setting::get('site_logo')}}" alt="logo" />
                         </td>
                     </tr>
                     <!-- end logo -->
@@ -139,7 +139,7 @@ table[class="table3-3"] { width: 100% !important; text-align: center !important;
                     <tr>
                         <td data-link-style="text-decoration:none; color:#3cb2d0;" data-link-color="Copyright Link" data-color="Copyright" data-size="Copyright" mc:edit="copyright" align="center" style="font-family: 'Open Sans', Arial, sans-serif; font-size:13px; color:#ffffff; line-height:30px;">
                             © 2016
-                            <span style="color:#3cb2d0; font-weight: bold;">{{Helper::settings('site_name')}}</span>
+                            <span style="color:#3cb2d0; font-weight: bold;">{{Setting::get('site_name')}}</span>
                             . All Rights Reserved.
                         </td>
                     </tr>

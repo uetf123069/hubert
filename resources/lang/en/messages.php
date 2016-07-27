@@ -85,8 +85,13 @@ return array(
 	'user_rated_by_provider_title' => 'Provider Rated',
 	'user_rated_by_provider_message' => 'The provider rated your service.',
 
+	'cod_paid_confirmation_title' => "Provider confirmed COD payment.",
+	'cod_paid_confirmation_message' => "Provider confirmed your COD payment.",
+
 	// User
-	'request_complete_payment_title' => "Your Request is completed.Please check the invoice details",
+	'request_complete_payment_title' => "Request is completed.",
+
+	'request_complete_payment_message' => "Your Request is completed.Please check the invoice details",
 
 	'cron_no_provider_title' => 'No Provider Available', 
 	'cron_no_provider_message' => 'No provider available to take the service.',
@@ -420,6 +425,7 @@ return array(
 
 	'site_name'	=>	'Site Name',
 	'site_logo'	=>	'Site Logo',
+	'email_logo'	=>	'Email Logo',
 	'site_icon'	=>	'Site Favicon',
 	'price_per_min'	=>	'Price Per Minute',
 	'provider_time'	=>	'Provider Timout',

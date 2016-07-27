@@ -7,7 +7,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1" />
-    <title>{{Helper::settings('site_name')}}</title>
+    <title>{{Setting::get('site_name')}}</title>
     <style type="text/css">
 .ReadMsgBody { width: 100%; background-color: #ffffff; }
 .ExternalClass { width: 100%; background-color: #ffffff; }
@@ -41,7 +41,7 @@ table[class="table3-3"] { width: 100% !important; text-align: center !important;
     <!-- Layout-->
     <table data-thumb="noti-3.jpg" data-module="Layout-3" data-bgcolor="Background" width="100%" border="0" align="center" cellpadding="0" cellspacing="0" bgcolor="#91c444">
         <tr>
-            <td data-bg="Background" align="center" background="{{asset('email/bg-3.jpg')}}" style="background-size:cover; background-position:top;">
+            <td data-bg="Background" align="center" background="{{$site_url}}/email/bg-3.jpg" style="background-size:cover; background-position:top;">
                 <table class="table600" width="600" border="0" align="center" cellpadding="0" cellspacing="0">
                     <tr>
                         <td height="60"></td>
@@ -62,7 +62,7 @@ table[class="table3-3"] { width: 100% !important; text-align: center !important;
                                                     <table class="table3-3" width="50" border="0" align="left" cellpadding="0" cellspacing="0">
                                                         <tr>
                                                             <td align="center" style="line-height:0px;">
-                                                                <img mc:edit="logo" data-crop="false" style="display:block; line-height:0px; font-size:0px; border:0px;max-height:30px;" src="{{Helper::settings('site_logo')}}" alt="logo" />
+                                                                <img mc:edit="logo" data-crop="false" style="display:block; line-height:0px; font-size:0px; border:0px;max-height:30px;" src="{{Setting::get('mail_logo')}}" alt="logo" />
                                                             </td>
                                                         </tr>
                                                     </table>
@@ -166,7 +166,7 @@ table[class="table3-3"] { width: 100% !important; text-align: center !important;
                                                     <table data-bgcolor="Main Color" align="center" bgcolor="#91c444" border="0" cellspacing="0" cellpadding="0" style=" border-radius:30px; box-shadow: 0px 2px 0px #dedfdf;">
                                                         <tr>
                                                             <td mc:edit="button" height="55" align="center" style="font-family: 'Open Sans', Arial, sans-serif; font-size:16px; color:#7f8c8d; line-height:30px; font-weight: bold;padding-left: 25px;padding-right: 25px;">
-                                                                <a href="#" style="color:#ffffff;text-decoration:none;" data-color="Button Link">{{Helper::tr('find_new')}}</a>
+                                                                <a href="#" style="color:#ffffff;text-decoration:none;" data-color="Button Link">{{tr('find_new')}}</a>
                                                             </td>
                                                         </tr>
                                                     </table>
@@ -192,7 +192,7 @@ table[class="table3-3"] { width: 100% !important; text-align: center !important;
                             <table bgcolor="#ecf0f1" style="box-shadow: 0px 3px 0px #bdc3c7; border-radius:4px;" class="table3-3" align="left" width="183" border="0" cellspacing="0" cellpadding="0">
                                 <tr>
                                     <td data-link-style="text-decoration:none; color:#3b3b3b;" data-link-color="Text Link" mc:edit="button-1" height="50" align="center" style="font-family: 'Open Sans', Arial, sans-serif; font-size:14px; color:#3b3b3b; line-height:30px;padding-left: 25px;padding-right: 25px;">
-                                        <a href="http://xuber.appoets.co/login" target="_blank" style="margin-bottom:20px;color:#3b3b3b;text-decoration:none;" data-color="Text Link">{{Helper::tr('need_help')}}</a>
+                                        <a href="http://xuber.appoets.co/login" target="_blank" style="margin-bottom:20px;color:#3b3b3b;text-decoration:none;" data-color="Text Link">{{tr('need_help')}}</a>
                                     </td>
                                 </tr>
                             </table>
@@ -216,7 +216,7 @@ table[class="table3-3"] { width: 100% !important; text-align: center !important;
                             <table bgcolor="#ecf0f1" style="box-shadow: 0px 3px 0px #bdc3c7; border-radius:4px;" class="table3-3" align="left" width="183" border="0" cellspacing="0" cellpadding="0">
                                 <tr>
                                     <td data-link-style="text-decoration:none; color:#3b3b3b;" data-link-color="Text Link" mc:edit="button-2" height="50" align="center" style="font-family: 'Open Sans', Arial, sans-serif; font-size:14px; color:#3b3b3b; line-height:30px;padding-left: 25px;padding-right: 25px;">
-                                        <a href="http://xuber.appoets.co/" target="_blank" style="margin-bottom:20px;color:#3b3b3b;text-decoration:none;" data-color="Text Link">{{Helper::tr('search_new')}}</a>
+                                        <a href="http://xuber.appoets.co/" target="_blank" style="margin-bottom:20px;color:#3b3b3b;text-decoration:none;" data-color="Text Link">{{tr('search_new')}}</a>
                                     </td>
                                 </tr>
                             </table>
@@ -240,7 +240,7 @@ table[class="table3-3"] { width: 100% !important; text-align: center !important;
                             <table bgcolor="#ecf0f1" style="box-shadow: 0px 3px 0px #bdc3c7; border-radius:4px;" class="table3-3" align="right" width="183" border="0" cellspacing="0" cellpadding="0">
                                 <tr>
                                     <td data-link-style="text-decoration:none; color:#3b3b3b;" data-link-color="Text Link" mc:edit="button-3" height="50" align="center" style="font-family: 'Open Sans', Arial, sans-serif; font-size:14px; color:#3b3b3b; line-height:30px;padding-left: 25px;padding-right: 25px;">
-                                        <a href="{{$site_url}}" target="_blank" style="margin-bottom:20px;color:#3b3b3b;text-decoration:none;" data-color="Text Link">{{Helper::tr('visit_website')}}</a>
+                                        <a href="{{$site_url}}" target="_blank" style="margin-bottom:20px;color:#3b3b3b;text-decoration:none;" data-color="Text Link">{{tr('visit_website')}}</a>
                                     </td>
                                 </tr>
                             </table>
@@ -256,7 +256,7 @@ table[class="table3-3"] { width: 100% !important; text-align: center !important;
                     <tr>
                         <td data-link-style="text-decoration:none; color:#3cb2d0;" data-link-color="Copyright Link" data-color="Copyright" data-size="Copyright" mc:edit="copyright" align="center" style="font-family: 'Open Sans', Arial, sans-serif; font-size:13px; color:#ffffff; line-height:30px;">
                             © 2016
-                            <span style="color:#91c444; font-weight: bold;">{{Helper::settings('site_name')}}</span>
+                            <span style="color:#91c444; font-weight: bold;">{{Setting::get('site_name')}}</span>
                             . All Rights Reserved.
                         </td>
                     </tr>

@@ -34,6 +34,8 @@ use App\Settings;
 
 use App\ProviderRating;
 
+use App\UserRating;
+
 use App\Cards;
 
 use App\ChatMessage;
@@ -104,129 +106,235 @@ class ProviderApiController extends Controller
 
 	public function register(Request $request) {
 
-		$validator = Validator::make(
-				$request->all(),
-				array(
-					'first_name' => 'required|max:255',
-					'last_name' => 'required|max:255',
-					'mobile' => 'required|digits_between:6,13',
-					'password' => 'required|min:6',
-					'picture' => 'mimes:jpeg,bmp,png',
-					'gender' => 'in:male,female,others',
-					'device_type' => 'required|in:'.DEVICE_ANDROID.','.DEVICE_IOS,
-					'device_token' => 'required'
-				));
+		$response_array = array();
+        $operation = false;
+        $new_user = DEFAULT_TRUE;
 
-		$email_validator = Validator::make(
-				$request->all(),
-				array(
-					'email' => 'required|email|unique:providers,email|max:255'
-				));
+        // validate basic field
 
-		if ($email_validator->fails()) {
+        $basicValidator = Validator::make(
+            $request->all(),
+            array(
+                'device_type' => 'required|in:'.DEVICE_ANDROID.','.DEVICE_IOS,
+                'device_token' => 'required',
+                'login_by' => 'required|in:manual,facebook,google',
+                'service_type' => 'numeric|exists:service_types,id',
+            )
+        );
 
-			$response_array = array('success' => false, 'error' => Helper::get_error_message(102), 'error_code' => 102);
+        if($basicValidator->fails()) {
 
-		} else if ($validator->fails()) {
+            $error_messages = implode(',', $basicValidator->messages()->all());
+            $response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101, 'error_messages'=> $error_messages);
+            Log::info('Registration basic validation failed');
 
-			$error_messages = implode(',', $validator->messages()->all());
-			$response_array = array('success' => false, 'error' => $error_messages, 'error_messages' => Helper::get_error_message(101) ,'error_code' => 101);
+        } else {
 
-		} else {
+        	$login_by = $request->login_by;
+            $allowedSocialLogin = array('facebook','google');
 
-			$first_name = $request->first_name;
-			$last_name = $request->last_name;
-			$email = $request->email;
-			$mobile = $request->mobile;
-			$password = $request->password;
-			$picture = $request->file('picture');
-			$device_token = $request->device_token;
-			$device_type = $request->device_type;
-			$login_by = $request->login_by;				
-				
-			$provider = new Provider;
-			$provider->first_name = $first_name;
-			$provider->last_name = $last_name;
-			$provider->email = $email;
-			$provider->mobile = $mobile;
-			$provider->password = Hash::make($password);
-			if($request->has('gender')) {
-				$provider->gender = $request->gender;
-			}
-			
-			// Temp purpose 
+            // check login-by
+            if(in_array($login_by,$allowedSocialLogin)){
 
-			$provider->is_approved = DEFAULT_TRUE;
-			$provider->is_available = DEFAULT_TRUE;
-			$provider->is_activated = DEFAULT_TRUE;
-			$provider->is_email_activated = DEFAULT_TRUE;
-			$provider->email_activation_code = uniqid();
+                // validate social registration fields
 
-			$provider->login_by = $login_by;
-			
-			$provider->token = Helper::generate_token();
-			$provider->token_expiry = Helper::generate_token_expiry();
-			$provider->device_token = $device_token;
-			$provider->device_type = $device_type;
+                $socialValidator = Validator::make(
+                        $request->all(),
+                        array(
+                            'social_unique_id' => 'required',
+                            'first_name' => 'required|max:255',
+                            'last_name' => 'max:255',
+                            'email' => 'required|email|max:255',
+                            'mobile' => 'digits_between:6,13',
+                            'picture' => 'mimes:jpeg,jpg,bmp,png',
+                            'gender' => 'in:male,female,others',
+                        )
+                    );
 
-			// Upload picture
-			if($request->hasFile('picture'))
-				$provider->picture = Helper::upload_picture($picture);
-				
-			$provider->save();
+                if($socialValidator->fails()) {
 
-			if($provider) {
+                    $error_messages = implode(',', $socialValidator->messages()->all());
+                    $response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101, 'error_messages'=> $error_messages);
 
-				if($request->has('service_type')) {
-					$provider_service = new  ProviderService;
-					$provider_service->provider_id = $provider->id;
-					$provider_service->service_type_id = $request->service_type;
-					$provider_service->is_available = DEFAULT_TRUE;
-					$provider_service->save();
-				}
-			}
-				
-			// Send welcome email to the new provider
-            $email_data = array();
-            $subject = Helper::tr('provider_welcome_title');
-            $email_data  = $provider;
-            $page = "emails.provider.welcome";
-            $email_send = Helper::send_email($page,$subject,$provider->email,$email_data);
+                    Log::info('Registration social validation failed');
 
-			// Send mail notification to the Admin
-            $email_data = array(); $admin_email = "appoetstest@gmail.com";
-            $subject = Helper::tr('new_provider_signup');
-            if($admin = Admin::first()) {
-            	$admin_email = $admin->email;
+                } else {
+                    
+                    $check_social_user = Provider::where('email' , $request->email)->first();
+                    
+                    if($check_social_user) {
+                        $new_user = DEFAULT_FALSE;
+                    }
+
+                    Log::info('Registration passed social validation');
+                    $operation = true;
+                }
+
+            } else {
+
+                // Validate manual registration fields
+
+                $manualValidator = Validator::make(
+                    $request->all(),
+                    array(
+                        'first_name' => 'required|max:255',
+                        'last_name' => 'required|max:255',
+                        'email' => 'required|email|max:255',
+                        'mobile' => 'required|digits_between:6,13',
+                        'password' => 'required|min:6',
+                        'picture' => 'mimes:jpeg,jpg,bmp,png',
+                    )
+                );
+
+                // validate email existence 
+
+                $emailValidator = Validator::make(
+                    $request->all(),
+                    array(
+                        'email' => 'unique:providers,email',
+                    )
+                );
+
+                if($manualValidator->fails()) {
+
+                    $error_messages = implode(',', $manualValidator->messages()->all());
+                    $response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101, 'error_messages'=> $error_messages);
+                    Log::info('Registration manual validation failed');
+
+                } elseif($emailValidator->fails()) {
+
+                    $error_messages = implode(',', $emailValidator->messages()->all());
+                    $response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101, 'error_messages'=> $error_messages);
+                    Log::info('Registration manual email validation failed');
+
+                } else {
+                    Log::info('Registration passed manual validation');
+                    $operation = true;
+                }
+            
             }
-            $email_data  = $provider;
-            $page = "emails.admin_new_provider_notify";
-            $email_send = Helper::send_email($page,$subject,$admin_email,$email_data);
 
-			// Log::info('Provider welcome status check'." ".$check_mail);
-			
-			Log::info("New provider registration: ".print_r($provider, true));
+            if($operation) {
 
-			$response_array = Helper::null_safe(array(
-				'success' => true ,
-				'message' => $provider ? Helper::get_message(105) : Helper::get_error_message(126),
-				'id' 	=> $provider->id,
-                'first_name' => $provider->first_name,
-                'last_name' => $provider->last_name,
-                'mobile' => $provider->mobile,
-                'gender' => $provider->gender,
-                'email' => $provider->email,
-                'picture' => $provider->picture,
-                'token' => $provider->token,
-                'token_expiry' => $provider->token_expiry,
-                'login_by' => $provider->login_by,
-                'social_unique_id' => $provider->social_unique_id,
-                'service_type' => $request->service_type,
+                // Creating the user
+                if($new_user) {
+                    $provider = new Provider;
+                    $provider->is_approved = DEFAULT_TRUE;
+					$provider->is_available = DEFAULT_TRUE;
+					$provider->is_activated = DEFAULT_TRUE;
+					$provider->is_email_activated = DEFAULT_TRUE;
+					$provider->email_activation_code = uniqid();
+
+                } else {
+                    $provider = $check_social_user;
+                }
+
+                if($request->has('first_name')) {
+                    $provider->first_name = $request->first_name;    
+                }
+
+                if($request->has('last_name')) {
+                    $provider->last_name = $request->last_name;    
+                }
+
+                if($request->has('email')) {
+                    $provider->email = $request->email;    
+                }
+                
+                if($request->has('mobile')) {
+                    $provider->mobile = $request->mobile;    
+                }
+
+                if($request->has('password'))
+                    $provider->password = Hash::make($request->password);
+
+                $provider->gender = $request->has('gender') ? $request->gender : "male";
+                
+                $provider->token = Helper::generate_token();
+                $provider->token_expiry = Helper::generate_token_expiry();
+
+                $check_device_exist = Provider::where('device_token', $request->device_token)->first();
+
+                if($check_device_exist){
+                    $check_device_exist->device_token = "";
+                    $check_device_exist->save();
+                }
+
+                $provider->device_token = $request->has('device_token') ? $request->device_token : "";
+                $provider->device_type = $request->has('device_type') ? $request->device_type : "";
+                $provider->login_by = $request->has('login_by') ? $request->login_by : "";
+                $provider->social_unique_id = $request->has('social_unique_id') ? $request->social_unique_id : '';
+
+                // Upload picture
+                if($request->hasFile('picture')) {
+                	$provider->picture = Helper::upload_picture($request->file('picture'));	
+                }
+                
+                $provider->save();
+
+                if($provider) {
+
+					if($request->has('service_type')) {
+
+                        $check_provider_service = ProviderService::where('provider_id' , $provider->id)
+                                                ->first();
+
+                        if(!$check_provider_service) {
+                            $provider_service = new ProviderService;
+                        } else {
+                            $provider_service = $check_provider_service;
+                        }
+
+						$provider_service->provider_id = $provider->id;
+						$provider_service->service_type_id = $request->service_type;
+						$provider_service->is_available = DEFAULT_TRUE;
+						$provider_service->save();
+					}
+				}
+
+				if($new_user) {
+					// Send welcome email to the new provider
+		            $email_data = array();
+		            $subject = Helper::tr('provider_welcome_title');
+		            $email_data  = $provider;
+		            $page = "emails.provider.welcome";
+		            $email_send = Helper::send_email($page,$subject,$provider->email,$email_data);
+
+		            // Send mail notification to the Admin
+		            $email_data = array(); $admin_email = "appoetstest@gmail.com";
+		            $subject = Helper::tr('new_provider_signup');
+		            if($admin = Admin::first()) {
+		            	$admin_email = $admin->email;
+		            }
+		            $email_data  = $provider;
+		            $page = "emails.admin_new_provider_notify";
+		            $email_send = Helper::send_email($page,$subject,$admin_email,$email_data);
+		        }
+               
+            	Log::info("New provider registration: ".print_r($provider, true));
+
+				$response_array = Helper::null_safe(array(
+					'success' => true ,
+					'message' => $provider ? Helper::get_message(105) : Helper::get_error_message(126),
+					'id' 	=> $provider->id,
+	                'first_name' => $provider->first_name,
+	                'last_name' => $provider->last_name,
+	                'mobile' => $provider->mobile,
+	                'gender' => $provider->gender,
+	                'email' => $provider->email,
+	                'picture' => $provider->picture,
+	                'token' => $provider->token,
+	                'token_expiry' => $provider->token_expiry,
+	                'login_by' => $provider->login_by,
+	                'social_unique_id' => $provider->social_unique_id,
+	                'service_type' => $request->service_type,
 				));
+            }
 		}
 	
 		$response = response()->json($response_array, 200);
 		return $response;
+	
 	}
 
 	// public function email_verification(Request $request) {
@@ -298,6 +406,7 @@ class ProviderApiController extends Controller
 						$response_array = array(
                             'success' => true,
                             'id' => $provider->id,
+                            'name' => $provider->first_name.' '.$provider->last_name,
                             'first_name' => $provider->first_name,
                             'last_name' => $provider->last_name,
                             'mobile' => $provider->mobile,
@@ -439,22 +548,22 @@ class ProviderApiController extends Controller
 	
 	public function profile(Request $request)
 	{
-		$provider = Provider::find($request->id);
-
-        // Generate new tokens
-        // $provider->token = Helper::generate_token();
-        // $provider->token_expiry = Helper::generate_token_expiry();
-        // $provider->token_refresh = Helper::generate_token();
-        // $provider->save();
+		$provider = Provider::where('providers.id' ,$request->id)
+                        ->leftJoin('provider_services' , 'providers.id' , '=' , 'provider_services.provider_id')
+                        ->leftJoin('service_types' , 'provider_services.service_type_id' , '=' , 'service_types.id')
+                        ->select('providers.*' , 'service_types.id as service_type' , 'service_types.provider_name' , 'service_types.name as service_name')
+                        ->first();
 
 		$response_array = array(
             'success' => true,
             'id' => $provider->id,
+            'email' => $provider->email,
             'first_name' => $provider->first_name,
             'last_name' => $provider->last_name,
             'mobile' => $provider->mobile,
-            'email' => $provider->email,
             'picture' => $provider->picture,
+            'service_type' => $provider->service_type,
+            'service_name' => $provider->service_name,
             'token' => $provider->token,
             'token_expiry' => $provider->token_expiry,
             'active' => boolval($provider->is_activated)
@@ -475,7 +584,8 @@ class ProviderApiController extends Controller
 					'mobile' => 'required|digits_between:6,13',
 					'picture' => 'mimes:jpeg,bmp,png',
 					'gender' => 'in:male,female,others',
-					'email' => 'email|max:255|unique:providers,email,'.$request->id
+					'email' => 'email|max:255|unique:providers,email,'.$request->id,
+                    'service_type' => 'numeric|exists:service_types,id',
 				),
 				array(
 						'unique' => 'Email ID already exists',
@@ -535,24 +645,20 @@ class ProviderApiController extends Controller
 
 				$service_type_id = $request->service_type_id;
 
-				if($check_service = ServiceType::find($request->service_type)) {
+				$check_provider_service = ProviderService::where('provider_id' , $request->id)
+											->first();
 
-					$check_provider_service = ProviderService::where('service_type_id', $request->service_type)
-												->where('provider_id' , $request->id)
-												->first();
-
-					if(!$check_provider_service) {
-						$provider_service = new ProviderService;
-					} else {
-						$provider_service = $check_provider_service;
-					}
-
-					$provider_service->provider_id = $request->id;
-					$provider_service->service_type_id = $request->service_type;
-					$provider_service->is_available = DEFAULT_TRUE;
-					$provider_service->save();
-				
+				if(!$check_provider_service) {
+					$provider_service = new ProviderService;
+				} else {
+					$provider_service = $check_provider_service;
 				}
+
+				$provider_service->provider_id = $request->id;
+				$provider_service->service_type_id = $request->service_type;
+				$provider_service->is_available = DEFAULT_TRUE;
+				$provider_service->save();
+				
 			
 			}
 
@@ -850,20 +956,31 @@ class ProviderApiController extends Controller
                     // No longer need request specific rows from RequestMeta
                     RequestsMeta::where('request_id', '=', $request_id)->delete();
 
+                    $user = User::find($requests->user_id);
+                    $services = ServiceType::find($requests->request_type);
+
                     $requestData = array(
                         'request_id' => $requests->id,
                         'user_id' => $requests->user_id,
                         'request_type' => $requests->request_type,
+                        'status' => $requests->status,
+                        'provider_status' => $requests->provider_status,
+                        's_longitude' => $requests->s_longitude,
+                        's_latitude' => $requests->s_latitude,
+                        'service_type_name' => $services->name,
+                        'user_name' => $user->first_name." ".$user->last_name,
+                        'user_picture' => $user->picture,
+                        'user_mobile' => $user->mobile,
+                        'user_rating' => UserRating::where('user_id', $requests->user_id)->avg('rating') ?: 0,
                     );
                     $response_array = Helper::null_safe(array(
                         'success' => true,
+                        'message' => Helper::get_message(111),
                         'data' => $requestData,
-                        'message' => Helper::get_message(111)
                         ));
                 }
             }
 		}
-		// Send Notification to User
 		
 		$response = response()->json($response_array , 200);
 		return $response;
@@ -1184,7 +1301,8 @@ class ProviderApiController extends Controller
 
 	            // Send Push Notification to User
 	            $title = Helper::tr('request_complete_payment_title');
-	            $message = $invoice_data;
+                // $message = $invoice_data;
+	            $message = Helper::tr('request_complete_payment_message');
 
 	            $this->dispatch( new sendPushNotification($requests->user_id, USER,$requests->id,$title, $message));
 
@@ -1485,13 +1603,15 @@ class ProviderApiController extends Controller
 		$provider = Provider::find($request->id);
 
 		$check_status = array(REQUEST_COMPLETED,REQUEST_CANCELLED,REQUEST_NO_PROVIDER_AVAILABLE);
-
+		
 		$requests = Requests::where('requests.confirmed_provider', '=', $provider->id)
 							->whereNotIn('requests.status', $check_status)
-							->orWhere(function($q) {
-						          $q->where('provider_status', PROVIDER_SERVICE_COMPLETED)
-						            ->where('requests.status', REQUEST_COMPLETED);
-						      })
+							->whereNotIn('requests.provider_status', array(PROVIDER_RATED))
+							->orWhere(function($q) use ($provider) {
+						 	         $q->where('requests.confirmed_provider', $provider->id)
+						 	         	->where('provider_status', PROVIDER_SERVICE_COMPLETED)						          	
+						 	           ->where('requests.status', REQUEST_COMPLETED);
+						 	     })
 							->leftJoin('users', 'users.id', '=', 'requests.user_id')
                             ->leftJoin('service_types', 'service_types.id', '=', 'requests.request_type')
 							->orderBy('provider_status','desc')
@@ -1499,6 +1619,8 @@ class ProviderApiController extends Controller
 								'requests.id as request_id',
 								'requests.request_type as request_type',
 								'service_types.name as service_type_name',
+								'requests.after_image as after_image',
+                                'requests.before_image as before_image',
 								'request_start_time as request_start_time',
 								'requests.status', 'requests.provider_status',
 								'requests.amount',
@@ -1508,7 +1630,8 @@ class ProviderApiController extends Controller
 								'users.id as user_id',
 								'requests.s_latitude',
 								'requests.s_longitude',
-								'requests.is_paid'
+								'requests.is_paid',
+								'requests.created_at'
 							)->get()->toArray();
 
         $requests_data = array();
@@ -1524,12 +1647,17 @@ class ProviderApiController extends Controller
                 $allowed_status = array(REQUEST_COMPLETE_PENDING,WAITING_FOR_PROVIDER_CONFRIMATION_COD,REQUEST_COMPLETED,REQUEST_RATING);
 
                 if( in_array($each_request['status'], $allowed_status)) {
-                    $invoice = RequestPayment::where('request_id' , $each_request['request_id'])
+
+                	$user = User::find($each_request['user_id']);
+
+                    $invoice_query = RequestPayment::where('request_id' , $each_request['request_id'])
                                     ->leftJoin('requests' , 'request_payments.request_id' , '=' , 'requests.id')
                                     ->leftJoin('users' , 'requests.user_id' , '=' , 'users.id')
-                                    ->leftJoin('cards' , 'users.default_card' , '=' , 'cards.id')
-                                    ->where('cards.is_default' , DEFAULT_TRUE)
-                                    ->select('requests.confirmed_provider as provider_id' , 'request_payments.total_time',
+                                    ->leftJoin('cards' , 'users.default_card' , '=' , 'cards.id');
+                    if($user->payment_mode == CARD) {
+                        $invoice_query = $invoice_query->where('cards.is_default' , DEFAULT_TRUE) ;  
+                    }
+                    $invoice = $invoice_query->select('requests.confirmed_provider as provider_id' , 'request_payments.total_time',
                                         'request_payments.payment_mode as payment_mode' , 'request_payments.base_price',
                                         'request_payments.time_price' , 'request_payments.tax_price' , 'request_payments.total',
                                         'cards.card_token','cards.customer_id','cards.last_four')
@@ -1587,6 +1715,13 @@ class ProviderApiController extends Controller
 	        	$requests->status = REQUEST_RATING;
 	        	$requests->is_paid = DEFAULT_TRUE;
 	        	$requests->save();
+
+                 // Send Push Notification to User
+                $title = Helper::tr('cod_paid_confirmation_title');
+                $message = Helper::tr('cod_paid_confirmation_message');
+                
+                // Send notifications to the user
+                $this->dispatch(new sendPushNotification($requests->user_id,USER,$requests->id,$title,$message));
 
 	        	$response_array = array('success' => true , 'message' => Helper::get_message(119));
 	        } else {

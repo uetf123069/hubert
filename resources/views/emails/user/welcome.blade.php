@@ -41,7 +41,7 @@ table[class="table3-3"] { width: 100% !important; text-align: center !important;
     <!-- Layout -->
     <table data-thumb="noti-2.jpg" data-module="Layout-2" data-bgcolor="Background Color" width="100%" border="0" align="center" cellpadding="0" cellspacing="0" bgcolor="#3cb2d0">
         <tr>
-            <td data-bg="Background" align="center" background="{{asset('email/bg-2.jpg')}}" style="background-size:cover; background-position:top;">
+            <td data-bg="Background" align="center" background="{{$site_url}}/email/bg-2.jpg" style="background-size:cover; background-position:top;">
                 <table class="table600" width="600" border="0" align="center" cellpadding="0" cellspacing="0">
                     <tr>
                         <td height="60"></td>
@@ -55,7 +55,7 @@ table[class="table3-3"] { width: 100% !important; text-align: center !important;
                                 <!-- logo -->
                                 <tr>
                                     <td align="center" style="line-height: 0px;">
-                                        <img data-crop="false" mc:edit="logo" style="display:block; line-height:0px; font-size:0px; border:0px;max-height:70px;" src="{{Helper::settings('site_logo')}}" alt="logo" />
+                                        <img data-crop="false" mc:edit="logo" style="display:block; line-height:0px; font-size:0px; border:0px;max-height:70px;" src="{{Setting::get('mail_logo')}}" alt="logo" />
                                     </td>
                                 </tr>
                                 <!-- end logo -->
@@ -76,7 +76,7 @@ table[class="table3-3"] { width: 100% !important; text-align: center !important;
                                             </tr>
                                             <!-- title -->
                                             <tr>
-                                                <td data-link-style="text-decoration:none; color:#3cb2d0;" data-link-color="Content Link" data-color="Headline" data-size="Headline" mc:edit="title" align="center" style="font-family: 'Open Sans', Arial, sans-serif; font-size:36px; color:#3b3b3b; font-weight: bold; letter-spacing:4px;">Welcome to {{Helper::settings('site_name')}}</td>
+                                                <td data-link-style="text-decoration:none; color:#3cb2d0;" data-link-color="Content Link" data-color="Headline" data-size="Headline" mc:edit="title" align="center" style="font-family: 'Open Sans', Arial, sans-serif; font-size:36px; color:#3b3b3b; font-weight: bold; letter-spacing:4px;">Welcome to {{Setting::get('site_name')}}</td>
                                             </tr>
                                             <!-- end title -->
 
@@ -96,7 +96,7 @@ table[class="table3-3"] { width: 100% !important; text-align: center !important;
                                             <!-- content -->
                                             <tr>
                                                 <td data-link-style="text-decoration:none; color:#3cb2d0;" data-link-color="Content Link" data-color="Main Text" data-size="Main Text" mc:edit="content" align="center" style="font-family: 'Open Sans', Arial, sans-serif; font-size:13px; color:#7f8c8d; line-height:30px;">
-                                                    Hi, {{$email_data->first_name}} {{$email_data->last_name}} . Welcome to {{Helper::settings('site_name')}}. You've just joined a community of millions who have discovered how quick and easy it is to use.
+                                                    Hi, {{$email_data->first_name}} {{$email_data->last_name}} . Welcome to {{Setting::get('site_name')}}. You've just joined a community of millions who have discovered how quick and easy it is to use.
                                                     <br>
                                                     <b>Name : {{$email_data->first_name}} {{$email_data->last_name}}</b>
                                                     <br>
@@ -146,7 +146,7 @@ table[class="table3-3"] { width: 100% !important; text-align: center !important;
                     <tr>
                         <td data-link-style="text-decoration:none; color:#3cb2d0;" data-link-color="Copyright Link" data-color="Copyright" data-size="Copyright" mc:edit="copyright" align="center" style="font-family: 'Open Sans', Arial, sans-serif; font-size:13px; color:#ffffff; line-height:30px;">
                             © 2016
-                            <span style="color:#3cb2d0; font-weight: bold;">{{Helper::settings('site_name')}}</span>
+                            <span style="color:#3cb2d0; font-weight: bold;">{{Setting::get('site_name')}}</span>
                             . All Rights Reserved.
                         </td>
                     </tr>

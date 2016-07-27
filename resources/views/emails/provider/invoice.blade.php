@@ -42,7 +42,7 @@ a { color: #ff646a; text-decoration: none; }
                                 <!-- logo -->
                                 <tr>
                                     <td align="center" style="line-height:0px;">
-                                        <img mc:edit="img" style="display:block;font-size:0px; border:0px; line-height:0px;max-width:70px;" src="{{Helper::settings('site_logo')}}" alt="logo" />
+                                        <img mc:edit="img" style="display:block;font-size:0px; border:0px; line-height:0px;max-width:70px;" src="{{Setting::get('mail_logo')}}" alt="logo" />
                                     </td>
                                 </tr>
                                 <!-- end logo -->
@@ -53,7 +53,7 @@ a { color: #ff646a; text-decoration: none; }
 
                                 <!-- Compane Name -->
                                 <tr>
-                                    <td data-link-style="text-decoration:none; color:#3b3b3b;font-weight:bold;" data-link-color="Address Link 1" mc:edit="Company Name" data-color="Company Title" style="font-family: 'Open Sans', Arial, sans-serif; font-size:16px; color:#FFFFFF; line-height:26px; font-weight: bold;">{{$email_data['provider_name']}}</td>
+                                    <td data-link-style="text-decoration:none; color:#3b3b3b;font-weight:bold;" data-link-color="Address Link 1" mc:edit="Company Name" data-color="Company Title" style="font-family: 'Open Sans', Arial, sans-serif; font-size:16px; color:#3b3b3b; line-height:26px; font-weight: bold;">{{$email_data['provider_name']}}</td>
                                 </tr>
                                 <!-- end Compane Name -->
 
@@ -85,7 +85,7 @@ a { color: #ff646a; text-decoration: none; }
 
                                 <!-- title -->
                                 <tr>
-                                    <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Header Link 2" mc:edit="title" data-color="Title" align="right" style="font-family: 'Open Sans', Arial, sans-serif; font-size:38px; color:#3b3b3b; line-height:26px;">{{Helper::tr('invoice')}}</td>
+                                    <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Header Link 2" mc:edit="title" data-color="Title" align="right" style="font-family: 'Open Sans', Arial, sans-serif; font-size:38px; color:#3b3b3b; line-height:26px;">{{tr('invoice')}}</td>
                                 </tr>
                                 <!-- end title -->
 
@@ -159,9 +159,9 @@ a { color: #ff646a; text-decoration: none; }
                                     <td>
                                         <table width="100%" border="0" cellspacing="0" cellpadding="0">
                                             <tr>
-                                                <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Title Link" mc:edit="title bar 1" width="263" align="left" valign="top" style="font-family: 'Open Sans', Arial, sans-serif; font-size:13px; color:#3b3b3b; line-height:26px; text-transform:uppercase;">{{Helper::tr('description')}}</td>
+                                                <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Title Link" mc:edit="title bar 1" width="263" align="left" valign="top" style="font-family: 'Open Sans', Arial, sans-serif; font-size:13px; color:#3b3b3b; line-height:26px; text-transform:uppercase;">{{tr('description')}}</td>
                                                 
-                                                <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Title Link" mc:edit="title bar 4" width="87" align="right" valign="top" style="font-family: 'Open Sans', Arial, sans-serif; font-size:13px; color:#3b3b3b; line-height:26px; text-transform:uppercase;">{{Helper::tr('amount')}}</td>
+                                                <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Title Link" mc:edit="title bar 4" width="87" align="right" valign="top" style="font-family: 'Open Sans', Arial, sans-serif; font-size:13px; color:#3b3b3b; line-height:26px; text-transform:uppercase;">{{tr('amount')}}</td>
                                             </tr>
                                         </table>
                                     </td>
@@ -194,7 +194,7 @@ a { color: #ff646a; text-decoration: none; }
                                     <td>
                                         <table width="100%" border="0" cellspacing="0" cellpadding="0">
                                             <tr>
-                                                <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Content Link" mc:edit="desctiption" width="263" align="left" valign="top" style="font-family: 'Open Sans', Arial, sans-serif; font-size:14px; color:#3b3b3b; line-height:26px;  font-weight: bold;">{{Helper::tr('base_fees')}}</td>
+                                                <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Content Link" mc:edit="desctiption" width="263" align="left" valign="top" style="font-family: 'Open Sans', Arial, sans-serif; font-size:14px; color:#3b3b3b; line-height:26px;  font-weight: bold;">{{tr('base_fees')}}</td>
                                                 
                                                 <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Content Link" mc:edit="value-3" width="87" align="right" valign="top" style="font-family: 'Open Sans', Arial, sans-serif; font-size:14px; color:#3b3b3b; line-height:26px;  font-weight: bold;">{{ get_currency_value($email_data['base_price'])}}</td>
                                             </tr>
@@ -210,7 +210,7 @@ a { color: #ff646a; text-decoration: none; }
                                     <td>
                                         <table width="100%" border="0" cellspacing="0" cellpadding="0">
                                             <tr>
-                                                <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Content Link" mc:edit="desctiption" width="263" align="left" valign="top" style="font-family: 'Open Sans', Arial, sans-serif; font-size:14px; color:#3b3b3b; line-height:26px;  font-weight: bold;">{{Helper::tr('extra_price')}}</td>
+                                                <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Content Link" mc:edit="desctiption" width="263" align="left" valign="top" style="font-family: 'Open Sans', Arial, sans-serif; font-size:14px; color:#3b3b3b; line-height:26px;  font-weight: bold;">{{tr('extra_price')}}</td>
                                                 
                                                 <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Content Link" mc:edit="value-3" width="87" align="right" valign="top" style="font-family: 'Open Sans', Arial, sans-serif; font-size:14px; color:#3b3b3b; line-height:26px;  font-weight: bold;">{{ get_currency_value($email_data['total_time_price'])}}</td>
                                             </tr>
@@ -226,7 +226,7 @@ a { color: #ff646a; text-decoration: none; }
                                     <td>
                                         <table width="100%" border="0" cellspacing="0" cellpadding="0">
                                             <tr>
-                                                <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Content Link" mc:edit="desctiption" width="263" align="left" valign="top" style="font-family: 'Open Sans', Arial, sans-serif; font-size:14px; color:#3b3b3b; line-height:26px;  font-weight: bold;">{{Helper::tr('other_price')}}</td>
+                                                <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Content Link" mc:edit="desctiption" width="263" align="left" valign="top" style="font-family: 'Open Sans', Arial, sans-serif; font-size:14px; color:#3b3b3b; line-height:26px;  font-weight: bold;">{{tr('other_price')}}</td>
                                                 
                                                 <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Content Link" mc:edit="value-3" width="87" align="right" valign="top" style="font-family: 'Open Sans', Arial, sans-serif; font-size:14px; color:#3b3b3b; line-height:26px;  font-weight: bold;">{{get_currency_value($email_data['other_price'])}}</td>
                                             </tr>
@@ -251,7 +251,7 @@ a { color: #ff646a; text-decoration: none; }
                                     <td>
                                         <table width="100%" border="0" cellspacing="0" cellpadding="0">
                                             <tr>
-                                                <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Content Link" mc:edit="desctiption" width="263" align="left" valign="top" style="font-family: 'Open Sans', Arial, sans-serif; font-size:14px; color:#3b3b3b; line-height:26px;  font-weight: bold;">{{Helper::tr('sub_total')}}</td>
+                                                <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Content Link" mc:edit="desctiption" width="263" align="left" valign="top" style="font-family: 'Open Sans', Arial, sans-serif; font-size:14px; color:#3b3b3b; line-height:26px;  font-weight: bold;">{{tr('sub_total')}}</td>
                                                 
                                                 <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Content Link" mc:edit="value-3" width="87" align="right" valign="top" style="font-family: 'Open Sans', Arial, sans-serif; font-size:14px; color:#3b3b3b; line-height:26px;  font-weight: bold;">{{ get_currency_value($email_data['sub_total'])}}</td>
                                             </tr>
@@ -288,7 +288,7 @@ a { color: #ff646a; text-decoration: none; }
                                                 <td height="10"></td>
                                             </tr>
                                             <tr>
-                                                <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Content Link" mc:edit="total title" align="left" valign="top" style="font-family: 'Open Sans', Arial, sans-serif; font-size:12px; color:#3b3b3b; line-height:26px; text-transform:uppercase;line-height:24px;">{{Helper::tr('tax_price')}}</td>
+                                                <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Content Link" mc:edit="total title" align="left" valign="top" style="font-family: 'Open Sans', Arial, sans-serif; font-size:12px; color:#3b3b3b; line-height:26px; text-transform:uppercase;line-height:24px;">{{tr('tax_price')}}</td>
                                             </tr>
                                             <tr>
                                                 <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Content Link" mc:edit="total content" align="left" valign="top" style="font-family: 'Open Sans', Arial, sans-serif; font-size:24px; color:#3b3b3b;  font-weight: bold;">+{{get_currency_value($email_data['tax_price'])}}</td>
@@ -304,7 +304,7 @@ a { color: #ff646a; text-decoration: none; }
                                                 <td height="10"></td>
                                             </tr>
                                             <tr>
-                                                <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Content Link" mc:edit="total title-1" align="right" valign="top" style="font-family: 'Open Sans', Arial, sans-serif; font-size:12px; color:#3b3b3b; line-height:26px; text-transform:uppercase;line-height:24px;">{{Helper::tr('total')}}</td>
+                                                <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Content Link" mc:edit="total title-1" align="right" valign="top" style="font-family: 'Open Sans', Arial, sans-serif; font-size:12px; color:#3b3b3b; line-height:26px; text-transform:uppercase;line-height:24px;">{{tr('total')}}</td>
                                             </tr>
                                             <tr>
                                                 <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Content Link" mc:edit="total content-2" align="right" valign="top" style="font-family: 'Open Sans', Arial, sans-serif; font-size:24px; color:#3b3b3b;  font-weight: bold;">{{get_currency_value($email_data['total'])}}</td>
@@ -342,7 +342,7 @@ a { color: #ff646a; text-decoration: none; }
 
                 <tr>
                     <td mc:edit="button" height="55" align="center" style="font-family: 'Open Sans', Arial, sans-serif; font-size:16px; color:#7f8c8d; line-height:30px; font-weight: bold;padding-left: 25px;padding-right: 25px;">
-                        <a href="{{$site_url}}" target="_blank" style="color:#ffffff;text-decoration:none;" data-color="Button Link">{{Helper::tr('visit_website')}}</a>
+                        <a href="{{$site_url}}" target="_blank" style="color:#ffffff;text-decoration:none;" data-color="Button Link">{{tr('visit_website')}}</a>
                     </td>
                 </tr>
             </table>
@@ -364,7 +364,7 @@ a { color: #ff646a; text-decoration: none; }
 
                     <!-- title -->
                     <tr>
-                        <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Content Link" mc:edit="note title" data-color="Title" data-size="Note Title" data-min="13" data-max="20" style="font-family: 'Open Sans', Arial, sans-serif; font-size:16px; color:#3b3b3b; line-height:26px;  font-weight: bold; text-transform:uppercase">{{Helper::tr('note')}}</td>
+                        <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Content Link" mc:edit="note title" data-color="Title" data-size="Note Title" data-min="13" data-max="20" style="font-family: 'Open Sans', Arial, sans-serif; font-size:16px; color:#3b3b3b; line-height:26px;  font-weight: bold; text-transform:uppercase">{{tr('note')}}</td>
                     </tr>
                     <!-- end title -->
                     <tr>
@@ -374,7 +374,7 @@ a { color: #ff646a; text-decoration: none; }
                     <!-- content -->
                     <tr>
                         <td data-link-style="text-decoration:none; color:#ff646a;" data-link-color="Content Link" mc:edit="note content" data-size="Note Content" data-min="13" data-max="18" style="font-family: 'Open Sans', Arial, sans-serif; font-size:13px; color:#7f8c8d; line-height:26px;">
-                            {{Helper::tr('invoice_note')}}
+                            {{tr('invoice_note')}}
                         </td>
                     </tr>
                     <!-- end content -->
@@ -399,7 +399,7 @@ a { color: #ff646a; text-decoration: none; }
         <tr>
             <td data-link-style="text-decoration:none; color:#7f8c8d;" data-link-color="Copyright Link" data-color="Copyright" data-size="Copyright" mc:edit="copyright" align="center" style="font-family: 'Open Sans', Arial, sans-serif; font-size:13px; color:#7f8c8d; line-height:30px;">
                 © 2016
-                <span style="color:#000; font-weight: bold;">{{Helper::settings('site_name')}}</span>
+                <span style="color:#000; font-weight: bold;">{{Setting::get('site_name')}}</span>
                 . All Rights Reserved.
             </td>
         </tr>
