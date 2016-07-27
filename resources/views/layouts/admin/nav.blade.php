@@ -173,13 +173,26 @@
                 </li>
             </ul>
             </li>
+            
             <li>
+                <a href="javascript:;">
+                    <i class="fa fa-gears"></i>
+                    <span>{{tr('settings')}}</span>
+                </a>
+                <ul class="sub-menu">
+                <li>
                 <a href="{{ route('admin.settings') }}">
                     <i class="fa fa-gears"></i>
                     <span>{{tr('settings')}}</span>
                 </a>
             </li>
-
+                <li>
+                    <a href="javascript:;">
+                    <span>{{tr('change_password')}}</span>
+                    </a>
+                </li>
+            </ul>
+            </li>
             <li>
                 <a href="{{ route('admin.help') }}">
                     <i class="fa fa-question-circle"></i>
