@@ -1172,6 +1172,7 @@ class UserapiController extends Controller
 
                         $provider = Provider::find( $requests->confirmed_provider );
                         $provider->is_available = PROVIDER_AVAILABLE;
+                        $provider->waiting_to_respond = WAITING_TO_RESPOND_NORMAL;
                         $provider->save();
 
                         // Send Push Notification to Provider
