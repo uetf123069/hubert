@@ -1723,7 +1723,18 @@ class ProviderApiController extends Controller
                 // Send notifications to the user
                 $this->dispatch(new sendPushNotification($requests->user_id,USER,$requests->id,$title,$message));
 
-	        	$response_array = array('success' => true , 'message' => Helper::get_message(119));
+                $data = array();
+
+                $data['request_id'] = $requests->id;
+                $data['user_id'] = $requests->user_id;
+                $data['user_name'] = $data['user_picture'] = "";
+
+                if($user = User::find($requests->user_id)) {
+                    $data['user_name'] = $user->first_name.' '.$user->last_name;    
+                    $data['user_picture'] = $user->picture;
+                }
+                
+	        	$response_array = array('success' => true , 'message' => Helper::get_message(119) , 'data' => $data);
 	        } else {
 	        	$response_array = array('success' => false , 'error' => Helper::get_error_message(155) ,'error_code' =>155);
 	        }
