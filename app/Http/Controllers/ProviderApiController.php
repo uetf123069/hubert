@@ -313,6 +313,8 @@ class ProviderApiController extends Controller
                
             	Log::info("New provider registration: ".print_r($provider, true));
 
+                $service_name = ServiceType::find($request->service_type);
+
 				$response_array = Helper::null_safe(array(
 					'success' => true ,
 					'message' => $provider ? Helper::get_message(105) : Helper::get_error_message(126),
@@ -327,7 +329,8 @@ class ProviderApiController extends Controller
 	                'token_expiry' => $provider->token_expiry,
 	                'login_by' => $provider->login_by,
 	                'social_unique_id' => $provider->social_unique_id,
-	                'service_type' => $request->service_type,
+                    'service_type' => $request->service_type,
+	                'service_type_name' => $service_name->name ? $service_name->name : "",
 				));
             }
 		}
@@ -401,6 +404,17 @@ class ProviderApiController extends Controller
 						$provider->device_type = $device_type;
 							
 						$provider->save();
+
+                        $service_type_id = $service_name = "";
+
+                        if($provider_service = ProviderService::where('provider_id' , $provider->id)   
+                                                ->leftJoin('service_types' , 'provider_services.service_type_id' , '=' , 'service_types.id')
+                                                ->select('provider_services.service_type_id' , 'service_types.name')
+                                                ->first()) {
+                            $service_type_id = $provider_service->service_type_id;
+
+                            $service_name = $provider_service->name;
+                        }
 							
 						// Respond with provider details
 						$response_array = array(
@@ -413,9 +427,12 @@ class ProviderApiController extends Controller
                             'gender' => $provider->gender,
                             'email' => $provider->email,
                             'picture' => $provider->picture,
+                            'login_by' => $provider->login_by,
                             'token' => $provider->token,
                             'token_expiry' => $provider->token_expiry,
-                            'active' => boolval($provider->is_activated)
+                            'active' => boolval($provider->is_activated),
+                            'service_type' => $service_type_id,
+                            'service_type_name' => $service_name,
 						);
 
 						$response_array = Helper::null_safe($response_array);
