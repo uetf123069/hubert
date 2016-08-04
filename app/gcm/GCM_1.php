@@ -36,6 +36,9 @@ class GCM {
             'Authorization: key=' . GOOGLE_API_KEY,
             'Content-Type: application/json'
         );
+
+        Log::info('***** PUSH MESSAGE ******'.print_r(json_encode($fields),true));
+        
         // Open connection
         $ch = curl_init();
 
