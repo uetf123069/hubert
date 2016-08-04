@@ -118,6 +118,12 @@ class sendPushNotification extends Job implements ShouldQueue
 
                 } else {
 
+                     $push_message = array(
+                        'success' => true,
+                        'message' => $this->message,
+                        'data' => $push_data
+                    );
+
                     Log::info("Andriod push Started");
 
                     require_once app_path().'/gcm/GCM_1.php';
@@ -140,6 +146,8 @@ class sendPushNotification extends Job implements ShouldQueue
                     }
 
                     $message = array(TEAM => $title1, MESSAGE => $msg);
+
+                    Log::info('Push Message   ********************************'.print_r($message,true));
 
                     $gcm = new \GCM();
                     $registatoin_ids = array($registatoin_ids);
