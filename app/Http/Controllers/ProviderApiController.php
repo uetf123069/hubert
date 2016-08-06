@@ -1639,7 +1639,8 @@ class ProviderApiController extends Controller
 								'service_types.name as service_type_name',
 								'requests.after_image as after_image',
                                 'requests.before_image as before_image',
-								'request_start_time as request_start_time',
+                                'request_start_time as request_start_time',
+								'requests.start_time as start_time',
 								'requests.status', 'requests.provider_status',
 								'requests.amount',
 								DB::raw('CONCAT(users.first_name, " ", users.last_name) as user_name'),
@@ -1660,10 +1661,17 @@ class ProviderApiController extends Controller
             foreach($requests as $each_request){
 
                 $each_request['user_rating'] = DB::table('user_ratings')->where('user_id', $each_request['user_id'])->avg('rating') ?: 0;
+                // This time is used for after service started => In app if the provider closed the app, while timer is running. 
+                
+                $each_request['service_time_diff'] = "00:00:00";
 
-                $time_diff = Helper::time_diff($each_request['request_start_time'],date('Y-m-d H:i:s'));
+                if($each_request['start_time'] != "0000-00-00 00:00:00") {
 
-                $each_request['service_time_diff'] = $time_diff->format('%h:%i:%s');
+                    $time_diff = Helper::time_diff($each_request['start_time'],date('Y-m-d H:i:s'));
+
+                    $each_request['service_time_diff'] = $time_diff->format('%h:%i:%s');
+
+                }
                 // unset($each_request['user_id']);
                 $requests_data[] = $each_request;
 
