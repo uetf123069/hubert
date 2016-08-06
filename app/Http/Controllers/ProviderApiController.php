@@ -1557,6 +1557,7 @@ class ProviderApiController extends Controller
                                     DB::raw('CONCAT(providers.first_name, " ", providers.last_name) as provider_name'),'user_ratings.rating','user_ratings.comment',
                                     DB::raw('ROUND(request_payments.base_price) as base_price'), DB::raw('ROUND(request_payments.tax_price) as tax_price'),
                                      DB::raw('ROUND(request_payments.time_price) as time_price'), DB::raw('ROUND(request_payments.total) as total'),
+                                     'request_payments.payment_mode as payment_mode',
                                     'cards.id as card_id','cards.customer_id as customer_id',
                                     'cards.card_token','cards.last_four',
                                     'requests.id as request_id','requests.before_image','requests.after_image',
@@ -1657,9 +1658,15 @@ class ProviderApiController extends Controller
 		if($requests)
 		{
             foreach($requests as $each_request){
+
                 $each_request['user_rating'] = DB::table('user_ratings')->where('user_id', $each_request['user_id'])->avg('rating') ?: 0;
+
+                $time_diff = Helper::time_diff($each_request['request_start_time'],date('Y-m-d H:i:s'));
+
+                $each_request['service_time_diff'] = $time_diff->format('%h:%i:%s');
                 // unset($each_request['user_id']);
                 $requests_data[] = $each_request;
+
 
                 $allowed_status = array(REQUEST_COMPLETE_PENDING,WAITING_FOR_PROVIDER_CONFRIMATION_COD,REQUEST_COMPLETED,REQUEST_RATING);
 
