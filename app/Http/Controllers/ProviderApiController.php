@@ -1561,7 +1561,7 @@ class ProviderApiController extends Controller
                                     'cards.id as card_id','cards.customer_id as customer_id',
                                     'cards.card_token','cards.last_four',
                                     'requests.id as request_id','requests.before_image','requests.after_image',
-                                    'requests.user_id as user_id',
+                                    'requests.user_id as user_id','users.picture as user_picture',
                                     DB::raw('CONCAT(users.first_name, " ", users.last_name) as user_name'))
                                 ->get()->toArray();
 
