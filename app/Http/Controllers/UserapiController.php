@@ -972,7 +972,7 @@ class UserapiController extends Controller
 
                                         // Send push notifications to the first provider
                                         $title = Helper::get_push_message(604);
-                                        $message = "You got a new request from".$user->name;
+                                        $message = "You got a new request from".$user->first_name." ".$user->last_name;
 
                                         $this->dispatch(new sendPushNotification($first_provider_id,PROVIDER,$requests->id,$title,$message));
 
