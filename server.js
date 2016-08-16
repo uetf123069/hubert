@@ -24,9 +24,9 @@ io.on('connection', function (socket) {
 
     socket.on('update sender', function(data) {
         console.log('update sender', data);
-        socket.join(data.sender);
         socket.handshake.query.myid = data.myid;
         socket.handshake.query.reqid = data.reqid;
+        socket.join(socket.handshake.query.myid);
         socket.emit('sender updated', 'Sender Updated ID:'+data.reqid, 'Request ID:'+data.myid);
     });
 
