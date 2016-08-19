@@ -22,6 +22,15 @@ io.on('connection', function (socket) {
 
     socket.emit('connected', 'Connection to server established!');
 
+    socket.on('update sender', function(data) {
+        console.log('update sender', data);
+        socket.handshake.query.myid = data.myid;
+        socket.handshake.query.reqid = data.reqid;
+        socket.reqid = socket.handshake.query.reqid;
+        socket.join(socket.handshake.query.myid);
+        socket.emit('sender updated', 'Sender Updated ID:'+data.reqid, 'Request ID:'+data.myid);
+    });
+
     socket.on('send message', function(data) {
 
         if(data.type == 'up') {
@@ -34,6 +43,7 @@ io.on('connection', function (socket) {
 
         socket.broadcast.to( receiver ).emit('message', data);
 
+        // url = 'http://dev.xuber.com/message/save?user_id='+data.user_id
         url = 'http://xuber.appoets.co/message/save?user_id='+data.user_id
         +'&provider_id='+data.provider_id
         +'&message='+data.message
