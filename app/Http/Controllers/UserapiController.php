@@ -566,7 +566,7 @@ class UserapiController extends Controller
                 'mobile' => 'required|digits_between:6,13',
                 'picture' => 'mimes:jpeg,bmp,png',
                 'gender' => 'in:male,female,others',
-                'device_token' => 'required',
+                'device_token' => '',
             ));
 
         if ($validator->fails()) {

@@ -750,15 +750,10 @@
                     $request_data = Requests::find($request_id);
 
                     // Push notification has to add
-                    $push_data = array();
-                    $title = Helper::tr('cron_new_request_title');
-                    $push_msg = "You got a new service from ".$user->first_name.''.$user->last_name;
-                    $message = array(
-                        'success' => true,
-                        'msg' => $push_msg,
-                        'data' => array((object) $push_data)
-                    );
+                    $title = Helper::get_push_message(604);
+                    $message = "You got a new request from".$user->first_name." ".$user->last_name;
                     // Send Push Notification to Provider 
+
                     dispatch(new sendPushNotification($next_request_meta->provider_id,PROVIDER,$request_id,$title,$message));
 
                 } else {
