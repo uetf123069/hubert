@@ -1886,13 +1886,9 @@ class UserapiController extends Controller
             )
         );
 
-        if ($validator->fails())
-        {
+        if ($validator->fails()) {
            $error_messages = implode(',', $validator->messages()->all());
-
            $response_array = array('success' => false , 'error' => Helper::get_error_message(101) , 'error_code' => 101 , 'error_messages' => $error_messages);
-
-           $response_code = 200;
         } else {
 
             Cards::where('id',$card_id)->delete();
@@ -1900,8 +1896,19 @@ class UserapiController extends Controller
             $user = User::find($request->id);
 
             if($user) {
-                $user->payment_mode = CARD;
-                $user->default_card = DEFAULT_FALSE;
+
+                if($user->payment_mode = CARD) {
+                    // Check he added any other card
+                    if($check_card = Cards::where('user_id' , $request->id)->first()) {
+                        $check_card->is_default =  DEFAULT_TRUE;
+                        $user->default_card = $check_card->id;
+                        $check_card->save();
+                    } else { 
+                        $user->payment_mode = COD;
+                        $user->default_card = DEFAULT_FALSE;
+                    }
+                }
+                
                 $user->save();
             }
 
@@ -1938,7 +1945,7 @@ class UserapiController extends Controller
 
             if($card) {
                 if($user) {
-                    $user->payment_mode = CARD;
+                    // $user->payment_mode = CARD;
                     $user->default_card = $request->card_id;
                     $user->save();
                 }
