@@ -1822,16 +1822,12 @@ class UserapiController extends Controller
 
     public function add_card(Request $request) {
 
-        $user = User::find($request->id);
-
-        $payment_token = $request->payment_token;
-        $last_four = $request->last_four;
-
         $validator = Validator::make(
                     $request->all(),
                     array(
                         'last_four' => 'required',
-                        'payment_token' => 'required',
+                        'card_token' => 'required',
+                        'customer_id' => 'required',
                     )
                 );
 
@@ -1844,63 +1840,32 @@ class UserapiController extends Controller
 
             $user = User::find($request->id);
 
-            try{
+            $customer_id = $request->customer_id;
 
-                // Get the key from settings table
+            $cards = new Cards;
+            $cards->user_id = $request->id;
+            $cards->customer_id = $request->customer_id;
+            $cards->last_four = $request->last_four;
+            $cards->card_token = $request->card_token;
 
-                $settings = Settings::where('key' , 'stripe_secret_key')->first();
+            // Check is any default is available
+            $check_card = Cards::where('user_id',$request->id)->first();
 
-                $stripe_secret_key = $settings->value;
-                
-                \Stripe\Stripe::setApiKey($stripe_secret_key);
-
-                $customer = \Stripe\Customer::create(array(
-                              "card" => $payment_token,
-                              "description" => $user->email)
-                            );
-
-                Log::info('customer = '.print_r($customer, true));
-
-                if($customer){
-
-                    $customer_id = $customer->id;
-
-                    $cards = new Cards;
-                    $cards->user_id = $request->id;
-                    $cards->customer_id = $customer_id;
-                    $cards->last_four = $last_four;
-                    $cards->card_token = $customer->sources->data[0]->id;
-
-                    // Check is any default is available
-                    $check_card = Cards::where('user',$request->id)->first();
-
-                    if($check_card ) 
-                        $cards->is_default = 0;
-                    else
-                        $cards->is_default = 1;
-                    
-                    $cards->save();
-
-                    if($user) {
-                        $user->payment_mode = CARD;
-                        $user->default_card = $cards->id;
-                        $user->save();
-                    }
-
-                    $response_array = Helper::null_safe(array('success' => true));
-                    $response_code = 200;
-                
-                } else {
-                    $response_array = array('success' => false , 'error' => 'Could not create client ID' , 'error_code' => 450);
-                    $response_code = 200;
-                }
-            
-            } catch(Exception $e) {
-                $response_array = array('success' => false , 'error' => $e , 'error_code' => 101);
-                $response_code = 200;
-            
+            if($check_card ) {
+                $cards->is_default = 0;
+            } else {
+                $cards->is_default = 1;
             }
-            
+
+            $cards->save();
+
+            if($user) {
+                // $user->payment_mode = CARD;
+                $user->default_card = $check_card ? $user->default_card : $cards->id;
+                $user->save();
+            }
+
+            $response_array = Helper::null_safe(array('success' => true));
         }
     
         $response = response()->json($response_array,200);

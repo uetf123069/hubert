@@ -422,6 +422,9 @@
                 case 155:
                     $string = "Already confirmed the payment or previous state is mismatched.";
                     break;
+                case 156:
+                    $string = "Adding cards is not enabled on this application. Please contact administrator.";
+                    break;
                 default:
                     $string = "Unknown error occurred.";
             }
