@@ -1293,6 +1293,7 @@ class UserapiController extends Controller
             foreach ($requests as  $req) {
 
                 $req['rating'] = DB::table('user_ratings')->where('provider_id', $req['provider_id'])->avg('rating') ?: 0;
+                $req['is_fav_provider'] = FavouriteProvider::where('user_id' , $request->id)->where('provider_id' , $req['provider_id'])->where('status' , 1)->count() ? 1 : 0;
                 // unset($req['provider_id']);
                 $requests_data[] = $req;
 
@@ -1459,7 +1460,12 @@ class UserapiController extends Controller
 
                         $customer_id = $user_card->customer_id;
                     
-                        \Stripe\Stripe::setApiKey($stripe_secret_key);
+                        if($stripe_secret_key) {
+                            \Stripe\Stripe::setApiKey($stripe_secret_key);
+                        } else {
+                            $response_array = array('success' => false, 'error' => Helper::get_error_message(155) , 'error_code' => 155);
+                            return response()->json($response_array , 200);
+                        }
 
                         try{
 
@@ -1485,10 +1491,13 @@ class UserapiController extends Controller
                         } catch (\Stripe\StripeInvalidRequestError $e) {
                             Log::info(print_r($e,true));
                             $response_array = array('success' => false , 'error' => Helper::get_error_message(141) ,'error_code' => 141);
+                            return response()->json($response_array , 200);
+                        
                         }
 
                     } else {
                         $response_array = array('success' => false, 'error' => Helper::get_error_message(140) , 'error_code' => 140);
+                        return response()->json($response_array , 200);
                     }
 
                 }  
@@ -1580,9 +1589,9 @@ class UserapiController extends Controller
                 }
 
                 // Send Push Notification to Provider
-                $title = Helper::tr('provider_rated_by_user_title');
-                $messages = Helper::tr('provider_rated_by_user_message');
-                $this->dispatch( new sendPushNotification($req->confirmed_provider, PROVIDER,$req->id,$title, $messages));     
+                // $title = Helper::tr('provider_rated_by_user_title');
+                // $messages = Helper::tr('provider_rated_by_user_message');
+                // $this->dispatch( new sendPushNotification($req->confirmed_provider, PROVIDER,$req->id,$title, $messages));     
                 $response_array = array('success' => true);
 
             } else {

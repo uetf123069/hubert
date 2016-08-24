@@ -1397,11 +1397,11 @@ class ProviderApiController extends Controller
 	            $provider->is_available = PROVIDER_AVAILABLE;
 	            $provider->save();
 
-	            // Send Push Notification to User
-	            $title = Helper::tr('user_rated_by_provider_title');
-	            $message = Helper::tr('user_rated_by_provider_title');
+	            // Send Push notification to user
+	            // $title = Helper::tr('user_rated_by_provider_title');
+	            // $message = Helper::tr('user_rated_by_provider_title');
 
-	            $this->dispatch( new sendPushNotification($req->user_id, USER,$req->id,$title, $message));     
+	            // $this->dispatch( new sendPushNotification($req->user_id, USER,$req->id,$title, $message));     
 
 	            $response_array = Helper::null_safe(array('success' => true,'status' => REQUEST_COMPLETE_PENDING,'message' => Helper::get_message(116)));
 	        } else {
