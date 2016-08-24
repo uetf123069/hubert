@@ -1577,16 +1577,16 @@ class UserapiController extends Controller
                 $req->save();
 
                 // Save favourite provider details
-                if($request->is_favorite ==  DEFAULT_TRUE) {
-                    $fav_provider = FavouriteProvider::where('provider_id',$req->confirmed_provider)->where('user_id' , $request->id)->first();
-                    if(!$fav_provider){
-                        $favProvider = new FavouriteProvider;
-                        $favProvider->provider_id = $req->confirmed_provider;
-                        $favProvider->user_id = $request->id;
-                        $favProvider->status = DEFAULT_TRUE;
-                        $favProvider->save();
-                    }
+                $fav_provider = FavouriteProvider::where('provider_id',$req->confirmed_provider)->where('user_id' , $request->id)->first();
+                
+                if(!$fav_provider){
+                    $favProvider = new FavouriteProvider;
                 }
+
+                $favProvider->provider_id = $req->confirmed_provider;
+                $favProvider->user_id = $request->id;
+                $favProvider->status = $request->is_favorite;
+                $favProvider->save();
 
                 // Send Push Notification to Provider
                 // $title = Helper::tr('provider_rated_by_user_title');
