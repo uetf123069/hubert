@@ -362,62 +362,134 @@ class ProviderApiController extends Controller
 	// }
 
 	public function login(Request $request)
-	{
-		// Social Login Pending
+    {
+        $response_array = array();
+        $operation = false;
 
-		$validator = Validator::make(
-				$request->all(),
-				array(
-						'email' => 'required|email',
-						'password' => 'required',
-						'device_token' => 'required',
-						'device_type' => 'required|in:'.DEVICE_ANDROID.','.DEVICE_IOS,
-				));
-	
-		if ($validator->fails()) {
+        $basicValidator = Validator::make(
+            $request->all(),
+            array(
+                'device_token' => 'required',
+                'device_type' => 'required|in:'.DEVICE_ANDROID.','.DEVICE_IOS,
+                'login_by' => 'required|in:manual,facebook,google',
+            )
+        );
 
-			$error_messages = implode(',', $validator->messages()->all());
-			$response_array = array('success' => false, 'error' => $error_messages, 'error_code' => 101, 'error_messages' => Helper::get_error_message(101));
+        if($basicValidator->fails()){
+            $error_messages = implode(',',$basicValidator->messages()->all());
+            $response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101, 'error_messages'=> $error_messages);
+        }else{
 
-		} else {
+            $login_by = $request->login_by;
+            if($login_by == 'manual'){
 
-			$email = $request->email;
-			$password = $request->password;
-			$device_token = $request->device_token;
-			$device_type = $request->device_type;
-				
-			// Validate the provider credentials
+                /*validate manual login fields*/
+                $manualValidator = Validator::make(
+                    $request->all(),
+                    array(
+                        'email' => 'required|email',
+                        'password' => 'required',
+                    )
+                );
 
-			if ($provider = Provider::where('email', '=', $email)->first()) {
+                if ($manualValidator->fails()) {
+                    $error_messages = implode(',',$manualValidator->messages()->all());
+                    $response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101, 'error_messages'=> $error_messages);
+                } else {
 
-				// Check the email is activated
-				if ($provider->is_activated) { 
+                    $email = $request->email;
+                    $password = $request->password;
 
-					if (Hash::check($password, $provider->password)) {
+                    // Validate the user credentials
+                    if($provider = Provider::where('email', '=', $email)->first()){
+                        if($provider->is_activated) {
+                            if(Hash::check($password, $provider->password)){
 
-						// Generate new tokens
-						$provider->token = Helper::generate_token();
-						$provider->token_expiry = Helper::generate_token_expiry();
-						
-						// Save device details
-						$provider->device_token = $device_token;
-						$provider->device_type = $device_type;
-							
-						$provider->save();
+                                /*manual login success*/
+                                $operation = true;
+                                $service_type_id = $service_name = "";
 
-                        $service_type_id = $service_name = "";
+                                if($provider_service = ProviderService::where('provider_id' , $provider->id)   
+                                                        ->leftJoin('service_types' , 'provider_services.service_type_id' , '=' , 'service_types.id')
+                                                        ->select('provider_services.service_type_id' , 'service_types.name')
+                                                        ->first()) {
+                                    $service_type_id = $provider_service->service_type_id;
 
-                        if($provider_service = ProviderService::where('provider_id' , $provider->id)   
-                                                ->leftJoin('service_types' , 'provider_services.service_type_id' , '=' , 'service_types.id')
-                                                ->select('provider_services.service_type_id' , 'service_types.name')
-                                                ->first()) {
-                            $service_type_id = $provider_service->service_type_id;
+                                    $service_name = $provider_service->name;
+                                }
 
-                            $service_name = $provider_service->name;
+                            }else{
+                                $response_array = array( 'success' => false, 'error' => Helper::get_error_message(105), 'error_code' => 105 );
+                            }
+                        } else {
+                            $response_array = array('success' => false , 'error' => Helper::get_error_message(144),'error_code' => 144);
                         }
-							
-						// Respond with provider details
-						$response_array = array(
+
+                    } else {
+                        $response_array = array( 'success' => false, 'error' => Helper::get_error_message(105), 'error_code' => 105 );
+                    }
+                }
+
+            } else {
+                /*validate social login fields*/
+                $socialValidator = Validator::make(
+                    $request->all(),
+                    array(
+                        'social_unique_id' => 'required',
+                    )
+                );
+
+                if ($socialValidator->fails()) {
+                    $error_messages = implode(',',$socialValidator->messages()->all());
+                    $response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101, 'error_messages'=> $error_messages);
+                } else {
+                    $social_unique_id = $request->social_unique_id;
+                    if ($provider = Provider::where('social_unique_id', '=', $social_unique_id)->first()) {
+                        if($provider->is_activated) {
+                            /*social login success*/
+                            $operation = true;
+                            $service_type_id = $service_name = "";
+
+                            if($provider_service = ProviderService::where('provider_id' , $provider->id)   
+                                                    ->leftJoin('service_types' , 'provider_services.service_type_id' , '=' , 'service_types.id')
+                                                    ->select('provider_services.service_type_id' , 'service_types.name')
+                                                    ->first()) {
+                                $service_type_id = $provider_service->service_type_id;
+
+                                $service_name = $provider_service->name;
+                            }
+                        } else {
+                            $response_array = array('success' => false , 'error' => Helper::get_error_message(144),'error_code' => 144);
+                        }
+
+                    }else{
+                        $response_array = array('success' => false, 'error' => Helper::get_error_message(125), 'error_code' => 125);
+                    }
+
+                }
+            }
+
+            if($operation){
+
+                $device_token = $request->device_token;
+                $device_type = $request->device_type;
+
+                // Generate new tokens
+                $provider->token = Helper::generate_token();
+                $provider->token_expiry = Helper::generate_token_expiry();
+                
+                // Save device details
+                $provider->device_token = $device_token;
+                $provider->device_type = $device_type;
+                $provider->login_by = $login_by;
+
+                $provider->save();
+
+                $payment_mode_status = $provider->payment_mode ? $provider->payment_mode : 0;
+
+                // Respond with provider details
+
+                $response_array = array(
                             'success' => true,
                             'id' => $provider->id,
                             'name' => $provider->first_name.' '.$provider->last_name,
@@ -433,41 +505,15 @@ class ProviderApiController extends Controller
                             'active' => boolval($provider->is_activated),
                             'service_type' => $service_type_id,
                             'service_type_name' => $service_name,
-						);
+                        );
 
-						$response_array = Helper::null_safe($response_array);
+                $response_array = Helper::null_safe($response_array);
+            }
+        }
 
-					} else {
-
-						$response_array = array(
-								'success' => false,
-								'error' => Helper::get_error_message(105),
-								'error_code' => 105
-						);
-					}
-				
-				} else {
-
-					$response_array = array(
-							'success' => false,
-							'error' => Helper::get_error_message(111),
-							'error_code' => 111
-					);
-				}
-			} else {
-
-				$response_array = array(
-						'success' => false,
-						'error' => Helper::get_error_message(105),
-						'error_code' => 105
-				);
-			}
-				
-		}
-	
-		$response = response()->json($response_array, 200);
-		return $response;
-	}
+        $response = response()->json($response_array, 200);
+        return $response;
+    }
 
     public function forgot_password(Request $request)
     {
