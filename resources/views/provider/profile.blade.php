@@ -24,11 +24,11 @@
 						<div class="panel-body">
 							<form action="{{route('provider.profile.save')}}" enctype="multipart/form-data" method="POST" class="form-horizontal row-border">
 									<div class="form-group pb10">
-										<label class="col-sm-2 control-label">{{ tr('availability') }}</label>
+										<label class="col-sm-2 control-label">{{  tr('availability') }}</label>
 										<div class="col-sm-8">
 											<input class="bootstrap-switch switch-alt" type="checkbox" 
 										 	 @if(Auth::guard('provider')->user()->is_available == 0)
-											 	checked="false"
+											 	
 											 @else
 											 	checked="true"
 											 @endif

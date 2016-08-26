@@ -15,6 +15,6 @@ class DatabaseSeeder extends Seeder
         // $this->call(UsersTableSeeder::class);
         factory(App\Provider::class, 10)->create();
         $this->call(SettingstableSeeder::class);
-        $this->call(SettingsAddEmailLogoSeeder::class);
+        // $this->call(SettingsAddEmailLogoSeeder::class);
     }
 }
