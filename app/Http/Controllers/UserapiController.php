@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Helpers\Helper;
 
-use //Log;
+use Log;
 
 use Hash;
 
@@ -110,7 +110,7 @@ class UserapiController extends Controller
 
     public function __construct(Request $request)
     {
-        $this->middleware('UserApiVal' , array('except' => ['register' , '//Login' , 'forgot_password']));
+        $this->middleware('UserApiVal' , array('except' => ['register' , 'login' , 'forgot_password']));
         
     }
     public function register(Request $request)
@@ -126,7 +126,7 @@ class UserapiController extends Controller
             array(
                 'device_type' => 'required|in:'.DEVICE_ANDROID.','.DEVICE_IOS,
                 'device_token' => 'required',
-                '//Login_by' => 'required|in:manual,facebook,google',
+                'login_by' => 'required|in:manual,facebook,google',
             )
         );
 
@@ -134,16 +134,16 @@ class UserapiController extends Controller
 
             $error_messages = implode(',', $basicValidator->messages()->all());
             $response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101, 'error_messages'=> $error_messages);
-            //Log::info('Registration basic validation failed');
+            Log::info('Registration basic validation failed');
 
         } else {
 
-            $//Login_by = $request->//Login_by;
-            $allowedSocial//Login = array('facebook','google');
+            $login_by = $request->login_by;
+            $allowedSocialLogin = array('facebook','google');
 
-            // check //Login-by
+            // check login-by
 
-            if(in_array($//Login_by,$allowedSocial//Login)){
+            if(in_array($login_by,$allowedSocialLogin)){
 
                 // validate social registration fields
 
@@ -165,7 +165,7 @@ class UserapiController extends Controller
                     $error_messages = implode(',', $socialValidator->messages()->all());
                     $response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101, 'error_messages'=> $error_messages);
 
-                    //Log::info('Registration social validation failed');
+                    Log::info('Registration social validation failed');
 
                 }else {
                     
@@ -175,7 +175,7 @@ class UserapiController extends Controller
                         $new_user = DEFAULT_FALSE;
                     }
 
-                    //Log::info('Registration passed social validation');
+                    Log::info('Registration passed social validation');
                     $operation = true;
                 }
 
@@ -208,16 +208,16 @@ class UserapiController extends Controller
 
                     $error_messages = implode(',', $manualValidator->messages()->all());
                     $response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101, 'error_messages'=> $error_messages);
-                    //Log::info('Registration manual validation failed');
+                    Log::info('Registration manual validation failed');
 
                 } elseif($emailValidator->fails()) {
 
                     $error_messages = implode(',', $emailValidator->messages()->all());
                     $response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101, 'error_messages'=> $error_messages);
-                    //Log::info('Registration manual email validation failed');
+                    Log::info('Registration manual email validation failed');
 
                 } else {
-                    //Log::info('Registration passed manual validation');
+                    Log::info('Registration passed manual validation');
                     $operation = true;
                 }
             
@@ -271,7 +271,7 @@ class UserapiController extends Controller
 
                 $user->device_token = $request->has('device_token') ? $request->device_token : "";
                 $user->device_type = $request->has('device_type') ? $request->device_type : "";
-                $user->//Login_by = $request->has('//Login_by') ? $request->//Login_by : "manual";
+                $user->login_by = $request->has('login_by') ? $request->login_by : "manual";
                 $user->social_unique_id = $request->has('social_unique_id') ? $request->social_unique_id : '';
 
                 // Upload picture
@@ -309,14 +309,14 @@ class UserapiController extends Controller
                     'picture' => $user->picture,
                     'token' => $user->token,
                     'token_expiry' => $user->token_expiry,
-                    '//Login_by' => $user->//Login_by,
+                    'login_by' => $user->login_by,
                     'social_unique_id' => $user->social_unique_id,
                     'payment_mode_status' =>  $payment_mode_status,
                 );
 
                 $response_array = Helper::null_safe($response_array);
 
-                //Log::info('Registration completed');
+                Log::info('Registration completed');
             
             }
 
@@ -326,7 +326,7 @@ class UserapiController extends Controller
         return $response;
     }
 
-    public function //Login(Request $request)
+    public function login(Request $request)
     {
         $response_array = array();
         $operation = false;
@@ -336,7 +336,7 @@ class UserapiController extends Controller
             array(
                 'device_token' => 'required',
                 'device_type' => 'required|in:'.DEVICE_ANDROID.','.DEVICE_IOS,
-                '//Login_by' => 'required|in:manual,facebook,google',
+                'login_by' => 'required|in:manual,facebook,google',
             )
         );
 
@@ -345,10 +345,10 @@ class UserapiController extends Controller
             $response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101, 'error_messages'=> $error_messages);
         }else{
 
-            $//Login_by = $request->//Login_by;
-            if($//Login_by == 'manual'){
+            $login_by = $request->login_by;
+            if($login_by == 'manual'){
 
-                /*validate manual //Login fields*/
+                /*validate manual login fields*/
                 $manualValidator = Validator::make(
                     $request->all(),
                     array(
@@ -370,7 +370,7 @@ class UserapiController extends Controller
                         if($user->is_activated) {
                             if(Hash::check($password, $user->password)){
 
-                                /*manual //Login success*/
+                                /*manual login success*/
                                 $operation = true;
 
                             }else{
@@ -386,7 +386,7 @@ class UserapiController extends Controller
                 }
 
             } else {
-                /*validate social //Login fields*/
+                /*validate social login fields*/
                 $socialValidator = Validator::make(
                     $request->all(),
                     array(
@@ -401,7 +401,7 @@ class UserapiController extends Controller
                     $social_unique_id = $request->social_unique_id;
                     if ($user = User::where('social_unique_id', '=', $social_unique_id)->first()) {
                         if($user->is_activated) {
-                            /*social //Login success*/
+                            /*social login success*/
                             $operation = true;
                         } else {
                             $response_array = array('success' => false , 'error' => Helper::get_error_message(144),'error_code' => 144);
@@ -426,7 +426,7 @@ class UserapiController extends Controller
                 // Save device details
                 $user->device_token = $device_token;
                 $user->device_type = $device_type;
-                $user->//Login_by = $//Login_by;
+                $user->login_by = $login_by;
 
                 $user->save();
 
@@ -446,7 +446,7 @@ class UserapiController extends Controller
                     'picture' => $user->picture,
                     'token' => $user->token,
                     'token_expiry' => $user->token_expiry,
-                    '//Login_by' => $user->//Login_by,
+                    'login_by' => $user->login_by,
                     'social_unique_id' => $user->social_unique_id,
                     'payment_mode_status' => $payment_mode_status,
                 );
@@ -545,7 +545,7 @@ class UserapiController extends Controller
             'picture' => $user->picture,
             'token' => $user->token,
             'token_expiry' => $user->token_expiry,
-            '//Login_by' => $user->//Login_by,
+            'login_by' => $user->login_by,
             'social_unique_id' => $user->social_unique_id
         );
         $response = response()->json(Helper::null_safe($response_array), 200);
@@ -625,7 +625,7 @@ class UserapiController extends Controller
                 'picture' => $user->picture,
                 'token' => $user->token,
                 'token_expiry' => $user->token_expiry,
-                '//Login_by' => $user->//Login_by,
+                'login_by' => $user->login_by,
                 'social_unique_id' => $user->social_unique_id,
                 'payment_mode_status' => $payment_mode_status
             );
@@ -755,15 +755,15 @@ class UserapiController extends Controller
                       ORDER BY distance";
                       
            $providers = DB::select(DB::raw($query));
-                //Log::info($request);
-                //Log::info($latitude);
-                //Log::info($longitude);
-                //Log::info($service_type_id);
+                Log::info($request);
+                Log::info($latitude);
+                Log::info($longitude);
+                Log::info($service_type_id);
             $response_array = Helper::null_safe(array(
                 'success' => true,
                 'providers' => $providers
             ));
-//Log::info($response_array);
+Log::info($response_array);
 
         }
 
@@ -773,7 +773,7 @@ class UserapiController extends Controller
     // Automated Request
     public function send_request(Request $request) {
 
-        //Log::info('send_request'.print_r($request->all() ,true));
+        Log::info('send_request'.print_r($request->all() ,true));
 
         $validator = Validator::make(
                 $request->all(),
@@ -788,7 +788,7 @@ class UserapiController extends Controller
             $error_messages = implode(',', $validator->messages()->all());
             $response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101, 'error_messages' => $error_messages);
         } else {
-            //Log::info('Create request start');
+            Log::info('Create request start');
             // Check the user filled the payment details
 
             $user = User::find($request->id);
@@ -798,7 +798,7 @@ class UserapiController extends Controller
             $user->save();
 
             if(!$user->payment_mode) {
-                // //Log::info('Payment Mode is not available');
+                // Log::info('Payment Mode is not available');
                 $response_array = array('success' => false , 'error' => Helper::get_error_message(134) , 'error_code' => 134);
             } else {
 
@@ -821,7 +821,7 @@ class UserapiController extends Controller
 
                     if($check_requests == 0) {
 
-                        //Log::info('Previous requests check is done');
+                        Log::info('Previous requests check is done');
                         $service_type = $request->service_type; // Get the service type 
 
                         // Initialize the variable
@@ -856,7 +856,7 @@ class UserapiController extends Controller
                         // Check the service type value to search the providers based on the nearby location
                         if($service_type) {
 
-                            //Log::info('Location Based search started - service_type');
+                            Log::info('Location Based search started - service_type');
                             // Get the providers based on the selected service types
 
                             $service_providers = ProviderService::where('service_type_id' , $service_type)->where('is_available' , 1)->select('provider_id')->get();
@@ -876,19 +876,19 @@ class UserapiController extends Controller
                                         ORDER BY distance";
 
                                 $providers = DB::select(DB::raw($query));
-                                //Log::info("Search query: " . $query);
+                                Log::info("Search query: " . $query);
                             } 
                         } else {
-                            //Log::info('Location Based search started - without service_type');
+                            Log::info('Location Based search started - without service_type');
 
                             $query = "SELECT providers.id,providers.waiting_to_respond as waiting, 1.609344 * 3956 * acos( cos( radians('$latitude') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians('$longitude') ) + sin( radians('$latitude') ) * sin( radians(latitude) ) ) AS distance FROM providers
                                     WHERE is_available = 1 AND is_activated = 1 AND is_approved = 1
                                     AND (1.609344 * 3956 * acos( cos( radians('$latitude') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians('$longitude') ) + sin( radians('$latitude') ) * sin( radians(latitude) ) ) ) <= $distance
                                     ORDER BY distance";
                             $providers = DB::select(DB::raw($query));
-                            //Log::info("Search query: " . $query);
+                            Log::info("Search query: " . $query);
                         }
-                        // //Log::info('List of providers'." ".print_r($providers));
+                        // Log::info('List of providers'." ".print_r($providers));
 
                         $merge_providers = array();
                         // Initialize Final list of provider variable
@@ -906,7 +906,7 @@ class UserapiController extends Controller
                             }
                         } else {
                             if(!$list_fav_providers) {
-                                //Log::info("No Provider Found");
+                                Log::info("No Provider Found");
                                 // Send push notification to User
 
                                 $title = Helper::get_push_message(601);
@@ -998,7 +998,7 @@ class UserapiController extends Controller
                                 'longitude' => $requests->s_longitude,
                             );
 
-                            $response_array = Helper::null_safe($response_array); //Log::info('Create request end');
+                            $response_array = Helper::null_safe($response_array); Log::info('Create request end');
                         } else {
                             $response_array = array('success' => false , 'error' => Helper::get_error_message(126) , 'error_code' => 126 );
                         }     
@@ -1033,11 +1033,11 @@ class UserapiController extends Controller
             $error_messages = implode(',', $validator->messages()->all());
             $response_array = array('success' => false, 'error' => Helper::get_error_message(101), 'error_code' => 101, 'error_messages' => $error_messages);
         } else {
-            //Log::info('Create request start');
+            Log::info('Create request start');
             // Check the user filled the payment details
             $user = User::find($request->id);
             if(!$user->payment_mode) {
-                //Log::info('Payment Mode is not available');
+                Log::info('Payment Mode is not available');
                 $response_array = array('success' => false , 'error' => Helper::get_error_message(134) , 'error_code' => 134);
             } else {
 
@@ -1063,7 +1063,7 @@ class UserapiController extends Controller
 
                         if($check_requests == 0) {
 
-                            //Log::info('Previous requests check is done');
+                            Log::info('Previous requests check is done');
                            
                             // Create Requests
                             $requests = new Requests;
@@ -1115,7 +1115,7 @@ class UserapiController extends Controller
                                     'longitude' => $requests->s_longitude,
                                 );
 
-                                $response_array = Helper::null_safe($response_array); //Log::info('Create request end');
+                                $response_array = Helper::null_safe($response_array); Log::info('Create request end');
                             } else {
                                 $response_array = array('success' => false , 'error' => Helper::get_error_message(126) , 'error_code' => 126 );
                             }     
@@ -1186,7 +1186,7 @@ class UserapiController extends Controller
                         
                         $this->dispatch(new sendPushNotification($requests->confirmed_provider,PROVIDER,$requests->id,$title,$message));
 
-                        //Log::info("Cancelled request by user");
+                        Log::info("Cancelled request by user");
                         // Send mail notification to the provider
                         $email_data = array();
 
@@ -1246,7 +1246,7 @@ class UserapiController extends Controller
                 $title = Helper::tr('waiting_cancel_by_user_title');
                 $message =  Helper::tr('waiting_cancel_by_user_message');
 
-                //Log::info("waiting cancelled - current provider".$current_provider);
+                Log::info("waiting cancelled - current provider".$current_provider);
 
                 $this->dispatch(new sendPushNotification($current_provider,PROVIDER,$requests->id,$title,$message));
             }
@@ -1494,7 +1494,7 @@ class UserapiController extends Controller
                             $requests->amount = $amount;
                         
                         } catch (\Stripe\StripeInvalidRequestError $e) {
-                            //Log::info(print_r($e,true));
+                            Log::info(print_r($e,true));
                             $response_array = array('success' => false , 'error' => Helper::get_error_message(141) ,'error_code' => 141);
                             return response()->json($response_array , 200);
                         
