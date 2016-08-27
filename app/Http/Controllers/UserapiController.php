@@ -753,13 +753,17 @@ class UserapiController extends Controller
                        providers.is_available = 1 AND is_activated = 1 AND is_approved = 1
                             AND (1.609344 * 3956 * acos( cos( radians('$latitude') ) * cos( radians(latitude) ) * cos( radians(longitude) - radians('$longitude') ) + sin( radians('$latitude') ) * sin( radians(latitude) ) ) ) <= $distance
                       ORDER BY distance";
-
-            $providers = DB::select(DB::raw($query));
-
+                      
+           $providers = DB::select(DB::raw($query));
+                Log::info($request);
+                Log::info($latitude);
+                Log::info($longitude);
             $response_array = Helper::null_safe(array(
                 'success' => true,
                 'providers' => $providers
             ));
+Log::info($response_array);
+
         }
 
         return response()->json($response_array , 200);
@@ -1641,7 +1645,7 @@ class UserapiController extends Controller
 
         $fav_providers = FavouriteProvider::where('favourite_providers.user_id' , $request->id)
                             ->leftJoin('providers' , 'favourite_providers.provider_id' , '=' ,'providers.id')
-                            ->select('favourite_providers.id as favourite_id' ,'providers.id as provider_id' ,
+                            ->select('favourite_providers.id as favourite_id' ,'favourite_providers.status as status','providers.id as provider_id' ,
                                 DB::raw('CONCAT(providers.first_name, " ", providers.last_name) as provider_name'),'providers.picture'
                                 )
                             ->get()
