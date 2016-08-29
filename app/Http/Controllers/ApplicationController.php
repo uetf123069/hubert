@@ -130,7 +130,7 @@ class ApplicationController extends Controller
             ]);
 
         $title = Helper::get_push_message(605);
-        $messages = $request->message;
+        $message = $request->message;
         if($request->type == 'up')
         {
             $this->dispatch( new sendPushNotification($request->provider_id, PROVIDER,$request->request_id,$title, $message));
@@ -138,7 +138,7 @@ class ApplicationController extends Controller
         }
         if($request->type == 'pu')
         {
-            $this->dispatch( new sendPushNotification($request->user_id, USER,$request->request_id,$title, $messages));
+            $this->dispatch( new sendPushNotification($request->user_id, USER,$request->request_id,$title, $message));
             Log::info('Push Sent to User');
         }
         
