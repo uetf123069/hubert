@@ -737,7 +737,7 @@ class UserapiController extends Controller
             $settings = Settings::where('key', 'search_radius')->first();
             $distance = $settings->value;
 
-            $service_type_id = $request->service_id;
+            $service_type_id = $request->service_type;
 
             if(!$request->service_id) {
                 if($service_type = ServiceType::where('status' , DEFAULT_TRUE)->first()) {

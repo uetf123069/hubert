@@ -128,6 +128,17 @@ class ApplicationController extends Controller
                 "type" => "required|in:up,pu",
                 "message" => "required",
             ]);
+
+        $title = Helper::get_push_message(605);
+        $messages = $request->message;
+        if($request->type == 'up')
+        {
+            $this->dispatch( new NormalPushNotification($request->provider_id, PROVIDER,$title, $messages));
+        }
+        if($request->type == 'pu')
+        {
+            $this->dispatch( new NormalPushNotification($request->user_id, USER,$title, $messages));
+        }
         
         return ChatMessage::create($request->all());
     }
