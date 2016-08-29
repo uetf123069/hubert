@@ -133,12 +133,12 @@ class ApplicationController extends Controller
         $messages = $request->message;
         if($request->type == 'up')
         {
-            $this->dispatch( new sendPushNotification($request->provider_id, PROVIDER,$title, $messages));
+            $this->dispatch( new sendPushNotification($request->provider_id, PROVIDER,$request->request_id,$title, $message));
             Log::info('Push Sent to Provider');
         }
         if($request->type == 'pu')
         {
-            $this->dispatch( new sendPushNotification($request->user_id, USER,$title, $messages));
+            $this->dispatch( new sendPushNotification($request->user_id, USER,$request->request_id,$title, $messages));
             Log::info('Push Sent to User');
         }
         
