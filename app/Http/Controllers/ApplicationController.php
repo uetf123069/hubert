@@ -134,10 +134,12 @@ class ApplicationController extends Controller
         if($request->type == 'up')
         {
             $this->dispatch( new NormalPushNotification($request->provider_id, PROVIDER,$title, $messages));
+            Log::info('Push Sent to Provider');
         }
         if($request->type == 'pu')
         {
             $this->dispatch( new NormalPushNotification($request->user_id, USER,$title, $messages));
+            Log::info('Push Sent to User');
         }
         
         return ChatMessage::create($request->all());
