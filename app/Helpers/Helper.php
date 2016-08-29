@@ -512,7 +512,7 @@
                 case 604:
                     $string = "New Request";
                     break;
-                case 604:
+                case 605:
                     $string = "New Message Received";
                     break;
                 default:
