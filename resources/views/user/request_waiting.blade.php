@@ -158,7 +158,7 @@
         infowindow.open(map, marker);
     }
 </script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyALHyNTDk1K_lmcFoeDRsrCgeMGJW6mGsY&libraries=places&callback=initMap" async defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_API_KEY') }}&libraries=places&callback=initMap" async defer></script>
 <script type="text/javascript">
     var providerStatus = {{ $CurrentRequest->data[0]->provider_status }};
     var serviceStatus = {{ $CurrentRequest->data[0]->status }};

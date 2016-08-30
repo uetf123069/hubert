@@ -145,7 +145,7 @@
         </div>
     </div>
 
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyALHyNTDk1K_lmcFoeDRsrCgeMGJW6mGsY&libraries=places"></script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&key={{ env('GOOGLE_API_KEY') }}&libraries=places"></script>
 
     <script type="text/javascript">
         var globalOnPopup = 0;

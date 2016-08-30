@@ -12,9 +12,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // $this->call(UsersTableSeeder::class);
-        factory(App\Provider::class, 10)->create();
+        $this->call(AdminSeeder::class);
         $this->call(SettingstableSeeder::class);
-        // $this->call(SettingsAddEmailLogoSeeder::class);
     }
 }
