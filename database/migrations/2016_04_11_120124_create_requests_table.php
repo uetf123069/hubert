@@ -31,6 +31,11 @@ class CreateRequestsTable extends Migration
             $table->dateTime('end_time');
             $table->integer('amount');
             $table->integer('status');
+            $table->integer('provider_status');
+            $table->integer('request_type');
+            $table->integer('request_meta_id');
+            $table->string('after_image');
+            $table->string('before_image');
             $table->timestamps();
         });
     }

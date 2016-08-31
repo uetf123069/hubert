@@ -17,6 +17,7 @@ class CreateProviderServicesTable extends Migration
             $table->integer('provider_id');
             $table->integer('service_type_id');
             $table->integer('status');
+            $table->integer('is_available');
             $table->timestamps();
         });
     }

@@ -19,6 +19,7 @@ class CreateRequestsMetaTable extends Migration
             $table->integer('service_id');
             $table->integer('status');
             $table->integer('is_cancelled');
+            $table->integer('provider_id');
             $table->timestamps();
         });
     }
