@@ -128,17 +128,17 @@ class ApplicationController extends Controller
                 "type" => "required|in:up,pu",
                 "message" => "required",
             ]);
-
+        $type = 'chat';
         $title = Helper::get_push_message(605);
         $message = $request->message;
         if($request->type == 'up')
         {
-            $this->dispatch( new sendPushNotification($request->provider_id, PROVIDER,$request->request_id,$title, $message));
+            $this->dispatch( new sendPushNotification($request->provider_id, PROVIDER,$request->request_id,$title, $message,$type));
             Log::info('Push Sent to Provider');
         }
         if($request->type == 'pu')
         {
-            $this->dispatch( new sendPushNotification($request->user_id, USER,$request->request_id,$title, $message));
+            $this->dispatch( new sendPushNotification($request->user_id, USER,$request->request_id,$title, $message,$type));
             Log::info('Push Sent to User');
         }
         
