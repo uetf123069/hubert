@@ -13,8 +13,6 @@ server.listen(port);
 io.on('connection', function (socket) {
 
     console.log('new connection established');
-    console.log('socket.handshake.query.myid', socket.handshake.query.myid);
-    console.log('socket.handshake.query.reqid', socket.handshake.query.reqid);
 
     socket.reqid = socket.handshake.query.reqid;
     
