@@ -42,10 +42,12 @@ class UserLogin
                 $guard = 'web'; 
                 break;
         }
-        // dd(\Auth::guard($guard)->user());
-        \Auth::guard($guard)->user()->token = Helper::generate_token();
-        \Auth::guard($guard)->user()->token_expiry = Helper::generate_token_expiry();
-        \Auth::guard($guard)->user()->device_token = \Auth::guard($guard)->user()->device_token ? \Auth::guard($guard)->user()->device_token : 'weblogin';
-        \Auth::guard($guard)->user()->save();
+
+        if($guard == 'web' || $guard == 'provider'){
+            \Auth::guard($guard)->user()->token = Helper::generate_token();
+            \Auth::guard($guard)->user()->token_expiry = Helper::generate_token_expiry();
+            \Auth::guard($guard)->user()->device_token = \Auth::guard($guard)->user()->device_token ? \Auth::guard($guard)->user()->device_token : 'weblogin';
+            \Auth::guard($guard)->user()->save();
+        }
     }
 }
