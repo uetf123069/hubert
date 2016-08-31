@@ -979,7 +979,7 @@ Log::info($response_array);
                                         $title = Helper::get_push_message(604);
                                         $message = "You got a new request from".$user->first_name." ".$user->last_name;
 
-                                        $this->dispatch(new sendPushNotification($first_provider_id,PROVIDER,$requests->id,$title,$message));
+                                        $this->dispatch(new sendPushNotification($first_provider_id,PROVIDER,$requests->id,$title,$message,''));
 
                                         // Push End
                                     }
@@ -1098,7 +1098,7 @@ Log::info($response_array);
                                 $title = Helper::get_push_message(604);
                                 $message = "You got a new request from".$user->name;
 
-                                $this->dispatch(new sendPushNotification($request->provider_id,PROVIDER,$requests->id,$title,$message));
+                                $this->dispatch(new sendPushNotification($request->provider_id,PROVIDER,$requests->id,$title,$message,''));
 
                                 // Push End
 
@@ -1184,7 +1184,7 @@ Log::info($response_array);
                         $title = Helper::tr('cancel_by_user_title');
                         $message = Helper::tr('cancel_by_user_message');
                         
-                        $this->dispatch(new sendPushNotification($requests->confirmed_provider,PROVIDER,$requests->id,$title,$message));
+                        $this->dispatch(new sendPushNotification($requests->confirmed_provider,PROVIDER,$requests->id,$title,$message,''));
 
                         Log::info("Cancelled request by user");
                         // Send mail notification to the provider
@@ -1248,7 +1248,7 @@ Log::info($response_array);
 
                 Log::info("waiting cancelled - current provider".$current_provider);
 
-                $this->dispatch(new sendPushNotification($current_provider,PROVIDER,$requests->id,$title,$message));
+                $this->dispatch(new sendPushNotification($current_provider,PROVIDER,$requests->id,$title,$message,''));
             }
         }
 
@@ -1383,7 +1383,7 @@ Log::info($response_array);
                         $title = Helper::tr('request_completed_user_title');
 
                     $message = Helper::tr('request_completed_user_message');                    
-                    $this->dispatch(new sendPushNotification($requests->confirmed_provider,PROVIDER,$requests->id,$title,$message));
+                    $this->dispatch(new sendPushNotification($requests->confirmed_provider,PROVIDER,$requests->id,$title,$message,''));
 
                      // Send mail notification to the provider
                     $subject = Helper::tr('request_completed_bill');
@@ -1517,7 +1517,7 @@ Log::info($response_array);
                     $title = Helper::tr('request_completed_user_title');
 
                 $message = Helper::get_push_message(603);
-                $this->dispatch(new sendPushNotification($requests->confirmed_provider,PROVIDER,$requests->id,$title,$message));
+                $this->dispatch(new sendPushNotification($requests->confirmed_provider,PROVIDER,$requests->id,$title,$message,''));
                 // Send notification end
 
                 // Send invoice notification to the user, provider and admin

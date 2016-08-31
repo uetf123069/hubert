@@ -1014,7 +1014,7 @@ class ProviderApiController extends Controller
                     $title = Helper::tr('request_accepted_title');
                     $message = Helper::tr('request_accepted_message');
 
-                    $this->dispatch( new sendPushNotification($requests->user_id, USER,$requests->id,$title, $message));     
+                    $this->dispatch( new sendPushNotification($requests->user_id, USER,$requests->id,$title, $message,''));     
 
                     // No longer need request specific rows from RequestMeta
                     RequestsMeta::where('request_id', '=', $request_id)->delete();
@@ -1096,7 +1096,7 @@ class ProviderApiController extends Controller
 	            $title = Helper::tr('provider_started_title');
                 $message = Helper::tr('provider_started_message');
 
-                $this->dispatch( new sendPushNotification($requests->user_id, USER,$requests->id,$title, $message));     
+                $this->dispatch( new sendPushNotification($requests->user_id, USER,$requests->id,$title, $message,''));     
            
 				$response_array = Helper::null_safe(array(
 						'success' => true,
@@ -1153,7 +1153,7 @@ class ProviderApiController extends Controller
 	            // Send Push Notification to User
 	            $title = Helper::tr('provider_arrived_title');
                 $message = Helper::tr('provider_arrived_message');
-                $this->dispatch( new sendPushNotification($requests->user_id, USER,$requests->id,$title, $message));
+                $this->dispatch( new sendPushNotification($requests->user_id, USER,$requests->id,$title, $message,''));
            
 				$response_array = Helper::null_safe(array(
 						'success' => true,
@@ -1216,7 +1216,7 @@ class ProviderApiController extends Controller
 	            // Send Push Notification to User
 	            $title = Helper::tr('request_started_title');
                 $message = Helper::tr('request_started_message');
-				$this->dispatch( new sendPushNotification($requests->user_id, USER,$requests->id,$title, $message));
+				$this->dispatch( new sendPushNotification($requests->user_id, USER,$requests->id,$title, $message,''));
            
 				$response_array = Helper::null_safe(array(
 						'success' => true,
@@ -1367,7 +1367,7 @@ class ProviderApiController extends Controller
                 // $message = $invoice_data;
 	            $message = Helper::tr('request_complete_payment_message');
 
-	            $this->dispatch( new sendPushNotification($requests->user_id, USER,$requests->id,$title, $message));
+	            $this->dispatch( new sendPushNotification($requests->user_id, USER,$requests->id,$title, $message,''));
 
 	            // Send invoice notification to the user and provider
                 $subject = Helper::tr('request_completed_invoice');
@@ -1497,7 +1497,7 @@ class ProviderApiController extends Controller
                     $message = Helper::tr('cancel_by_provider_message');
 					
 					// Send notifications to the user
-                    $this->dispatch(new sendPushNotification($requests->user_id,USER,$requests->id,$title,$message));
+                    $this->dispatch(new sendPushNotification($requests->user_id,USER,$requests->id,$title,$message,''));
 
                     // Send email notification to the user
                     /*If request has confirmed provider then release him to available status*/
@@ -1799,7 +1799,7 @@ class ProviderApiController extends Controller
                 $message = Helper::tr('cod_paid_confirmation_message');
                 
                 // Send notifications to the user
-                $this->dispatch(new sendPushNotification($requests->user_id,USER,$requests->id,$title,$message));
+                $this->dispatch(new sendPushNotification($requests->user_id,USER,$requests->id,$title,$message,''));
 
                 $data = array();
 
