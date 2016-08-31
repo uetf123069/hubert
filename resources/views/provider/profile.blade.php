@@ -282,7 +282,7 @@ function change_availability(){
 </script>
 
 <!-- <script type="text/javascript"
-  src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyALHyNTDk1K_lmcFoeDRsrCgeMGJW6mGsY&libraries=places">
+  src="https://maps.googleapis.com/maps/api/js?v=3.exp&key={{ env('GOOGLE_API_KEY') }}&libraries=places">
   </script> -->
 
 <script>

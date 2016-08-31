@@ -15,6 +15,8 @@ class CreateUsersTable extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
+            $table->string('first_name');
+            $table->string('last_name');
             $table->string('email')->unique();
             $table->string('password');
             $table->string('picture');
@@ -34,7 +36,11 @@ class CreateUsersTable extends Migration
             $table->double('longitude',15,8);
             $table->string('paypal_email');
             $table->string('address');
+            $table->integer('is_approved');
+            $table->string('payment_mode');
+            $table->integer('default_card');
             $table->rememberToken();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

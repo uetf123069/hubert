@@ -39,7 +39,8 @@ io.on('connection', function (socket) {
             receiver = 'up' + data.user_id;
         }
 
-        console.log('receiver',receiver);
+        console.log('data', data);
+        console.log('receiver', receiver);
 
         socket.broadcast.to( receiver ).emit('message', data);
 

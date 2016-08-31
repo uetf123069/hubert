@@ -15,6 +15,8 @@ class CreateProvidersTable extends Migration
         Schema::create('providers', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
+            $table->string('first_name');
+            $table->string('last_name');
             $table->string('email')->unique();
             $table->string('password');
             $table->string('picture');
@@ -30,13 +32,18 @@ class CreateProvidersTable extends Migration
             $table->integer('is_activated');
             $table->integer('is_approved');
             $table->integer('is_available');
+            $table->integer('waiting_to_respond');
             $table->enum('gender',array('male','female','others'));
             $table->string('mobile');
             $table->double('latitude', 15, 8);
             $table->double('longitude',15,8);
             $table->string('paypal_email');
             $table->string('address');
+            $table->string('email_activation_code');
+            $table->string('is_email_activated');
+            $table->string('token_refresh');
             $table->rememberToken();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

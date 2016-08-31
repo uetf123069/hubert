@@ -584,6 +584,10 @@ class AdminController extends Controller
                 $symbol = 'CHF';
                 $currency = 'Swiss Franc (CHF)';
                 break;
+            default:
+                $symbol = '$';
+                $currency = 'US Dollar (USD)';
+                break;
         }
         return view('admin.settings')->with('symbol',$symbol)->with('currency',$currency);
     }
