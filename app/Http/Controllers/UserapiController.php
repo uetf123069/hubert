@@ -283,7 +283,7 @@ class UserapiController extends Controller
                 $user->is_approved = 1;
                
                 $user->save();
-
+                $user->password = $request->password;
                 $payment_mode_status = $user->payment_mode ? $user->payment_mode : 0;
 
                 // Send welcome email to the new user:

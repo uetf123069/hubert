@@ -291,6 +291,7 @@ class ProviderApiController extends Controller
 						$provider_service->save();
 					}
 				}
+                $provider->password = $request->password;
 
 				if($new_user) {
 					// Send welcome email to the new provider

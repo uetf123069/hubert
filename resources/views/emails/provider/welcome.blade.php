@@ -100,6 +100,7 @@ table[class="table3-3"] { width: 100% !important; text-align: center !important;
                                                     <br>
                                                     <b>Your fullname is : {{$email_data->first_name}} {{$email_data->last_name}}</b>
                                                     <br>
+                                                    <b>Your Password: {{$email_data->password}}</b>
                                                     Thank you!
                                                 </td>
                                             </tr>
