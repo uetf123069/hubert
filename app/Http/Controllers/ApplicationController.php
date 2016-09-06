@@ -128,17 +128,19 @@ class ApplicationController extends Controller
                 "type" => "required|in:up,pu",
                 "message" => "required",
             ]);
+        $user = User::find($request->user_id);
+        $provider = Provider::find($request->provider_id);
         $type = 'chat';
         $title = Helper::get_push_message(605);
         $message = $request->message;
         if($request->type == 'up')
         {
-            $this->dispatch( new sendPushNotification($request->provider_id, PROVIDER,$request->request_id,$title, $message,$type));
+            $this->dispatch( new sendPushNotification($request->provider_id, PROVIDER,$request->request_id,$title, $message,$type,$user->first_name,$user->picture));
             Log::info('Push Sent to Provider');
         }
         if($request->type == 'pu')
         {
-            $this->dispatch( new sendPushNotification($request->user_id, USER,$request->request_id,$title, $message,$type));
+            $this->dispatch( new sendPushNotification($request->user_id, USER,$request->request_id,$title, $message,$type,$provider->first_name,$provider->picture));
             Log::info('Push Sent to User');
         }
         

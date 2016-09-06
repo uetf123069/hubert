@@ -32,7 +32,7 @@ class sendPushNotification extends Job implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($id,$user_type,$request_id,$title,$message,$type)
+    public function __construct($id,$user_type,$request_id,$title,$message,$type,$name,$picture)
     {
         $this->id = $id;
         $this->user_type = $user_type;
@@ -40,6 +40,8 @@ class sendPushNotification extends Job implements ShouldQueue
         $this->title = $title;
         $this->message = $message;
         $this->type = $type;
+        $this->name = $name;
+        $this->picture = $picture;
     }
 
     /**
