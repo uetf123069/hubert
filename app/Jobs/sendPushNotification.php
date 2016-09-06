@@ -26,13 +26,14 @@ class sendPushNotification extends Job implements ShouldQueue
     protected $request_id;
     protected $title;
     protected $message;
+    protected $type;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($id,$user_type,$request_id,$title,$message,$type,$name,$picture)
+    public function __construct($id,$user_type,$request_id,$title,$message,$type)
     {
         $this->id = $id;
         $this->user_type = $user_type;
@@ -40,8 +41,6 @@ class sendPushNotification extends Job implements ShouldQueue
         $this->title = $title;
         $this->message = $message;
         $this->type = $type;
-        $this->name = $name;
-        $this->picture = $picture;
     }
 
     /**
@@ -129,6 +128,7 @@ class sendPushNotification extends Job implements ShouldQueue
                     );
 
                     Log::info("Andriod push Started");
+                    dd(json_encode($push_message));
 
                     require_once app_path().'/gcm/GCM_1.php';
                     require_once app_path().'/gcm/const.php';
