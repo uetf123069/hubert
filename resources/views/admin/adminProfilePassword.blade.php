@@ -13,6 +13,15 @@
   <div class="panel-body">
     <div class="row no-margin">
       <div class="col-lg-12">
+        @if (count($errors) > 0)
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
         <form class="form-horizontal bordered-group" action="{{route('admin.profile.password.update')}}" method="POST">
           <div class="form-group">
             <label class="col-sm-2 control-label">{{ tr('old_password') }}</label>
