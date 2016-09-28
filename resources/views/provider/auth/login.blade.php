@@ -40,8 +40,18 @@
                                 @if ($errors->has('password'))
                                     <span class="help-block">
                                         <strong>{{ $errors->first('password') }}</strong>
-                                    </span>
+                                        </span>
                                 @endif
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-md-6 col-md-offset-4">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" class="text-center" name="remember"> Remember Me
+                                    </label>
+                                </div>
                             </div>
                         </div>
 

@@ -1,11 +1,11 @@
 @extends('layouts.admin')
 
-@section('title', 'Admin Profile | ')
-
+@section('title', 'Admin Password | ')
 
 @section('content')
 
 @include('notification.notify')
+
 <div class="panel mb25">
   <div class="panel-heading border">
     {{ tr('change_password') }}
@@ -14,13 +14,13 @@
     <div class="row no-margin">
       <div class="col-lg-12">
         @if (count($errors) > 0)
-            <div class="alert alert-danger">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
+          <div class="alert alert-danger">
+            <ul>
+              @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+              @endforeach
+            </ul>
+          </div>
         @endif
         <form class="form-horizontal bordered-group" action="{{route('admin.profile.password.update')}}" method="POST">
           <div class="form-group">

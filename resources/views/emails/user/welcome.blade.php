@@ -55,7 +55,7 @@ table[class="table3-3"] { width: 100% !important; text-align: center !important;
                                 <!-- logo -->
                                 <tr>
                                     <td align="center" style="line-height: 0px;">
-                                        <img data-crop="false" mc:edit="logo" style="display:block; line-height:0px; font-size:0px; border:0px;max-height:70px;" src="{{Setting::get('mail_logo')}}" alt="logo" />
+                                        <img data-crop="false" mc:edit="logo" style="display:block; line-height:0px; font-size:0px; border:0px;max-height:70px;" src="{{ Setting::get('mail_logo', asset('xuber_blue.png')) }}" alt="logo" />
                                     </td>
                                 </tr>
                                 <!-- end logo -->

@@ -42,7 +42,7 @@ a { color: #ff646a; text-decoration: none; }
                                 <!-- logo -->
                                 <tr>
                                     <td align="center" style="line-height:0px;">
-                                        <img mc:edit="img" style="display:block;font-size:0px; border:0px; line-height:0px;max-width:70px;" src="{{Setting::get('mail_logo')}}" alt="logo" />
+                                        <img mc:edit="img" style="display:block;font-size:0px; border:0px; line-height:0px;max-width:70px;" src="{{ Setting::get('mail_logo', asset('xuber_blue.png')) }}" alt="logo" />
                                     </td>
                                 </tr>
                                 <!-- end logo -->

@@ -998,7 +998,8 @@ Log::info($response_array);
                                 'longitude' => $requests->s_longitude,
                             );
 
-                            $response_array = Helper::null_safe($response_array); Log::info('Create request end');
+                            $response_array = Helper::null_safe($response_array);
+                            Log::info('Create request end');
                         } else {
                             $response_array = array('success' => false , 'error' => Helper::get_error_message(126) , 'error_code' => 126 );
                         }     

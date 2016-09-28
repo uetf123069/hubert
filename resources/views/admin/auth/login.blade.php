@@ -25,18 +25,23 @@
         </div>
 
         <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
-
             <input type="password" class="form-control input-lg" name="password" placeholder="{{ tr('password') }}">
-
             @if ($errors->has('password'))
                 <span class="help-block">
                     <strong>{{ $errors->first('password') }}</strong>
                 </span>
             @endif
-
         </div>
+    </div>
 
-
+    <div class="form-group text-center">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="remember"> Remember Me
+                </label>
+            </div>
+        </div>
     </div>
 
     <div class="col-md-6 col-md-offset-3">

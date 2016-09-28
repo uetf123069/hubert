@@ -15,8 +15,8 @@ class ServiceTypeSeeder extends Seeder
     {
     	DB::table('service_types')->truncate();
         DB::table('service_types')->insert([
-            'name' => 'Caretaker',
-            'provider_name' => 'Caretaker',
+            'name' => 'Mechanic',
+            'provider_name' => 'Mechanic',
             'status' => 1,
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),

@@ -6,7 +6,7 @@
 <div class="container" id="login-form">
     <a href="{{ url('/') }}" class="login-logo"><img src="{{ Setting::get('site_logo', asset('logo.png')) }}"></a>
     <div class="row">
-        <div class="col-md-4 col-md-offset-4">
+        <div class="col-md-6 col-md-offset-3">
             <div class="panel panel-default">
                 <div class="panel-heading"><h2>{{ tr('registration_form') }}</h2></div>
                 <div class="panel-body">
@@ -83,7 +83,7 @@
                             </div>
                         </div>
 
-                         <div class="form-group{{ $errors->has('service_type') ? ' has-error' : '' }}">
+                        <div class="form-group{{ $errors->has('service_type') ? ' has-error' : '' }}">
                             <label class="col-md-4 control-label">{{ tr('service_type') }}</label>
 
                             <div class="col-md-8">

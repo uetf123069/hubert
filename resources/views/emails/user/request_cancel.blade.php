@@ -62,7 +62,7 @@ table[class="table3-3"] { width: 100% !important; text-align: center !important;
                                                     <table class="table3-3" width="50" border="0" align="left" cellpadding="0" cellspacing="0">
                                                         <tr>
                                                             <td align="center" style="line-height:0px;">
-                                                                <img mc:edit="logo" data-crop="false" style="display:block; line-height:0px; font-size:0px; border:0px;max-height:30px;" src="{{Setting::get('mail_logo')}}" alt="logo" />
+                                                                <img mc:edit="logo" data-crop="false" style="display:block; line-height:0px; font-size:0px; border:0px;max-height:30px;" src="{{ Setting::get('mail_logo', asset('xuber_blue.png')) }}" alt="logo" />
                                                             </td>
                                                         </tr>
                                                     </table>

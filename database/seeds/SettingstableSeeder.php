@@ -12,19 +12,11 @@ class SettingstableSeeder extends Seeder
      */
     public function run()
     {
-    	DB::table('settings')->delete();
+    	DB::table('settings')->truncate();
     	DB::table('settings')->insert([
     		[
 		        'key' => 'site_name',
 		        'value' => 'Xuber'
-		    ],
-		    [
-		        'key' => 'site_logo',
-		        'value' => ''
-		    ],
-		    [
-		        'key' => 'site_icon',
-		        'value' => ''
 		    ],
 		    [
 		        'key' => 'provider_select_timeout',
@@ -81,12 +73,7 @@ class SettingstableSeeder extends Seeder
 		    [
 		        'key' => 'currency',
 		        'value' => '$'
-		    ], 
-		    [
-		        'key' => 'mail_logo',
-		        'value' => ''
-		    ], 
-
+		    ],
 		]);
     }
 }
