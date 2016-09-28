@@ -182,12 +182,11 @@
                 <ul class="sub-menu">
                 <li>
                 <a href="{{ route('admin.settings') }}">
-                    <i class="fa fa-gears"></i>
                     <span>{{tr('settings')}}</span>
                 </a>
             </li>
                 <li>
-                    <a href="javascript:;">
+                    <a href="{{ route('admin.profile.password.edit') }}">
                     <span>{{tr('change_password')}}</span>
                     </a>
                 </li>

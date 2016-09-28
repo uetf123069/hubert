@@ -178,7 +178,12 @@ Route::group(['prefix' => 'admin'], function(){
 
     Route::post('/profileProcess', 'AdminController@profileProcess')->name('adminProfileProcess');
 
+    Route::get('/profile/password', 'AdminController@profile_password')->name('admin.profile.password.edit');
+    
+    Route::post('/profile/password', 'AdminController@profile_password_store')->name('admin.profile.password.update');
+    
     Route::get('/settings', 'AdminController@settings')->name('admin.settings');
+
 
     Route::get('/paymentsettings', 'AdminController@paymentSettings')->name('adminPaymentSettings');
 

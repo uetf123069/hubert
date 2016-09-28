@@ -1003,4 +1003,29 @@ class AdminController extends Controller
         $provider = ChatMessage::where('request_id',$request->id)->delete();
         return back()->with('flash_success', tr('chat_history_delete'));
     }
+
+    public function profile_password()
+    {
+        return view('admin.adminProfilePassword');
+    }
+
+    public function profile_password_store(Request $request)
+    {
+        $this->validate($request, [
+                'old_password' => 'required|min:6',
+                'password' => 'required|min:6|confirmed',
+            ]);
+
+        if(Hash::check(Auth::guard('admin')->user()->password, $request->old_password))
+        {
+            $Admin = Auth::guard('admin')->user();
+            $Admin->update([
+                    'password' => bcrypt($request->password),
+                ]);
+            return back()->with('flash_success', tr('password_success'));
+        } else {
+            return back()->with('flash_error', tr('something_error'));
+        }
+
+    }
 }
