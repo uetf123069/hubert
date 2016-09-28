@@ -1016,16 +1016,16 @@ class AdminController extends Controller
                 'password' => 'required|min:6|confirmed',
             ]);
 
-        if(Hash::check(Auth::guard('admin')->user()->password, $request->old_password))
+        $Admin = Admin::find(Auth::guard('admin')->user()->id);
+
+        if(password_verify($request->old_password, $Admin->password))
         {
-            $Admin = Auth::guard('admin')->user();
-            $Admin->update([
-                    'password' => bcrypt($request->password),
-                ]);
+            $Admin->password = bcrypt($request->password);
+            $Admin->save();
+
             return back()->with('flash_success', tr('password_success'));
         } else {
             return back()->with('flash_error', tr('something_error'));
         }
-
     }
 }
