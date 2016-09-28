@@ -1012,7 +1012,7 @@ class AdminController extends Controller
     public function profile_password_store(Request $request)
     {
         $this->validate($request, [
-                'old_password' => 'required|min:6',
+                'old_password' => 'required',
                 'password' => 'required|min:6|confirmed',
             ]);
 
