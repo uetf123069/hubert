@@ -128,7 +128,6 @@ class sendPushNotification extends Job implements ShouldQueue
                     );
 
                     Log::info("Andriod push Started");
-                    dd(json_encode($push_message));
 
                     require_once app_path().'/gcm/GCM_1.php';
                     require_once app_path().'/gcm/const.php';
