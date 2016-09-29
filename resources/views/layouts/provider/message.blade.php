@@ -3,23 +3,23 @@
         <div class="alert alert-danger">
             <button type="button" class="close" data-dismiss="alert">×</button>
             <ul>
-@foreach(Session::get('errors') as $errors)
-    @if(is_array($errors))
-    @foreach($errors as $error)
+                @foreach(Session::get('errors') as $errors)
+                    @if(is_array($errors))
+                        @foreach($errors as $error)
                             <li> {{$error}} </li>
-@endforeach
+                        @endforeach
                     @else
                         <li> {{$errors}} </li>
-@endif
+                    @endif
                 @endforeach
             </ul>
         </div>
-@else
+    @else
         <div class="alert alert-danger">
             <button type="button" class="close" data-dismiss="alert">×</button>
             {{Session::get('errors')}}
         </div>
-@endif
+    @endif
 @endif
 
 @if(Session::has('error'))

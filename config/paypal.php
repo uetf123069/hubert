@@ -1,12 +1,11 @@
 <?php
 return array(
-    // set your paypal credential  //test
-    'client_id' => 'AVPSjQbR0VdaRv2h35o6gNAFdUOM0Oe-251pPER1eX_vArda5MPI-BVXCW7uAtuMMi2OuTYsyvryexJj',
-    'secret' => 'ECaFz5wYBuR2kHjDXmzQM5dIVkTYT91acDPH2v74h_J0VITI9d3IdS0BwDy6xAmV2cz6k2yiHjzMXNzH',
- 
-	// Live Credentials
-    // 'client_id' => 'ARBGzkJvTjAPR8yfjb2Elp-CIXFx9GtkJ9OE7McSq5P8O75Q-PsR2hEKYI4xAZDv79UdzMbqG3eEdhZG',
-    // 'secret' => 'EN1rmRdkQ6UgFmwbIRUMcyJ0GRn03pcpblelhnSSwHLNU9g0USEKwLfl0DzS9TVPZm7_9CzZcnLbME4t',
+
+    /**
+     * Keys loaded from environme
+     */
+    'client_id' => env('PAYPAL_CLIENT_ID'),
+    'secret' => env('PAYPAL_SECRET'),
  
     /**
      * SDK configuration
