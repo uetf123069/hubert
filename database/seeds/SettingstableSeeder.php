@@ -74,6 +74,18 @@ class SettingstableSeeder extends Seeder
 		        'key' => 'currency',
 		        'value' => '$'
 		    ],
+		    [
+		        'key' => 'site_logo',
+		        'value' => ''
+		    ],
+		    [
+		        'key' => 'site_icon',
+		        'value' => ''
+		    ],
+		    [
+		        'key' => 'mail_logo',
+		        'value' => ''
+		    ],
 		]);
     }
 }

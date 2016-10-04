@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>Xuber</title>
+	<title>{{ Setting::get('site_name', 'Xuber')}}</title>
 	
 	<link rel="stylesheet" href="{{ asset('assets/landing/css/base.css') }}">
 	<link rel="stylesheet" href="{{ asset('assets/landing/css/main.css') }}">
@@ -26,7 +26,7 @@
 	<meta name="keywords" content="">
 	<meta name="author" content="Appoets">
 	
-	<link rel="icon" href="{{ asset('assets/landing/img/favicon.ico') }}">
+	<link rel="icon" href="{{ Setting::get('site_name', asset('assets/landing/img/favicon.ico'))}}">
 	<link rel="apple-touch-icon" href="{{ asset('assets/landing/img/apple-touch-icon.png') }}">
 	<link rel="apple-touch-icon" sizes="72x72" href="{{ asset('assets/landing/img/apple-touch-icon-72x72.png') }}">
 	<link rel="apple-touch-icon" sizes="114x114" href="{{ asset('assets/landing/img/apple-touch-icon-114x114.png') }}">
@@ -64,8 +64,8 @@
 							<img src="{{ asset('assets/landing/img/iphone-1.png') }}" alt="iPhone App Mockup Here">
 						</div>
 						<div class="col-xs-12 col-sm-offset-1 col-sm-6 m-small-top">
-							<h1 class="pop white">Xuber</h1>
-							<h5 class="light white">Grow your business with high performing and custom mobile app Ideas that makes profit by using XUBER for X.Our mobile app developers built mobile application that deliver the customers with higher engagement and out-of-the-blue usability</h5>
+							<h1 class="pop white">{{ Setting::get('site_name', 'Xuber')}}</h1>
+							<h5 class="light white">Grow your business with high performing and custom mobile app Ideas that makes profit by using {{ Setting::get('site_name', 'Xuber')}} for X.Our mobile app developers built mobile application that deliver the customers with higher engagement and out-of-the-blue usability</h5>
 							
 							<div class="download-cta m-xsmall-top">
 								<a href="#" class="download"><img src="{{ asset('assets/landing/img/apple-download_2x.png') }}" alt="Xuber app store"></a>
@@ -118,7 +118,7 @@
 					<div class="col-xs-12 col-sm-4 about">
 						<i class="large fa fa-comments blue"></i>
 						<h4 class="m-xsmall-top">Chat with Service Providers</h4>
-						<p>Xuber Messenger is a Cross-Platform messaging Module which allows you to exchange messages without having to pay for SMS and is available for all smart phones.</p>
+						<p>{{ Setting::get('site_name', 'Xuber')}} Messenger is a Cross-Platform messaging Module which allows you to exchange messages without having to pay for SMS and is available for all smart phones.</p>
 					</div>
 					
 					<div class="col-xs-12 col-sm-4 about">
@@ -142,7 +142,7 @@
 		<section id="features">
 			<div class="heading type-1">
 				<h6>Feature</h6>
-				<h2>Xuber with features you won’t believe existed</h2>
+				<h2>{{ Setting::get('site_name', 'Xuber')}} with features you won’t believe existed</h2>
 			</div>
 			
 			<div class="inner-space">
@@ -176,7 +176,7 @@
 					
 					<div class="col-xs-12 col-sm-offset-1 col-sm-10 m-xsmall-top">
 						<br>
-						<h3 class="info">Signin/Login Xuber from anywhere!
+						<h3 class="info">Signin/Login {{ Setting::get('site_name', 'Xuber')}} from anywhere!
 						</h3>
 					</div>
 					<div class="col-xs-12 col-sm-offset-1 col-sm-10 m-xsmall-top text-center log-btn">
@@ -284,7 +284,7 @@
 					<div class="reviews col-sm-offset-1 col-sm-9 col-md-offset-2 col-md-8">
 						<div class="owl-carousel">
 							<div class="review">
-								<h3 class="quote">“Finally after hunting so much for a proper uber for service app that lets you create uber clone on the fly. Xuber is my daily driver.”</h3>
+								<h3 class="quote">“Finally after hunting so much for a proper uber for service app that lets you create uber clone on the fly. {{ Setting::get('site_name', 'Xuber')}} is my daily driver.”</h3>
 								<h5 class="r-name">Scott Wills</h5>
 								<div class="stars">
 									<i class="fa fa-star"></i>
@@ -296,7 +296,7 @@
 							</div>
 							
 							<div class="review">
-								<h3 class="quote">Xuber is the best uber for service app I’ve ever used. I would recommend to anyone looking to start a service.”</h3>
+								<h3 class="quote">{{ Setting::get('site_name', 'Xuber')}} is the best uber for service app I’ve ever used. I would recommend to anyone looking to start a service.”</h3>
 								<h5 class="r-name">Alex Morphing</h5>
 								<div class="stars">
 									<i class="fa fa-star"></i>
@@ -307,7 +307,7 @@
 							</div>
 							
 							<div class="review">
-								<h3 class="quote">“One of my friends recommended me to try Xuber once and since then it has never been off my phone. Silva is a service providers best friend.”</h3>
+								<h3 class="quote">“One of my friends recommended me to try {{ Setting::get('site_name', 'Xuber')}} once and since then it has never been off my phone. Silva is a service providers best friend.”</h3>
 								<h5 class="r-name">Mehul Jain</h5>
 								<div class="stars">
 									<i class="fa fa-star"></i>
@@ -334,7 +334,7 @@
 				<div class="bg-content">
 					<div class="heading type-1 white">
 						<h6>Download</h6>
-						<h2>Start your own business <br> Download Xuber now</h2>
+						<h2>Start your own business <br> Download {{ Setting::get('site_name', 'Xuber')}} now</h2>
 					</div>
 					<div class="container clearfix">
 						<div class="col-sm-offset-1 col-sm-10 m-small-top">
