@@ -26,7 +26,7 @@
 	<meta name="keywords" content="">
 	<meta name="author" content="Appoets">
 	
-	<link rel="icon" href="{{ Setting::get('site_name', asset('assets/landing/img/favicon.ico'))}}">
+	<link rel="icon" href="{{ Setting::get('site_icon', asset('assets/landing/img/favicon.ico'))}}">
 	<link rel="apple-touch-icon" href="{{ asset('assets/landing/img/apple-touch-icon.png') }}">
 	<link rel="apple-touch-icon" sizes="72x72" href="{{ asset('assets/landing/img/apple-touch-icon-72x72.png') }}">
 	<link rel="apple-touch-icon" sizes="114x114" href="{{ asset('assets/landing/img/apple-touch-icon-114x114.png') }}">
