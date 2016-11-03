@@ -15,8 +15,8 @@ return array(
 
 	'test'	=> 'test',
 	// mail title configure
-	'user_welcome_title' => 'Welcome to XUBER',
-	'provider_welcome_title' => 'Welcome to XUBER',
+	'user_welcome_title' => 'Welcome to Hubert',
+	'provider_welcome_title' => 'Welcome to Hubert',
 	'user_forgot_email_title' => "Your new password",
 	'no_provider_found_cron_title' => 'No providers found',
 	'request_cancel_by_provider' => 'Request cancelled by provider',
@@ -151,7 +151,7 @@ return array(
 	'service_comp'	=>	'Service Completed',
 	'service_cancel'	=>	'Service Cancelled',
 	'payment_details'	=>	'Payment Details',
-	'welcome_user_msg'	=>	'Thank you for signing up. Enjoy fast on-demand services from the best verified and validated service providers from your own neighborhood. Check out the list of best services we provide and enjoy your Xuber experience.',
+	'welcome_user_msg'	=>	'Thank you for signing up. Enjoy fast on-demand services from the best verified and validated service providers from your own neighborhood. Check out the list of best services we provide and enjoy your Hubert experience.',
 	'request_now' 	=>	'Request A Service Now!',
 
 
@@ -334,7 +334,7 @@ return array(
 
 
 	//Admin Login
-	'welcome'	=>	'Welcome to Xuber. Please sign in to your account',
+	'welcome'	=>	'Welcome to Hubert. Please sign in to your account',
 	'email_add'	=>	'E-mail Address',
 	'password'	=>	'Password',
 	'login'	=>	'Login',
