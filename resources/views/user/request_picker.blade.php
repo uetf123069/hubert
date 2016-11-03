@@ -46,8 +46,9 @@
 @section('styles')
 <style type="text/css">
     .service-box{
-        display: inline-block;
+        display: block;
         margin: 10px;
+        float:left;
     }
     .service-box .info-tile{
         margin: 0;
