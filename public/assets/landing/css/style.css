@@ -1,5 +1,55 @@
+@font-face {
+    font-family: aveirnext-UltLt;
+    src: url(../fonts/AvenirNextLTPro-It.otf);
+}
+
+@font-face {
+    font-family: Bungasai;
+    src: url(../fonts/Bungasai.ttf);
+}
+
+@font-face {
+    font-family: aveirnext-Medium;
+    src: url(../fonts/AvenirNextLTPro-MediumCn.otf);
+}
+
+.aveirnext{
+	font-family: aveirnext-UltLt;
+}
+
+.aveirnext-medium{
+	font-family: aveirnext-Medium;
+}
+
+.bungasai{
+	font-family: Bungasai; 
+}
+
+body{
+	font-family: 'aveirnext-UltLt' !important;
+	font-size: 13px;
+	letter-spacing: .7px;
+	line-height: 25px;
+}
+
+a:hover,
+a:focus{
+	text-decoration: none;
+}
+
+.p-none a:hover,
+.p-none a:active,
+.p-none a:focus{
+	background: #238BF6;
+    color: #fff !important;
+}
+
 .download{
 	margin-right: 10px;
+}
+
+#header{
+	box-shadow: 0px 7px 70px 0px rgba(0,0,0,0.07);
 }
 
 #header .logo img{
@@ -35,3 +85,270 @@
 	    padding: 10px;
     font-size: 18px;
 }
+
+.iphone-float{
+	text-align: right;
+}
+
+.head-bottom{
+	margin-top: 30px !important;
+}
+
+.iphone-float img{
+	height: 25em;
+	margin: 0;
+	display: inline-block;
+}
+
+.no-margin{
+	margin: 0;
+}
+
+.head-left{
+	margin-bottom: 20px;
+}
+
+.head-left p{
+	color: #fff;
+    font-size: 20px;
+}
+
+.jeffrey{
+	font-size: 24px;
+}
+
+.float-right{
+	float: right;
+}
+
+.float-left{
+	float: left;
+}
+
+.head-right img{
+	height: auto;
+	width: 150px;
+	margin-right: 10px;
+	margin-top: 20px;
+}
+
+.head-right p{
+	color: #fff;
+	text-align: center;
+}
+
+.download-button a:hover,
+.download-button a:focus{
+	background-color: #06498e;
+}
+
+.padding30{
+	padding: 50px 15px;
+}
+
+.logo-txt{
+	color: #dedede;
+    font-size: 17px;
+}
+
+.know-about img{
+	width: 250px;
+	height: auto;
+}
+
+.per-hour{
+	text-align: right;
+}
+
+.per-hour-link{
+    font-size: 19px;
+    text-align: right;
+    line-height: 25px;
+    text-decoration: none;
+    color: #979797;
+    display: inline-block;
+}
+
+.per-hour-link:hover,
+.per-hour-link:focus{
+	color: #238BF6;
+}
+
+.booker{
+	max-width: 550px;
+    margin: 0 auto;
+    margin-top: 108px;
+}
+
+.booker p{
+	font-size: 17px;
+    line-height: 25px;
+}
+
+.booker-link{
+	text-decoration: none;
+    color: #666;
+    font-weight: bold;
+    display: inline-block;
+    font-size: 17px;
+}
+
+.booker-link:hover,
+.booker-link:focus{
+	color: #238BF6;
+	text-decoration: none;
+}
+
+.download-icon{
+	text-align: right;
+    margin-top: 20px;
+}
+
+.download-icon img{
+	width: 30px;
+	height: 30px;
+}
+
+.service-item{
+	text-decoration: none;
+    color: #676767;
+    font-size: 16px;
+    /*display: block;*/
+    line-height: 30px;
+}
+
+.service-item:hover,
+.service-item:focus{
+	color: #238BF6;
+	text-decoration: none;
+}
+
+.services{
+	margin-top: 40px;
+}
+
+.services li{
+	position: relative;
+}
+
+.services li:before{
+	content: 'ø';
+	position: absolute;
+	top: 3px;
+    left: -18px;
+    vertical-align: inherit;
+    color: #676767;
+}
+
+.service-item:hover .services>li:before,
+.service-item:focus .services>li:before{
+	color: #238BF6;
+}
+
+.hidden{
+	display: none;
+}
+
+.app-info a{
+	text-decoration: none;
+	color: #676767;
+	text-align: center;
+	font-size: 15px;
+}
+
+.app-info a:hover,
+.app-info a:focus{
+	color: #238bf6;
+}
+
+.become-inner .blue-cap{
+	margin-bottom: 20px !important;
+}
+
+.become-inner .services li:before{
+	content: 'ø';
+	position: absolute;
+	top: 9px;
+    left: -18px;
+    vertical-align: inherit;
+    color: #676767;
+}
+
+.b-space{
+	margin-top: 0;
+}
+
+.head-logo{
+	width: 130px;
+	display: inline-block;
+}
+
+.white-bg{
+	background-color: #fff;
+}
+
+.gray-bg{
+	background-color: #f7f7f7;
+}
+
+.benefits-box{
+	text-align: center;
+	margin-bottom: 30px;
+}
+
+.benefits-box img{
+	width: auto;
+    height: 30px;
+}
+
+.benefits-box p{
+	position: relative;
+	font-size: 16px;
+}
+
+.benefits-box p:before{
+	content: 'ø ';
+}
+
+.become-inner .service-item{
+	line-height: 40px;
+}
+
+.adventure-title{
+	padding: 20px 0;
+    text-align: center;
+    margin: 0;
+}
+
+.adventure-title a{
+	display: inline-block;
+    color: #676767;
+    text-decoration: none;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.adventure-title a:hover,
+.adventure-title a:focus{
+	color: #238bf6;
+}
+
+.get-txt{
+	color: #f5f5f5;
+    font-size: 20px;
+    line-height: 27px;
+    padding-top: 250px;
+}
+
+.feature-link{
+	color: #238bf6;
+	font-size: 15px;
+    display: inline-block;
+}
+
+.feature-link:hover,
+.feature-link:active{
+	color: #0e81af !important;
+	background-color: transparent !important;
+}
+

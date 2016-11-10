@@ -13,11 +13,12 @@
 	</noscript>
 	
 	<link rel="stylesheet" href="{{ asset('assets/landing/css/vendor/bootstrap.css') }}">
+	<link rel="stylesheet" href="{{ asset('assets/landing/css/bootstrap-combined.min.css') }}">
 	<link rel="stylesheet" href="{{ asset('assets/landing/css/vendor/animate.css') }}">
 	<link rel="stylesheet" href="{{ asset('assets/landing/css/vendor/owl.carousel.css') }}">
 	<link rel="stylesheet" href="{{ asset('assets/landing/css/vendor/magnific-popup.css') }}">
 	
-	<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto:400,400italic,300,500' type='text/css'>
+	
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
 	<link rel="stylesheet" href="{{ asset('assets/landing/css/style.css') }}">
 	
@@ -40,39 +41,57 @@
 			<p class="white">Hi there! Sorry for interrupting but we have detected that you are browsing with JavaScript disabled. So we would like to warn you that some of the features might not work as expected. In order to turn it on back follow the instructions <a href="http://enable-javascript.com/" class="link white">here</a></p>
 		</div>
 		<section id="banner" class="m-none">
-			<div class="bg image overlay" id="auto-height">
-				<div class="parallax-window" data-parallax="scroll" data-image-src="{{ asset('assets/landing/img/man-1.jpg') }}"></div>
+			<div class="bg image" id="auto-height">
+				<div class="parallax-window" data-parallax="scroll" data-image-src="{{ asset('assets/landing/img/head-bg.png') }}"></div>
 				<noscript>
 					<div class="bg-image">
-						<img src="{{ asset('assets/landing/img/man-1.jpg') }}" alt="Banner Background Image Here">
+						<img src="{{ asset('assets/landing/img/head-bg.jpg') }}" alt="Banner Background Image Here">
 					</div>
 				</noscript>
 				<div class="bg-content">
 					<header class="top">
 						<div class="container-full clearfix">
-							<div class="col-xs-3 col-sm-2 col-lg-1 logo p-none">
-								<a href="#"><img src="{{ asset('assets/landing/img/logo-white.png') }}" alt="Xuber"></a>
+							<div class="col-xs-3 col-sm-2 col-lg-4">
+								<div class="logo">
+									<a href="#" class="head-logo"><img src="{{ asset('assets/landing/img/logo-white.png') }}" alt="jeffrey"></a>
+									<p class="logo-txt">Le service à la personne pour tous.</p>	
+								</div>					
 							</div>
-							<div class="col-xs-5 col-xs-offset-4 col-sm-offset-8 col-lg-offset-9 col-sm-2 p-none">
+
+							<div class="col-xs-5 col-xs-offset-4 col-sm-offset-8 col-lg-offset-5 col-sm-2 p-none">
 								<a href="{{ route('user.login.form') }}" target="_blank" class="button white align-right">Login / Signup</a>
 							</div>
 						</div>
 					</header>
 					
 					<div class="container b-space">
-						<div class="col-sm-5 iphone-float">
+						<div class="col-sm-5 ">
+							
+						</div>
+						<div class="col-xs-12 col-sm-offset-1 col-sm-6 m-small-top iphone-float">
 							<img src="{{ asset('assets/landing/img/iphone-1.png') }}" alt="iPhone App Mockup Here">
 						</div>
-						<div class="col-xs-12 col-sm-offset-1 col-sm-6 m-small-top">
-							<h1 class="pop white">{{ Setting::get('site_name', 'Xuber')}}</h1>
-							<h5 class="light white">Grow your business with high performing and custom mobile app Ideas that makes profit by using {{ Setting::get('site_name', 'Xuber')}} for X.Our mobile app developers built mobile application that deliver the customers with higher engagement and out-of-the-blue usability</h5>
-							
-							<div class="download-cta m-xsmall-top">
-								<a href="#" class="download"><img src="{{ asset('assets/landing/img/apple-download_2x.png') }}" alt="Xuber app store"></a>
-								<a href="#" class="download"><img src="{{ asset('assets/landing/img/android-download_2x.png') }}" alt="Xuber play store"></a>
-							</div>
-						</div>
 					</div>
+
+					<div class="container">
+						<div class="head-bottom row no-margin">
+							<div class="col-md-5 col-sm-5">
+								<div class="head-left">
+									<p>Votre temps n’a pas de prix.Commandez votre <span class="bungasai jeffrey">Jeffrey!</span> </p>
+								</div>
+							</div><!--end of column-->
+
+							<div class="col-md-7 col-sm-7">
+								<div class="head-right float-right">
+									<a href="#"><img src="{{ asset('assets/landing/img/android-download_2x.png') }}"></a>
+
+									<a href="#"><img src="{{ asset('assets/landing/img/apple-download_2x.png') }}"></a>
+									<p>téléchargez l’application</p>
+								</div><!--end of head-right-->
+							</div><!--end of column-->
+						</div><!--end of row-->
+					</div><!--end of container-->
+					
 					
 					<a href="#about" class="scroll-down white">
 						<i class="fa fa-angle-double-down"></i>
@@ -85,76 +104,96 @@
 			<div class="container-full clearfix">
 				
 				<div class="col-xs-3 col-sm-2 col-lg-1 logo p-none">
-					<a href="#"><img src="{{ asset('assets/landing/img/logo-blue.png') }}" alt="Main App Logo here"></a>
+					<a href="#"><img src="{{ asset('assets/landing/img/logo-black.png') }}" alt="Main App Logo here"></a>
 				</div>
 				
 				<nav class="main col-sm-8 col-lg-9">
 					<ul>
-						<li><a href="#banner">Home</a></li>
-						<li><a href="#about">About</a></li>
-						<li><a href="#features">Features</a></li>
-						<li><a href="#screenshots">Screens</a></li>
-						<li><a href="#video">Video</a></li>
-						<li><a href="#reviews">Reviews</a></li>
-						<li><a href="{{ route('provider.login.form') }}" target="_blank">Provider Login</a></li>
-						<li><a href="{{ route('user.login.form') }}" target="_blank">User Login</a></li>
+						<li><a href="#">Services &amp; Prix</a></li>
+						<li><a href="#about">Book Jeffrey</a></li>
+						<li><a href="#features">Fonctionnement</a></li>
+						<li><a href="#become-section">Devenir Jeffrey</a></li>
+						<li><a href="#">Villes</a></li>
 					</ul>
 				</nav>
 				
 				<div class="col-sm-2 p-none download-button">
-					<a href="#download" class="button align-right">Download</a>
+					<a href="#download" class="button align-right">Log in/Signup</a>
 				</div>
 			</div>
 		</header>
 		
-		<section id="about" class="m-xlarge-top">
-			<div class="heading type-1">
-				<h6>About</h6>
-				<h2>Here’s everything you need to know about the app</h2>
-			</div>
-			
-			<div class="about-section m-large-top">
-				<div class="container clearfix">
-					<div class="col-xs-12 col-sm-4 about">
-						<i class="large fa fa-comments blue"></i>
-						<h4 class="m-xsmall-top">Chat with Service Providers</h4>
-						<p>{{ Setting::get('site_name', 'Xuber')}} Messenger is a Cross-Platform messaging Module which allows you to exchange messages without having to pay for SMS and is available for all smart phones.</p>
-					</div>
-					
-					<div class="col-xs-12 col-sm-4 about">
-						<i class="large fa fa-credit-card blue"></i>
-						<h4 class="m-xsmall-top">Enjoy Cashless Payment</h4>
-						<p>Pay for every service using Paypal and Stripe which is an easy and secure way to start accepting payments online. It's also a well-known payment method that your shoppers trust.</p>
-					</div>
-					
-					
-					<div class="col-xs-12 col-sm-4 about">
-						<i class="large fa fa-eye blue"></i>
-						<h4 class="m-xsmall-top">Beautiful interface</h4>
-						<p>Witness the easy to use stock built interface for effective usage.Interactive design that lets people manipulate and contribute to the application.</p>
-					</div>
-					
-				</div>
-			</div>
-			
+		<section id="about" class="m-xlarge-top row no-margin">
+			<div class="container">
+				<div class="about-inner row no-margin padding30">
+					<div class="col-md-4 col-sm-4 col-xs-12">
+						<div class="know-about">
+							<img src="{{ asset('assets/landing/img/know-about.png') }}" alt="Main App Logo here">
+						</div><!--end of know-about-->
+					</div><!--end of column-->
+
+					<div class="col-md-8 col-sm-8 col-xs-12">
+						<div class="about-content">
+							<div class="per-hour">
+								<a href="#" class="per-hour-link" data-toggle="tooltip" data-placement="bottom" title="les services sont facturés à la minute. Un supplément de 2.50.- par km est facturé en cas de déplacement motorisé.">A partir de
+									<br> 29.- / heure</a>
+							</div><!--end of per-hour-->
+
+							<div class="booker text-center">
+								<p>Jeffrey est le moyen le plus simple et rapide de <a href="#" class="booker-link"> booker</a> son 
+									majordome des temps modernes à un prix accessible à tous.</p>
+							</div><!--end of booker-->
+
+							<div class="row no-margin">
+								<div class="services float-left">
+									<ul class="list-unstyled">
+										<li> <a href="#" class="service-item">Ménage</a> </li>
+										<li> <a href="#" class="service-item">Repassage</a></li>
+										<li><a href="#" class="service-item">Accompagnement personnes âgées</a></li>
+										<li><a href="#" class="service-item">Chauffeur</a></li>
+									</ul>
+								</div><!--end of services-->
+
+								<div class="services float-right">
+									<ul class="list-unstyled">
+										<li> <a href="#" class="service-item">Vos Courses</a> </li>
+										<li> <a href="#" class="service-item">Cuisinier</a></li>
+										<li><a href="#" class="service-item">Demandes spéciales</a></li>
+										<li><a href="#" class="service-item">Jardinage</a></li>
+										<li><a href="#" class="service-item">Gardienage</a></li>
+									</ul>
+								</div><!--end of services-->
+							</div>
+							
+						</div><!--end of content-->
+					</div><!--end of column-->
+
+					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+						<div class="download-icon">
+							<a href="#"><img src="{{ asset('assets/landing/img/android-icon.png') }}"></a>
+							<a href="#"><img src="{{ asset('assets/landing/img/appstore-icon.png') }}"></a>
+						</div><!--end of download-icon-->
+					</div><!--end of column-->
+				</div><!--end of row-->
+			</div><!--end of container-->
 		</section>
 		
-		<section id="features">
+		<section id="features" class="gray-bg padding30" style="margin-top: 0;">
 			<div class="heading type-1">
-				<h6>Feature</h6>
-				<h2>{{ Setting::get('site_name', 'Xuber')}} with features you won’t believe existed</h2>
+				<h2 class="aveirnext-medium">Fonctionnement</h2>
 			</div>
 			
 			<div class="inner-space">
 				<div class="container clearfix">
 					<div class="col-xs-12 col-sm-4 m-medium-top">
-						<div class="features col-xs-12 m-small-top m-xsmall-bottom p-none">
-							<h6 class="blue-cap">Great Customization</h6>
-							<p>Ask us for any customisations that you want to. We have solutions to satisfy all your need.</p>
+						<div class="features col-xs-12 m-small-top m-xsmall-bottom">
+							<h6 class="blue-cap ">
+								<a href="#" class="feature-link aveirnext-medium">CONNEXION / CREATION COMPTE</a></h6>
+							<p>Entrez vos données personnelles de manières sécurisée afin de créer un compte en quelques minutes.</p>
 						</div>
-						<div class="features col-xs-12 m-small-top m-xsmall-bottom p-none">
-							<h6 class="blue-cap">Live Tracking</h6>
-							<p>The application uses GPS to lively track various stages of users and providers and updates it regularly to the application users.</p>
+						<div class="features col-xs-12 m-small-top m-xsmall-bottom">
+							<a href="#" class="feature-link aveirnext-medium">CHOIX DU SERVICE</a></h6>
+							<p>Choisissez le(s) service(s) dont vous avez besoin depuis n’importe où.</p>
 						</div>
 					</div>
 					
@@ -164,214 +203,129 @@
 					
 					
 					<div class="col-xs-12 col-sm-4 m-medium-top">
-						<div class="features col-xs-12 m-small-top m-xsmall-bottom p-none">
-							<h6 class="blue-cap">Rate and Review</h6>
-							<p>We value your comfort and listen to your needs. Rate and Review providers for other users using the start rating system.</p>
+						<div class="features col-xs-12 m-small-top m-xsmall-bottom">
+							<a href="#" class="feature-link aveirnext-medium">CHOIX DU JEFFREY</a></h6>
+							<p>Séléctionnez votre Jeffrey en fonction de son emplacement et de sa/ses compétence(s). Echangez quelques mots grâce à notre chat afin de partager des informations utiles.</p>
 						</div>
-						<div class="features col-xs-12 m-small-top m-xsmall-bottom p-none">
-							<h6 class="blue-cap">Dedicated Support</h6>
-							<p>Any trouble. Stay connected with our support team anytime, anyplace around the world. Overcome Your Challenges With Our Expert Assistance.</p>
+						<div class="features col-xs-12 m-small-top m-xsmall-bottom">
+							<a href="#" class="feature-link aveirnext-medium">CONFIRMATION / PAIEMENT</a></h6>
+							<p>Confirmez votre requête et passez en revue les informations échangées. Suivez le bon déroulement du service demandé. Payez d’une manière simple et sécurisée.</p>
 						</div>
 					</div>
 					
 					<div class="col-xs-12 col-sm-offset-1 col-sm-10 m-xsmall-top">
 						<br>
-						<h3 class="info">Signin/Login {{ Setting::get('site_name', 'Xuber')}} from anywhere!
+						<h3 class="info hidden">Signin/Login {{ Setting::get('site_name', 'Xuber')}} from anywhere!
 						</h3>
+						<h3 class="app-info aveirnext-medium text-center">
+						<a href="#"> Vous avez besoin d’un Jeffrey ? Tout se fera en quelques clics sur notre App.</a></h3>
 					</div>
-					<div class="col-xs-12 col-sm-offset-1 col-sm-10 m-xsmall-top text-center log-btn">
+					<div class="col-xs-12 col-sm-offset-1 col-sm-10 m-xsmall-top text-center log-btn hidden">
 						<a href="{{ route('provider.login.form') }}" class="button m-small-top" target="_blank">Provider Login</a>
 						<a href="{{ route('user.login.form') }}" class="button m-small-top" target="_blank">User Login</a>
 					</div>
 				</div>
 			</div>
 		</section>
-		
-		<section id="extra-feature-1">
-			<div class="container clearfix">
-				<div class="col-sm-6 col-md-6 iphone-left">
-					<img src="{{ asset('assets/landing/img/admin-map.png') }}" alt="iPhone Image Here">
-				</div>
-				<div class="col-sm-6 col-md-6 content">
-					<h1 class="pop text-gradient">On the wheels Admin Panel</h1>
-					<p class="m-xsmall-top">Get access to muti-functional admin panel with all possible editing options. Easy to use understand statistics makes you to run the business at ease. But that's not it.</p>
-					<a href="#download" class="button m-small-top">Download Now</a>
-				</div>
-			</div>
-		</section>
-		
-		<section id="extra-feature-2">
-			<div class="container clearfix">
-				<div class="col-sm-6 col-md-6 content">
-					<h1 class="pop text-gradient">One Step At a Time</h1>
-					<p class="m-xsmall-top">Services History tab to get track of the application usage. Lively handled Step By Step for a ongoing Service.</p>
-					<a href="#download" class="button m-small-top">Download Now</a>
-				</div>
-				<div class="col-sm-6 iphone-right">
-					<img src="{{ asset('assets/landing/img/user-map-phone.png') }}" alt="iPhone Image Here">
-				</div>
-			</div>
-		</section>
-		
-		<section id="screenshots">
-			<div class="heading type-1">
-				<h6>Screenshots</h6>
-				<h2>Take a look at the screenshots for a better glimpse</h2>
-			</div>
-			<div class="inner-space">
-				<div class="container-medium">
-					<div class="screenshots">
-						<div class="app-screen">
-							<a href="{{ asset('assets/landing/img/app-screen-1.png') }}">
-								<img src="{{ asset('assets/landing/img/app-screen-1.png') }}" alt="Your App Screen Here">
-							</a>
-						</div>
-						<div class="app-screen">
-							<a href="{{ asset('assets/landing/img/app-screen-2.png') }}">
-								<img src="{{ asset('assets/landing/img/app-screen-2.png') }}" alt="Your App Screen Here">
-							</a>
-						</div>
-						<div class="app-screen active">
-							<a href="{{ asset('assets/landing/img/app-screen-3.png') }}">
-								<img src="{{ asset('assets/landing/img/app-screen-3.png') }}" alt="Your App Screen Here">
-							</a>
-						</div>
-						<div class="app-screen">
-							<a href="{{ asset('assets/landing/img/app-screen-4.png') }}">
-								<img src="{{ asset('assets/landing/img/app-screen-4.png') }}" alt="Your App Screen Here">
-							</a>
-						</div>
-						<div class="app-screen">
-							<a href="{{ asset('assets/landing/img/app-screen-5.png') }}">
-								<img src="{{ asset('assets/landing/img/app-screen-5.png') }}" alt="Your App Screen Here">
-							</a>
-						</div>
-					</div>
-				</div>
-			</div>
-		</section>
-		
-		<section id="video">
-			<div class="heading type-1">
-				<h6>Video</h6>
-				<h2>Here’s an awesome video to show what can it do</h2>
-			</div>
-			<div class="inner-space">
+
+		<section id="become-section" >
+			<div class="become">
 				<div class="container">
-					<div class="video card overlay">
-						<img src="{{ asset('assets/landing/img/man-3.jpg') }}" alt="Video Background Image Here">
-						<div class="video-button">
-							<a href="https://www.youtube.com/watch?v=yHWZA-5W-dc" target="_blank" class="video-link"><i class="fa fa-play"></i></a>
-						</div>
+					<div class="heading type-1">
+						<h2 class="hidden">{{ Setting::get('site_name', 'Xuber')}} with features you won’t believe existed</h2>
+						<h2 class="aveirnext-medium">Devenir Jeffrey</h2>
 					</div>
-					<div class="col-sm-offset-1 col-sm-10 m-medium-top">
-						<h3 class="info">This app does everything you could possibly want it to do and not only that, it is beautifully designed and extremely intuitive to use.
-						<br>Download it from the App Store for free.
-						</h3>
+					<div class="become-inner row no-margin">
+						<div class="col-sm-8 services">
+							<h6 class="blue-cap aveirnext-medium">CONDITIONS A REMPLIR POUR DEVENIR JEFFREY</h6>
+							<ul class="list-unstyled">
+								<li>
+									<a href="#" class="service-item" data-toggle="tooltip" data-placement="right" title="vous devez être né le : ____ pour avoir 18 ans">Avoir 18 ans révolu</a>
+								</li>
+								<li>
+									<a target="_blank" href="https://www.e-service.admin.ch/crex/app/wizard/navigate.do;jsessionid=41d6280fa684d5016caf3a6133f0" class="service-item">Extrait casier judiciaire</a>
+								</li>
+								<li>
+									<a href="#" class="service-item" data-toggle="tooltip" data-placement="right" title="obligatoire uniquement pour les services motorisés">Permis de conduire*</a>
+								</li>
+								<li>
+									<a href="#" class="service-item" data-toggle="tooltip" data-placement="right" title="Une facture d’éléctricité ou d’assurance ménage par exemple. Avec vos nom et prénomfin de certifier votre domiciliation.">Facture de moins de 3 mois</a>
+								</li>
+								<li>
+									<a href="#" class="service-item">1 vidéo entre 5-20’’ </a>
+								</li>
+								<li>
+									<a href="#" class="service-item">Acceptation de nos C.G.</a>
+								</li>
+							</ul>
+						</div><!--end of services-->
+
+						<div class="col-sm-4 services">
+							<h6 class="blue-cap aveirnext-medium text-center">LES AVANTAGES UNE FOIS QUE TU FAIS PARTI DE LA COMMUNAUTE</h6>
+							<div class="benefits">
+								<div class="benefits-box">
+									<img src="{{ asset('assets/landing/img/benefit1.png') }}">
+									<p>Maître de ton temps</p>
+								</div><!--end of benefits-box-->
+
+								<div class="benefits-box">
+									<img src="{{ asset('assets/landing/img/benefit2.png') }}">
+									<p>Indépendance financière</p>
+								</div><!--end of benefits-box-->
+
+								<div class="benefits-box">
+									<img src="{{ asset('assets/landing/img/benefit3.png') }}">
+									<p>Nous trouvons vos mandats</p>
+								</div><!--end of benefits-box-->
+							</div><!--end of benrfits-->
+						</div><!--end of services-->
+					</div><!--end of become-inner-->
+				</div><!--end of container-->
+			</div><!--end of become-->
+		</section>
+
+		<div class="adventure">
+			<h3 class="adventure-title gray-bg">
+				<a href="#">Démarre l’aventure Jeffrey dès aujourd’hui</a>
+			</h3>
+			<section id="banner" class="m-none">
+				<div class="bg image overlay" id="auto-height">
+					<div class="parallax-window" data-parallax="scroll" data-image-src="{{ asset('assets/landing/img/adventure-bg.png') }}"></div>
+					<noscript>
+						<div class="bg-image">
+							<img src="{{ asset('assets/landing/img/adventure-bg.png') }}" alt="Banner Background Image Here">
+						</div>
+					</noscript>
+					<div class="bg-content">
+						<div class="container">
+							<div class="row no-margin">
+								<div class="col-md-6 col-sm-6 text-left">
+									<p class="get-txt">Toi aussi <br> devient Jeffrey</p>
+								</div>
+
+								<div class="col-md-6 col-sm-6 text-right">
+									<p class="get-txt">Et génère un <br>revenu rapidement</p>
+								</div>
+							</div><!--end of row-->
+						</div><!--end of container-->
 					</div>
 				</div>
-			</div>
-		</section>
-		
-		<section id="reviews">
-			<div class="heading type-1">
-				<h6>Reviews</h6>
-				<h2>5 star ratings and happy users everywhere</h2>
-			</div>
-			
-			<div class="inner-space">
-				<div class="container">
-					<div class="reviews col-sm-offset-1 col-sm-9 col-md-offset-2 col-md-8">
-						<div class="owl-carousel">
-							<div class="review">
-								<h3 class="quote">“Finally after hunting so much for a proper uber for service app that lets you create uber clone on the fly. {{ Setting::get('site_name', 'Xuber')}} is my daily driver.”</h3>
-								<h5 class="r-name">Scott Wills</h5>
-								<div class="stars">
-									<i class="fa fa-star"></i>
-									<i class="fa fa-star"></i>
-									<i class="fa fa-star"></i>
-									<i class="fa fa-star"></i>
-									<i class="fa fa-star"></i>
-								</div>
-							</div>
-							
-							<div class="review">
-								<h3 class="quote">{{ Setting::get('site_name', 'Xuber')}} is the best uber for service app I’ve ever used. I would recommend to anyone looking to start a service.”</h3>
-								<h5 class="r-name">Alex Morphing</h5>
-								<div class="stars">
-									<i class="fa fa-star"></i>
-									<i class="fa fa-star"></i>
-									<i class="fa fa-star"></i>
-									<i class="fa fa-star"></i>
-								</div>
-							</div>
-							
-							<div class="review">
-								<h3 class="quote">“One of my friends recommended me to try {{ Setting::get('site_name', 'Xuber')}} once and since then it has never been off my phone. Silva is a service providers best friend.”</h3>
-								<h5 class="r-name">Mehul Jain</h5>
-								<div class="stars">
-									<i class="fa fa-star"></i>
-									<i class="fa fa-star"></i>
-									<i class="fa fa-star"></i>
-									<i class="fa fa-star"></i>
-									<i class="fa fa-star"></i>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</section>
-		
-		<section id="download" class="small m-bottom-none">
-			<div class="bg overlay">
-				<div class="parallax-window" data-parallax="scroll" data-image-src="{{ asset('assets/landing/img/man-2.jpg') }}"></div>
-				<noscript>
-					<div class="bg-image">
-						<img src="{{ asset('assets/landing/img/man-2.jpg') }}" alt="Banner Background Image Here">
-					</div>
-				</noscript>		
-				<div class="bg-content">
-					<div class="heading type-1 white">
-						<h6>Download</h6>
-						<h2>Start your own business <br> Download {{ Setting::get('site_name', 'Xuber')}} now</h2>
-					</div>
-					<div class="container clearfix">
-						<div class="col-sm-offset-1 col-sm-10 m-small-top">
-							<h3 class="info white">This app does everything you could possibly want it to do and not only
-							<br> that, it is beautifully designed and extremely intuitive to use.
-							<br>Download it from the App Store for free.
-							</h3>
-						</div>
-						<div class="text-center download-cta dwn m-small-top">
-							<a href="#" class="download">
-								<img src="{{ asset('assets/landing/img/apple-download_2x.png') }}" alt="App Store Download Button">
-							</a>
-							<a href="#" class="download">
-								<img src="{{ asset('assets/landing/img/android-download_2x.png') }}" alt="App Store Download Button">
-							</a>
-						</div>
-					</div>
-				</div>
-			</div>
-		</section>
+			</section>
+		</div>
 
 		<footer class="default">
 			<div class="container-full clearfix">
 				<div class="col-lg-3 col-sm-4">
 					<a href="#" class="logo">
-						<img src="{{ asset('assets/landing/img/logo-blue.png') }}" alt="Your Logo Here">
+						<img src="{{ asset('assets/landing/img/logo-black.png') }}" alt="Your Logo Here">
 					</a>
-					<p class="copy">© Copyright Appoets 2016. All Rights Reserved</p>
+					<p class="copy">All Rights Reserved©</p>
 				</div>
 				<div class="social col-sm-7">
 					<ul>
 						<li><a href="#"><i class="fa fa-facebook"></i></a></li>
 						<li><a href="#"><i class="fa fa-twitter"></i></a></li>
 						<li><a href="#"><i class="fa fa-instagram"></i></a></li>
-						<li><a href="#"><i class="fa fa-linkedin"></i></a></li>
-						<li><a href="#"><i class="fa fa-dribbble"></i></a></li>
-						<li><a href="#"><i class="fa fa-rss"></i></a></li>
 					</ul>
 				</div>
 				<div class="col-xs-offset-5 col-xs-1 col-sm-1 col-sm-offset-0 scroll-top">
@@ -389,6 +343,12 @@
 		<script src="{{ asset('assets/landing/js/vendor/owl.carousel.min.js') }}"></script>
 		<script src="{{ asset('assets/landing/js/vendor/retina.min.js') }}"></script>
 		<script src="{{ asset('assets/landing/js/vendor/magnific-popup.min.js') }}"></script>
+		<script src="{{ asset('assets/landing/js/tooltip.js') }}"></script>
+		<script src="{{ asset('assets/landing/js/bootstrap.min.js') }}"></script>
 		<script src="{{ asset('assets/landing/js/main.js') }}"></script>
+
+		<script type="text/javascript">
+			$('a').tooltip();
+		</script>
 	</body>
 </html>
