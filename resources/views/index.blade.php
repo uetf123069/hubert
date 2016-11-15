@@ -50,7 +50,7 @@
 				</noscript>
 				<div class="bg-content">
 					<header class="top">
-						<div class="container-full clearfix">
+						<div class="clearfix">
 							<div class="col-xs-3 col-sm-2 col-lg-4">
 								<div class="logo">
 									<a href="#" class="head-logo"><img src="{{ asset('assets/landing/img/logo-white.png') }}" alt="jeffrey"></a>
@@ -58,8 +58,8 @@
 								</div>					
 							</div>
 
-							<div class="col-xs-5 col-xs-offset-4 col-sm-offset-8 col-lg-offset-5 col-sm-2 p-none">
-								<a href="{{ route('user.login.form') }}" target="_blank" class="button white align-right">Login / Signup</a>
+							<div class="col-xs-9 col-sm-10 col-lg-8 p-none">
+								<a href="{{ route('user.login.form') }}" target="_blank" class="button white align-right" style="margin-right: 20px;">Login / Signup</a>
 							</div>
 						</div>
 					</header>
@@ -111,6 +111,7 @@
 					<ul>
 						<li><a href="#">Services &amp; Prix</a></li>
 						<li><a href="#about">Book Jeffrey</a></li>
+						<li><a href="#security">Securité</a></li>
 						<li><a href="#features">Fonctionnement</a></li>
 						<li><a href="#become-section">Devenir Jeffrey</a></li>
 						<li><a href="#">Villes</a></li>
@@ -151,6 +152,7 @@
 										<li> <a href="#" class="service-item">Repassage</a></li>
 										<li><a href="#" class="service-item">Accompagnement personnes âgées</a></li>
 										<li><a href="#" class="service-item">Chauffeur</a></li>
+										<li><a href="#" class="service-item">Promenade pour votre chien</a></li>
 									</ul>
 								</div><!--end of services-->
 
@@ -177,8 +179,56 @@
 				</div><!--end of row-->
 			</div><!--end of container-->
 		</section>
+
+		<section id="security" class="gray-bg padding30" style="margin-top: 0;">
+			<div class="heading type-1">
+				<h2 class="aveirnext-medium">Securité</h2>
+			</div>
+			
+			<div class="inner-space">
+				<div class="container clearfix">
+					<div class="col-xs-12 col-sm-4 m-medium-top">
+						<div class="features col-xs-12 m-small-top m-xsmall-bottom">
+							<h6 class="blue-cap ">
+								<a href="#" class="feature-link aveirnext-medium">VOTRE SECURITE EST IMPORTANTE</a></h6>
+							<p>Jeffrey mets tout en oeuvre pour votre sécurité ainsi que celle de vos biens. Vous pouvez nous contacter en tout temps pour signaler un litige. </p>
+						</div>
+						<div class="features col-xs-12 m-small-top m-xsmall-bottom">
+							<a href="#" class="feature-link aveirnext-medium">SELECTION DES JEFFREY</a></h6>
+							<p>Lors de la séléction, un certains nombre de documents sont demandés afin de certifier la bonne conduite des Jeffrey ainsi que leur domiciliation ou encore leurs aptitudes.</p>
+						</div>
+					</div>
+					
+					<div class="col-xs-12 col-sm-4 iphone-front">
+						<img src="{{ asset('assets/landing/img/security-img.png') }}" alt="Security Image Here">
+					</div>
+					
+					
+					<div class="col-xs-12 col-sm-4 m-medium-top">
+						<div class="features col-xs-12 m-small-top m-xsmall-bottom">
+							<a href="#" class="feature-link aveirnext-medium">ASSURANCE</a></h6>
+							<p>Lorsque nous procédons à la validation d’un dossier Jeffrey, nous demandons à se dernier de se munir d’une assurance responsablité civile. Bien entendu, Jeffrey-services dispose également de ses assurances pour votre sécurité.</p>
+						</div>
+						<div class="features col-xs-12 m-small-top m-xsmall-bottom">
+							<a href="#" class="feature-link aveirnext-medium">GEO-LOCALISATION </a></h6>
+							<p>Grâce à la technologie, nous pouvons connaitre la localisation de chaque utilisateurs et Jeffrey. Cela nous permets de collaborer avec les services de police et de leur remettre des informations en cas de litige.</p>
+						</div>
+					</div>
+					
+					<div class="col-xs-12 col-sm-offset-1 col-sm-10 m-xsmall-top">
+						<br>
+						<h3 class="app-info aveirnext-medium text-center">
+						<a href="#">Soyez sans craintes, Jeffrey est la pour vous.</a></h3>
+					</div>
+					<div class="col-xs-12 col-sm-offset-1 col-sm-10 m-xsmall-top text-center log-btn hidden">
+						<a href="{{ route('provider.login.form') }}" class="button m-small-top" target="_blank">Provider Login</a>
+						<a href="{{ route('user.login.form') }}" class="button m-small-top" target="_blank">User Login</a>
+					</div>
+				</div>
+			</div>
+		</section>
 		
-		<section id="features" class="gray-bg padding30" style="margin-top: 0;">
+		<section id="features" class="padding30" style="margin-top: 0;">
 			<div class="heading type-1">
 				<h2 class="aveirnext-medium">Fonctionnement</h2>
 			</div>
@@ -228,7 +278,7 @@
 			</div>
 		</section>
 
-		<section id="become-section" >
+		<section id="become-section" class="gray-bg padding30">
 			<div class="become">
 				<div class="container">
 					<div class="heading type-1">
@@ -236,7 +286,7 @@
 						<h2 class="aveirnext-medium">Devenir Jeffrey</h2>
 					</div>
 					<div class="become-inner row no-margin">
-						<div class="col-sm-8 services">
+						<div class="col-sm-4 services">
 							<h6 class="blue-cap aveirnext-medium">CONDITIONS A REMPLIR POUR DEVENIR JEFFREY</h6>
 							<ul class="list-unstyled">
 								<li>
@@ -259,6 +309,12 @@
 								</li>
 							</ul>
 						</div><!--end of services-->
+
+						<div class="col-sm-4">
+							<div class="become-img">
+								<img src="{{ asset('assets/landing/img/become-img.png') }}">
+							</div>
+						</div>
 
 						<div class="col-sm-4 services">
 							<h6 class="blue-cap aveirnext-medium text-center">LES AVANTAGES UNE FOIS QUE TU FAIS PARTI DE LA COMMUNAUTE</h6>
@@ -285,9 +341,13 @@
 		</section>
 
 		<div class="adventure">
-			<h3 class="adventure-title gray-bg">
-				<a href="#">Démarre l’aventure Jeffrey dès aujourd’hui</a>
-			</h3>
+			<div class="adven">
+				<h3 class="adventure-title">
+					<a href="#">Démarre l’aventure Jeffrey dès aujourd’hui</a>
+				</h3>
+				<div class="underline"></div>
+			</div>
+			
 			<section id="banner" class="m-none">
 				<div class="bg image overlay" id="auto-height">
 					<div class="parallax-window" data-parallax="scroll" data-image-src="{{ asset('assets/landing/img/adventure-bg.png') }}"></div>
@@ -297,24 +357,22 @@
 						</div>
 					</noscript>
 					<div class="bg-content">
-						<div class="container">
-							<div class="row no-margin">
-								<div class="col-md-6 col-sm-6 text-left">
-									<p class="get-txt">Toi aussi <br> devient Jeffrey</p>
-								</div>
+						<div class="row no-margin">
+							<div class="col-md-6 col-sm-6 text-left">
+								<p class="get-txt">Toi aussi <br> devient Jeffrey</p>
+							</div>
 
-								<div class="col-md-6 col-sm-6 text-right">
-									<p class="get-txt">Et génère un <br>revenu rapidement</p>
-								</div>
-							</div><!--end of row-->
-						</div><!--end of container-->
+							<div class="col-md-6 col-sm-6 text-right">
+								<p class="get-txt">Et génère un <br>revenu rapidement</p>
+							</div>
+						</div><!--end of row-->
 					</div>
 				</div>
 			</section>
 		</div>
 
 		<footer class="default">
-			<div class="container-full clearfix">
+			<div class="clearfix">
 				<div class="col-lg-3 col-sm-4">
 					<a href="#" class="logo">
 						<img src="{{ asset('assets/landing/img/logo-black.png') }}" alt="Your Logo Here">
