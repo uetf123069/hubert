@@ -37,10 +37,65 @@
 	
 </head>
 	<body>
-		<div class="warning">
-			<p class="white">Hi there! Sorry for interrupting but we have detected that you are browsing with JavaScript disabled. So we would like to warn you that some of the features might not work as expected. In order to turn it on back follow the instructions <a href="http://enable-javascript.com/" class="link white">here</a></p>
-		</div>
-		<section id="banner" class="m-none">
+		<div class="head-parallax" id="head-parallax">
+			<div class="parallax-window" data-parallax="scroll" data-image-src="{{ asset('assets/landing/img/head-bg.png') }}">
+				<div class="overlay1">
+					<div class="head-parallax-content padding30">
+						<header class="top">
+							<div class="clearfix">
+								<div class="col-xs-3 col-sm-2 col-lg-4 head-logo">
+									<div class="logo">
+										<a href="#" class="head-logo"><img src="{{ asset('assets/landing/img/logo-white.png') }}" alt="jeffrey"></a>
+										<p class="logo-txt">Le service à la personne pour tous.</p>	
+									</div>					
+								</div>
+
+								<div class="col-xs-9 col-sm-10 col-lg-8 p-none">
+									<a href="{{ route('user.login.form') }}" target="_blank" class="button white align-right" style="margin-right: 20px;">Login / Signup</a>
+								</div>
+							</div>
+						</header>
+
+						<div class="container b-space">
+							<div class="col-sm-5 ">
+								
+							</div>
+							<div class="col-xs-12 col-sm-7 m-small-top iphone-float">
+								<img src="{{ asset('assets/landing/img/iphone-1.png') }}" alt="iPhone App Mockup Here">
+							</div>
+						</div>
+
+						<div class="container">
+							<div class="head-bottom row no-margin">
+								<div class="col-md-5 col-sm-5">
+									<div class="head-left">
+										<p>Votre temps n’a pas de prix.Commandez votre <span class="bungasai jeffrey">Jeffrey!</span> </p>
+									</div>
+								</div><!--end of column-->
+
+								<div class="col-md-7 col-sm-7">
+									<div class="head-right float-right">
+										<a href="#"><img src="{{ asset('assets/landing/img/android-download_2x.png') }}"></a>
+
+										<a href="#"><img src="{{ asset('assets/landing/img/apple-download_2x.png') }}"></a>
+										<p>téléchargez l’application</p>
+									</div><!--end of head-right-->
+								</div><!--end of column-->
+							</div><!--end of row-->
+						</div><!--end of container-->
+					
+						<div class="row no-margin">
+							<a href="#about" class="scroll-down white">
+								<i class="fa fa-angle-double-down"></i>
+							</a>
+						</div>
+						
+					</div>
+				</div><!--end of overlay-->	
+			</div>	
+		</div><!--end of head-parallax-->
+
+<!-- 		<section id="banner" class="m-none hidden">
 			<div class="bg image" id="auto-height">
 				<div class="parallax-window" data-parallax="scroll" data-image-src="{{ asset('assets/landing/img/head-bg.png') }}"></div>
 				<noscript>
@@ -79,7 +134,7 @@
 								<div class="head-left">
 									<p>Votre temps n’a pas de prix.Commandez votre <span class="bungasai jeffrey">Jeffrey!</span> </p>
 								</div>
-							</div><!--end of column-->
+							</div>
 
 							<div class="col-md-7 col-sm-7">
 								<div class="head-right float-right">
@@ -87,10 +142,10 @@
 
 									<a href="#"><img src="{{ asset('assets/landing/img/apple-download_2x.png') }}"></a>
 									<p>téléchargez l’application</p>
-								</div><!--end of head-right-->
-							</div><!--end of column-->
-						</div><!--end of row-->
-					</div><!--end of container-->
+								</div>
+							</div>
+						</div>
+					</div>
 					
 					
 					<a href="#about" class="scroll-down white">
@@ -98,7 +153,7 @@
 					</a>
 				</div>
 			</div>
-		</section>
+		</section> -->
 		
 		<header id="header" class="sticky">
 			<div class="container-full clearfix">
@@ -114,7 +169,7 @@
 						<li><a href="#security">Securité</a></li>
 						<li><a href="#features">Fonctionnement</a></li>
 						<li><a href="#become-section">Devenir Jeffrey</a></li>
-						<li><a href="#">Villes</a></li>
+						<li><a href="#villes">Villes</a></li>
 					</ul>
 				</nav>
 				
@@ -340,6 +395,23 @@
 			</div><!--end of become-->
 		</section>
 
+		<div class="villes padding20" id="villes">
+			<div class="container">
+				<div class="heading type-1">
+					<h2 class="aveirnext-medium">Villes</h2>
+				</div>
+
+				<div class="villes-content">
+					<p class="text-right villes-txt">Retrouvez Jeffrey dans quatres cantons suisses et 
+						<br> bientôt partout ailleurs... </p>				
+				</div>
+
+				<div class="villes-img">
+					<img src="{{ asset('assets/landing/img/villes.png') }}"">
+				</div>
+			</div>			
+		</div>
+
 		<div class="adventure">
 			<div class="adven">
 				<h3 class="adventure-title">
@@ -347,8 +419,22 @@
 				</h3>
 				<div class="underline"></div>
 			</div>
+
+			<div class="parallax-window" data-parallax="scroll" data-image-src="{{ asset('assets/landing/img/adventure-bg.png') }}">
+				<div class="overlay1">
+					<div class="row no-margin">
+						<div class="col-md-6 col-sm-6 col-xs-6 text-left">
+							<p class="get-txt">Toi aussi <br> devient Jeffrey</p>
+						</div>
+
+						<div class="col-md-6 col-sm-6 col-xs-6 text-right">
+							<p class="get-txt">Et génère un <br>revenu rapidement</p>
+						</div>
+					</div><!--end of row-->
+				</div>
+			</div>
 			
-			<section id="banner" class="m-none">
+			<section id="banner" class="m-none hidden">
 				<div class="bg image overlay" id="auto-height">
 					<div class="parallax-window" data-parallax="scroll" data-image-src="{{ asset('assets/landing/img/adventure-bg.png') }}"></div>
 					<noscript>
@@ -387,7 +473,7 @@
 					</ul>
 				</div>
 				<div class="col-xs-offset-5 col-xs-1 col-sm-1 col-sm-offset-0 scroll-top">
-					<a href="#banner">
+					<a href="#head-parallax">
 						<i class="fa fa-angle-double-up"></i>
 					</a>
 				</div>

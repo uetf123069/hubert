@@ -105,12 +105,22 @@ a:focus{
 }
 
 .head-left{
-	margin-bottom: 20px;
+	/*margin-bottom: 20px;*/
 }
 
 .head-left p{
 	color: #fff;
     font-size: 20px;
+    margin-bottom: 0;
+}
+
+.head-parallax{
+	position: relative;
+}
+
+.overlay1{
+	background: rgba(0,0,0,.5);
+    color: #fff;
 }
 
 .jeffrey{
@@ -135,11 +145,16 @@ a:focus{
 .head-right p{
 	color: #fff;
 	text-align: center;
+	margin-bottom: 0;
 }
 
 .download-button a:hover,
 .download-button a:focus{
 	background-color: #06498e;
+}
+
+.padding20{
+	padding: 20px 0;
 }
 
 .padding30{
@@ -396,4 +411,24 @@ section{
 
 .heading.type-1::after {
     margin-top: 0em;
+}
+
+.villes-txt{
+	font-size: 20px;
+	margin-top: 20px;
+}
+
+
+@media screen and (max-width: 767px){
+	.head-right{
+		float: none;
+		text-align: center;
+	}
+}
+
+@media screen and (max-width: 400px){
+	.head-logo{
+		width: 100%;
+		text-align: center;
+	}
 }
