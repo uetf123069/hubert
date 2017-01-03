@@ -8,14 +8,10 @@
 
 <div class="row">
     <div class="col-md-12 full-width">
-        <div class="panel panel-default welcome-box">
+        <div class="panel panel-default welcome-box-provider">
             <!-- <div class="panel-heading"></div> -->
             <div class="panel-body text-center">
-                <h3 class="mt0">Welcome to Xuber!</h3>
-                <div>                        
-                    <p class="wel-cont">{{tr('welcome_provider')}}</p>
-                </div>
-                <br>
+                
                 <a href="{{route('provider.profile')}}" class="btn btn-primary-alt">{{tr('provider_change_loc')}}</a>
                 <!-- FOR PROVIDER -->
                 

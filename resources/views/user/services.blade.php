@@ -11,11 +11,7 @@
         <div class="panel panel-default welcome-box">
             <!-- <div class="panel-heading"></div> -->
             <div class="panel-body text-center">
-                <h3 class="mt0">Welcome to Xuber!</h3>
-                <div>                        
-                    <p class="wel-cont">{{tr('welcome_user_msg')}}</p>
-                </div>
-                <br>
+                
                 <a href="{{ route('user.services.request') }}" class="btn btn-primary-alt">{{tr('request_now')}}</a>                        
             </div>
         </div>
