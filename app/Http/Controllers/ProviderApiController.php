@@ -118,7 +118,7 @@ class ProviderApiController extends Controller
                 'device_type' => 'required|in:'.DEVICE_ANDROID.','.DEVICE_IOS,
                 'device_token' => 'required',
                 'login_by' => 'required|in:manual,facebook,google',
-                'service_type' => 'numeric|exists:service_types,id',
+                // 'service_type' => 'numeric|exists:service_types,id',
             )
         );
 
@@ -274,21 +274,31 @@ class ProviderApiController extends Controller
 
                 if($provider) {
 
-					if($request->has('service_type')) {
+					iif($request->has('service_type')) {
 
-                        $check_provider_service = ProviderService::where('provider_id' , $provider->id)
-                                                ->first();
+                        $provider_services = ProviderService::where('provider_id' , $provider->id)->get();
 
-                        if(!$check_provider_service) {
-                            $provider_service = new ProviderService;
-                        } else {
-                            $provider_service = $check_provider_service;
+                        ProviderService::where('provider_id' , $provider->id)->update(['is_available' => 0]);
+
+                        $services =  array($request->service_type);
+
+                        if(!is_array($request->service_type)) {
+                            $services = explode(',',$request->service_type );
                         }
 
-						$provider_service->provider_id = $provider->id;
-						$provider_service->service_type_id = $request->service_type;
-						$provider_service->is_available = DEFAULT_TRUE;
-						$provider_service->save();
+                        if($services) {
+                            foreach ($services as $key => $service) {
+                                $check_provider_service = ProviderService::where('provider_id' , $provider->id)->where('service_type_id' , $service)->count();
+
+                                if($check_provider_service) {
+                                    save_provider_service($provider->id,$service , 1);    
+                                } else {
+                                    save_provider_service($provider->id,$service);
+                                }
+                            }    
+                        
+                        }
+                    }$provider_service->save();
 					}
 				}
                 $provider->password = $request->password;
@@ -312,27 +322,28 @@ class ProviderApiController extends Controller
 		            $email_send = Helper::send_email($page,$subject,$admin_email,$email_data);
 		        }
                
-            	Log::info("New provider registration: ".print_r($provider, true));
+            	$service_types = get_provider_service_types($provider->id);
 
-                $service_name = ServiceType::find($request->service_type);
+                $service_type_id = $service_types['id'];
+                $service_type_name = $service_types['name'];
 
-				$response_array = Helper::null_safe(array(
-					'success' => true ,
-					'message' => $provider ? Helper::get_message(105) : Helper::get_error_message(126),
-					'id' 	=> $provider->id,
-	                'first_name' => $provider->first_name,
-	                'last_name' => $provider->last_name,
-	                'mobile' => $provider->mobile,
-	                'gender' => $provider->gender,
-	                'email' => $provider->email,
-	                'picture' => $provider->picture,
-	                'token' => $provider->token,
-	                'token_expiry' => $provider->token_expiry,
-	                'login_by' => $provider->login_by,
-	                'social_unique_id' => $provider->social_unique_id,
-                    'service_type' => $request->service_type,
-	                'service_type_name' => $service_name->name ? $service_name->name : "",
-				));
+                $response_array = Helper::null_safe(array(
+                    'success' => true ,
+                    'message' => $provider ? Helper::get_message(105) : Helper::get_error_message(126),
+                    'id'    => $provider->id,
+                    'first_name' => $provider->first_name,
+                    'last_name' => $provider->last_name,
+                    'mobile' => $provider->mobile,
+                    'gender' => $provider->gender,
+                    'email' => $provider->email,
+                    'picture' => $provider->picture,
+                    'token' => $provider->token,
+                    'token_expiry' => $provider->token_expiry,
+                    'login_by' => $provider->login_by,
+                    'social_unique_id' => $provider->social_unique_id,
+                    'service_type' => $service_type_id,
+                    'service_type_name' => $service_type_name,
+                ));
             }
 		}
 	
@@ -705,26 +716,41 @@ class ProviderApiController extends Controller
 
 			$service_type_id = NONE;
 
-			if($request->has('service_type')) {
+            if($request->has('service_type')) {
 
-				$service_type_id = $request->service_type_id;
+                // dd($request->service_type);
 
-				$check_provider_service = ProviderService::where('provider_id' , $request->id)
-											->first();
+                $provider_services = ProviderService::where('provider_id' , $request->id)->get();    
 
-				if(!$check_provider_service) {
-					$provider_service = new ProviderService;
-				} else {
-					$provider_service = $check_provider_service;
-				}
+                ProviderService::where('provider_id' , $request->id)->update(['is_available' => 0]);
 
-				$provider_service->provider_id = $request->id;
-				$provider_service->service_type_id = $request->service_type;
-				$provider_service->is_available = DEFAULT_TRUE;
-				$provider_service->save();
-				
-			
-			}
+                $services =  $request->service_type;
+
+                if(!is_array($request->service_type)) {
+                    $services = explode(',',$request->service_type );
+                }
+
+                if($services) {
+
+                    foreach ($services as $key => $service) {
+
+                        $check_provider_service = ProviderService::where('provider_id' , $request->id)->where('service_type_id' , $service)->count();
+
+                        if($check_provider_service) {
+                            save_provider_service($request->id,$service , 1);    
+                        } else {
+                            save_provider_service($request->id,$service);
+                        }
+                    }    
+                }
+            
+            }
+
+
+            $service_types = get_provider_service_types($request->id);
+
+            $service_type_id = $service_types['id'];
+            $service_type_name = $service_types['name'];
 
             $response_array = array(
                 'success' => true,
@@ -738,7 +764,9 @@ class ProviderApiController extends Controller
                 'token' => $provider->token,
                 'token_expiry' => $provider->token_expiry,
                 'service_type' => $service_type_id,
+                'service_type_name' => $service_type_name
             );
+
 
             $response_array = Helper::null_safe($response_array);
 		}

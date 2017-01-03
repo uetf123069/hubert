@@ -159,3 +159,51 @@ function get_currency_value($value)
 {
 	return Setting::get('currency').$value;
 }
+
+
+function save_provider_service($provider_id,$service_type,$update = null) {
+
+	if($update) {
+		$provider_service = ProviderService::where('provider_id' , $provider_id)->where('service_type_id' , $service_type)->first();
+	} else {
+		$provider_service = new ProviderService;
+	}	
+	$provider_service->provider_id = $provider_id;
+    $provider_service->service_type_id = $service_type;
+    $provider_service->is_available = 1;
+    $provider_service->save();
+
+}
+
+function get_provider_service_types($provider_id) {
+
+	$services = ProviderService::leftJoin('service_types' ,'service_types.id' , '=' , 'provider_services.service_type_id')
+			->where('provider_services.provider_id' , $provider_id)
+			->where('is_available' , 1)
+			->select('service_type_id','service_types.name as service_name')
+			->get();
+
+	$ids = $service_name = array();
+
+	if($services) {
+		foreach ($services as $key => $value) {
+			$ids[] = $value->service_type_id;
+			$service_name[] = $value->service_name;
+		}
+
+		$ids = implode(',' , $ids);
+		$service_name = implode(',' , $service_name);
+	}
+
+	return array('id' => $ids , 'name' => $service_name);
+
+}
+
+function change_provider_service_available($provider_id,$service_type,$update = null) {
+	ProviderService::where('provider_id' , $provider_id)->where('service_type_id' , '!=' , $service_type)->update(['is_available' => 0]);
+
+}
+
+function check_provider_service_type_avail($provider_id, $service_type_id) {
+	return ProviderService::where('provider_id' , $provider_id)->where('service_type_id' , $service_type_id)->where('is_available' , 1)->count();
+}
