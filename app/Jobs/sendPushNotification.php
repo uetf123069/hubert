@@ -33,14 +33,14 @@ class sendPushNotification extends Job implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($id,$user_type,$request_id,$title,$message,$type)
+    public function __construct($id,$user_type,$request_id,$title,$message)
     {
         $this->id = $id;
         $this->user_type = $user_type;
         $this->request_id = $request_id;
         $this->title = $title;
         $this->message = $message;
-        $this->type = $type;
+        // $this->type = $type;
     }
 
     /**
@@ -92,7 +92,14 @@ class sendPushNotification extends Job implements ShouldQueue
 
                     Log::info("iOS push Started");
 
+                    if($this->user_type == 0) {
+
                     require_once app_path().'/ios/apns.php';
+
+                    }
+                    else{
+                        require_once app_path().'/ios/apns1.php';
+                    }
 
                     Log::info($user->device_token);
 

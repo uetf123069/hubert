@@ -621,15 +621,23 @@ class ProviderApiController extends Controller
     
     }
 	
-	public function profile(Request $request)
-	{
-		$provider = Provider::where('providers.id' ,$request->id)
+	public function profile(Request $request) {
+
+        $provider = Provider::where('providers.id' ,$request->id)
                         ->leftJoin('provider_services' , 'providers.id' , '=' , 'provider_services.provider_id')
                         ->leftJoin('service_types' , 'provider_services.service_type_id' , '=' , 'service_types.id')
                         ->select('providers.*' , 'service_types.id as service_type' , 'service_types.provider_name' , 'service_types.name as service_name')
                         ->first();
+                        
+        $services = array();
 
-		$response_array = array(
+        $service_types = get_provider_service_types($request->id);
+
+        $service_type_id = $service_types['id'];
+
+        $service_type_name = $service_types['name'];
+
+        $response_array = array(
             'success' => true,
             'id' => $provider->id,
             'email' => $provider->email,
@@ -637,36 +645,37 @@ class ProviderApiController extends Controller
             'last_name' => $provider->last_name,
             'mobile' => $provider->mobile,
             'picture' => $provider->picture,
-            'service_type' => $provider->service_type,
-            'service_name' => $provider->service_name,
+            'service_type' => $service_type_id,
+            'service_name' => $service_type_name,
             'token' => $provider->token,
+            'services' => $services,
+            'address' => $provider->address,
             'token_expiry' => $provider->token_expiry,
             'active' => boolval($provider->is_activated)
-		);
-		$response_array = Helper::null_safe($response_array);
+        );
+        $response_array = Helper::null_safe($response_array);
+    
+        $response = response()->json($response_array, 200);
+        return $response;
+    }
 	
-		$response = response()->json($response_array, 200);
-		return $response;
-	}
-	
-	public function update_profile(Request $request)
-	{
-		$validator = Validator::make(
-				$request->all(),
-				array(
-					'first_name' => 'required|max:255',
-					'last_name' => 'required|max:255',
-					'mobile' => 'required|digits_between:6,13',
-					'picture' => 'mimes:jpeg,bmp,png',
-					'gender' => 'in:male,female,others',
-					'email' => 'email|max:255|unique:providers,email,'.$request->id,
-                    'service_type' => 'numeric|exists:service_types,id',
-				),
-				array(
-						'unique' => 'Email ID already exists',
-					));
-			
-		if ($validator->fails()) {
+	public function update_profile(Request $request) {
+
+        $validator = Validator::make(
+                $request->all(),
+                array(
+                    'first_name' => 'required|max:255',
+                    'last_name' => 'max:255',
+                    'mobile' => 'required|digits_between:6,13',
+                    'picture' => 'mimes:jpeg,bmp,png',
+                    'gender' => 'in:male,female,others',
+                    'email' => 'email|max:255|unique:providers,email,'.$request->id
+                ),
+                array(
+                        'unique' => 'Email ID already exists',
+                    ));
+            
+        if ($validator->fails()) {
             $error_messages = implode(',', $validator->messages()->all());
             $response_array = array(
                 'success' => false,
@@ -674,33 +683,60 @@ class ProviderApiController extends Controller
                 'error_code' => 101,
                 'error_messages' => Helper::get_error_message(101)
             );
-		} else {
+        } else {
 
-			$provider = Provider::find($request->id);
-			
-			if($request->has('first_name')) {
-				$provider->first_name = $request->first_name;
-			}
+            $provider = Provider::find($request->id);
+            
+            if($request->has('first_name')) {
+                $provider->first_name = $request->first_name;
+            }
 
-			if($request->has('last_name')) {
-				$provider->last_name = $request->last_name;
-			}
+            if($request->has('last_name')) {
+                $provider->last_name = $request->last_name;
+            }
 
-			if($request->has('email')) {
-				$provider->email = $request->email;
-			}
+            if($request->has('email')) {
+                $provider->email = $request->email;
+            }
 
-			if ($request->has('mobile')) {
-				$provider->mobile = $request->mobile;
-			}
+            if ($request->has('mobile')) {
+                $provider->mobile = $request->mobile;
+            }
 
-			if ($request->has('gender')) {
-				$provider->gender = $request->gender;
-			}
+            if ($request->has('gender')) {
+                $provider->gender = $request->gender;
+            }
 
-			$picture = $request->file('picture');
 
-			// Upload picture
+            if ($request->has('address')) {
+                $provider->address = $request->address;
+            }
+
+            if ($request->has('city')) {
+                $provider->city = $request->city;
+            }
+
+            if ($request->has('state')) {
+                $provider->state = $request->state;
+            }
+
+            if ($request->has('pincode')) {
+                $provider->pincode = $request->pincode;
+            }
+
+            if ($request->has('about')) {
+                $provider->description = $request->about;
+            }
+
+            if ($request->has('education')) {
+                $provider->education = $request->education;
+            }
+
+
+
+            $picture = $request->file('picture');
+
+            // Upload picture
             if ($picture != ""){
 
                 //deleting old image if exists
@@ -708,13 +744,9 @@ class ProviderApiController extends Controller
                 $provider->picture = Helper::upload_picture($picture);
             }
 
-            // Generate new tokens
-            // $provider->token = Helper::generate_token();
-            // $provider->token_expiry = Helper::generate_token_expiry();
+            $provider->save();
 
-			$provider->save();
-
-			$service_type_id = NONE;
+            $service_type_id = NONE;
 
             if($request->has('service_type')) {
 
@@ -767,13 +799,12 @@ class ProviderApiController extends Controller
                 'service_type_name' => $service_type_name
             );
 
-
             $response_array = Helper::null_safe($response_array);
-		}
-			
-		$response = response()->json($response_array, 200);
-		return $response;
-	}
+        }
+            
+        $response = response()->json($response_array, 200);
+        return $response;
+    }
 	
 	public function tokenRenew(Request $request)
 	{

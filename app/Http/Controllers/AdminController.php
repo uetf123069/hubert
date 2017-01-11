@@ -783,55 +783,54 @@ class AdminController extends Controller
         return view('admin.addServiceTypes');
     }
 
-    public function addServiceProcess(Request $request)
+ public function addServiceProcess(Request $request)
     {
 
-                $validator = Validator::make(
-                    $request->all(),
-                    array(
-                        'service_name' => 'required|max:255',
-                        'provider_name' => 'required|max:255',
-                                         
-                    )
-                );
-            if($validator->fails())
-        {
+        $validator = Validator::make(
+            $request->all(),
+            array(
+                'service_name' => 'required|max:255',
+                'provider_name' => 'required|max:255',
+                'service_price' => 'required',
+                'picture' => 'mimes:ico,png'
+                                 
+            )
+        );
+        if($validator->fails()) {
             $error_messages = implode(',', $validator->messages()->all());
             return back()->with('flash_errors', $error_messages);
-        }
-        else
-        {
+        } else {
+
             if($request->id != '')
             {
                 $service = ServiceType::find($request->id);
                 $message = tr('admin_not_st_updated');
-            }
-            else
-            {
+            } else {
                 $service = new ServiceType;
                 $message = tr('admin_not_st');
 
             }
-                if ($request->is_default == 1) {
+            if ($request->is_default == 1) {
                 ServiceType::where('status', 1)->update(array('status' => 0));
                 $service->status = 1;
-            }
-            else
-            {
+            } else {
                 $service->status = 0;
             }
-                $service->name = $request->service_name;
-                $service->provider_name = $request->provider_name;
-                $service->save();
+            $service->name = $request->service_name;
+            $service->provider_name = $request->provider_name;
             
-        if($service)
-        {
-            return back()->with('flash_success',$message);
-        }
-        else
-        {
-            return back()->with('flash_error',tr('admin_not_error'));
-        }
+            $service->service_price = $request->service_price;
+            if($request->hasFile('picture')) {
+                $service->icon = Helper::upload_picture($request->file('picture'));
+            }
+            $service->save();
+            
+            if($service)
+            {
+                return back()->with('flash_success',$message);
+            } else {
+                return back()->with('flash_error',tr('admin_not_error'));
+            }
         }
     }
 
