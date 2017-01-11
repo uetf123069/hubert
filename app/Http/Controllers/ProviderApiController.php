@@ -274,7 +274,7 @@ class ProviderApiController extends Controller
 
                 if($provider) {
 
-					iif($request->has('service_type')) {
+					if($request->has('service_type')) {
 
                         $provider_services = ProviderService::where('provider_id' , $provider->id)->get();
 
