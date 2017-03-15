@@ -5,7 +5,7 @@
  * and open the template in the editor.
  */
 
-define("GOOGLE_API_KEY", "AIzaSyAaCR_zQmLD0p1WFYetrJHjlzY809amX9g");
+define("GOOGLE_API_KEY", "AIzaSyApG_dz4JUTRSMYFv__BdGL6HQG-1-efy0");
 
 //change the browser key from admin panel
 

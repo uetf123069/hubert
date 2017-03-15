@@ -43,7 +43,7 @@ io.on('connection', function (socket) {
         socket.broadcast.to( receiver ).emit('message', data);
 
         // url = 'http://dev.xuber.com/message/save?user_id='+data.user_id
-        url = 'http://xuber.appoets.co/message/save?user_id='+data.user_id
+        url = 'http://138.68.10.151/message/save?user_id='+data.user_id
         +'&provider_id='+data.provider_id
         +'&message='+data.message
         +'&type='+data.type

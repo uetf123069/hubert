@@ -345,7 +345,6 @@ class ProviderApiController extends Controller
                     'service_type_name' => $service_type_name,
                 ));
             }
-		}
 	
 		$response = response()->json($response_array, 200);
 		return $response;
